@@ -1,4 +1,4 @@
-var IDE_NAME = "BlankE";
+var IDE_NAME = "project";
 var ZOOM_AMT = 1;
 var DEV_MODE = true; // use dev_data instead of data for saving
 
@@ -97,6 +97,8 @@ $(function(){
 
         handleDropFile(in_file);
     }
+
+    dispatchEvent("ide-ready",{});
 });
 
 function handleDropFile(in_path) {
