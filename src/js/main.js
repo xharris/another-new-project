@@ -11,6 +11,7 @@ var nwCHILD = require('child_process');
 var nwOS = require('os');
 var nwNET = require('net');
 
+var nwMODULES = {};
 var nwMAC = require("getmac");
 //var nwUA = require("universal-analytics");
 
@@ -18,10 +19,10 @@ var eIPC = require('electron').ipcRenderer;
 var eREMOTE = require('electron').remote;
 var eAPP = eREMOTE.require('electron').app;
 var eSHELL = eREMOTE.require('electron').shell;
+var eMENU = eREMOTE.require('electron').Menu;
+var eMENUITEM = eREMOTE.require('electron').MenuItem;
 
-var editor, aceModeList;
-var re_file_ext = /(?:\.([^.]+))?$/;
-
+var game_items = [];      
 
 $(function(){
     /* disable eval
@@ -43,6 +44,19 @@ $(function(){
         eIPC.send('minimize');
     });
     */
+
+    loadModules();
+        
+    // btn-add : menu for adding things to the library
+    $(".btn-add").on('click', function(){
+        const menu = new eMENU();
+        for (var m = 0; m < game_items.length; m++) {
+            menu.append(new eMENUITEM({label: game_items[m], click(item, focusedWindow) {
+                b_library.add(item.label);
+            }}))
+        }
+        menu.popup(eREMOTE.getCurrentWindow());        
+    });
 
     // set user id
     nwMAC.getMac(function(err, address) {
@@ -136,6 +150,31 @@ function handleDropFile(in_path) {
 function dispatchEvent(ev_name, ev_properties) {
     var new_event = new CustomEvent(ev_name, ev_properties);
     document.dispatchEvent(new_event);
+}
+
+function loadModules(callback) {
+    // import module files
+    nwFILE.readdir("js/modules", function(err, files) {
+        for (var f = 0; f < files.length; f++) {
+            var mod_name = nwPATH.basename(files[f], nwPATH.extname(files[f]));
+
+            if (!game_items.includes(mod_name)) {
+                game_items.push(mod_name);
+
+                nwMODULES[mod_name] = require("./js/modules/" + mod_name);
+                if (nwMODULES[mod_name].loaded) {
+                    nwMODULES[mod_name].loaded();
+                }
+            }
+        }
+        if (callback) {
+            callback();
+        }
+    });
+}
+
+function libraryAdd(type) {
+
 }
 
 function normalizePath(path) {

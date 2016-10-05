@@ -24,7 +24,7 @@ function createWindow () {
     var path = require("path");
     var fs = require("fs");
     var initPath = path.join(app.getPath('userData'), "init.json");
-    var data;
+    var data = {};
     try {
         data = JSON.parse(fs.readFileSync(initPath, 'utf8'));
     }
