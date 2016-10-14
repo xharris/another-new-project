@@ -45,7 +45,9 @@ $(function(){
     });
     */
 
-    loadModules();
+    loadModules(function(){
+        dispatchEvent("ide-ready",{});
+    });
         
     // btn-add : menu for adding things to the library
     $(".btn-add").on('click', function(){
@@ -112,7 +114,15 @@ $(function(){
         handleDropFile(in_file);
     }
 
-    dispatchEvent("ide-ready",{});
+    $(".library .object-tree").on("dblclick",".object",function(){
+        var uuid = $(this).data('uuid');
+        var type = $(this).data('type');
+
+        if (nwMODULES[type].onDblClick) {
+            nwMODULES[type].onDblClick(uuid, b_library.getByUUID(type, uuid))
+        }
+    });
+
 });
 
 function handleDropFile(in_path) {
@@ -121,14 +131,9 @@ function handleDropFile(in_path) {
             if (stats.isDirectory()) {
                 var folder_name = nwPATH.basename(in_path);
 
-                b_project.addFolder(in_path)
             }
             else if (stats.isSymbolicLink()) {
-                b_ide.addToast({
-                    message: " symoblic! " + in_path,
-                    can_dismiss: false,
-                    timeout: 2000
-                });
+
             }
             else if (stats.isFile()) {
                 /*
@@ -171,10 +176,6 @@ function loadModules(callback) {
             callback();
         }
     });
-}
-
-function libraryAdd(type) {
-
 }
 
 function normalizePath(path) {

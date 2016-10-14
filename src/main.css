@@ -1,31 +1,76 @@
+.no-select {
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Chrome/Safari/Opera */
+  -khtml-user-select: none;
+  /* Konqueror */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+                                  not supported by any browser */
+}
 .library {
   position: absolute;
   top: 0px;
   bottom: 0px;
   left: 0px;
   width: 200px;
+  background-color: #ffffff;
+  box-shadow: 1px 0px 10px black;
 }
 .library .actions button {
-  margin: 4px;
+  margin: 0px;
   width: 25px;
   height: 25px;
   padding: 0px;
   text-align: center;
   outline: none;
   border: none;
-  border-radius: 4px;
+  border-radius: 0px;
+  font-size: 20px;
+  transition: all 0.2s ease-in-out;
+}
+.library .actions button:hover {
+  outline: solid 1px black;
+}
+.library .object-tree {
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Chrome/Safari/Opera */
+  -khtml-user-select: none;
+  /* Konqueror */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+                                  not supported by any browser */
 }
 .library .object-tree .object {
   padding: 4px;
-  cursor: pointer;
+  cursor: default;
   transition: ease-in-out 0.1s background-color;
 }
 .library .object-tree .object:hover {
   background-color: #e0e0e0;
 }
+#main_canvas {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  left: 0px;
+  bottom: 0px;
+}
 html {
   width: 100%;
   height: 100%;
+  overflow: hidden;
 }
 body {
   margin: 0px;
