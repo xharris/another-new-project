@@ -66,6 +66,7 @@
   right: 0px;
   left: 0px;
   bottom: 0px;
+  cursor: default;
 }
 html {
   width: 100%;
