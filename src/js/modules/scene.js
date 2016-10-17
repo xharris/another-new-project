@@ -73,7 +73,7 @@ function createGrid() {
 	pGraphics.lineTo(0,0);
 
 	// draw origin lines
-	origin_g = game.add.graphics(0,0);		//origin_g.clear();
+	origin_g = game.add.graphics(0,0);
 	origin_g.lineStyle(1, 0x000000, grid_opacity);
 	origin_g.moveTo(0 + camera.x, 0);
 	origin_g.lineTo(0 + camera.x,game.height);
@@ -103,7 +103,7 @@ function createGrid() {
 		
 		grid_tiles.tilePosition.x = camera.x;
 		grid_tiles.tilePosition.y = camera.y;
-		
+
 		// update origin position
 		origin_g.clear();
 		origin_g.lineStyle(1, 0x000000, grid_opacity);

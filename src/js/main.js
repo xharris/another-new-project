@@ -13,6 +13,7 @@ var nwNET = require('net');
 
 var nwMODULES = {};
 var nwMAC = require("getmac");
+var nwMKDIRP = require("mkdirp");
 //var nwUA = require("universal-analytics");
 
 var eIPC = require('electron').ipcRenderer;
@@ -21,6 +22,7 @@ var eAPP = eREMOTE.require('electron').app;
 var eSHELL = eREMOTE.require('electron').shell;
 var eMENU = eREMOTE.require('electron').Menu;
 var eMENUITEM = eREMOTE.require('electron').MenuItem;
+var eDIALOG = eREMOTE.require('electron').dialog;
 
 var game_items = [];      
 
@@ -30,20 +32,51 @@ $(function(){
       throw new Error("Sorry, BlankE does not support window.eval() for security reasons.");
     };
     */
+    b_ide.setAppDataDir(eAPP.getPath('userData'));
+    b_ide.loadSettings();
 
     $("body").addClass(nwOS.type());
 
-    /* title bar buttons
-    $(".title-bar #btn-close").on("click", function() {
+    // title bar buttons
+    $(".titlebar .actionbuttons .btn-newproject").on("click", function() {
+        eDIALOG.showSaveDialog(
+            {
+                title: "save new project",
+                defaultPath: "new_project.bip",
+                filters: [{name: 'BlankE IDE project', extensions: ['bip']}]
+            },
+            function (path) {
+                if (path) {
+                    b_project.newProject(path);
+                }
+            }
+        );
+    });
+    $(".titlebar .actionbuttons .btn-openproject").on("click", function() {
+        eDIALOG.showOpenDialog(
+            {
+                title: "open project",
+                properties: ["openFile"],
+                filters: [{name: 'BlankE IDE project', extensions: ['bip']}]
+            },
+            function (path) {
+                if (path) {
+                    console.log(path)
+                    b_project.openProject(path[0]);
+                }
+            }
+        );
+    });
+
+    $(".titlebar .titlebuttons .btn-close").on("click", function() {
         eIPC.send('close');
     });
-    $(".title-bar #btn-maximize").on("click", function() {
+    $(".titlebar .titlebuttons .btn-maximize").on("click", function() {
         eIPC.send('maximize');
     });
-    $(".title-bar #btn-minimize").on("click", function() {
+    $(".titlebar .titlebuttons .btn-minimize").on("click", function() {
         eIPC.send('minimize');
     });
-    */
 
     loadModules(function(){
         dispatchEvent("ide-ready",{});
@@ -54,7 +87,7 @@ $(function(){
         const menu = new eMENU();
         for (var m = 0; m < game_items.length; m++) {
             menu.append(new eMENUITEM({label: game_items[m], click(item, focusedWindow) {
-                b_library.add(item.label);
+                b_library.add(item.label, true);
             }}))
         }
         menu.popup(eREMOTE.getCurrentWindow());        
@@ -79,8 +112,7 @@ $(function(){
         eIPC.send('confirm-window-close');
     });
 
-    /*
-    var drop_mainwin = document.getElementById("body");
+    var drop_mainwin = $("body")[0];
 	drop_mainwin.ondragover = () => {
         // console.log(e.dataTransfer.files);
 		if ($(".filedrop-overlay").hasClass("inactive")) {
@@ -104,7 +136,6 @@ $(function(){
 		$(".filedrop-overlay").addClass("inactive");
 		return false;
 	};
-    */
 
     var args = eREMOTE.getGlobal("shareVars").args;
 
@@ -128,6 +159,8 @@ $(function(){
 function handleDropFile(in_path) {
     nwFILE.lstat(in_path, function(err, stats) {
         if (!err) {
+            dispatchEvent("filedrop", {path:in_path, stats:stats});
+
             if (stats.isDirectory()) {
                 var folder_name = nwPATH.basename(in_path);
 
@@ -136,24 +169,14 @@ function handleDropFile(in_path) {
 
             }
             else if (stats.isFile()) {
-                /*
-                b_ide.addToast({
-                    message: labels['file'] + " " + in_path,
-                    can_dismiss: false,
-                    timeout: 2000
-                });
 
-                b_project.reset();
-                b_project.setFolder(nwPATH.dirname(in_path));
-                b_editor.setFile(normalizePath(in_path));
-                */
             }
         }
     });
 }
 
 function dispatchEvent(ev_name, ev_properties) {
-    var new_event = new CustomEvent(ev_name, ev_properties);
+    var new_event = new CustomEvent(ev_name, {'detail': ev_properties});
     document.dispatchEvent(new_event);
 }
 

@@ -1,3 +1,76 @@
+.titlebar {
+  -webkit-app-region: drag;
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Chrome/Safari/Opera */
+  -khtml-user-select: none;
+  /* Konqueror */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+    not supported by any browser */
+  position: absolute;
+  top: 0px;
+  left: 200px;
+  right: 0px;
+  height: auto;
+  padding: 5px;
+}
+.titlebar .actionbuttons {
+  -webkit-app-region: no-drag;
+  white-space: nowrap;
+  display: inline-block;
+  margin-left: 5px;
+}
+.titlebar .actionbuttons button {
+  height: 30px;
+  width: 30px;
+  margin: 3px;
+  padding: 0px;
+  border: none;
+  border-radius: 2px;
+  outline: none;
+  background-color: transparent;
+  font-size: 15px;
+  cursor: default;
+  transition: all ease-in-out 0.4s;
+}
+.titlebar .actionbuttons button:hover {
+  border-radius: 100%;
+  background-color: #E5E5E5;
+}
+.titlebar .titlebuttons {
+  -webkit-app-region: no-drag;
+  white-space: nowrap;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+.titlebar .titlebuttons button {
+  height: 30px;
+  width: 30px;
+  margin: 3px;
+  padding: 0px;
+  border: none;
+  border-radius: 2px;
+  outline: none;
+  background-color: transparent;
+  font-size: 15px;
+  cursor: default;
+  transition: all ease-in-out 0.4s;
+  vertical-align: top;
+}
+.titlebar .titlebuttons button:hover {
+  border-radius: 100%;
+  background-color: #E5E5E5;
+}
+.titlebar .titlebuttons button:hover.btn-close {
+  background-color: #E81123;
+}
 .no-select {
   -webkit-touch-callout: none;
   /* iOS Safari */
@@ -11,7 +84,34 @@
   /* Internet Explorer/Edge */
   user-select: none;
   /* Non-prefixed version, currently
-                                  not supported by any browser */
+    not supported by any browser */
+}
+.win-drag {
+  -webkit-app-region: drag;
+}
+.win-nodrag {
+  -webkit-app-region: no-drag;
+}
+.ui-btn-group {
+  background-color: rgba(0, 0, 0, 0.03);
+  border-radius: 4px;
+}
+.ui-button {
+  height: 30px;
+  width: 30px;
+  margin: 3px;
+  padding: 0px;
+  border: none;
+  border-radius: 2px;
+  outline: none;
+  background-color: transparent;
+  font-size: 15px;
+  cursor: default;
+  transition: all ease-in-out 0.4s;
+}
+.ui-button:hover {
+  border-radius: 100%;
+  background-color: #E5E5E5;
 }
 .library {
   position: absolute;
@@ -23,19 +123,24 @@
   box-shadow: 1px 0px 10px black;
 }
 .library .actions button {
-  margin: 0px;
-  width: 25px;
-  height: 25px;
+  height: 30px;
+  width: 30px;
+  margin: 3px;
   padding: 0px;
-  text-align: center;
-  outline: none;
   border: none;
-  border-radius: 0px;
-  font-size: 20px;
-  transition: all 0.2s ease-in-out;
+  border-radius: 2px;
+  outline: none;
+  background-color: transparent;
+  font-size: 15px;
+  cursor: default;
+  transition: all ease-in-out 0.4s;
 }
 .library .actions button:hover {
-  outline: solid 1px black;
+  border-radius: 100%;
+  background-color: #E5E5E5;
+}
+.library .actions .btn-add:hover {
+  background-color: #E5E5E5;
 }
 .library .object-tree {
   -webkit-touch-callout: none;
@@ -50,7 +155,7 @@
   /* Internet Explorer/Edge */
   user-select: none;
   /* Non-prefixed version, currently
-                                  not supported by any browser */
+    not supported by any browser */
 }
 .library .object-tree .object {
   padding: 4px;
@@ -75,4 +180,6 @@ html {
 }
 body {
   margin: 0px;
+  width: 100%;
+  height: 100%;
 }

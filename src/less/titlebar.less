@@ -1,0 +1,44 @@
+.titlebar {
+	.win-drag();
+    .no-select();
+
+    position: absolute;
+    top: 0px;
+    left: 200px;
+    right: 0px;
+    height: auto;
+    padding: 5px;
+    //background-color: rgba(0,0,0,0.03);
+
+    .actionbuttons {
+        .win-nodrag();
+
+        white-space: nowrap;
+        display: inline-block;
+        margin-left: 5px;
+
+        button {
+            .ui-button();
+        }
+    }
+
+    .titlebuttons {
+    	.win-nodrag();
+
+        white-space: nowrap;
+    	position: absolute;
+    	top: 5px;
+    	right: 5px;
+
+    	button {
+    		.ui-button();
+    		vertical-align: top;
+
+		    &:hover {
+		    	&.btn-close {
+		    		background-color: #E81123;
+		    	}
+		    }
+    	}
+    }
+}

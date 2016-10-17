@@ -1,0 +1,86 @@
+var b_project = {
+	bip_path: '',
+	curr_project: '', // path to current project folder
+	proj_data: {},
+	autosave_on: true,
+
+	newProject: function(bip_path) {
+		var ext = nwPATH.extname(bip_path);
+		var folder_path = bip_path.replace(ext, '');
+		var filename = nwPATH.basename(bip_path,ext);
+
+		this.curr_project = folder_path;
+		this.bip_path = nwPATH.join(folder_path, filename + ext);
+
+		// make dir if it doesn't exist
+		nwMKDIRP(folder_path, function() {
+			b_project.saveProject();
+		});
+
+
+		dispatchEvent('project.new');
+	},
+
+	openProject: function(bip_path) {
+		this.bip_path = bip_path;
+		this.curr_project = nwPATH.dirname(bip_path);
+
+		try {
+			b_project.proj_data = JSON.parse(nwFILE.readFileSync(bip_path, 'utf8'));
+		} catch (e) {
+			b_project.proj_data = {};
+		}
+
+		dispatchEvent('project.open');
+	},
+
+	saveProject: function() {
+		if (this.isProjectOpen()) {
+			b_project.proj_data.library = b_library.objects;
+
+			nwFILE.writeFileSync(this.bip_path, JSON.stringify(this.proj_data));
+
+			dispatchEvent('project.save');
+		}
+	},
+
+	autoSaveProject: function() {
+		if (this.autosave_on) {
+			this.saveProject();
+		}
+	},
+
+	importResource: function(type, path, callback) {
+		if (this.isProjectOpen()) {
+			var cbCalled = false;
+
+			nwMKDIRP(nwPATH.join(this.curr_project, type), function() {
+				var rd = nwFILE.createReadStream(path);
+				rd.on("error", function(err) {
+					done(err);
+				});
+				var wr = nwFILE.createWriteStream(nwPATH.join(b_project.curr_project, type, nwPATH.basename(path)));
+					wr.on("error", function(err) {
+					done(err);
+				});
+				wr.on("close", function(ex) {
+					done(nwPATH.join(b_project.curr_project, type, nwPATH.basename(path)));
+				});
+				rd.pipe(wr);
+
+				function done(err) {
+					if (!cbCalled) {
+					  callback(err);
+					  cbCalled = true;
+					}
+					b_project.autoSaveProject();
+				}
+			});
+
+		}
+	},
+
+	isProjectOpen: function() {
+		return this.bip_path != '';
+	}
+};

@@ -24,6 +24,8 @@
 
     <link rel="stylesheet" href="main.css" media="screen"/>
 
+    <script src="js/ide.js"></script>
+    <script src="js/project.js"></script>
     <script src="js/canvas.js"></script>
     <script src="js/library.js"></script>
     <script src="js/main.js"></script>
@@ -35,6 +37,20 @@
 
 </head>
 <body>
+    <div class="titlebar">
+        <div class="ui-btn-group actionbuttons">
+            <button class="btn-newproject"><i class="mdi mdi-file-outline"></i></button>
+            <button class="btn-openproject"><i class="mdi mdi-folder-outline"></i></button>
+            <button class="btn-devtools" onclick="eIPC.send('show-dev-tools');">
+                <i class="mdi mdi-code-tags"></i>
+            </button>
+        </div>
+        <div class="ui-btn-group titlebuttons">
+            <button class="btn-minimize"><i class="mdi mdi-window-minimize"></i></button>
+            <button class="btn-maximize"><i class="mdi mdi-window-maximize"></i></button>
+            <button class="btn-close"><i class="mdi mdi-close"></i></button>
+        </div>
+    </div>
 
     <div class="library">
         <div class="actions">

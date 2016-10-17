@@ -1,9 +1,42 @@
 .no-select {
-  -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none;   /* Chrome/Safari/Opera */
-  -khtml-user-select: none;    /* Konqueror */
-  -moz-user-select: none;      /* Firefox */
-  -ms-user-select: none;       /* Internet Explorer/Edge */
-  user-select: none;           /* Non-prefixed version, currently
-                                  not supported by any browser */
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none;   /* Chrome/Safari/Opera */
+    -khtml-user-select: none;    /* Konqueror */
+    -moz-user-select: none;      /* Firefox */
+    -ms-user-select: none;       /* Internet Explorer/Edge */
+    user-select: none;           /* Non-prefixed version, currently
+    not supported by any browser */
+}
+
+.win-drag{
+    -webkit-app-region: drag;
+}
+
+.win-nodrag{
+    -webkit-app-region: no-drag;
+}
+
+.ui-btn-group {
+    background-color: rgba(0,0,0,.03);
+    border-radius: 4px;
+}
+
+.ui-button {
+    height: 30px;
+    width: 30px;
+    margin: 3px;
+    padding: 0px;
+    border: none;
+    border-radius: 2px;
+    outline: none;
+    background-color: transparent;
+    font-size: 15px;
+    cursor: default;
+
+    transition: all ease-in-out 0.4s;
+
+    &:hover {
+    	border-radius: 100%;
+    	background-color: #E5E5E5;
+    }
 }
