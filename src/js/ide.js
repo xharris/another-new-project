@@ -4,35 +4,28 @@ var b_ide = {
 	settings: {},
 
 	setAppDataDir: function(path) {
-		this.appdata_path = path;
-		this.setting_file = nwPATH.join(path, "settings.json");
+		b_ide.appdata_path = path;
+		b_ide.setting_file = nwPATH.join(path, "settings.json");
 	},
 
 	saveSetting: function(key, value) {
-		var data = {};
 		try {
-        	data = JSON.parse(nwFILE.readFileSync(this.settings_file, 'utf8'));
-        	data[key] = value;
-        	this.settings = data;
-        	nwFILE.writeFileSync(this.settings_file, JSON.stringify(data));
+        	b_ide.settings[key] = value;
+
+        	nwFILE.writeFileSync(b_ide.setting_file, JSON.stringify(b_ide.settings));
 	    }
 	    catch(e) {
 	    }
 	},
 
 	loadSettings: function() {
-		var data = {};
+    	nwFILE.readFile(b_ide.setting_file, 'utf8', function(err, data) {
+    		if (!err) {
+	    		b_ide.settings = JSON.parse(data);
+	    		dispatchEvent("ide.settings.loaded");
+	    	}
+    	});
 
-		try {
-        	data = JSON.parse(nwFILE.readFileSync(this.settings_file, 'utf8'));
-        	this.settings = data;
-	    }
-	    catch(e) {
-	    }
-
-	    if (data.last_project_open) {
-	    	b_project.openProject(data.last_project_open);
-	    }
 	}
 
 }

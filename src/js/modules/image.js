@@ -42,4 +42,10 @@ function importImage(path, uuid=0) {
 exports.onDblClick = function(uuid, properties) {
     console.log(uuid)
     console.log(properties);
+
+    // if image is not in image folder, ask user:
+    //      1. relocate image
+    //      2. delete object
+
+    
 }

@@ -18,11 +18,11 @@ var nwMKDIRP = require("mkdirp");
 
 var eIPC = require('electron').ipcRenderer;
 var eREMOTE = require('electron').remote;
-var eAPP = eREMOTE.require('electron').app;
-var eSHELL = eREMOTE.require('electron').shell;
-var eMENU = eREMOTE.require('electron').Menu;
-var eMENUITEM = eREMOTE.require('electron').MenuItem;
-var eDIALOG = eREMOTE.require('electron').dialog;
+var eAPP = eREMOTE.app;
+var eSHELL = eREMOTE.shell;
+var eMENU = eREMOTE.Menu;
+var eMENUITEM = eREMOTE.MenuItem;
+var eDIALOG = eREMOTE.dialog;
 
 var game_items = [];      
 

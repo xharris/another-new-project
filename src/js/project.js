@@ -31,6 +31,7 @@ var b_project = {
 			b_project.proj_data = {};
 		}
 
+		b_ide.saveSetting("last_project_open", this.bip_path);
 		dispatchEvent('project.open');
 	},
 
@@ -38,6 +39,7 @@ var b_project = {
 		if (this.isProjectOpen()) {
 			nwFILE.writeFileSync(this.bip_path, JSON.stringify(this.proj_data));
 
+			b_ide.saveSetting("last_project_open", this.bip_path);
 			dispatchEvent('project.post-save');
 		}
 	},
@@ -91,3 +93,10 @@ var b_project = {
 		return this.bip_path != '';
 	}
 };
+
+document.addEventListener("ide.settings.loaded", function(e) {
+	console.log(b_ide.settings);
+	if (b_ide.settings.last_project_open) {
+		b_project.openProject(b_ide.settings.last_project_open);
+	}
+});
