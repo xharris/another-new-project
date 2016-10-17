@@ -33,6 +33,11 @@ exports.onDblClick = function(uuid, properties) {
 	// loadScene(sel_prop.map);
 }
 
+document.addEventListener("canvas.destroy", function() {
+	camera_start = {x:0, y:0};
+	camera = {x: 0, y: 0};
+});
+
 document.addEventListener("canvas.preload", function() {
 	var game = b_canvas.pGame;
 

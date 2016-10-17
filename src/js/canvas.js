@@ -3,6 +3,10 @@ b_canvas = {
 	pGame: 0,
 
 	init: function() {
+		if (this.pGame) {
+			b_canvas.destroy();
+		}
+
 		this.pGame = new Phaser.Game(
 			window.screen.availWidth,
 			window.screen.availHeight,
@@ -16,6 +20,15 @@ b_canvas = {
 		);
 
 		is_init = true
+	},
+
+	destroy: function() {
+		if (this.pGame) {
+			this.pGame.destroy();
+			this.pGame = 0;
+
+			dispatchEvent("canvas.destroy");
+		}
 	},
 
 	pPreload: function() {

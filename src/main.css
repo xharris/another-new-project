@@ -120,7 +120,7 @@
   left: 0px;
   width: 200px;
   background-color: #ffffff;
-  box-shadow: 1px 0px 10px black;
+  box-shadow: 1px 0px 5px black;
 }
 .library .actions button {
   height: 30px;
@@ -172,6 +172,13 @@
   left: 0px;
   bottom: 0px;
   cursor: default;
+}
+@font-face {
+  font-family: "Inconsolata";
+  src: url("includes/fonts/inconsolata/inconsolata.otf") format("opentype");
+}
+* {
+  font-family: 'Inconsolata', sans-serif;
 }
 html {
   width: 100%;
