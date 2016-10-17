@@ -79,7 +79,7 @@ $(function(){
     });
 
     loadModules(function(){
-        dispatchEvent("ide-ready",{});
+        dispatchEvent("ide.ready",{});
     });
         
     // btn-add : menu for adding things to the library
@@ -301,7 +301,6 @@ function parseXML(str) {
     return xmlDoc;
 }
 
-// creates a file and it's necessary directories
-function createFile() {
-
+function ifndef(value, default_value) {
+    return (typeof value === 'undefined') ? default_value : value;
 }

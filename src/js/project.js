@@ -36,11 +36,9 @@ var b_project = {
 
 	saveProject: function() {
 		if (this.isProjectOpen()) {
-			b_project.proj_data.library = b_library.objects;
-
 			nwFILE.writeFileSync(this.bip_path, JSON.stringify(this.proj_data));
 
-			dispatchEvent('project.save');
+			dispatchEvent('project.post-save');
 		}
 	},
 
@@ -48,6 +46,15 @@ var b_project = {
 		if (this.autosave_on) {
 			this.saveProject();
 		}
+	},
+
+	// data that is saved to project file
+	setData: function(key, value) {
+		this.proj_data[key] = value;
+	},
+
+	getData: function(key) {
+		return this.proj_data[key];
 	},
 
 	importResource: function(type, path, callback) {

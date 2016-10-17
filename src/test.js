@@ -1,3 +1,3 @@
-document.addEventListener("ide-ready", function(){
-	b_library.add('scene');
+document.addEventListener("ide.ready", function(){
+	//b_library.add('scene');
 });

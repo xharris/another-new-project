@@ -2,15 +2,6 @@ document.addEventListener("filedrop", function(e) {
 	importImage(e.detail.path);
 });
 
-function importImage(path) {
-	b_project.importResource('image', path, function(e) {
-		var new_img = b_library.add('image');
-		new_img.path = nwPATH.join('image', nwPATH.basename(e));
-
-		console.log(b_library);
-	})
-}
-
 exports.libraryAdd = function(uuid, name) {
     eDIALOG.showOpenDialog(
         {
@@ -26,9 +17,29 @@ exports.libraryAdd = function(uuid, name) {
         function (path) {
             if (path) {
                 for (var p = 0; p < path.length; p++) {
-	                importImage(path[p]);
+	                importImage(path[p], uuid);
 	            }
+            } else {
+            	console.log('delete ' + uuid)
+            	b_library.delete('image', uuid);
             }
         }
     );
+}
+
+function importImage(path, uuid=0) {
+	b_project.importResource('image', path, function(e) {
+		var new_img;
+		if (uuid) {
+			new_img = b_library.getByUUID(uuid);
+		} else {
+			new_img = b_library.add('image');
+		}
+		new_img.path = nwPATH.join('image', nwPATH.basename(e));
+	})
+}
+
+exports.onDblClick = function(uuid, properties) {
+    console.log(uuid)
+    console.log(properties);
 }
