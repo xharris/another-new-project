@@ -97,6 +97,8 @@ var b_project = {
 document.addEventListener("ide.settings.loaded", function(e) {
 	console.log(b_ide.settings);
 	if (b_ide.settings.last_project_open) {
+		// TODO: if project file doesn't exist
+		// set last_project_open to 0
 		b_project.openProject(b_ide.settings.last_project_open);
 	}
 });

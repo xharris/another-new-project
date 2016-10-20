@@ -39,13 +39,14 @@ function importImage(path, uuid=0) {
 	})
 }
 
-exports.onDblClick = function(uuid, properties) {
-    console.log(uuid)
-    console.log(properties);
+exports.onMouseEnter = function(uuid, properties) {
+    $(".library").append(
+        "<img src='"+nwPATH.join(b_project.curr_project, properties.path)+"' class='img-hover img-hover-"+uuid+"'/>"
+    );
 
-    // if image is not in image folder, ask user:
-    //      1. relocate image
-    //      2. delete object
+    $(".img-hover .img-hover-"+uuid).offset({top: $('.library .object[data-uuid="'+uuid+'"]').position().top});
+}
 
-    
+exports.onMouseLeave = function(uuid, properties) {
+    $('.library .img-hover-'+uuid).remove();
 }

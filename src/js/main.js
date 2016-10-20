@@ -14,6 +14,7 @@ var nwNET = require('net');
 var nwMODULES = {};
 var nwMAC = require("getmac");
 var nwMKDIRP = require("mkdirp");
+var nwLESS = require("less");
 //var nwUA = require("universal-analytics");
 
 var eIPC = require('electron').ipcRenderer;
@@ -152,7 +153,21 @@ $(function(){
         if (nwMODULES[type].onDblClick) {
             nwMODULES[type].onDblClick(uuid, b_library.getByUUID(type, uuid))
         }
-    });
+    }).on("mouseenter", ".object", function(){
+        var uuid = $(this).data('uuid');
+        var type = $(this).data('type');
+
+        if (nwMODULES[type].onMouseEnter) {
+            nwMODULES[type].onMouseEnter(uuid, b_library.getByUUID(type, uuid))
+        }
+    }).on("mouseleave", ".object", function(){
+        var uuid = $(this).data('uuid');
+        var type = $(this).data('type');
+
+        if (nwMODULES[type].onMouseLeave) {
+            nwMODULES[type].onMouseLeave(uuid, b_library.getByUUID(type, uuid))
+        }
+    })
 
 });
 
@@ -180,25 +195,59 @@ function dispatchEvent(ev_name, ev_properties) {
     document.dispatchEvent(new_event);
 }
 
+function importLess(module, file) {
+    nwFILE.readFile(file, 'utf8', function(err, data) {
+
+        if (!err) {
+            nwLESS.render(data,
+                {
+                    paths: [nwPATH.join(__dirname,"less"),nwPATH.join(__dirname, "modules", module, "less")],
+                },
+                function (e, output) {
+                    var head  = document.getElementsByTagName('head')[0];
+                    var link  = document.createElement('style');
+                    link.id   = file.hashCode();
+                    link.rel  = 'stylesheet';
+                    link.type = 'text/css';
+                    link.media = 'all';
+                    $(link).html(output.css);
+                    head.appendChild(link);
+                });
+        }
+    });
+}
+
 function loadModules(callback) {
     // import module files
-    nwFILE.readdir("js/modules", function(err, files) {
-        for (var f = 0; f < files.length; f++) {
-            var mod_name = nwPATH.basename(files[f], nwPATH.extname(files[f]));
+    nwFILE.readdir(nwPATH.join(__dirname, "modules"), function(err, mods) {
+
+        mods.forEach(function(mod_name, m) {
+            // import less files=
+            nwFILE.readdir(nwPATH.join(__dirname, "modules", mod_name, "less"), function(err, files) {
+                if (!err) {
+                    files.forEach(function(file, l) {
+
+                        importLess(mod_name, nwPATH.join(__dirname, "modules", mod_name, "less", file));
+
+                    });
+                }
+            });
 
             if (!game_items.includes(mod_name)) {
                 game_items.push(mod_name);
 
-                nwMODULES[mod_name] = require("./js/modules/" + mod_name);
+                nwMODULES[mod_name] = require(nwPATH.join(__dirname, "modules", mod_name));
                 if (nwMODULES[mod_name].loaded) {
                     nwMODULES[mod_name].loaded();
                 }
             }
-        }
-        if (callback) {
-            callback();
-        }
+        });
+
     });
+
+    if (callback) {
+        callback();
+    }
 }
 
 function normalizePath(path) {
