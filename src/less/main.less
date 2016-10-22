@@ -1,17 +1,7 @@
-@import "variables";
+@import "imports";
 @import "titlebar";
-@import "classes";
 @import "library";
 @import "canvas";
-
-@font-face {
-    font-family: "Inconsolata";
-    src: url("includes/fonts/inconsolata/inconsolata.otf") format("opentype");
-}
-
-*{
-    font-family: 'Inconsolata', sans-serif;
-}
 
 html {
 	width: 100%;
@@ -23,5 +13,11 @@ body {
 	margin: 0px;
 	width: 100%;
 	height: 100%;
+
+	.workspace {
+		height: 100%;
+		margin-left: 200px;
+		z-index: @ide-z-back;
+	}
 }
 

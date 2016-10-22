@@ -164,6 +164,8 @@ $(function(){
         var uuid = $(this).data('uuid');
         var type = $(this).data('type');
 
+
+
         if (nwMODULES[type].onMouseLeave) {
             nwMODULES[type].onMouseLeave(uuid, b_library.getByUUID(type, uuid))
         }
@@ -217,12 +219,18 @@ function importLess(module, file) {
     });
 }
 
+function callModuleFn(type, fn_name) {
+    if (nwMODULES[type][fn_name]) {
+        nwMODULES[type][fn_name]();
+    }
+}
+
 function loadModules(callback) {
     // import module files
     nwFILE.readdir(nwPATH.join(__dirname, "modules"), function(err, mods) {
 
         mods.forEach(function(mod_name, m) {
-            // import less files=
+            // import less files
             nwFILE.readdir(nwPATH.join(__dirname, "modules", mod_name, "less"), function(err, files) {
                 if (!err) {
                     files.forEach(function(file, l) {

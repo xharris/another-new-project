@@ -6,12 +6,15 @@
     width: 200px;
     background-color: rgb(255,255,255);
     box-shadow: 1px 0px 5px black;
+    z-index: @ide-z-middle;
 
     .actions {
+    	.win-drag();
     	z-index: @library-z-front;
 
     	button {
     		.ui-button();
+    		.win-nodrag();
 		}
 
 		.btn-add:hover {

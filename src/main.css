@@ -1,3 +1,58 @@
+.no-select {
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Chrome/Safari/Opera */
+  -khtml-user-select: none;
+  /* Konqueror */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+    not supported by any browser */
+}
+.win-drag {
+  -webkit-app-region: drag;
+}
+.win-nodrag {
+  -webkit-app-region: no-drag;
+}
+.ui-btn-group {
+  cursor: default;
+  background-color: rgba(255, 255, 255, 0.6);
+  border-radius: 4px;
+}
+.ui-button {
+  height: 30px;
+  width: 30px;
+  margin: 3px;
+  padding: 0px;
+  border: none;
+  border-radius: 2px;
+  outline: none;
+  background-color: transparent;
+  font-size: 15px;
+  cursor: default;
+  transition: all ease-in-out 0.4s;
+}
+.ui-button:hover {
+  border-radius: 100%;
+  background-color: #E5E5E5;
+}
+.ui-select {
+  padding: 5px;
+  border-radius: 5px;
+  outline: none;
+}
+@font-face {
+  font-family: "Inconsolata";
+  src: url("includes/fonts/inconsolata/inconsolata.otf") format("opentype");
+}
+* {
+  font-family: 'Inconsolata', sans-serif;
+}
 .titlebar {
   -webkit-app-region: drag;
   -webkit-touch-callout: none;
@@ -71,48 +126,6 @@
 .titlebar .titlebuttons button:hover.btn-close {
   background-color: #E81123;
 }
-.no-select {
-  -webkit-touch-callout: none;
-  /* iOS Safari */
-  -webkit-user-select: none;
-  /* Chrome/Safari/Opera */
-  -khtml-user-select: none;
-  /* Konqueror */
-  -moz-user-select: none;
-  /* Firefox */
-  -ms-user-select: none;
-  /* Internet Explorer/Edge */
-  user-select: none;
-  /* Non-prefixed version, currently
-    not supported by any browser */
-}
-.win-drag {
-  -webkit-app-region: drag;
-}
-.win-nodrag {
-  -webkit-app-region: no-drag;
-}
-.ui-btn-group {
-  background-color: rgba(0, 0, 0, 0.03);
-  border-radius: 4px;
-}
-.ui-button {
-  height: 30px;
-  width: 30px;
-  margin: 3px;
-  padding: 0px;
-  border: none;
-  border-radius: 2px;
-  outline: none;
-  background-color: transparent;
-  font-size: 15px;
-  cursor: default;
-  transition: all ease-in-out 0.4s;
-}
-.ui-button:hover {
-  border-radius: 100%;
-  background-color: #E5E5E5;
-}
 .library {
   position: absolute;
   top: 0px;
@@ -121,8 +134,10 @@
   width: 200px;
   background-color: #ffffff;
   box-shadow: 1px 0px 5px black;
+  z-index: 0;
 }
 .library .actions {
+  -webkit-app-region: drag;
   z-index: 10;
 }
 .library .actions button {
@@ -137,6 +152,7 @@
   font-size: 15px;
   cursor: default;
   transition: all ease-in-out 0.4s;
+  -webkit-app-region: no-drag;
 }
 .library .actions button:hover {
   border-radius: 100%;
@@ -172,20 +188,10 @@
 .library .object-tree .object:hover {
   background-color: #e0e0e0;
 }
-#main_canvas {
-  position: absolute;
-  top: 0px;
-  right: 0px;
-  left: 0px;
-  bottom: 0px;
+#main-canvas {
+  width: 100%;
+  height: 100%;
   cursor: default;
-}
-@font-face {
-  font-family: "Inconsolata";
-  src: url("includes/fonts/inconsolata/inconsolata.otf") format("opentype");
-}
-* {
-  font-family: 'Inconsolata', sans-serif;
 }
 html {
   width: 100%;
@@ -196,4 +202,9 @@ body {
   margin: 0px;
   width: 100%;
   height: 100%;
+}
+body .workspace {
+  height: 100%;
+  margin-left: 200px;
+  z-index: -20;
 }

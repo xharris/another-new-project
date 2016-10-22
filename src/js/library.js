@@ -14,12 +14,16 @@ b_library = {
 	        this.objects[type][uuid] = nwMODULES[type].libraryAdd(uuid, name);
 	    }
 
-	    // give name if it wasn't assigned
 	    if (this.objects[type][uuid] == undefined) {
 	    	this.objects[type][uuid] = {};
 	    }
-	    if (!(name in this.objects[type][uuid])) {
+	    // give name if it wasn't assigned
+	    if (!('name' in this.objects[type][uuid])) {
 	    	this.objects[type][uuid].name = name;
+	    }
+	    // give hover tooltip if it wasn't assigned
+	    if (!('title' in this.objects[type][uuid])) {
+	    	this.objects[type][uuid].title = name;
 	    }
 
 	    $(".library .object-tree").append(
@@ -53,7 +57,7 @@ b_library = {
 
 		this._saveTree($(".object-tree"), b_library.tree);
 
-		console.log(b_library.tree);
+		b_project.autoSaveProject();
 
 		b_project.setData('tree', b_library.tree);
 	},

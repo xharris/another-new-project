@@ -20,7 +20,6 @@ exports.libraryAdd = function(uuid, name) {
 	                importImage(path[p], uuid);
 	            }
             } else {
-            	console.log('delete ' + uuid)
             	b_library.delete('image', uuid);
             }
         }
@@ -43,7 +42,7 @@ exports.onMouseEnter = function(uuid, properties) {
     $(".library").append(
         "<img src='"+nwPATH.join(b_project.curr_project, properties.path)+"' class='img-hover img-hover-"+uuid+"'/>"
     );
-
+    $(".library .object[data-uuid='"+uuid+"'").attr("title", properties.path);
     $(".img-hover .img-hover-"+uuid).offset({top: $('.library .object[data-uuid="'+uuid+'"]').position().top});
 }
 

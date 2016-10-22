@@ -1,5 +1,7 @@
 var sel_uuid, sel_prop;
 
+var game;
+
 var grid_settings = {
 	'height': 32,
 	'width': 32
@@ -23,47 +25,33 @@ exports.libraryAdd = function(uuid, name) {
 }
 
 exports.onDblClick = function(uuid, properties) {
-	b_canvas.init();
+	b_canvas.init("scene");
+	game = b_canvas.pGame;
 
 	sel_uuid = uuid;
 	sel_prop = properties;
 
-	//$("#main-canvas").
-
 	// loadScene(sel_prop.map);
 }
 
-document.addEventListener("canvas.destroy", function() {
-	camera_start = {x:0, y:0};
-	camera = {x: 0, y: 0};
-});
+exports.canvas = {
+	destroy: function() {
+		camera_start = {x:0, y:0};
+		camera = {x: 0, y: 0};
+	},
 
-document.addEventListener("canvas.preload", function() {
-	var game = b_canvas.pGame;
+	preload: function() {
+		game = b_canvas.pGame;
+	},
 
-	
-});
+	create: function() {
+		createGrid();
+		cursors = game.input.keyboard.createCursorKeys();
+	}
+}
 
-document.addEventListener("canvas.create", function() {
-	var game = b_canvas.pGame;
-
-	createGrid();
-	cursors = game.input.keyboard.createCursorKeys();
-
-});
-
-document.addEventListener("canvas.update", function() {
-	var game = b_canvas.pGame;
-
-});
-
-document.addEventListener("canvas.render", function() {
-	var game = b_canvas.pGame;
-
-});
 
 var camera_start = {x:0, y:0};
-
 function createGrid() {
 	var game = b_canvas.pGame;
 
