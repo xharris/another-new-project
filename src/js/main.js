@@ -150,6 +150,8 @@ $(function(){
         var uuid = $(this).data('uuid');
         var type = $(this).data('type');
 
+        $(".workspace").empty();
+
         if (nwMODULES[type].onDblClick) {
             nwMODULES[type].onDblClick(uuid, b_library.getByUUID(type, uuid))
         }

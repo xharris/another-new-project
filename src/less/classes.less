@@ -38,7 +38,7 @@
 
     &:hover {
     	border-radius: 100%;
-    	background-color: #E5E5E5;
+    	background-color: #BDBDBD;
     }
 }
 
@@ -46,4 +46,16 @@
     padding: 5px;
     border-radius: 5px;
     outline: none;
+}
+
+.ui-input-group {
+    input {
+        border: 20px solid transparent;
+        border-image: linear-gradient(to right, black 0%, transparent 90%, transparent 100%);
+        border-image-slice: 1;
+        border-width: 0px;
+        padding: 3px;
+        border-bottom-width: 1px;
+        outline: none;
+    }
 }
