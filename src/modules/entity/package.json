@@ -1,0 +1,7 @@
+{
+  "name": "entity",
+  "main": "entity.js",
+  "dependencies": {
+    "codemirror": "^5.20.2"
+  }
+}

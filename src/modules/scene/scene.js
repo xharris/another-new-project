@@ -14,6 +14,12 @@ var cursors;
 var pGraphics;
 var origin_g;
 
+var selected_obj = {
+	type: '',
+	uuid: '',
+	properties: {}
+}
+
 exports.loaded = function() {
 
 }
@@ -32,6 +38,18 @@ exports.onDblClick = function(uuid, properties) {
 	sel_prop = properties;
 
 	// loadScene(sel_prop.map);
+
+	document.addEventListener("library.click", function(e) {
+		if (game) {
+			if (e.detail.type === "sprite") {
+				selected_obj.type = "sprite";
+				selected_obj.uuid = e.detail.uuid;
+				selected_obj.properties = e.detail.properties;
+
+				console.log('showing ' + selected_obj);
+			}
+		}
+	});
 }
 
 exports.canvas = {

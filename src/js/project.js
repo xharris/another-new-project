@@ -5,6 +5,7 @@ var b_project = {
 	autosave_on: true,
 
 	newProject: function(bip_path) {
+		$(".library .object-tree").empty();
 		var ext = nwPATH.extname(bip_path);
 		var folder_path = bip_path.replace(ext, '');
 		var filename = nwPATH.basename(bip_path,ext);
@@ -17,18 +18,36 @@ var b_project = {
 			b_project.saveProject();
 		});
 
+		if (b_project.bip_path !== '') {
+			b_ide.setHTMLattr("project-open", 1);
+		} else {
+			b_ide.setHTMLattr("project-open", 0);
+		}
 
 		dispatchEvent('project.new');
 	},
 
 	openProject: function(bip_path) {
+		$(".library .object-tree").empty();
 		this.bip_path = bip_path;
 		this.curr_project = nwPATH.dirname(bip_path);
 
 		try {
 			b_project.proj_data = JSON.parse(nwFILE.readFileSync(bip_path, 'utf8'));
+			// if not type OBJECT, set it 
+			// ...
+
 		} catch (e) {
 			b_project.proj_data = {};
+			b_project.bip_path = '';
+			b_project.curr_project = '';
+			console.log("ERR: Can't open " + nwPATH.basename(bip_path));
+		}
+
+		if (b_project.bip_path !== '') {
+			b_ide.setHTMLattr("project-open", 1);
+		} else {
+			b_ide.setHTMLattr("project-open", 0);
 		}
 
 		b_ide.saveSetting("last_project_open", this.bip_path);
@@ -95,7 +114,7 @@ var b_project = {
 };
 
 document.addEventListener("ide.settings.loaded", function(e) {
-	console.log(b_ide.settings);
+	b_ide.setHTMLattr("project-open", 0);
 	if (b_ide.settings.last_project_open) {
 		// TODO: if project file doesn't exist
 		// set last_project_open to 0

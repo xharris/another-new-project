@@ -39,11 +39,13 @@ function importImage(path, uuid=0) {
 }
 
 exports.onMouseEnter = function(uuid, properties) {
-    $(".library").append(
-        "<img src='"+nwPATH.join(b_project.curr_project, properties.path)+"' class='img-hover img-hover-"+uuid+"'/>"
-    );
+    if (properties.path.length > 0) {
+        $(".library").append(
+            "<img src='"+nwPATH.join(b_project.curr_project, properties.path)+"' class='img-hover img-hover-"+uuid+"'/>"
+        );
+        $(".img-hover .img-hover-"+uuid).offset({top: $('.library .object[data-uuid="'+uuid+'"]').position().top});
+    }
     $(".library .object[data-uuid='"+uuid+"'").attr("title", properties.path);
-    $(".img-hover .img-hover-"+uuid).offset({top: $('.library .object[data-uuid="'+uuid+'"]').position().top});
 }
 
 exports.onMouseLeave = function(uuid, properties) {

@@ -1,0 +1,22 @@
+@import "imports";
+
+@import (inline) "./../node_modules/codemirror/lib/codemirror.css";
+@import (inline) "./../node_modules/codemirror/theme/monokai.css";
+
+.workspace.entity {
+	#code {
+		width: 100%;
+		height: 100%;
+
+    	font-family: initial !important;
+
+		.CodeMirror {
+			width: 100%;
+			height: 100%;
+
+			.CodeMirror-scroll {
+				padding: 40px;
+			}
+		}
+	}
+}

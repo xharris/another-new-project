@@ -26,6 +26,10 @@ var b_ide = {
 	    	}
     	});
 
+	},
+
+	setHTMLattr: function(key, value) {
+		$("body").attr(key, value);
 	}
 
 }

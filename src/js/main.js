@@ -25,7 +25,8 @@ var eMENU = eREMOTE.Menu;
 var eMENUITEM = eREMOTE.MenuItem;
 var eDIALOG = eREMOTE.dialog;
 
-var game_items = [];      
+var game_items = [];   
+var last_open;   
 
 $(function(){
     /* disable eval
@@ -150,11 +151,34 @@ $(function(){
         var uuid = $(this).data('uuid');
         var type = $(this).data('type');
 
+        var module_calls = $(".workspace")[0].classList;
+        for (var c in module_calls) {
+            var mod = module_calls.item(c);
+            if (mod !== "workspace" && nwMODULES[mod].onClose) {
+                nwMODULES[mod].onClose(last_open);
+            }
+        }
+
+        last_open = uuid;
+
         $(".workspace").empty();
+        $(".workspace")[0].className = "workspace";
+        $(".workspace").addClass(type);
 
         if (nwMODULES[type].onDblClick) {
             nwMODULES[type].onDblClick(uuid, b_library.getByUUID(type, uuid))
         }
+
+    }).on("click", ".object", function(){
+        var uuid = $(this).data('uuid');
+        var type = $(this).data('type');
+
+        if (nwMODULES[type].onClick) {
+            nwMODULES[type].onClick(uuid, b_library.getByUUID(type, uuid))
+        }
+
+        dispatchEvent("library.click", {type: type, uuid: uuid, properties: b_library.getByUUID(type, uuid)});
+        
     }).on("mouseenter", ".object", function(){
         var uuid = $(this).data('uuid');
         var type = $(this).data('type');
@@ -162,15 +186,15 @@ $(function(){
         if (nwMODULES[type].onMouseEnter) {
             nwMODULES[type].onMouseEnter(uuid, b_library.getByUUID(type, uuid))
         }
+
     }).on("mouseleave", ".object", function(){
         var uuid = $(this).data('uuid');
         var type = $(this).data('type');
 
-
-
         if (nwMODULES[type].onMouseLeave) {
             nwMODULES[type].onMouseLeave(uuid, b_library.getByUUID(type, uuid))
         }
+
     })
 
 });
@@ -245,7 +269,7 @@ function loadModules(callback) {
 
             if (!game_items.includes(mod_name)) {
                 game_items.push(mod_name);
-
+                
                 nwMODULES[mod_name] = require(nwPATH.join(__dirname, "modules", mod_name));
                 if (nwMODULES[mod_name].loaded) {
                     nwMODULES[mod_name].loaded();

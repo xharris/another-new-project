@@ -1,12 +1,31 @@
+body{
+	&[project-open="0"] {
+		.library {
+			width: 0px;
+
+			.actions {
+				display: none;
+			}
+		}
+	}
+
+	&[project-open="1"] {
+		.library {
+			width: 200px;
+		}
+	}
+}
+
 .library {
 	position: absolute;
     top: 0px;
     bottom: 0px;
     left: 0px;
-    width: 200px;
     background-color: rgb(255,255,255);
     box-shadow: 1px 0px 5px black;
     z-index: @ide-z-middle;
+
+    transition: all ease-in-out 0.2s;
 
     .actions {
     	.win-drag();

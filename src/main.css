@@ -62,6 +62,12 @@
 * {
   font-family: 'Inconsolata', sans-serif;
 }
+body[project-open="0"] .titlebar {
+  left: 0px;
+}
+body[project-open="1"] .titlebar {
+  left: 200px;
+}
 .titlebar {
   -webkit-app-region: drag;
   -webkit-touch-callout: none;
@@ -79,10 +85,12 @@
     not supported by any browser */
   position: absolute;
   top: 0px;
-  left: 200px;
   right: 0px;
   height: auto;
   padding: 5px;
+  margin: 1px;
+  z-index: 20;
+  transition: all ease-in-out 0.2s;
 }
 .titlebar .actionbuttons {
   -webkit-app-region: no-drag;
@@ -135,15 +143,24 @@
 .titlebar .titlebuttons button:hover.btn-close {
   background-color: #E81123;
 }
+body[project-open="0"] .library {
+  width: 0px;
+}
+body[project-open="0"] .library .actions {
+  display: none;
+}
+body[project-open="1"] .library {
+  width: 200px;
+}
 .library {
   position: absolute;
   top: 0px;
   bottom: 0px;
   left: 0px;
-  width: 200px;
   background-color: #ffffff;
   box-shadow: 1px 0px 5px black;
   z-index: 0;
+  transition: all ease-in-out 0.2s;
 }
 .library .actions {
   -webkit-app-region: drag;
@@ -216,4 +233,7 @@ body .workspace {
   height: 100%;
   margin-left: 200px;
   z-index: -20;
+}
+::selection {
+  background: #80deea;
 }

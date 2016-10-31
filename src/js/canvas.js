@@ -10,7 +10,6 @@ b_canvas = {
 		}
 
 		if (!$("#main-canvas").length) {
-			console.log('give a thing')
 			$(".workspace").append("<div id='main-canvas'></div>");
 		}
 		b_canvas.module = module;
