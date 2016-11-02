@@ -1,6 +1,7 @@
 var sel_uuid, sel_prop;
 
 var game;
+var game_objects = {};
 
 var grid_settings = {
 	'height': 32,
@@ -41,12 +42,11 @@ exports.onDblClick = function(uuid, properties) {
 
 	document.addEventListener("library.click", function(e) {
 		if (game) {
-			if (e.detail.type === "sprite") {
-				selected_obj.type = "sprite";
+			if (e.detail.type === "entity") {
+				game_objects["entity"] = ifndef(game_objects["entity"], []);
+				selected_obj.type = "entity";
 				selected_obj.uuid = e.detail.uuid;
 				selected_obj.properties = e.detail.properties;
-
-				console.log('showing ' + selected_obj);
 			}
 		}
 	});
@@ -65,6 +65,23 @@ exports.canvas = {
 	create: function() {
 		createGrid();
 		cursors = game.input.keyboard.createCursorKeys();
+		game.input.onTap.add(function(p) {
+			// place whatever is selected
+			if (selected_obj.type === "entity") {
+				console.log((p.x - camera.x) + ' ' + (p.y - camera.y));
+				// draw a rectangle
+				var graphic = game.add.graphics(p.x, p.y);
+			    graphic.lineStyle(1, 0x0000FF, 1);
+    			graphic.beginFill(0x0000FF, 0.25);
+			    graphic.drawRect(0, 0, grid_settings.width, grid_settings.height);
+			    graphic.real_x = p.x - camera.x;
+			    graphic.real_y = p.y - camera.y;
+
+			    
+			    
+			    game_objects.entity.push(graphic);
+			}
+		});
 	}
 }
 
@@ -122,6 +139,15 @@ function createGrid() {
 		origin_g.lineTo(0 + camera.x,game.height);
 		origin_g.moveTo(0,0 + camera.y);
 		origin_g.lineTo(game.width,0 + camera.y);
+
+		for (var cat in game_objects) {
+			for (var obj=0; obj < game_objects[cat].length; obj += 1) {
+				var gObj = game_objects[cat][obj];
+
+				gObj.x = gObj.real_x + camera.x;
+				gObj.y = gObj.real_y + camera.y;
+			}
+		}
 		
 	}, this);
 

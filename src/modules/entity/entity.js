@@ -71,7 +71,23 @@ function saveScript(retry=false) {
 	if (obj_prop.code_path === '') {
 		obj_prop.code_path = getCodePath();
 	}
-	nwFILE.writeFile(obj_prop.code_path, codemirror.getValue(), function(err) {
+	var code = codemirror.getValue();
+	// get template if there's no code
+	if (code === "") {
+		code = nwFILE.readFileSync(nwPATH.join(__dirname, "entity_template.js"), 'utf8');
+
+		var replacements = [
+			['UUID', obj_uuid],
+			['NAME', obj_prop.name]
+		];
+
+	for (var r in replacements) {
+		code = code.replace(new RegExp('<'+replacements[r][0]+'>', 'g'), replacements[r][1]);
+	}
+
+		codemirror.setValue(code);
+	}
+	nwFILE.writeFile(obj_prop.code_path, code, function(err) {
 		if (err && !retry) {
 			// try again
 			obj_prop.code_path = getCodePath();
