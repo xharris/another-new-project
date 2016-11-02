@@ -76,8 +76,17 @@ exports.canvas = {
 			    graphic.drawRect(0, 0, grid_settings.width, grid_settings.height);
 			    graphic.real_x = p.x - camera.x;
 			    graphic.real_y = p.y - camera.y;
-
-			    
+				graphic.inputEnabled = true;
+				graphic.input.enableDrag(true);	
+				graphic.events.onDragStart.add(function(sprite, pointer, x, y) {
+					/*console.log(-(camera.x % grid_settings.width) + ' ' + -(camera.y % grid_settings.height));
+					sprite.input.enableSnap(grid_settings.width, grid_settings.height, true, true,
+					 0, 0);*/
+				});
+				graphic.events.onDragUpdate.add(function(sprite, pointer, x, y) {
+					sprite.real_x = x - camera.x;
+					sprite.real_y = y - camera.y;
+				});		    
 			    
 			    game_objects.entity.push(graphic);
 			}

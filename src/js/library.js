@@ -10,8 +10,13 @@ b_library = {
 	    var uuid = guid();
 	    var name = type+Object.keys(this.objects[type]).length;
 
+	    // call module method
         if (nwMODULES[type].libraryAdd && fromMenu) {
 	        this.objects[type][uuid] = nwMODULES[type].libraryAdd(uuid, name);
+	    }
+	    if (this.objects[type][uuid] == 0 && fromMenu) {
+	    	b_library.delete(type, uuid);
+	    	return;
 	    }
 
 	    if (this.objects[type][uuid] == undefined) {
@@ -51,6 +56,26 @@ b_library = {
 
 	getByUUID: function(type, uuid) {
 		return this.objects[type][uuid];
+	},
+
+	rename: function(uuid, new_name) {
+		var html_obj = $(".library .object-tree .object[data-uuid='"+uuid+"']");
+		var type = html_obj.data('type');
+		var obj = b_library.getByUUID(type, uuid);
+
+		// check new name for validity
+		if (new_name === '') {
+			new_name = obj.name;
+		}
+		new_name = new_name.split(' ').join('_');
+
+		// set 'new name'
+		obj.name = new_name;
+		html_obj.attr('data-name', new_name);
+
+		b_project.autoSaveProject();
+
+		return new_name;
 	},
 
 	saveTree: function() {
@@ -93,7 +118,7 @@ b_library = {
 			// object
 			else {
 				$(sel).append(
-			    	"<div class='object' data-type='" + container[obj] + "' data-uuid='" + obj + "' draggable='true'>"+
+			    	"<div class='object' data-type='" + container[obj] + "' data-uuid='" + obj + "' draggable='true' data-name='"+b_library.getByUUID(container[obj], obj).name+"'>"+
 			    		b_library.getByUUID(container[obj], obj).name+
 			    	"</div>"
 			    );

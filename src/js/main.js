@@ -2,6 +2,8 @@ var IDE_NAME = "project";
 var ZOOM_AMT = 1;
 var DEV_MODE = true; // use dev_data instead of data for saving
 
+var LIBRARY_RENAME_HOLD_TIME = 600;
+
 require('electron-cookies');
 
 var nwFILE = require('fs');
@@ -147,6 +149,8 @@ $(function(){
         handleDropFile(in_file);
     }
 
+    var library_timeout = 0;
+
     $(".library .object-tree").on("dblclick",".object",function(){
         var uuid = $(this).data('uuid');
         var type = $(this).data('type');
@@ -196,8 +200,41 @@ $(function(){
         }
 
     })
+    .on("mousedown", ".object", function(e) {
+        var target = $(e.target);
+
+        library_timeout = setTimeout(lib_renameTimeout, LIBRARY_RENAME_HOLD_TIME, target);
+    }).on('mouseup mouseleave dragstart', ".object", function() {
+        clearTimeout(library_timeout);
+    }).on('keyup', '.object .in-rename', function(e) {
+        e.preventDefault();
+        if (e.keyCode == 13) {
+            lib_objectRename(e);
+        }
+    }).on('blur', '.object .in-rename', function(e) {
+        lib_objectRename(e);
+    });
 
 });
+
+function lib_renameTimeout(target) {
+    var name = b_library.getByUUID(target.data('type'), target.data('uuid')).name;
+
+    target.attr('draggable', 'false');
+    target.html('<input class="in-rename" type="text" data-uuid="" value="'+name+'">');
+    target.children('.in-rename')[0].select()
+}
+
+function lib_objectRename(e) {
+    var e_object = $(e.target).parent();
+
+    // rename object
+    var name = b_library.rename(e_object.data('uuid'), $(e.target).val());
+
+    // make thing draggable again
+    e_object.attr('draggable', 'true');
+    e_object.html(name);
+}
 
 function handleDropFile(in_path) {
     nwFILE.lstat(in_path, function(err, stats) {

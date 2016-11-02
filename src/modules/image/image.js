@@ -17,23 +17,19 @@ exports.libraryAdd = function(uuid, name) {
         function (path) {
             if (path) {
                 for (var p = 0; p < path.length; p++) {
-	                importImage(path[p], uuid);
+	                importImage(path[p]);
 	            }
             } else {
             	b_library.delete('image', uuid);
             }
         }
     );
+    return 0;
 }
 
-function importImage(path, uuid=0) {
+function importImage(path) {
 	b_project.importResource('image', path, function(e) {
-		var new_img;
-		if (uuid) {
-			new_img = b_library.getByUUID(uuid);
-		} else {
-			new_img = b_library.add('image');
-		}
+		var new_img = b_library.add('image');
 		new_img.path = nwPATH.join('image', nwPATH.basename(e));
 	})
 }
