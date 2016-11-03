@@ -2,7 +2,7 @@ UI classes or whatever
 
 .ui-input-group {
 	label
-	input (text, number, etc)
+	.ui-input (input: text, number, etc)
 }
 
 .ui-btn-group {

@@ -46,6 +46,15 @@
   border-radius: 5px;
   outline: none;
 }
+.ui-input {
+  border: 20px solid transparent;
+  border-image: linear-gradient(to right, black 0%, transparent 90%, transparent 100%);
+  border-image-slice: 1;
+  border-width: 0px;
+  padding: 3px;
+  border-bottom-width: 1px;
+  outline: none;
+}
 .ui-input-group input {
   border: 20px solid transparent;
   border-image: linear-gradient(to right, black 0%, transparent 90%, transparent 100%);
@@ -204,6 +213,9 @@ body[project-open="1"] .library {
   left: 0px;
   right: 0px;
   z-index: 10;
+  height: 30px;
+  box-sizing: border-box;
+  line-height: 20px;
 }
 .library .object-tree .object {
   padding: 4px;
@@ -212,6 +224,18 @@ body[project-open="1"] .library {
 }
 .library .object-tree .object:hover {
   background-color: #e0e0e0;
+}
+.library .object-tree .object input {
+  border: 20px solid transparent;
+  border-image: linear-gradient(to right, black 0%, transparent 90%, transparent 100%);
+  border-image-slice: 1;
+  border-width: 0px;
+  padding: 3px;
+  border-bottom-width: 1px;
+  background: transparent;
+  outline: none;
+  font-size: 16px;
+  padding: 0px;
 }
 #main-canvas {
   width: 100%;

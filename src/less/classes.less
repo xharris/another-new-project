@@ -48,14 +48,18 @@
     outline: none;
 }
 
+.ui-input {
+    border: 20px solid transparent;
+    border-image: linear-gradient(to right, black 0%, transparent 90%, transparent 100%);
+    border-image-slice: 1;
+    border-width: 0px;
+    padding: 3px;
+    border-bottom-width: 1px;
+    outline: none; 
+}
+
 .ui-input-group {
     input {
-        border: 20px solid transparent;
-        border-image: linear-gradient(to right, black 0%, transparent 90%, transparent 100%);
-        border-image-slice: 1;
-        border-width: 0px;
-        padding: 3px;
-        border-bottom-width: 1px;
-        outline: none;
+        .ui-input();
     }
 }

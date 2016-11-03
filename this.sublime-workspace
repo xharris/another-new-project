@@ -1,0 +1,890 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"game",
+				"game_objects"
+			],
+			[
+				"gam",
+				"game_objects"
+			],
+			[
+				"camer",
+				"camera"
+			],
+			[
+				"sele",
+				"selected_obj"
+			],
+			[
+				"rz",
+				"rZigZag"
+			],
+			[
+				"no",
+				"node"
+			],
+			[
+				"rZ",
+				"rZigZig"
+			],
+			[
+				"rZi",
+				"rZigZag"
+			],
+			[
+				"lZi",
+				"lZigZag"
+			],
+			[
+				"lZig",
+				"lZigZig"
+			],
+			[
+				"nod",
+				"nodeR_diff"
+			],
+			[
+				"node",
+				"nodeL_diff"
+			],
+			[
+				"cod",
+				"codemirror"
+			],
+			[
+				"curr",
+				"curr_project"
+			],
+			[
+				"height",
+				"heightDiff"
+			],
+			[
+				"heigh",
+				"heightDiff"
+			],
+			[
+				"m_",
+				"m_trees"
+			],
+			[
+				"AVLTRE",
+				"AVLTreeBase"
+			],
+			[
+				"AVLTre",
+				"AVLTreeBase"
+			],
+			[
+				"m_tre",
+				"m_tree_key"
+			],
+			[
+				"AVLT",
+				"AVLTreeNodeBase"
+			],
+			[
+				"AVLTreeNo",
+				"AVLTreeNodeBase"
+			],
+			[
+				"shee",
+				"sheet_uuid"
+			],
+			[
+				"over",
+				"overflow"
+			],
+			[
+				"she",
+				"sheet_prop"
+			],
+			[
+				"fram",
+				"frameHeight"
+			],
+			[
+				"cac",
+				"cacheKey"
+			],
+			[
+				"b_",
+				"b_canvas"
+			],
+			[
+				"inlin",
+				"inline-block"
+			],
+			[
+				"line",
+				"line_stream"
+			],
+			[
+				"less",
+				"lessfiles"
+			],
+			[
+				"hash",
+				"hashCode"
+			],
+			[
+				"ite",
+				"iterattion"
+			],
+			[
+				"print",
+				"printTabs"
+			],
+			[
+				"singl",
+				"single_exists"
+			],
+			[
+				"tal",
+				"table_vals"
+			],
+			[
+				"rem",
+				"remaining_nums"
+			],
+			[
+				"sin",
+				"single_exists"
+			],
+			[
+				"dec",
+				"dec_num_singles"
+			],
+			[
+				"sett",
+				"setting_file"
+			],
+			[
+				"objec",
+				"object-tree"
+			],
+			[
+				"def",
+				"default_value"
+			],
+			[
+				"proj",
+				"proj_data"
+			],
+			[
+				"autosa",
+				"autosave_on"
+			],
+			[
+				"impo",
+				"importImage"
+			],
+			[
+				"save",
+				"saveProject"
+			],
+			[
+				"fol",
+				"folder_path"
+			],
+			[
+				"pion",
+				"pointer_start"
+			],
+			[
+				"dra",
+				"drag_diff"
+			],
+			[
+				"lin",
+				"lineStyle"
+			],
+			[
+				"gri",
+				"grid_settings"
+			],
+			[
+				"create",
+				"createGrid"
+			],
+			[
+				"pg",
+				"pGraphics"
+			],
+			[
+				"grid",
+				"grid_lines"
+			],
+			[
+				"file",
+				"fileStream"
+			],
+			[
+				"sta",
+				"stack_size"
+			],
+			[
+				"grim",
+				"grid_img_data"
+			],
+			[
+				"grid_im",
+				"grid_img_data"
+			],
+			[
+				"ava",
+				"availHeight"
+			],
+			[
+				"term",
+				"term_priority"
+			],
+			[
+				"temp",
+				"temp_t"
+			],
+			[
+				"end",
+				"end_str"
+			],
+			[
+				"input",
+				"input_letters"
+			],
+			[
+				"sort",
+				"sorted"
+			],
+			[
+				"ter",
+				"term_priority"
+			],
+			[
+				"en",
+				"end_terms"
+			],
+			[
+				"tea",
+				"table_vals"
+			],
+			[
+				"table",
+				"table_vals"
+			],
+			[
+				"tabl",
+				"table_vals"
+			],
+			[
+				"diff",
+				"diff_pos"
+			],
+			[
+				"COMM",
+				"COMMODITIES_FILE"
+			],
+			[
+				"lib",
+				"libraryAdd"
+			],
+			[
+				"temp_no",
+				"temp_node2"
+			],
+			[
+				"Llama",
+				"LlamaNode"
+			],
+			[
+				"con",
+				"construct"
+			],
+			[
+				"La",
+				"LlamaUnderflow"
+			],
+			[
+				"Llam",
+				"LlamaUnderflow"
+			],
+			[
+				"m_rea",
+				"m_real_size"
+			],
+			[
+				"m_l",
+				"m_ln_size"
+			],
+			[
+				"m_no",
+				"m_nodes_destroyed"
+			],
+			[
+				"m_re",
+				"m_real_size"
+			],
+			[
+				"m_n",
+				"m_next"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "src/js/library.js",
+			"settings":
+			{
+				"buffer_size": 3638,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/js/main.js",
+			"settings":
+			{
+				"buffer_size": 11968,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/index.html",
+			"settings":
+			{
+				"buffer_size": 2342,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/modules/image/image.js",
+			"settings":
+			{
+				"buffer_size": 1554,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/modules/scene/scene.js",
+			"settings":
+			{
+				"buffer_size": 4141,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		}
+	],
+	"build_system": "Packages/Python/Python.sublime-build",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					""
+				],
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					"Run"
+				],
+				[
+					"Packages/User/cmsc341.sublime-build",
+					""
+				]
+			],
+			[
+				"Packages/User/cmsc341.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/Python/Python.sublime-build",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					"Syntax Check"
+				]
+			],
+			[
+				"Packages/Python/Python.sublime-build",
+				""
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 490.0,
+		"last_filter": "insta",
+		"selected_items":
+		[
+			[
+				"insta",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 593.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/tiles/less/main.less",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/tiles/package.json",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/main.js",
+		"/C/Users/XHH/AppData/Local/Temp/scp36287/afs/umbc.edu/users/s/l/slupoli/pub/cs341/xharris1/proj3-late1/src/Makefile",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ3/AVLTreeNode.cpp",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ3/AVLTree.cpp",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ3/AVLTree.h",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ3/AVLForest.h",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ3/AVLForest.cpp",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ3/alter.py",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/scene/scene.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/main.js",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ3/range1.txt",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ3/input1.txt",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ3/Makefile",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ3/AVLTreeNode.h",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMPE212/QuineMcCluskey/tabular.py",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/releases/gamething-win32-ia32/resources/app/main.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/classes.less",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/titlebar.less",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/entity/entity_template.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/README.md",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/engines/phaser/entity.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/library.less",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/entity/entity.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/entity/less/main.less",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/project.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/engines/phaser/package.json",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/engines/phaser.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/another/scripts/entity/entity0_cf82a1a1.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/logo.ico",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/canvas.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/imports.less",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/image/image.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/index.html",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/ide.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/entity/package.json",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/another_proj/another_proj.bip",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/object/less/main.less",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/object/object.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/spritesheet/less/main.less",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/spritesheet/spritesheet.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/library.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/object/package.json",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/main.less",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ3/input1-old.txt",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ3/range1-old.txt",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ3/AVLTreeBase.h",
+		"/C/Users/XHH/Downloads/GUI.java",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/new_project/new_project.bip",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ2/Card.cpp",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ2/CommodityStore.cpp",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ3/Driver.cpp",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ0/Makefile",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ3/AVLTreeBase.cpp",
+		"/C/Users/XHH/AppData/Local/Temp/scp08607/afs/umbc.edu/users/x/h/xharris1/home/CMSC341/PJ2/Makefile",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/variables.less",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/canvas.less",
+		"/C/Users/XHH/AppData/Roaming/Sublime Text 3/Packages/User/electron.sublime-build",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/image/less/main.less",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/modules/image/less/main.less",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/modules/image/package.json",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/modules/spritesheet/package.json",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/modules/scene/package.json",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/modules/image.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/releases/gamething-win32-ia32/resources/app/js/main.js",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ2/CommodityStore.h",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ2/Commodity.h",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ2/Player.cpp",
+		"/C/Users/XHH/AppData/Local/Temp/scp10476/afs/umbc.edu/users/x/h/xharris1/home/CMSC341/PJ2/Game.cpp",
+		"/C/Users/XHH/AppData/Local/Temp/scp10734/afs/umbc.edu/users/x/h/xharris1/home/CMSC341/PJ2/Player.h",
+		"/C/Users/XHH/AppData/Local/Temp/scp10568/afs/umbc.edu/users/x/h/xharris1/home/CMSC341/PJ2/Player.cpp",
+		"/C/Users/XHH/AppData/Local/Temp/scp10312/afs/umbc.edu/users/x/h/xharris1/home/CMSC341/PJ2/output.out",
+		"/C/Users/XHH/AppData/Local/Temp/scp10671/afs/umbc.edu/users/x/h/xharris1/home/CMSC341/PJ2/Objective.h",
+		"/C/Users/XHH/AppData/Local/Temp/scp10737/afs/umbc.edu/users/x/h/xharris1/home/CMSC341/PJ2/Objective.cpp",
+		"/C/Users/XHH/AppData/Local/Temp/scp10420/afs/umbc.edu/users/x/h/xharris1/home/CMSC341/PJ2/Makefile",
+		"/C/Users/XHH/AppData/Local/Temp/scp10980/afs/umbc.edu/users/x/h/xharris1/home/CMSC341/PJ2/Game.h",
+		"/C/Users/XHH/AppData/Local/Temp/scp10016/afs/umbc.edu/users/x/h/xharris1/home/CMSC341/PJ2/driver.cpp",
+		"/C/Users/XHH/AppData/Local/Temp/scp10042/afs/umbc.edu/users/x/h/xharris1/home/CMSC341/PJ2/CommodityStore.h",
+		"/C/Users/XHH/AppData/Local/Temp/scp10296/afs/umbc.edu/users/x/h/xharris1/home/CMSC341/PJ2/CommodityStore.cpp",
+		"/C/Users/XHH/AppData/Local/Temp/scp09017/afs/umbc.edu/users/x/h/xharris1/home/CMSC341/PJ2/Commodity.h",
+		"/C/Users/XHH/AppData/Local/Temp/scp09706/afs/umbc.edu/users/x/h/xharris1/home/CMSC341/PJ2/Commodity.cpp",
+		"/C/Users/XHH/AppData/Local/Temp/scp09445/afs/umbc.edu/users/x/h/xharris1/home/CMSC341/PJ2/Card.h",
+		"/C/Users/XHH/AppData/Local/Temp/scp08031/afs/umbc.edu/users/x/h/xharris1/home/CMSC341/PJ2/Card.cpp",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ2/Makefile",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ2/driver.cpp",
+		"/C/Users/XHH/AppData/Roaming/Sublime Text 3/Packages/User/cmsc341.sublime-build",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/.gitignore",
+		"/C/Users/XHH/AppData/Roaming/gamething/settings.json",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/test.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/modules/scene.js",
+		"/C/Users/XHH/Documents/PROJECTS/texteditor/src/less/main.less",
+		"/C/Users/XHH/Documents/PROJECTS/texteditor/src/less/ace.less",
+		"/C/Users/XHH/Documents/PROJECTS/blanke3/src/less/classes.less",
+		"/C/Users/XHH/Documents/PROJECTS/blanke3/src/less/main.less",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/new_project/npm-debug.log",
+		"/C/Users/XHH/Documents/PROJECTS/blanke3/src/js/main.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/package.json",
+		"/C/Users/XHH/Documents/PROJECTS/texteditor/src/less/classes.less",
+		"/C/Users/XHH/Documents/PROJECTS/boredom/src/maps/level1.tmx",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ2/alter.py",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ2/Game.h",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ2/Game.cpp",
+		"/C/Users/XHH/AppData/Local/Temp/scp38550/afs/umbc.edu/users/x/h/xharris1/home/CMSC341/PJ2/alter.py",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ2/results.txt",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ2/Player.h",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ2/Card.h",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ2/Objective.cpp",
+		"/C/Users/XHH/AppData/Local/Temp/scp36425/afs/umbc.edu/users/x/h/xharris1/home/CMPE212/hw1/src/hw_module3.v",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMPE212/hw1/Makefile",
+		"/C/Users/XHH/AppData/Local/Temp/scp09967/afs/umbc.edu/users/x/h/xharris1/home/CMPE212/hw1/src/test_simple.v",
+		"/C/Users/XHH/AppData/Local/Temp/scp08499/afs/umbc.edu/users/x/h/xharris1/home/CMPE212/hw1/src/hw_module3.v",
+		"/C/Users/XHH/AppData/Local/Temp/scp08794/afs/umbc.edu/users/x/h/xharris1/home/CMPE212/hw1/src/test_fulladder.v",
+		"/C/Users/XHH/AppData/Local/Temp/scp07118/afs/umbc.edu/users/x/h/xharris1/home/CMPE212/hw1/src/hw_module2.v",
+		"/C/Users/XHH/AppData/Local/Temp/scp06886/afs/umbc.edu/users/x/h/xharris1/home/CMPE212/hw1/src/hw_module1.v",
+		"/C/Users/XHH/AppData/Local/Temp/scp06898/afs/umbc.edu/users/x/h/xharris1/home/CMPE212/hw1/src/test_halfadder.v",
+		"/C/Users/XHH/AppData/Local/Temp/scp11383/afs/umbc.edu/users/x/h/xharris1/home/CMPE212/hw1/src/hw_module4.v",
+		"/C/Users/XHH/AppData/Local/Temp/scp11060/afs/umbc.edu/users/x/h/xharris1/home/CMPE212/hw1/src/test_demorgan.v",
+		"/C/Users/XHH/AppData/Local/Temp/scp47520/afs/umbc.edu/users/x/h/xharris1/home/CMPE212/hw1/src/output1.txt",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ2/Commodity.cpp",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ2/commodities.txt",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ2/Objective.h",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ1/Llama.cpp",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ2/cards.txt",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ2/Setup.h",
+		"/C/Users/XHH/Documents/PROJECTS/python fun/misc.py",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/grid - Copy.txt",
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMPE212/New Text Document.txt"
+	],
+	"find":
+	{
+		"height": 43.0
+	},
+	"find_in_files":
+	{
+		"height": 117.0,
+		"where_history":
+		[
+			"C:\\Users\\XHH\\AppData\\Roaming\\.pixelmon-beta\\assets\\objects"
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"<<",
+			"m_tree_id",
+			"mkdirp",
+			"nwMODULES[",
+			"ui-input-group",
+			"dispat",
+			");\n",
+			"console.l",
+			"PrintOrder print_order, DataType dataT, NumberType numberT",
+			"top",
+			"death2.ogg",
+			"/",
+			"container",
+			"scenej",
+			"setGrid",
+			"cards_file",
+			"getintvalue",
+			")\n",
+			"delete",
+			"nodes_cre",
+			"m_pop_off",
+			"m_pop_off\t\t",
+			"m_pop_off",
+			"m_nodes_created",
+			"m_size",
+			"        \n"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"nwMODULES['_'+"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "src/js/library.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3638,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1878,
+								1878
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 972.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "src/js/main.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 11968,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5912,
+								5912
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 3456.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "src/index.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2342,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 540.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "src/modules/image/image.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1554,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								240,
+								240
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": -0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "src/modules/scene/scene.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4141,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1157,
+								1157
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1108.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 26.0
+	},
+	"input":
+	{
+		"height": 36.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 176.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.unsaved_changes":
+	{
+		"height": 266.0
+	},
+	"pinned_build_system": "Packages/User/electron.sublime-build",
+	"project": "this.sublime-project",
+	"replace":
+	{
+		"height": 50.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": false,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 222.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+		"max_columns": 1
+	}
+}
