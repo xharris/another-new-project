@@ -101,10 +101,8 @@ $(function(){
     });
     $(".library .actions .btn-delete").on('change', function(){
         if (this.checked) {
-            // add delete buttons
             lib_showDeleteBtn();
         } else {
-            // remove delete buttons
             lib_hideDeleteBtn();
         }
     });
@@ -116,15 +114,15 @@ $(function(){
             $(this).parent().remove();
         }
         b_library.saveTree();
-        
+
     })
 
     // set user id
     nwMAC.getMac(function(err, address) {
        if (!err && !DEV_MODE) {
             var hash = address.hashCode();
-        //   analytics.userID = hash;
-        //   analytics.clientID = hash;
+            // analytics.userID = hash;
+            // analytics.clientID = hash;
             
             console.log("userID: " + hash);
        }
@@ -323,13 +321,11 @@ function lib_objectRename(e) {
     // make thing draggable again
     e_object.attr('draggable', 'true');
 
-    console.log($(e.target))
-
     // object rename
-    if ($(e_object).hasClass('.object')) {
+    if ($(e_object).hasClass('object')) {
         var name = b_library.rename(uuid, new_name);
 
-        $(e.target).parent().html(new_name);
+        $(e.target).parent().html(name);
     } 
     // folder rename
     else {

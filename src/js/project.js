@@ -15,6 +15,8 @@ var b_project = {
 		this.bip_path = nwPATH.join(folder_path, filename + ext);
 		this.proj_data = {};
 
+		b_library.reset();
+
 		// make dir if it doesn't exist
 		nwMKDIRP(folder_path, function() {
 			b_project.saveProject();

@@ -2,6 +2,11 @@ b_library = {
 	objects: {},
 	tree: {}, // used for saveTree to get library tree structure
 
+	reset: function() {
+		b_library.objects = {};
+		b_library.tree = {};
+	},
+
 	add: function(type, fromMenu=false) {
 	    if (!(type in this.objects)) {
 	    	this.objects[type] = {};
@@ -26,12 +31,8 @@ b_library = {
 	    if (!('name' in this.objects[type][uuid])) {
 	    	this.objects[type][uuid].name = name;
 	    }
-	    // give hover tooltip if it wasn't assigned
-	    if (!('title' in this.objects[type][uuid])) {
-	    	this.objects[type][uuid].title = name;
-	    }
 
-	    $(".library .object-tree").append(
+	    $(".library .object-tree > .children").append(
 	    	"<div class='object' data-type='" + type + "' data-uuid='" + uuid + "' draggable='true'>"+
 	    		"<div class='name'>"+this.objects[type][uuid].name+"</div>"+
 	    	"</div>"
@@ -72,7 +73,7 @@ b_library = {
 		}
 	},
 
-	// reset library object associated with this object
+	// reset library object associated with this object (DEPRECATED?)
 	resetHTML: function(uuid) {
 		var type = b_library.getTypeByUUID(uuid);
 		$(".library .object-tree .object[data-uuid='"+uuid+"']").replaceWith(
@@ -97,8 +98,9 @@ b_library = {
 
 		// set 'new name'
 		obj.name = new_name;
-		html_obj.attr('data-name', new_name);
 
+	    b_project.setData('library', b_library.objects);
+		
 		b_project.autoSaveProject();
 
 		return new_name;
@@ -110,6 +112,7 @@ b_library = {
 	},
 
 	loadFolder: function(sel_location, uuid, name='folder') {
+		console.log(sel_location)
 		$(sel_location).append(
 			"<div class='folder' data-uuid='"+uuid+"' draggable='true'>"+
 				"<div class='name'>"+name+"</div>"+
@@ -147,6 +150,7 @@ b_library = {
 		} 
 		// object
 		else if ($(sel).hasClass('object')) {
+			console.log('saving ' + $(sel).data('type'))
 			container[$(sel).data('uuid')] = $(sel).data('type');
 		}
 		
@@ -169,7 +173,7 @@ b_library = {
 			// object
 			else {
 				$(sel).append(
-			    	"<div class='object' data-type='" + container[obj] + "' data-uuid='" + obj + "' draggable='true' data-name='"+b_library.getByUUID(container[obj], obj).name+"'>"+
+			    	"<div class='object' data-type='" + container[obj] + "' data-uuid='" + obj + "' draggable='true'>"+
 			    		"<div class='name'>"+b_library.getByUUID(container[obj], obj).name+"</div>"+
 			    	"</div>"
 			    );
