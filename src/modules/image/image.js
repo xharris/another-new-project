@@ -20,7 +20,7 @@ exports.libraryAdd = function(uuid, name) {
 	                importImage(path[p]);
 	            }
             } else {
-            	b_library.delete('image', uuid);
+            	b_library.delete(uuid);
             }
         }
     );

@@ -47,6 +47,7 @@
   outline: none;
 }
 .ui-input {
+  -webkit-app-region: no-drag;
   border: 20px solid transparent;
   border-image: linear-gradient(to right, black 0%, transparent 90%, transparent 100%);
   border-image-slice: 1;
@@ -55,7 +56,51 @@
   border-bottom-width: 1px;
   outline: none;
 }
+.ui-checkbox {
+  -webkit-app-region: no-drag;
+  width: 30px;
+  height: 30px;
+  margin: 3px;
+  display: inline-block;
+  vertical-align: top;
+  position: relative;
+}
+.ui-checkbox input {
+  height: 100%;
+  width: 100%;
+  margin: 0px;
+  opacity: 0;
+}
+.ui-checkbox input:not(:checked) + .mdi {
+  border-color: transparent;
+  border-style: dashed;
+}
+.ui-checkbox input:checked + .mdi {
+  border-radius: 100%;
+  border-color: black;
+  border-style: solid;
+}
+.ui-checkbox .mdi {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  pointer-events: none;
+  border: 1px solid black;
+  border-radius: 2px;
+  margin: 0px;
+  width: 30px;
+  height: 30px;
+  padding: 6px;
+  background-color: transparent;
+  box-sizing: border-box;
+  transition: all ease-in-out 0.2s;
+}
+.ui-checkbox:hover .mdi {
+  border-radius: 100%;
+  background-color: #e0e0e0;
+}
 .ui-input-group input {
+  -webkit-app-region: no-drag;
   border: 20px solid transparent;
   border-image: linear-gradient(to right, black 0%, transparent 90%, transparent 100%);
   border-image-slice: 1;
@@ -172,6 +217,19 @@ body[project-open="1"] .library {
 }
 .library .actions {
   -webkit-app-region: drag;
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Chrome/Safari/Opera */
+  -khtml-user-select: none;
+  /* Konqueror */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+    not supported by any browser */
   z-index: 10;
 }
 .library .actions button {
@@ -213,19 +271,31 @@ body[project-open="1"] .library {
   left: 0px;
   right: 0px;
   z-index: 10;
-  height: 30px;
   box-sizing: border-box;
   line-height: 20px;
 }
+.library .object-tree.can-delete .children {
+  margin-left: 0px !important;
+}
+.library .object-tree .children {
+  padding: 1px;
+}
+.library .object-tree .folder,
 .library .object-tree .object {
-  padding: 4px;
+  position: relative;
   cursor: default;
-  transition: ease-in-out 0.1s background-color;
+  outline: 1.5px dashed;
+  outline-color: transparent;
+  transition: background-color ease-in-out 0.1s;
+  transition: outline-color ease-in-out 0.5s;
 }
-.library .object-tree .object:hover {
-  background-color: #e0e0e0;
+.library .object-tree .folder.dragover,
+.library .object-tree .object.dragover {
+  outline-color: #26c6da;
 }
+.library .object-tree .folder input,
 .library .object-tree .object input {
+  -webkit-app-region: no-drag;
   border: 20px solid transparent;
   border-image: linear-gradient(to right, black 0%, transparent 90%, transparent 100%);
   border-image-slice: 1;
@@ -236,6 +306,68 @@ body[project-open="1"] .library {
   outline: none;
   font-size: 16px;
   padding: 0px;
+}
+.library .object-tree .folder .name,
+.library .object-tree .object .name {
+  padding: 4px;
+}
+.library .object-tree .folder .name:hover,
+.library .object-tree .object .name:hover {
+  background-color: #e0e0e0;
+}
+.library .object-tree .folder.can-delete,
+.library .object-tree .object.can-delete {
+  margin-left: 25px;
+}
+.library .object-tree .folder .btn-delete-obj,
+.library .object-tree .object .btn-delete-obj {
+  height: 30px;
+  width: 30px;
+  margin: 3px;
+  padding: 0px;
+  border: none;
+  border-radius: 2px;
+  outline: none;
+  background-color: transparent;
+  font-size: 15px;
+  cursor: default;
+  transition: all ease-in-out 0.4s;
+  position: absolute;
+  top: 0px;
+  left: -25px;
+  width: 25px;
+  height: 28px;
+  margin: 0px;
+  transition: ease-in-out 0.1s background-color;
+}
+.library .object-tree .folder .btn-delete-obj:hover,
+.library .object-tree .object .btn-delete-obj:hover {
+  border-radius: 100%;
+  background-color: #e0e0e0;
+}
+.library .object-tree .folder .btn-delete-obj:hover,
+.library .object-tree .object .btn-delete-obj:hover {
+  background-color: #f44336;
+  color: white;
+  border-radius: 0px;
+}
+.library .object-tree .folder > .children {
+  overflow-y: hidden;
+  margin-left: 15px;
+  transition: ease-in-out 0.05s all;
+}
+.library .object-tree .folder.expanded > .name {
+  font-style: italic;
+}
+.library .object-tree .folder.expanded > .children {
+  max-height: 1800px;
+  opacity: 1;
+}
+.library .object-tree .folder:not(.expanded) > .children {
+  max-height: 0;
+  height: auto;
+  margin-left: 0px;
+  opacity: 0;
 }
 #main-canvas {
   width: 100%;

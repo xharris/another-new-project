@@ -4,6 +4,7 @@ var b_project = {
 	proj_data: {},
 	autosave_on: true,
 
+	// asks user where project should be saved and creates folder and project file
 	newProject: function(bip_path) {
 		$(".library .object-tree").empty();
 		var ext = nwPATH.extname(bip_path);
@@ -12,6 +13,7 @@ var b_project = {
 
 		this.curr_project = folder_path;
 		this.bip_path = nwPATH.join(folder_path, filename + ext);
+		this.proj_data = {};
 
 		// make dir if it doesn't exist
 		nwMKDIRP(folder_path, function() {
@@ -27,8 +29,8 @@ var b_project = {
 		dispatchEvent('project.new');
 	},
 
+	// asks user for location of project file and opens it
 	openProject: function(bip_path) {
-		$(".library .object-tree").empty();
 		this.bip_path = bip_path;
 		this.curr_project = nwPATH.dirname(bip_path);
 
@@ -54,6 +56,7 @@ var b_project = {
 		dispatchEvent('project.open');
 	},
 
+	// saves project file
 	saveProject: function() {
 		if (this.isProjectOpen()) {
 			nwFILE.writeFileSync(this.bip_path, JSON.stringify(this.proj_data));

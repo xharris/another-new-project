@@ -55,10 +55,16 @@
     <div class="library">
         <div class="actions">
             <button class="btn-add hidden"><i class="mdi mdi-plus"></i></button>
+            <button class="btn-folder hidden"><i class="mdi mdi-folder-plus"></i></button>
+            <div class="ui-checkbox">
+                <input class="btn-delete" type="checkbox">
+                <i class="mdi mdi-minus"></i>
+            </div>
         </div>
 
-        <div class="object-tree folder" data-name="root">
-
+        <div class="object-tree folder expanded" data-name="root" data-uuid="0">
+            <div class="children"></div>
+            <div class="name"></div>
         </div>
     </div>
 

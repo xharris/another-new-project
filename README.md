@@ -2,17 +2,21 @@ UI classes or whatever
 
 .ui-input-group {
 	label
-	.ui-input (input: text, number, etc)
+	input
 }
 
 .ui-btn-group {
 	creates transparent rounded box for buttons
 }
 
-INPUTS STYLED
+INDIVIDUAL INPUTS STYLED
+.ui-input (input: text, number, etc)
 .ui-button (button)
 .ui-select (select)
-.
+.ui-checkbox {
+	input[type=checkbox]
+	mdi-icon
+}
 
 CUSTOM MODULE things
 

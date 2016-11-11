@@ -15,7 +15,7 @@ b_library = {
 	        this.objects[type][uuid] = nwMODULES[type].libraryAdd(uuid, name);
 	    }
 	    if (this.objects[type][uuid] == 0 && fromMenu) {
-	    	b_library.delete(type, uuid);
+	    	b_library.delete(uuid);
 	    	return;
 	    }
 
@@ -33,7 +33,7 @@ b_library = {
 
 	    $(".library .object-tree").append(
 	    	"<div class='object' data-type='" + type + "' data-uuid='" + uuid + "' draggable='true'>"+
-	    		this.objects[type][uuid].name+
+	    		"<div class='name'>"+this.objects[type][uuid].name+"</div>"+
 	    	"</div>"
 	    );
 
@@ -43,19 +43,43 @@ b_library = {
 	    return this.getByUUID(type, uuid);
 	},
 
-	delete: function(type, uuid) {
+	delete: function(uuid) {
 		try {
-			delete this.objects[type][uuid];
+			delete this.objects[b_library.getTypeByUUID(uuid)][uuid];
 		} catch (e) {}
 		$(".library .object-tree .object[data-uuid='"+uuid+"']").remove();
 
 	    b_project.setData('library', b_library.objects);
+
+	    b_library.saveTree();
 
 		dispatchEvent('library.delete', {uuid: uuid});
 	},
 
 	getByUUID: function(type, uuid) {
 		return this.objects[type][uuid];
+	},
+
+	getTypeByUUID: function(uuid) {
+		var cat_keys = Object.keys(b_library.objects);
+		for (var c = 0; c < cat_keys.length; c++) {
+			var keys = Object.keys(b_library.objects[cat_keys[c]]);
+			for (var o = 0; o < keys.length; o++) {
+				if (keys[o] === uuid) {
+					return cat_keys[c];
+				}
+			}
+		}
+	},
+
+	// reset library object associated with this object
+	resetHTML: function(uuid) {
+		var type = b_library.getTypeByUUID(uuid);
+		$(".library .object-tree .object[data-uuid='"+uuid+"']").replaceWith(
+			"<div class='object' data-type='" + type + "' data-uuid='" + uuid + "' draggable='true'>"+
+	    		"<div class='name'>"+this.objects[type][uuid].name+"</div>"+
+	    	"</div>"
+		);
 	},
 
 	rename: function(uuid, new_name) {
@@ -68,6 +92,8 @@ b_library = {
 			new_name = obj.name;
 		}
 		new_name = new_name.split(' ').join('_');
+		// ADD: name cannot start with number or special char
+		// ...
 
 		// set 'new name'
 		obj.name = new_name;
@@ -78,48 +104,73 @@ b_library = {
 		return new_name;
 	},
 
-	saveTree: function() {
+	addFolder: function(sel_location='.library .object-tree > .children') {
+		b_library.loadFolder(sel_location, guid());
+		b_library.saveTree();
+	},
 
-		this._saveTree($(".object-tree"), b_library.tree);
+	loadFolder: function(sel_location, uuid, name='folder') {
+		$(sel_location).append(
+			"<div class='folder' data-uuid='"+uuid+"' draggable='true'>"+
+				"<div class='name'>"+name+"</div>"+
+				"<div class='children'></div>"+
+			"</div>"
+		);
+	},
+
+	saveTree: function() {
+		b_library.tree = {};
+		this._saveTree(".object-tree", b_library.tree);
+		b_project.setData('tree', b_library.tree);
 
 		b_project.autoSaveProject();
 
-		b_project.setData('tree', b_library.tree);
+		return b_library.tree;
 	},
 
 	_saveTree: function(sel, container) {
+		// folder
 		if ($(sel).hasClass('folder')) {
-			var chil = $(sel).children();
+			var uuid = $(sel).data('uuid');
+			var name = $(sel+' > .name').html();
+			var child_container = sel + ' > .children';
 
-			container[$(sel).data('name')] = {};
+			container[uuid] = {
+				name: name,
+				expanded: $(sel).is('.expanded'),
+				children: {}
+			};
 
-			for (var c = 0; c < chil.length; c++) {
-				b_library._saveTree(chil[c], container[$(sel).data('name')]);
-			}
-		} else if ($(sel).hasClass('object')) {
+			$(child_container).children().each(function(){
+				b_library._saveTree('.object-tree [data-uuid="'+$(this).data('uuid')+'"]', container[uuid].children);
+			})
+		} 
+		// object
+		else if ($(sel).hasClass('object')) {
 			container[$(sel).data('uuid')] = $(sel).data('type');
 		}
-
 		
 	},
 
 	loadTree: function(data) {
-		$(".object-tree").empty();
-		b_library._loadTree($(".object-tree"), data['root']);
+		$(".object-tree[data-uuid='0'] > .children").empty();
+		b_library._loadTree(data['0'].children);
 	},
 
-	_loadTree: function(sel, container) {
+	_loadTree: function(container,sel='.object-tree[data-uuid="0"] > .children') {
 		for (var obj in container) {
 			// folder
-			if (typeof container[obj] !== "string")  {
-				$(sel).append("<div class='folder' data-name='" + obj + "'></div>");
-				b_library._loadTree($(".object-tree [data-name='" + obj + "']"), container[obj]);
+			if (container[obj].children)  {
+				b_library.loadFolder(sel, obj, container[obj].name)
+				if (container[obj].expanded)
+					$(".object-tree .folder[data-uuid='"+obj+"']").addClass('expanded');
+				b_library._loadTree(container[obj].children, '.object-tree .folder[data-uuid="'+obj+'"] > .children');
 			}
 			// object
 			else {
 				$(sel).append(
 			    	"<div class='object' data-type='" + container[obj] + "' data-uuid='" + obj + "' draggable='true' data-name='"+b_library.getByUUID(container[obj], obj).name+"'>"+
-			    		b_library.getByUUID(container[obj], obj).name+
+			    		"<div class='name'>"+b_library.getByUUID(container[obj], obj).name+"</div>"+
 			    	"</div>"
 			    );
 			}
@@ -128,11 +179,9 @@ b_library = {
 }
 
 document.addEventListener('project.open', function(e) {
-	if (b_project.proj_data.library) {
-		b_library.objects = ifndef(b_project.getData('library'), b_library.objects);
-		b_library.tree = ifndef(b_project.getData('tree'), b_library.tree);
+	b_library.objects = ifndef(b_project.getData('library'), {});
+	b_library.tree = ifndef(b_project.getData('tree'), {});
 
-		b_library.loadTree(b_library.tree);
-	}
+	b_library.loadTree(b_library.tree);
 });	
 

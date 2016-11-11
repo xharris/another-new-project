@@ -87,7 +87,7 @@ $(function(){
     });
         
     // btn-add : menu for adding things to the library
-    $(".btn-add").on('click', function(){
+    $(".library .actions .btn-add").on('click', function(){
         const menu = new eMENU();
         for (var m = 0; m < game_items.length; m++) {
             menu.append(new eMENUITEM({label: game_items[m], click(item, focusedWindow) {
@@ -96,6 +96,28 @@ $(function(){
         }
         menu.popup(eREMOTE.getCurrentWindow());        
     });
+    $(".library .actions .btn-folder").on('click', function(){
+        b_library.addFolder();       
+    });
+    $(".library .actions .btn-delete").on('change', function(){
+        if (this.checked) {
+            // add delete buttons
+            lib_showDeleteBtn();
+        } else {
+            // remove delete buttons
+            lib_hideDeleteBtn();
+        }
+    });
+    $(".object-tree").on('click', '.object > .btn-delete-obj', function(e) {
+        b_library.delete($(this).data('uuid'));
+
+    }).on('click', '.folder > .btn-delete-obj', function(e) {
+        if ($(this).parent().children('.children').children().length == 0) {
+            $(this).parent().remove();
+        }
+        b_library.saveTree();
+        
+    })
 
     // set user id
     nwMAC.getMac(function(err, address) {
@@ -150,10 +172,11 @@ $(function(){
     }
 
     var library_timeout = 0;
+    var dragged;
 
-    $(".library .object-tree").on("dblclick",".object",function(){
-        var uuid = $(this).data('uuid');
-        var type = $(this).data('type');
+    $(".library .object-tree").on("dblclick", ".object .name", function(){
+        var uuid = $(this).parent(".object").data('uuid');
+        var type = $(this).parent(".object").data('type');
 
         var module_calls = $(".workspace")[0].classList;
         for (var c in module_calls) {
@@ -173,9 +196,9 @@ $(function(){
             nwMODULES[type].onDblClick(uuid, b_library.getByUUID(type, uuid))
         }
 
-    }).on("click", ".object", function(){
-        var uuid = $(this).data('uuid');
-        var type = $(this).data('type');
+    }).on("click", ".object .name", function(){
+        var uuid = $(this).parent(".object").data('uuid');
+        var type = $(this).parent(".object").data('type');
 
         if (nwMODULES[type].onClick) {
             nwMODULES[type].onClick(uuid, b_library.getByUUID(type, uuid))
@@ -183,57 +206,138 @@ $(function(){
 
         dispatchEvent("library.click", {type: type, uuid: uuid, properties: b_library.getByUUID(type, uuid)});
         
-    }).on("mouseenter", ".object", function(){
-        var uuid = $(this).data('uuid');
-        var type = $(this).data('type');
+    }).on("mouseenter", ".object .name", function(){
+        var uuid = $(this).parent(".object").data('uuid');
+        var type = $(this).parent(".object").data('type');
 
         if (nwMODULES[type].onMouseEnter) {
             nwMODULES[type].onMouseEnter(uuid, b_library.getByUUID(type, uuid))
         }
 
-    }).on("mouseleave", ".object", function(){
-        var uuid = $(this).data('uuid');
-        var type = $(this).data('type');
+    }).on("mouseleave", ".object .name", function(){
+        var uuid = $(this).parent(".object").data('uuid');
+        var type = $(this).parent(".object").data('type');
 
         if (nwMODULES[type].onMouseLeave) {
             nwMODULES[type].onMouseLeave(uuid, b_library.getByUUID(type, uuid))
         }
 
     })
-    .on("mousedown", ".object", function(e) {
+    .on("mousedown", ".name", function(e) {
         var target = $(e.target);
-
         library_timeout = setTimeout(lib_renameTimeout, LIBRARY_RENAME_HOLD_TIME, target);
-    }).on('mouseup mouseleave dragstart', ".object", function() {
+
+    }).on('mouseup mouseleave', ".name", function() {
         clearTimeout(library_timeout);
-    }).on('keyup', '.object .in-rename', function(e) {
+
+    }).on('keyup', '.name > .in-rename', function(e) {
         e.preventDefault();
         if (e.keyCode == 13) {
             lib_objectRename(e);
         }
-    }).on('blur', '.object .in-rename', function(e) {
+
+    }).on('blur', '.name > .in-rename', function(e) {
         lib_objectRename(e);
-    });
+
+    }).on('dragstart', ".object,.folder:not(.object-tree)", function(e) {
+        clearTimeout(library_timeout);
+        dragged = $(e.target);
+
+    }).on('drop', '.folder > .name', function(e) {
+        var dragged_uuid = $(dragged).data('uuid');
+        var target_uuid = $(e.target).parent().data('uuid');
+
+        if (dragged_uuid !== target_uuid) {
+            // drag object onto folder
+            if ($(dragged).is(".object") && $(e.target).parent().is(".folder")) {
+                var moving_el = $(dragged).detach();
+                $('.object-tree .folder[data-uuid="'+target_uuid+'"] > .children').append(moving_el);
+            }
+
+            // drag folder onto folder
+            if ($(dragged).is(".folder") && $(e.target).parent().is(".folder") && !$(dragged).has(".folder[data-uuid='"+target_uuid+"']").length) {
+                var moving_el = $(dragged).detach();
+                $('.object-tree .folder[data-uuid="'+target_uuid+'"] > .children').append(moving_el);
+            }
+
+            b_library.saveTree();
+        }
+        $('.object-tree .object,.object-tree .folder').removeClass('dragover');
+
+    }).on('dragover', '.object,.folder', function(e) {
+        $(e.target).parent().addClass("dragover");
+
+    }).on('dragleave', '.object,.folder', function(e) {
+        $(e.target).parent().removeClass("dragover");
+
+    }).on('click', '.folder > .name', function(e) {
+        if (!$(this).children('.in-rename').length) {
+            $(this).parent().toggleClass("expanded");
+            b_library.saveTree();
+        }
+
+    }).on('mouseup', '.object,.folder', function(e) {
+        $('.object,.folder').removeClass('dragover');
+
+    })
+
 
 });
 
+function lib_showDeleteBtn() {
+    $(".library .actions .btn-delete").prop("checked", true)
+    $(".object-tree").addClass("can-delete");
+    $(".library .object, .library .folder:not(.object-tree)").each(function(){
+        $(this).prepend('<button class="btn-delete-obj" data-uuid="'+$(this).data('uuid')+'"><i class="mdi mdi-minus"></i></button>');
+        $(this).addClass("can-delete");
+    });
+}
+
+function lib_hideDeleteBtn() {
+    $(".library .actions .btn-delete").prop("checked", false)
+    $(".object-tree").removeClass("can-delete");
+    $(".library .object .btn-delete-obj, .library .folder .btn-delete-obj").remove();
+    $(".library .object, .library .folder:not(.object-tree)").removeClass("can-delete");
+}
+
 function lib_renameTimeout(target) {
-    var name = b_library.getByUUID(target.data('type'), target.data('uuid')).name;
+    var name = '';
+    if ($(target).parent().hasClass(".object")) {
+        name = b_library.getByUUID(target.parent().data('type'), target.parent().data('uuid')).name;
+    } else {
+        name = $(target).html();
+    }
+
+    lib_hideDeleteBtn();
 
     target.attr('draggable', 'false');
     target.html('<input class="in-rename" type="text" data-uuid="" value="'+name+'">');
-    target.children('.in-rename')[0].select()
+    target.children('.in-rename')[0].select();
 }
 
 function lib_objectRename(e) {
-    var e_object = $(e.target).parent();
-
-    // rename object
-    var name = b_library.rename(e_object.data('uuid'), $(e.target).val());
+    var e_object = $(e.target).parent().parent();
+    var new_name = $(e.target).val();
+    var uuid = $(e.target).parent().parent().data('uuid');
 
     // make thing draggable again
     e_object.attr('draggable', 'true');
-    e_object.html(name);
+
+    console.log($(e.target))
+
+    // object rename
+    if ($(e_object).hasClass('.object')) {
+        var name = b_library.rename(uuid, new_name);
+
+        $(e.target).parent().html(new_name);
+    } 
+    // folder rename
+    else {
+        $(e.target).parent().html(new_name);
+    }
+
+
+    b_library.saveTree();
 }
 
 function handleDropFile(in_path) {
