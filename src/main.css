@@ -277,7 +277,7 @@ body[project-open="1"] .library {
 .library .object-tree.can-delete .children {
   margin-left: 0px !important;
 }
-.library .object-tree .children {
+.library .object-tree > .children {
   padding: 1px;
 }
 .library .object-tree .folder,
@@ -292,6 +292,10 @@ body[project-open="1"] .library {
 .library .object-tree .folder.dragover,
 .library .object-tree .object.dragover {
   outline-color: #26c6da;
+}
+.library .object-tree .folder.selected > .name,
+.library .object-tree .object.selected > .name {
+  font-weight: 900;
 }
 .library .object-tree .folder input,
 .library .object-tree .object input {

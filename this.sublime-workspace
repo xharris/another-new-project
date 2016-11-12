@@ -368,28 +368,28 @@
 	"buffers":
 	[
 		{
+			"file": "src/js/main.js",
+			"settings":
+			{
+				"buffer_size": 16228,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
 			"file": "src/js/project.js",
 			"settings":
 			{
-				"buffer_size": 3098,
+				"buffer_size": 3121,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "src/index.html",
+			"file": "src/modules/tiles/tiles.js",
 			"settings":
 			{
-				"buffer_size": 2695,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "src/js/library.js",
-			"settings":
-			{
-				"buffer_size": 5241,
+				"buffer_size": 5850,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -398,16 +398,25 @@
 			"file": "src/less/library.less",
 			"settings":
 			{
-				"buffer_size": 2169,
+				"buffer_size": 2234,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "src/js/main.js",
+			"file": "src/js/library.js",
 			"settings":
 			{
-				"buffer_size": 15664,
+				"buffer_size": 5173,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/modules/scene/scene.js",
+			"settings":
+			{
+				"buffer_size": 4275,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -487,19 +496,25 @@
 	[
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/test1"
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/test3",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/tiles"
 	],
 	"file_history":
 	[
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/test3/test3.bip",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/project.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/library.less",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/index.html",
 		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/hashtable_notes.txt",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/test1/test1.bip",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/main.js",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/index.html",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/library.less",
 		"/C/Users/XHH/Documents/PROJECTS/python fun/hash.py",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/variables.less",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/main.less",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/project.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/library.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/README.md",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/test4/test4.bip",
@@ -617,8 +632,7 @@
 		"/C/Users/XHH/AppData/Local/Temp/scp47520/afs/umbc.edu/users/x/h/xharris1/home/CMPE212/hw1/src/output1.txt",
 		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ2/Commodity.cpp",
 		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ2/commodities.txt",
-		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ2/Objective.h",
-		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ1/Llama.cpp"
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ2/Objective.h"
 	],
 	"find":
 	{
@@ -629,6 +643,8 @@
 		"height": 117.0,
 		"where_history":
 		[
+			"C:\\Users\\XHH\\Documents\\PROJECTS\\another-new-project\\src\\js",
+			"C:\\Users\\XHH\\Documents\\PROJECTS\\another-new-project",
 			"C:\\Users\\XHH\\Documents\\PROJECTS\\another-new-project\\src",
 			"C:\\Users\\XHH\\AppData\\Roaming\\.pixelmon-beta\\assets\\objects"
 		]
@@ -638,6 +654,10 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"title",
+			"rename",
+			"data(\"name\")",
+			"data('name')",
 			"btn-delete",
 			"b_project",
 			"b_library.delete",
@@ -685,83 +705,54 @@
 	"groups":
 	[
 		{
-			"selected": 4,
+			"selected": 2,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "src/js/project.js",
+					"file": "src/js/main.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3098,
+						"buffer_size": 16228,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								894,
-								894
+								6673,
+								6673
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1140.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "src/index.html",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2695,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2616,
-								2616
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML/HTML.sublime-syntax",
 							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 780.0,
+						"translation.y": 3900.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
-					"buffer": 2,
-					"file": "src/js/library.js",
+					"buffer": 1,
+					"file": "src/js/project.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 5241,
+						"buffer_size": 3121,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2862,
-								2862
+								121,
+								121
 							]
 						],
 						"settings":
@@ -770,10 +761,38 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1671.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "src/modules/tiles/tiles.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5850,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								562,
+								562
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 952.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
@@ -782,15 +801,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2169,
+						"buffer_size": 2234,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								803,
-								803
+								1249,
+								1249
 							]
 						],
 						"settings":
@@ -798,40 +817,68 @@
 							"syntax": "Packages/CSS/CSS.sublime-syntax"
 						},
 						"translation.x": 0.0,
-						"translation.y": 900.0,
+						"translation.y": 1464.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
 					"buffer": 4,
-					"file": "src/js/main.js",
+					"file": "src/js/library.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 15664,
+						"buffer_size": 5173,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3123,
-								3123
+								4039,
+								4039
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1920.0,
+						"translation.y": 923.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "src/modules/scene/scene.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4275,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								619,
+								619
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 618.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
 					"type": "text"
 				}
 			]

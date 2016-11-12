@@ -150,7 +150,6 @@ b_library = {
 		} 
 		// object
 		else if ($(sel).hasClass('object')) {
-			console.log('saving ' + $(sel).data('type'))
 			container[$(sel).data('uuid')] = $(sel).data('type');
 		}
 		

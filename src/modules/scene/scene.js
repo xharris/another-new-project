@@ -40,7 +40,7 @@ exports.onDblClick = function(uuid, properties) {
 
 	// loadScene(sel_prop.map);
 
-	document.addEventListener("library.click", function(e) {
+	document.addEventListener("library.select", function(e) {
 		if (game) {
 			if (e.detail.type === "entity") {
 				game_objects["entity"] = ifndef(game_objects["entity"], []);
@@ -50,6 +50,14 @@ exports.onDblClick = function(uuid, properties) {
 			}
 		}
 	});
+
+	document.addEventListener("library.deselect", function(e) {
+		selected_obj = {
+			type: '',
+			uuid: '',
+			properties: {}
+		}
+	})
 }
 
 exports.canvas = {

@@ -202,6 +202,21 @@ $(function(){
             nwMODULES[type].onClick(uuid, b_library.getByUUID(type, uuid))
         }
 
+        // object selection
+        $(".object-tree .object").each(function() {
+            if ($(this).data('uuid') === uuid) {
+                $(this).toggleClass("selected");
+            } else {
+                $(this).removeClass("selected");
+            }
+        });
+
+        if ($(this).parent(".object").hasClass("selected")) {
+            dispatchEvent("library.select", {type: type, uuid: uuid, properties: b_library.getByUUID(type, uuid)});
+        } else {
+            dispatchEvent("library.deselect", {type: type, uuid: uuid, properties: b_library.getByUUID(type, uuid)});
+        }
+
         dispatchEvent("library.click", {type: type, uuid: uuid, properties: b_library.getByUUID(type, uuid)});
         
     }).on("mouseenter", ".object .name", function(){
