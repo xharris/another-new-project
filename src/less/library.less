@@ -21,9 +21,10 @@ body{
     top: 0px;
     bottom: 0px;
     left: 0px;
-    background-color: rgb(255,255,255);
+    background-color: #ffffff;
     box-shadow: 1px 0px 5px black;
-    z-index: @ide-z-front;
+    z-index: 20;
+    overflow: hidden;
 
     transition: all ease-in-out 0.2s;
 
@@ -31,6 +32,7 @@ body{
     	.win-drag();
     	.no-select();
     	
+    	white-space: nowrap;
     	z-index: @library-z-front;
 
     	button {
@@ -46,13 +48,16 @@ body{
 	.object-tree {
 		.no-select();
 
-		position: absolute;
-		left: 0px;
-		right: 0px;
-		z-index: @library-z-front;
-		//height: 100%;
-		box-sizing: border-box;
-		line-height: 20px;
+	    position: absolute;
+	    top: 36px;
+	    left: 0px;
+	    right: 0px;
+	    z-index: 10;
+	    box-sizing: border-box;
+	    line-height: 20px;
+	    overflow: auto;
+	    bottom: 0px;
+	    height: 100%;
 
 		&.can-delete {
 			.children {
@@ -62,6 +67,7 @@ body{
 
 		>.children {
 			padding: 1px;
+			position: absolute;
 		}
 
 		>.name {
@@ -131,7 +137,7 @@ body{
 
 		.folder {
 			> .children {
-				overflow-y: hidden;
+				overflow: hidden;
 				margin-left: 15px;
 				transition: ease-in-out 0.05s all;
 			}

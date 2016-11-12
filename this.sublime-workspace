@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"til",
+				"tileHeight"
+			],
+			[
+				"shee",
+				"sheet_data"
+			],
+			[
 				"dragg",
 				"dragged"
 			],
@@ -122,10 +130,6 @@
 			[
 				"AVLTreeNo",
 				"AVLTreeNodeBase"
-			],
-			[
-				"shee",
-				"sheet_uuid"
 			],
 			[
 				"over",
@@ -368,55 +372,35 @@
 	"buffers":
 	[
 		{
-			"file": "src/js/main.js",
-			"settings":
-			{
-				"buffer_size": 16228,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "src/js/project.js",
-			"settings":
-			{
-				"buffer_size": 3121,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "src/modules/tiles/tiles.js",
-			"settings":
-			{
-				"buffer_size": 5850,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "src/less/library.less",
-			"settings":
-			{
-				"buffer_size": 2234,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "src/js/library.js",
-			"settings":
-			{
-				"buffer_size": 5173,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			}
-		},
-		{
 			"file": "src/modules/scene/scene.js",
 			"settings":
 			{
-				"buffer_size": 4275,
+				"buffer_size": 5564,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/js/main.js",
+			"settings":
+			{
+				"buffer_size": 16260,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/modules/tile/tile.js",
+			"settings":
+			{
+				"buffer_size": 4443,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/modules/scene/less/main.less",
+			"settings":
+			{
+				"buffer_size": 89,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -495,34 +479,41 @@
 	"expanded_folders":
 	[
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/test3",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/boredom",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/tiles"
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/image/less",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/scene",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/tile",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/tile/less"
 	],
 	"file_history":
 	[
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/test3/test3.bip",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/project.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/library.less",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/tile/tile.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/library.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/main.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/README.md",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/image/less/main.less",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/project.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/tile/less/main.less",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/boredom/boredom.bip",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/tile/package.json",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/scene/scene.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/tiles/tiles.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/test3/test3.bip",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/index.html",
 		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/hashtable_notes.txt",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/test1/test1.bip",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/main.js",
 		"/C/Users/XHH/Documents/PROJECTS/python fun/hash.py",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/variables.less",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/main.less",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/library.js",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/README.md",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/test4/test4.bip",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/test/test.bip",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/image/image.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/classes.less",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/main.js",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/scene/scene.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/tiles/less/main.less",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/tiles/package.json",
 		"/C/Users/XHH/AppData/Local/Temp/scp36287/afs/umbc.edu/users/s/l/slupoli/pub/cs341/xharris1/proj3-late1/src/Makefile",
@@ -570,7 +561,6 @@
 		"/C/Users/XHH/AppData/Local/Temp/scp08607/afs/umbc.edu/users/x/h/xharris1/home/CMSC341/PJ2/Makefile",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/canvas.less",
 		"/C/Users/XHH/AppData/Roaming/Sublime Text 3/Packages/User/electron.sublime-build",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/image/less/main.less",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/modules/image/less/main.less",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/modules/image/package.json",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/modules/spritesheet/package.json",
@@ -627,12 +617,7 @@
 		"/C/Users/XHH/AppData/Local/Temp/scp07118/afs/umbc.edu/users/x/h/xharris1/home/CMPE212/hw1/src/hw_module2.v",
 		"/C/Users/XHH/AppData/Local/Temp/scp06886/afs/umbc.edu/users/x/h/xharris1/home/CMPE212/hw1/src/hw_module1.v",
 		"/C/Users/XHH/AppData/Local/Temp/scp06898/afs/umbc.edu/users/x/h/xharris1/home/CMPE212/hw1/src/test_halfadder.v",
-		"/C/Users/XHH/AppData/Local/Temp/scp11383/afs/umbc.edu/users/x/h/xharris1/home/CMPE212/hw1/src/hw_module4.v",
-		"/C/Users/XHH/AppData/Local/Temp/scp11060/afs/umbc.edu/users/x/h/xharris1/home/CMPE212/hw1/src/test_demorgan.v",
-		"/C/Users/XHH/AppData/Local/Temp/scp47520/afs/umbc.edu/users/x/h/xharris1/home/CMPE212/hw1/src/output1.txt",
-		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ2/Commodity.cpp",
-		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ2/commodities.txt",
-		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ2/Objective.h"
+		"/C/Users/XHH/AppData/Local/Temp/scp11383/afs/umbc.edu/users/x/h/xharris1/home/CMPE212/hw1/src/hw_module4.v"
 	],
 	"find":
 	{
@@ -705,24 +690,53 @@
 	"groups":
 	[
 		{
-			"selected": 2,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "src/js/main.js",
+					"file": "src/modules/scene/scene.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 16228,
+						"buffer_size": 5564,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								6673,
-								6673
+								1404,
+								1404
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1145.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "src/js/main.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 16260,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								7065,
+								7065
 							]
 						],
 						"settings":
@@ -731,151 +745,67 @@
 							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
-						"translation.x": 0.0,
-						"translation.y": 3900.0,
+						"translation.x": -0.0,
+						"translation.y": 4320.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 2,
 					"type": "text"
 				},
 				{
-					"buffer": 1,
-					"file": "src/js/project.js",
+					"buffer": 2,
+					"file": "src/modules/tile/tile.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3121,
+						"buffer_size": 4443,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								121,
-								121
+								3492,
+								3492
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
-							"translate_tabs_to_spaces": false
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
 						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.x": -0.0,
+						"translation.y": 2280.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
 					"type": "text"
 				},
 				{
-					"buffer": 2,
-					"file": "src/modules/tiles/tiles.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5850,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								562,
-								562
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 952.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
 					"buffer": 3,
-					"file": "src/less/library.less",
+					"file": "src/modules/scene/less/main.less",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2234,
+						"buffer_size": 89,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1249,
-								1249
+								83,
+								83
 							]
 						],
 						"settings":
 						{
+							"auto_name": "",
 							"syntax": "Packages/CSS/CSS.sublime-syntax"
 						},
 						"translation.x": 0.0,
-						"translation.y": 1464.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "src/js/library.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5173,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								4039,
-								4039
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 923.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "src/modules/scene/scene.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4275,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								619,
-								619
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 618.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 3,

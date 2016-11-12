@@ -178,6 +178,14 @@ b_library = {
 			    );
 			}
 		}
+	},
+
+	disableDrag: function() {
+		$(".object-tree .object, .object-tree .folder").attr("draggable", false);
+	},
+
+	enableDrag: function() {
+		$(".object-tree .object, .object-tree .folder").attr("draggable", true);
 	}
 }
 

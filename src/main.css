@@ -213,6 +213,7 @@ body[project-open="1"] .library {
   background-color: #ffffff;
   box-shadow: 1px 0px 5px black;
   z-index: 20;
+  overflow: hidden;
   transition: all ease-in-out 0.2s;
 }
 .library .actions {
@@ -230,6 +231,7 @@ body[project-open="1"] .library {
   user-select: none;
   /* Non-prefixed version, currently
     not supported by any browser */
+  white-space: nowrap;
   z-index: 10;
 }
 .library .actions button {
@@ -268,17 +270,22 @@ body[project-open="1"] .library {
   /* Non-prefixed version, currently
     not supported by any browser */
   position: absolute;
+  top: 36px;
   left: 0px;
   right: 0px;
   z-index: 10;
   box-sizing: border-box;
   line-height: 20px;
+  overflow: auto;
+  bottom: 0px;
+  height: 100%;
 }
 .library .object-tree.can-delete .children {
   margin-left: 0px !important;
 }
 .library .object-tree > .children {
   padding: 1px;
+  position: absolute;
 }
 .library .object-tree .folder,
 .library .object-tree .object {
@@ -356,7 +363,7 @@ body[project-open="1"] .library {
   border-radius: 0px;
 }
 .library .object-tree .folder > .children {
-  overflow-y: hidden;
+  overflow: hidden;
   margin-left: 15px;
   transition: ease-in-out 0.05s all;
 }

@@ -25,3 +25,32 @@ Less file
 
 FREQUENT FUNCTIONS
 	b_project.autoSaveProject();
+
+LIBRARY OBJECT PROPERTIES
+entity
+	- name 
+	- code_path
+image
+	- name
+	- path
+scene
+	- name
+	- map
+tile
+	- name
+	- img_source
+	- parameters
+		- tileHeight
+		- tileWidth
+		- tileMarginX
+		- tileMarginY
+spritesheet
+	- name
+	- img_source
+	- parameters
+		- frameWidth
+		- frameHeight
+		- frameMax
+		- margin
+		- spacing
+		- speed

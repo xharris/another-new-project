@@ -31,6 +31,10 @@ exports.libraryAdd = function(uuid, name) {
 	}
 }
 
+exports.onClose = function(uuid, properties) {
+	game = undefined;
+}
+
 exports.onDblClick = function(uuid, properties) {
 	b_canvas.init("scene");
 	game = b_canvas.pGame;
@@ -39,26 +43,74 @@ exports.onDblClick = function(uuid, properties) {
 	sel_prop = properties;
 
 	// loadScene(sel_prop.map);
+}
 
-	document.addEventListener("library.select", function(e) {
-		if (game) {
-			if (e.detail.type === "entity") {
-				game_objects["entity"] = ifndef(game_objects["entity"], []);
-				selected_obj.type = "entity";
+document.addEventListener("library.select", function(e) {
+	if (game) {
+		var placeables = ["entity", "tile"];
+
+		for (var p in placeables) {
+			var type = placeables[p];
+			if (e.detail.type === type) {
+				game_objects[type] = ifndef(game_objects[type], []);
+				selected_obj.type = type;
 				selected_obj.uuid = e.detail.uuid;
 				selected_obj.properties = e.detail.properties;
 			}
 		}
-	});
 
-	document.addEventListener("library.deselect", function(e) {
-		selected_obj = {
-			type: '',
-			uuid: '',
-			properties: {}
+		if (e.detail.type === "tile") {
+			// open up tile selector
+			b_library.disableDrag();
+
+			var img_uuid = selected_obj.properties.img_source;
+			var tile_img_src = nwPATH.join(b_project.curr_project, b_library.getByUUID('image', img_uuid).path);
+
+			$(".library .object[data-uuid='"+e.detail.uuid+"']").append(
+				"<div class='tile-selector'>"+
+					"<img src='"+tile_img_src+"'>"+
+					"<div class='frame-container'></div>"+
+				"</div>"
+			);
+
+			// add tile grid
+			var sheet_data = selected_obj.properties.parameters;
+			var img_width = $(".tile-selector > img").width();
+			var img_height = $(".tile-selector > img").height();
+
+			var frame_count = (img_width * img_height) / ((sheet_data.tileWidth + sheet_data.tileMarginX) * (sheet_data.tileHeight + sheet_data.tileMarginY));
+
+		    for (var f = 0; f < frame_count; f++) {
+		    	$(".tile-selector .frame-container").append(
+		    		"<div class='frame-box' data-frame='"+f+"'></div>"
+		    	);
+		    }
+		    $(".tile-selector .frame-container .frame-box").css({
+		    	'width': sheet_data.tileWidth,
+		    	'height': sheet_data.tileHeight,
+		        'margin-right': sheet_data.tileMarginX,
+		        'margin-bottom': sheet_data.tileMarginY
+		    });
+
+			$(".tile-selector").on('click', '.frame-box', function(e) {
+				$(".tile-selector .frame-box").removeClass("selected");
+				$(this).addClass("selected");
+			});
 		}
-	})
-}
+	}
+});
+
+document.addEventListener("library.deselect", function(e) {
+	b_library.enableDrag();
+
+	selected_obj = {
+		type: '',
+		uuid: '',
+		properties: {}
+	};
+
+	$(".tile-selector").remove();
+})
 
 exports.canvas = {
 	destroy: function() {
@@ -68,6 +120,21 @@ exports.canvas = {
 
 	preload: function() {
 		game = b_canvas.pGame;
+
+		for (var cat in b_library.objects) {
+			for (var o in b_library.objects[cat]) {
+				var obj = b_library.objects[cat][o];
+
+				if (cat === "image") {
+					var img_path = nwPATH.join(b_project.curr_project, obj.path);
+					game.load.image(obj.name, img_path);
+				}
+				if (cat === "spritesheet") {
+					var img_path = nwPATH.join(b_project.curr_project, b_library.getByUUID(obj.img_source).path)
+					game.load.spritesheet(obj.name, img_path, obj.frameWidth, obj.frameHeight, obj.frameMax, obj.margin, obj.spacing)
+				}
+			}
+		}
 	},
 
 	create: function() {
@@ -76,7 +143,6 @@ exports.canvas = {
 		game.input.onTap.add(function(p) {
 			// place whatever is selected
 			if (selected_obj.type === "entity") {
-				console.log((p.x - camera.x) + ' ' + (p.y - camera.y));
 				// draw a rectangle
 				var graphic = game.add.graphics(p.x, p.y);
 			    graphic.lineStyle(1, 0x0000FF, 1);
@@ -97,6 +163,10 @@ exports.canvas = {
 				});		    
 			    
 			    game_objects.entity.push(graphic);
+			}
+
+			if (selected_obj.type === "tile") {
+
 			}
 		});
 	}

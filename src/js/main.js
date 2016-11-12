@@ -190,6 +190,7 @@ $(function(){
         $(".workspace")[0].className = "workspace";
         $(".workspace").addClass(type);
 
+        b_library.enableDrag();
         if (nwMODULES[type].onDblClick) {
             nwMODULES[type].onDblClick(uuid, b_library.getByUUID(type, uuid))
         }
