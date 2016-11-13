@@ -166,18 +166,24 @@ exports.canvas = {
 		createGrid();
 		cursors = game.input.keyboard.createCursorKeys();
 		game.input.onTap.add(function(p) {
-			var snap_x = (p.x - (p.x % grid_settings.width))// + ((camera.x % grid_settings.width));
-			var snap_y = (p.y - (p.y % grid_settings.height))// + ((camera.y % grid_settings.height));
+			var place_x = p.x;
+			var place_y = p.y;
+
+			var mx = p.x - (camera.x % grid_settings.width);
+			var my = p.y - (camera.y % grid_settings.height);
+
+			var place_x = (mx - (mx % grid_settings.width)) + (camera.x % grid_settings.width);
+			var place_y = (my - (my % grid_settings.height)) + (camera.y % grid_settings.height);
 
 			// place whatever is selected
 			if (selected_obj.type === "entity") {
 				// draw a rectangle
-				var graphic = game.add.graphics(snap_x, snap_y);
+				var graphic = game.add.graphics(place_x, place_y);
 			    graphic.lineStyle(1, 0x0000FF, 1);
     			graphic.beginFill(0x0000FF, 0.25);
 			    graphic.drawRect(0, 0, grid_settings.width, grid_settings.height);
-			    graphic.real_x = snap_x;
-			    graphic.real_y = snap_y;
+			    graphic.real_x = place_x - camera.x;
+			    graphic.real_y = place_y - camera.y;
 				graphic.inputEnabled = true;
 				graphic.input.enableDrag(true);	
 				graphic.events.onDragStart.add(function(sprite, pointer, x, y) {
@@ -199,19 +205,16 @@ exports.canvas = {
 				
 				if ($(".tile-selector .frame-box.selected").length > 0) {
 					var el_frame = $(".tile-selector .frame-box.selected");
-					var new_tile = game.add.sprite(snap_x, snap_y, b_library.getByUUID("image", obj.img_source).name);
+					var new_tile = game.add.sprite(place_x, place_y, b_library.getByUUID("image", obj.img_source).name);
 					var crop = new Phaser.Rectangle($(el_frame).data('x'), $(el_frame).data('y'), $(el_frame).data('width'), $(el_frame).data('height'));
 					new_tile.crop(crop);
 
 					if (new_tile) {
-						new_tile.real_x = snap_x;
-						new_tile.real_y = snap_y;
+						new_tile.real_x = place_x - camera.x;
+						new_tile.real_y = place_y - camera.y;
 						game_objects.tile.push(new_tile);
 					}
 				}
-
-				//tilelayers[obj.uuid].real_x = p.x - camera.x;
-				//tilelayers[obj.uuid].real_y = p.y - camera.y;
 			}
 		});
 	}
@@ -281,13 +284,9 @@ function createGrid() {
 			for (var obj=0; obj < game_objects[cat].length; obj += 1) {
 				var gObj = game_objects[cat][obj];
 
-				if (false) {
-					gObj.worldX = gObj.real_x + camera.x;
-					gObj.worldY = gObj.real_y + camera.y;
-				} else {
-					gObj.x = gObj.real_x + camera.x;
-					gObj.y = gObj.real_y + camera.y;
-				}
+				gObj.x = gObj.real_x + camera.x;
+				gObj.y = gObj.real_y + camera.y;
+				
 			}
 		}
 		
