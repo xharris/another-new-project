@@ -112,7 +112,6 @@ b_library = {
 	},
 
 	loadFolder: function(sel_location, uuid, name='folder') {
-		console.log(sel_location)
 		$(sel_location).append(
 			"<div class='folder' data-uuid='"+uuid+"' draggable='true'>"+
 				"<div class='name'>"+name+"</div>"+

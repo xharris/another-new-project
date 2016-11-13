@@ -10,6 +10,7 @@ var grid_settings = {
 var grid_opacity = 0.1;
 var grid_tiles;
 var camera = {x: 0, y: 0};
+var camera_enabled = true;
 
 var cursors;
 var pGraphics;
@@ -20,6 +21,8 @@ var selected_obj = {
 	uuid: '',
 	properties: {}
 }
+
+var placeables = ["entity", "tile"];
 
 exports.loaded = function() {
 
@@ -42,17 +45,18 @@ exports.onDblClick = function(uuid, properties) {
 	sel_uuid = uuid;
 	sel_prop = properties;
 
+	for (var p in placeables) {
+		var type = placeables[p];
+		game_objects[type] = ifndef(game_objects[type], []);
+	}
 	// loadScene(sel_prop.map);
 }
 
 document.addEventListener("library.select", function(e) {
 	if (game) {
-		var placeables = ["entity", "tile"];
-
 		for (var p in placeables) {
 			var type = placeables[p];
 			if (e.detail.type === type) {
-				game_objects[type] = ifndef(game_objects[type], []);
 				selected_obj.type = type;
 				selected_obj.uuid = e.detail.uuid;
 				selected_obj.properties = e.detail.properties;
@@ -60,6 +64,8 @@ document.addEventListener("library.select", function(e) {
 		}
 
 		if (e.detail.type === "tile") {
+			if (!game) return;
+
 			// open up tile selector
 			b_library.disableDrag();
 
@@ -75,22 +81,39 @@ document.addEventListener("library.select", function(e) {
 
 			// add tile grid
 			var sheet_data = selected_obj.properties.parameters;
-			var img_width = $(".tile-selector > img").width();
-			var img_height = $(".tile-selector > img").height();
+			$(".tile-selector > img")[0].onload = function() {
+				var img_width = $(".tile-selector > img").width();
+				var img_height = $(".tile-selector > img").height();
 
-			var frame_count = (img_width * img_height) / ((sheet_data.tileWidth + sheet_data.tileMarginX) * (sheet_data.tileHeight + sheet_data.tileMarginY));
+				var frame_count = (img_width * img_height) / ((sheet_data.tileWidth + sheet_data.tileMarginX) * (sheet_data.tileHeight + sheet_data.tileMarginY));
+				var col_count = img_width / (sheet_data.tileWidth + sheet_data.tileMarginX);
 
-		    for (var f = 0; f < frame_count; f++) {
-		    	$(".tile-selector .frame-container").append(
-		    		"<div class='frame-box' data-frame='"+f+"'></div>"
-		    	);
-		    }
-		    $(".tile-selector .frame-container .frame-box").css({
-		    	'width': sheet_data.tileWidth,
-		    	'height': sheet_data.tileHeight,
-		        'margin-right': sheet_data.tileMarginX,
-		        'margin-bottom': sheet_data.tileMarginY
-		    });
+			    for (var f = 0; f < frame_count; f++) {
+			    	var x = f * sheet_data.tileWidth;
+			    	var y = 0;
+			    	if (f >= col_count) {
+			    		var row = Math.floor(f / (img_height / (sheet_data.tileHeight + sheet_data.tileMarginY)));
+			    		x = (f - (col_count * row)) * (sheet_data.tileWidth + sheet_data.tileMarginX);
+			    		y = Math.floor(f / col_count) * sheet_data.tileHeight;
+			    	}
+
+			    	var width = sheet_data.tileWidth;
+			    	var height = sheet_data.tileHeight;
+
+			    	$(".tile-selector .frame-container").append(
+			    		"<div class='frame-box' data-x='"+x+"' data-y='"+y+"' data-width='"+width+"' data-height='"+height+"'></div>"
+			    	);
+			    }
+			    $(".tile-selector .frame-container").css({
+			    	'width': img_width
+			    });
+			    $(".tile-selector .frame-container .frame-box").css({
+			    	'width': sheet_data.tileWidth,
+			    	'height': sheet_data.tileHeight,
+			        'margin-right': sheet_data.tileMarginX,
+			        'margin-bottom': sheet_data.tileMarginY
+			    });				
+			}
 
 			$(".tile-selector").on('click', '.frame-box', function(e) {
 				$(".tile-selector .frame-box").removeClass("selected");
@@ -101,6 +124,7 @@ document.addEventListener("library.select", function(e) {
 });
 
 document.addEventListener("library.deselect", function(e) {
+	game = undefined;
 	b_library.enableDrag();
 
 	selected_obj = {
@@ -120,6 +144,7 @@ exports.canvas = {
 
 	preload: function() {
 		game = b_canvas.pGame;
+		//map = game.add.tilemap();
 
 		for (var cat in b_library.objects) {
 			for (var o in b_library.objects[cat]) {
@@ -141,15 +166,18 @@ exports.canvas = {
 		createGrid();
 		cursors = game.input.keyboard.createCursorKeys();
 		game.input.onTap.add(function(p) {
+			var snap_x = (p.x - (p.x % grid_settings.width))// + ((camera.x % grid_settings.width));
+			var snap_y = (p.y - (p.y % grid_settings.height))// + ((camera.y % grid_settings.height));
+
 			// place whatever is selected
 			if (selected_obj.type === "entity") {
 				// draw a rectangle
-				var graphic = game.add.graphics(p.x, p.y);
+				var graphic = game.add.graphics(snap_x, snap_y);
 			    graphic.lineStyle(1, 0x0000FF, 1);
     			graphic.beginFill(0x0000FF, 0.25);
 			    graphic.drawRect(0, 0, grid_settings.width, grid_settings.height);
-			    graphic.real_x = p.x - camera.x;
-			    graphic.real_y = p.y - camera.y;
+			    graphic.real_x = snap_x;
+			    graphic.real_y = snap_y;
 				graphic.inputEnabled = true;
 				graphic.input.enableDrag(true);	
 				graphic.events.onDragStart.add(function(sprite, pointer, x, y) {
@@ -166,7 +194,24 @@ exports.canvas = {
 			}
 
 			if (selected_obj.type === "tile") {
+				var obj = selected_obj.properties;
+				var params = selected_obj.properties.parameters;
+				
+				if ($(".tile-selector .frame-box.selected").length > 0) {
+					var el_frame = $(".tile-selector .frame-box.selected");
+					var new_tile = game.add.sprite(snap_x, snap_y, b_library.getByUUID("image", obj.img_source).name);
+					var crop = new Phaser.Rectangle($(el_frame).data('x'), $(el_frame).data('y'), $(el_frame).data('width'), $(el_frame).data('height'));
+					new_tile.crop(crop);
 
+					if (new_tile) {
+						new_tile.real_x = snap_x;
+						new_tile.real_y = snap_y;
+						game_objects.tile.push(new_tile);
+					}
+				}
+
+				//tilelayers[obj.uuid].real_x = p.x - camera.x;
+				//tilelayers[obj.uuid].real_y = p.y - camera.y;
 			}
 		});
 	}
@@ -210,6 +255,8 @@ function createGrid() {
 	}, this);
 
     grid_tiles.events.onDragUpdate.add(function(sprite, pointer, x, y) {
+    	if (!camera_enabled) return;
+
 		sprite.x = 0;
 		sprite.y = 0;
 
@@ -227,12 +274,20 @@ function createGrid() {
 		origin_g.moveTo(0,0 + camera.y);
 		origin_g.lineTo(game.width,0 + camera.y);
 
+		//game.camera.x = camera.x;
+		//game.camera.y = camera.y;
+
 		for (var cat in game_objects) {
 			for (var obj=0; obj < game_objects[cat].length; obj += 1) {
 				var gObj = game_objects[cat][obj];
 
-				gObj.x = gObj.real_x + camera.x;
-				gObj.y = gObj.real_y + camera.y;
+				if (false) {
+					gObj.worldX = gObj.real_x + camera.x;
+					gObj.worldY = gObj.real_y + camera.y;
+				} else {
+					gObj.x = gObj.real_x + camera.x;
+					gObj.y = gObj.real_y + camera.y;
+				}
 			}
 		}
 		
