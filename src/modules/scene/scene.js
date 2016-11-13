@@ -36,6 +36,9 @@ exports.libraryAdd = function(uuid, name) {
 
 exports.onClose = function(uuid, properties) {
 	game = undefined;
+
+	// save all data to json
+
 }
 
 exports.onDblClick = function(uuid, properties) {
@@ -123,6 +126,51 @@ document.addEventListener("library.select", function(e) {
 	}
 });
 
+function placeObject(type, x, y) {
+	// place whatever is selected
+	if (selected_obj.type === "entity") {
+		// draw a rectangle
+		var graphic = game.add.graphics(x, y);
+	    graphic.lineStyle(1, 0x0000FF, 1);
+		graphic.beginFill(0x0000FF, 0.25);
+	    graphic.drawRect(0, 0, grid_settings.width, grid_settings.height);
+	    graphic.real_x = x - camera.x;
+	    graphic.real_y = y - camera.y;
+		graphic.inputEnabled = true;
+		graphic.input.enableDrag(true);	
+		graphic.events.onDragStart.add(function(sprite, pointer, x, y) {
+			/*console.log(-(camera.x % grid_settings.width) + ' ' + -(camera.y % grid_settings.height));
+			sprite.input.enableSnap(grid_settings.width, grid_settings.height, true, true,
+			 0, 0);*/
+		});
+		graphic.events.onDragUpdate.add(function(sprite, pointer, x, y) {
+			sprite.real_x = x - camera.x;
+			sprite.real_y = y - camera.y;
+		});		    
+	    
+	    return graphic;
+	}
+
+	if (selected_obj.type === "tile") {
+		var obj = selected_obj.properties;
+		var params = selected_obj.properties.parameters;
+		
+		if ($(".tile-selector .frame-box.selected").length > 0) {
+			var el_frame = $(".tile-selector .frame-box.selected");
+			var new_tile = game.add.sprite(x, y, b_library.getByUUID("image", obj.img_source).name);
+			var crop = new Phaser.Rectangle($(el_frame).data('x'), $(el_frame).data('y'), $(el_frame).data('width'), $(el_frame).data('height'));
+			new_tile.crop(crop);
+
+			if (new_tile) {
+				new_tile.real_x = x - camera.x;
+				new_tile.real_y = y - camera.y;
+				
+				return new_tile;
+			}
+		}
+	}
+}
+
 document.addEventListener("library.deselect", function(e) {
 	game = undefined;
 	b_library.enableDrag();
@@ -175,47 +223,10 @@ exports.canvas = {
 			var place_x = (mx - (mx % grid_settings.width)) + (camera.x % grid_settings.width);
 			var place_y = (my - (my % grid_settings.height)) + (camera.y % grid_settings.height);
 
-			// place whatever is selected
-			if (selected_obj.type === "entity") {
-				// draw a rectangle
-				var graphic = game.add.graphics(place_x, place_y);
-			    graphic.lineStyle(1, 0x0000FF, 1);
-    			graphic.beginFill(0x0000FF, 0.25);
-			    graphic.drawRect(0, 0, grid_settings.width, grid_settings.height);
-			    graphic.real_x = place_x - camera.x;
-			    graphic.real_y = place_y - camera.y;
-				graphic.inputEnabled = true;
-				graphic.input.enableDrag(true);	
-				graphic.events.onDragStart.add(function(sprite, pointer, x, y) {
-					/*console.log(-(camera.x % grid_settings.width) + ' ' + -(camera.y % grid_settings.height));
-					sprite.input.enableSnap(grid_settings.width, grid_settings.height, true, true,
-					 0, 0);*/
-				});
-				graphic.events.onDragUpdate.add(function(sprite, pointer, x, y) {
-					sprite.real_x = x - camera.x;
-					sprite.real_y = y - camera.y;
-				});		    
-			    
-			    game_objects.entity.push(graphic);
-			}
+			var obj = placeObject(selected_obj.type, place_x, place_y);
 
-			if (selected_obj.type === "tile") {
-				var obj = selected_obj.properties;
-				var params = selected_obj.properties.parameters;
-				
-				if ($(".tile-selector .frame-box.selected").length > 0) {
-					var el_frame = $(".tile-selector .frame-box.selected");
-					var new_tile = game.add.sprite(place_x, place_y, b_library.getByUUID("image", obj.img_source).name);
-					var crop = new Phaser.Rectangle($(el_frame).data('x'), $(el_frame).data('y'), $(el_frame).data('width'), $(el_frame).data('height'));
-					new_tile.crop(crop);
-
-					if (new_tile) {
-						new_tile.real_x = place_x - camera.x;
-						new_tile.real_y = place_y - camera.y;
-						game_objects.tile.push(new_tile);
-					}
-				}
-			}
+	    	if (obj) 
+	    		game_objects[selected_obj.type].push(obj);
 		});
 	}
 }

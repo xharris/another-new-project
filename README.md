@@ -28,29 +28,29 @@ FREQUENT FUNCTIONS
 
 LIBRARY OBJECT PROPERTIES
 entity
-	- name 
-	- code_path
+ * name 
+ * code_path
 image
-	- name
-	- path
+ * name
+ * path
 scene
-	- name
-	- map
+ * name
+ * map
 tile
-	- name
-	- img_source
-	- parameters
-		- tileHeight
-		- tileWidth
-		- tileMarginX
-		- tileMarginY
+ * name
+ * img_source
+ * parameters
+   * tileHeight
+   * tileWidth
+   * tileMarginX
+   * tileMarginY
 spritesheet
-	- name
-	- img_source
-	- parameters
-		- frameWidth
-		- frameHeight
-		- frameMax
-		- margin
-		- spacing
-		- speed
+ * name
+ * img_source
+ * parameters
+   * frameWidth
+   * frameHeight
+   * frameMax
+   * margin
+   * spacing
+   * speed
