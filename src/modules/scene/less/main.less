@@ -30,3 +30,30 @@
 		}
 	}
 }
+
+.workspace.scene {
+	.data-bar {
+		position: absolute;
+	    bottom: 0px;
+	    height: 50px;
+	    padding: 10px;
+	    box-sizing: border-box;
+	    pointer-events: none;
+
+	    > .mouse-coords, .grid-size {
+	    	text-align: center;
+	    	margin: 0px 5px;
+	    	display: inline-block;
+
+	    	> *:not(.title) {
+	    		display: inline-block;
+	    		margin: 0px 5px;
+	    	}
+
+	    	> input {
+	    		width: 30px;
+	    		pointer-events: all;
+	    	}
+	    }
+	}
+}

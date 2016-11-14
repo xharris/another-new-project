@@ -4,8 +4,8 @@ var game;
 var game_objects = {};
 
 var grid_settings = {
-	'height': 32,
-	'width': 32
+	'height': 33,
+	'width': 33
 }
 var grid_opacity = 0.1;
 var grid_tiles;
@@ -21,6 +21,8 @@ var selected_obj = {
 	uuid: '',
 	properties: {}
 }
+
+var k_shift;
 
 var placeables = ["entity", "tile"];
 
@@ -52,6 +54,27 @@ exports.onDblClick = function(uuid, properties) {
 		var type = placeables[p];
 		game_objects[type] = ifndef(game_objects[type], []);
 	}
+
+	$(".workspace").append(
+		"<div class='data-bar'>"+
+			"<div class='mouse-coords'>"+
+				"<div class='title'>mouse</div>"+
+				"<div class='x'></div>"+
+				"<div class='y'></div>"+
+			"</div>"+
+			"<div class='grid-size'>"+
+				"<div class='title'>grid</div>"+
+				"<input class='ui-input' data-input='width' type='number' value='"+grid_settings.width+"'>"+
+				"<input class='ui-input' data-input='height' type='number' value='"+grid_settings.height+"'>"+
+			"</div>"+
+		"</div>"
+	);
+
+	$(".workspace.scene .grid-size").on('change', 'input', function(){
+		grid_settings[$(this).data('input')] = parseInt($(this).val());
+		createGrid();
+	});
+
 	// loadScene(sel_prop.map);
 }
 
@@ -127,8 +150,6 @@ document.addEventListener("library.select", function(e) {
 });
 
 document.addEventListener("library.deselect", function(e) {
-	// game = undefined;
-	console.log('deselected')
 	b_library.enableDrag();
 
 	selected_obj = {
@@ -141,6 +162,8 @@ document.addEventListener("library.deselect", function(e) {
 });
 
 function placeObject(type, x, y) {
+	var ret_obj;
+
 	// place whatever is selected
 	if (selected_obj.type === "entity") {
 		// draw a rectangle
@@ -152,17 +175,18 @@ function placeObject(type, x, y) {
 	    graphic.real_y = y - camera.y;
 		graphic.inputEnabled = true;
 		graphic.input.enableDrag(true);	
+   		graphic.input.enableSnap(grid_settings.width, grid_settings.height, true, true);
+		graphic.snapX = grid_settings.width;
+		graphic.snapY = grid_settings.height;
 		graphic.events.onDragStart.add(function(sprite, pointer, x, y) {
-			/*console.log(-(camera.x % grid_settings.width) + ' ' + -(camera.y % grid_settings.height));
-			sprite.input.enableSnap(grid_settings.width, grid_settings.height, true, true,
-			 0, 0);*/
+			
 		});
 		graphic.events.onDragUpdate.add(function(sprite, pointer, x, y) {
-			sprite.real_x = x - camera.x;
-			sprite.real_y = y - camera.y;
+			sprite.real_x = sprite.x - camera.x;
+			sprite.real_y = sprite.y - camera.y;
 		});		    
 	    
-	    return graphic;
+	    ret_obj = graphic;
 	}
 
 	if (selected_obj.type === "tile") {
@@ -179,10 +203,12 @@ function placeObject(type, x, y) {
 				new_tile.real_x = x - camera.x;
 				new_tile.real_y = y - camera.y;
 				
-				return new_tile;
+				ret_obj = new_tile;
 			}
 		}
 	}
+
+	return ret_obj;
 }
 
 
@@ -215,6 +241,8 @@ exports.canvas = {
 	create: function() {
 		createGrid();
 		cursors = game.input.keyboard.createCursorKeys();
+		k_shift = game.input.keyboard.addKey()
+
 		game.input.onTap.add(function(p) {
 			var place_x = p.x;
 			var place_y = p.y;
@@ -230,6 +258,14 @@ exports.canvas = {
 	    	if (obj) 
 	    		game_objects[selected_obj.type].push(obj);
 		});
+
+		game.input.addMoveCallback(function(pointer, x, y) {
+			var mx = x - camera.x;
+			var my = y - camera.y;
+
+			$(".workspace .data-bar .x").html(mx);
+			$(".workspace .data-bar .y").html(my);
+		});
 	}
 }
 
@@ -238,14 +274,22 @@ var camera_start = {x:0, y:0};
 function createGrid() {
 	var game = b_canvas.pGame;
 
+	if (pGraphics) pGraphics.destroy();
+	if (origin_g) origin_g.destroy();
+	if (grid_tiles) grid_tiles.destroy();
+
+	// "+ 1" is to compensate for border size
+	var grid_width = grid_settings.width + 1;
+	var grid_height =  grid_settings.height + 1;
+
 	// draw grid tile
 	pGraphics = game.add.graphics(0,0);
 
 	pGraphics.lineStyle(0.5, 0x000000, grid_opacity);
 	pGraphics.moveTo(0,0);
-	pGraphics.lineTo(grid_settings.width,0);
-	pGraphics.lineTo(grid_settings.width,grid_settings.height);
-	pGraphics.lineTo(0,grid_settings.height);
+	pGraphics.lineTo(grid_width,0);
+	pGraphics.lineTo(grid_width,grid_height);
+	pGraphics.lineTo(0,grid_height);
 	pGraphics.lineTo(0,0);
 
 	// draw origin lines
@@ -257,8 +301,12 @@ function createGrid() {
 	origin_g.lineTo(game.width,0 + camera.y);
 	
 	grid_tiles = game.add.tileSprite(0, 0, game.width, game.height, pGraphics.generateTexture(1,0,-2));
+	grid_tiles.z = 1000;
 	grid_tiles.inputEnabled = true;
 	grid_tiles.input.enableDrag();
+
+	grid_tiles.tilePosition.x = camera.x;
+	grid_tiles.tilePosition.y = camera.y;
 
 	grid_tiles.events.onDragStart.add(function(sprite, pointer, x, y) {
 		sprite.x = 0;
@@ -299,6 +347,9 @@ function createGrid() {
 
 				gObj.x = gObj.real_x + camera.x;
 				gObj.y = gObj.real_y + camera.y;
+
+				gObj.input.snapOffsetX = camera.x;
+				gObj.input.snapOffsetY = camera.y;
 				
 			}
 		}
