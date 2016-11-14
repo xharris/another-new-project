@@ -203,19 +203,24 @@ $(function(){
             nwMODULES[type].onClick(uuid, b_library.getByUUID(type, uuid))
         }
 
-        // object selection
-        $(".object-tree .object").each(function() {
-            if ($(this).data('uuid') === uuid) {
-                $(this).toggleClass("selected");
-            } else {
-                $(this).removeClass("selected");
-            }
+        // call select/deselect events
+        
+        $(".object-tree .object.selected").each(function(e) {
+            var uuid2 = $(this).data('uuid');
+            var type2 = $(this).data('type');
+            dispatchEvent("library.deselect", {type: type2, uuid: uuid2, properties: b_library.getByUUID(type2, uuid2)});
+        
         });
 
-        if ($(this).parent(".object").hasClass("selected")) {
-            dispatchEvent("library.select", {type: type, uuid: uuid, properties: b_library.getByUUID(type, uuid)});
-        } else {
-            dispatchEvent("library.deselect", {type: type, uuid: uuid, properties: b_library.getByUUID(type, uuid)});
+        // toggle the selected class
+        $(this).parent(".object").toggleClass("selected");
+        $(".object-tree .object.selected:not([data-uuid='"+uuid+"'])").removeClass("selected");
+
+        if ($(".object-tree .object.selected").length !== 0) {
+            var uuid3 = $(".object-tree .object.selected").data('uuid');
+            var type3 = $(".object-tree .object.selected").data('type');
+            dispatchEvent("library.select", {type: type3, uuid: uuid3, properties: b_library.getByUUID(type3, uuid3)});
+        
         }
 
         dispatchEvent("library.click", {type: type, uuid: uuid, properties: b_library.getByUUID(type, uuid)});

@@ -126,6 +126,20 @@ document.addEventListener("library.select", function(e) {
 	}
 });
 
+document.addEventListener("library.deselect", function(e) {
+	// game = undefined;
+	console.log('deselected')
+	b_library.enableDrag();
+
+	selected_obj = {
+		type: '',
+		uuid: '',
+		properties: {}
+	};
+
+	$(".tile-selector").remove();
+});
+
 function placeObject(type, x, y) {
 	// place whatever is selected
 	if (selected_obj.type === "entity") {
@@ -171,18 +185,7 @@ function placeObject(type, x, y) {
 	}
 }
 
-document.addEventListener("library.deselect", function(e) {
-	game = undefined;
-	b_library.enableDrag();
 
-	selected_obj = {
-		type: '',
-		uuid: '',
-		properties: {}
-	};
-
-	$(".tile-selector").remove();
-})
 
 exports.canvas = {
 	destroy: function() {
@@ -192,7 +195,6 @@ exports.canvas = {
 
 	preload: function() {
 		game = b_canvas.pGame;
-		//map = game.add.tilemap();
 
 		for (var cat in b_library.objects) {
 			for (var o in b_library.objects[cat]) {
