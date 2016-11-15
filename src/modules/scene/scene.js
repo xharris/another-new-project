@@ -2,6 +2,7 @@ var sel_uuid, sel_prop;
 
 var game;
 var game_objects = {};
+var groups = {};
 
 var grid_settings = {
 	'height': 33,
@@ -22,7 +23,7 @@ var selected_obj = {
 	properties: {}
 }
 
-var k_shift;
+var k_ctrl;
 
 var placeables = ["entity", "tile"];
 
@@ -66,6 +67,11 @@ exports.onDblClick = function(uuid, properties) {
 				"<div class='title'>grid</div>"+
 				"<input class='ui-input' data-input='width' type='number' value='"+grid_settings.width+"'>"+
 				"<input class='ui-input' data-input='height' type='number' value='"+grid_settings.height+"'>"+
+			"</div>"+
+			"<div class='tooltip'>"+
+				"<div class='title'></div>"+
+				"<div class='x'></div>"+
+				"<div class='y'></div>"+
 			"</div>"+
 		"</div>"
 	);
@@ -127,7 +133,7 @@ document.addEventListener("library.select", function(e) {
 			    	var height = sheet_data.tileHeight;
 
 			    	$(".tile-selector .frame-container").append(
-			    		"<div class='frame-box' data-x='"+x+"' data-y='"+y+"' data-width='"+width+"' data-height='"+height+"'></div>"
+			    		"<div class='frame-box' data-frame='"+f+"' data-x='"+x+"' data-y='"+y+"' data-width='"+width+"' data-height='"+height+"'></div>"
 			    	);
 			    }
 			    $(".tile-selector .frame-container").css({
@@ -161,47 +167,36 @@ document.addEventListener("library.deselect", function(e) {
 	$(".tile-selector").remove();
 });
 
-function placeObject(type, x, y) {
+// place_obj should be structured like 'selected_obj' ^^^^^^^
+function placeObject(place_obj, x, y) {
+	var type = place_obj.type;
+	var uuid = place_obj.uuid;
+	var properties = place_obj.properties;
+
 	var ret_obj;
 
 	// place whatever is selected
-	if (selected_obj.type === "entity") {
+	if (type === "entity") {
 		// draw a rectangle
 		var graphic = game.add.graphics(x, y);
 	    graphic.lineStyle(1, 0x0000FF, 1);
 		graphic.beginFill(0x0000FF, 0.25);
 	    graphic.drawRect(0, 0, grid_settings.width, grid_settings.height);
-	    graphic.real_x = x - camera.x;
-	    graphic.real_y = y - camera.y;
-		graphic.inputEnabled = true;
-		graphic.input.enableDrag(true);	
-   		graphic.input.enableSnap(grid_settings.width, grid_settings.height, true, true);
-		graphic.snapX = grid_settings.width;
-		graphic.snapY = grid_settings.height;
-		graphic.events.onDragStart.add(function(sprite, pointer, x, y) {
-			
-		});
-		graphic.events.onDragUpdate.add(function(sprite, pointer, x, y) {
-			sprite.real_x = sprite.x - camera.x;
-			sprite.real_y = sprite.y - camera.y;
-		});		    
 	    
+	    setupObject(graphic, uuid, properties.name);
+
 	    ret_obj = graphic;
 	}
 
-	if (selected_obj.type === "tile") {
-		var obj = selected_obj.properties;
-		var params = selected_obj.properties.parameters;
-		
+	if (type === "tile") {		
 		if ($(".tile-selector .frame-box.selected").length > 0) {
 			var el_frame = $(".tile-selector .frame-box.selected");
-			var new_tile = game.add.sprite(x, y, b_library.getByUUID("image", obj.img_source).name);
+			var new_tile = game.add.sprite(x, y, b_library.getByUUID("image", properties.img_source).name);
 			var crop = new Phaser.Rectangle($(el_frame).data('x'), $(el_frame).data('y'), $(el_frame).data('width'), $(el_frame).data('height'));
 			new_tile.crop(crop);
 
 			if (new_tile) {
-				new_tile.real_x = x - camera.x;
-				new_tile.real_y = y - camera.y;
+				setupObject(new_tile, uuid, properties.name + '(' + $(el_frame).data('frame') + ')');
 				
 				ret_obj = new_tile;
 			}
@@ -211,7 +206,40 @@ function placeObject(type, x, y) {
 	return ret_obj;
 }
 
-
+// give object variables for camera movement and setup dragging
+function setupObject(obj, uuid, tooltip) {
+	obj.uuid = uuid;
+	obj.tooltip = tooltip;
+	obj.real_x = obj.x - camera.x;
+    obj.real_y = obj.y - camera.y;
+	obj.inputEnabled = true;
+	obj.input.enableDrag(true);	
+	obj.input.enableSnap(grid_settings.width, grid_settings.height, true, true);
+	obj.snapX = grid_settings.width;
+	obj.snapY = grid_settings.height;
+	obj.events.onDragStart.add(function(sprite, pointer, x, y) {
+		
+	});
+	obj.events.onDragUpdate.add(function(sprite, pointer, x, y) {
+		sprite.input.snapOnDrag = !k_ctrl.isDown;
+			 
+		sprite.real_x = sprite.x - camera.x;
+		sprite.real_y = sprite.y - camera.y;	
+		
+	});		
+	obj.events.onInputOver.add(function(sprite, pointer) {
+		// show tooltip
+		$(".workspace .data-bar .tooltip > .title").html(sprite.tooltip);
+		$(".workspace .data-bar .tooltip > .x").html(sprite.real_x);
+		$(".workspace .data-bar .tooltip > .y").html(sprite.real_y);
+	});
+	obj.events.onInputOut.add(function() {
+		// hide tooltip
+		$(".workspace .data-bar .tooltip > .title").html("");
+		$(".workspace .data-bar .tooltip > .x").html("");
+		$(".workspace .data-bar .tooltip > .y").html("");
+	});
+}
 
 exports.canvas = {
 	destroy: function() {
@@ -241,7 +269,7 @@ exports.canvas = {
 	create: function() {
 		createGrid();
 		cursors = game.input.keyboard.createCursorKeys();
-		k_shift = game.input.keyboard.addKey()
+		k_ctrl = game.input.keyboard.addKey(Phaser.Keyboard.CONTROL);
 
 		game.input.onTap.add(function(p) {
 			var place_x = p.x;
@@ -253,7 +281,7 @@ exports.canvas = {
 			var place_x = (mx - (mx % grid_settings.width)) + (camera.x % grid_settings.width);
 			var place_y = (my - (my % grid_settings.height)) + (camera.y % grid_settings.height);
 
-			var obj = placeObject(selected_obj.type, place_x, place_y);
+			var obj = placeObject(selected_obj, place_x, place_y);
 
 	    	if (obj) 
 	    		game_objects[selected_obj.type].push(obj);
@@ -263,8 +291,8 @@ exports.canvas = {
 			var mx = x - camera.x;
 			var my = y - camera.y;
 
-			$(".workspace .data-bar .x").html(mx);
-			$(".workspace .data-bar .y").html(my);
+			$(".workspace .data-bar > .mouse-coords .x").html(mx);
+			$(".workspace .data-bar > .mouse-coords .y").html(my);
 		});
 	}
 }

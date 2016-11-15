@@ -40,7 +40,11 @@
 	    box-sizing: border-box;
 	    pointer-events: none;
 
-	    > .mouse-coords, .grid-size {
+	    > .mouse-coords {
+	    	min-width: 100px;
+	    }
+
+	    > .mouse-coords, .grid-size, .tooltip {
 	    	text-align: center;
 	    	margin: 0px 5px;
 	    	display: inline-block;

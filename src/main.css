@@ -284,6 +284,7 @@ body[project-open="1"] .library {
   margin-left: 0px !important;
 }
 .library .object-tree > .children {
+  width: 100%;
   padding: 1px;
   position: absolute;
 }
