@@ -5,8 +5,8 @@ var b_project = {
 	autosave_on: true,
 
 	// asks user where project should be saved and creates folder and project file
-	newProject: function(bip_path) {
-		$(".library .object-tree").empty();
+	newProject: function(bip_path, engine) {
+		$(".library .object-tree > .children").empty();
 		var ext = nwPATH.extname(bip_path);
 		var folder_path = bip_path.replace(ext, '');
 		var filename = nwPATH.basename(bip_path,ext);
@@ -16,6 +16,7 @@ var b_project = {
 		this.proj_data = {};
 
 		b_library.reset();
+		b_project.setData('engine', engine);
 
 		// make dir if it doesn't exist
 		nwMKDIRP(folder_path, function() {
@@ -38,6 +39,7 @@ var b_project = {
 
 		try {
 			b_project.proj_data = JSON.parse(nwFILE.readFileSync(bip_path, 'utf8'));
+
 			// if not type OBJECT, set it 
 			// ...
 
@@ -87,17 +89,17 @@ var b_project = {
 		if (this.isProjectOpen()) {
 			var cbCalled = false;
 
-			nwMKDIRP(nwPATH.join(this.curr_project, type), function() {
+			nwMKDIRP(nwPATH.join(this.curr_project, 'assets', type), function() {
 				var rd = nwFILE.createReadStream(path);
 				rd.on("error", function(err) {
 					done(err);
 				});
-				var wr = nwFILE.createWriteStream(nwPATH.join(b_project.curr_project, type, nwPATH.basename(path)));
+				var wr = nwFILE.createWriteStream(nwPATH.join(b_project.curr_project, 'assets', type, nwPATH.basename(path)));
 					wr.on("error", function(err) {
 					done(err);
 				});
 				wr.on("close", function(ex) {
-					done(nwPATH.join(b_project.curr_project, type, nwPATH.basename(path)));
+					done(nwPATH.join(b_project.curr_project, 'assets', type, nwPATH.basename(path)));
 				});
 				rd.pipe(wr);
 
@@ -111,6 +113,20 @@ var b_project = {
 			});
 
 		}
+	},
+
+	getResourceFolder: function(type) {
+		return nwPATH.join(b_project.curr_project, 'assets', type);
+	},
+
+	copyResources: function(dest_path) {
+		nwFILEX.copy(nwPATH.join(this.curr_project, 'assets'), dest_path, function (err) {
+			if (err) {
+				console.error(err);
+			} else {
+				console.log("success!");
+			}
+		});
 	},
 
 	isProjectOpen: function() {

@@ -11,16 +11,16 @@ require('codemirror/mode/htmlmixed/htmlmixed');
 var nwCODE = require("codemirror/lib/codemirror");
 
 function setCodePath() {
-	obj_prop.code_path = nwPATH.join(b_project.curr_project, 'scripts', 'entity', obj_prop.name + '_' + obj_uuid + '.js');
+	obj_prop.code_path = nwPATH.join('entity', obj_prop.name + '_' + obj_uuid + '.js');
 }
 
 function getCodePath() {
-	return obj_prop.code_path;
+	return nwPATH.join(b_project.getResourceFolder('scripts'), obj_prop.code_path);
 }
 
 exports.libraryAdd = function(uuid, name) {
 	return {
-		code_path: nwPATH.join(b_project.curr_project, 'scripts', 'entity', name + '_' + uuid + '.js'),
+		code_path: nwPATH.join('entity', name + '_' + uuid + '.js'),
 	}
 }
 
@@ -58,7 +58,7 @@ function loadScript(uuid) {
 	console.log(obj_prop)
 	nwMKDIRP(nwPATH.join(nwPATH.dirname(getCodePath())), function() {
 		try {
-			var code = nwFILE.readFileSync(obj_prop.code_path, 'utf8');
+			var code = nwFILE.readFileSync(getCodePath(), 'utf8');
 			codemirror.setValue(code);
 		} catch (e) {
 			// make script file if it doesn't exist
@@ -69,7 +69,7 @@ function loadScript(uuid) {
 
 function saveScript(retry=false) {
 	if (obj_prop.code_path === '') {
-		obj_prop.code_path = getCodePath();
+		obj_prop.code_path = nwPATH.join('entity', obj_prop.name + '_' + obj_uuid + '.js');
 	}
 	var code = codemirror.getValue();
 	// get template if there's no code
@@ -87,10 +87,10 @@ function saveScript(retry=false) {
 
 		codemirror.setValue(code);
 	}
-	nwFILE.writeFile(obj_prop.code_path, code, function(err) {
+	nwFILE.writeFile(getCodePath(), code, function(err) {
 		if (err && !retry) {
 			// try again
-			obj_prop.code_path = getCodePath();
+			obj_prop.code_path = nwPATH.join('entity', obj_prop.name + '_' + obj_uuid + '.js');
 			saveScript(true);
 		}
 	});

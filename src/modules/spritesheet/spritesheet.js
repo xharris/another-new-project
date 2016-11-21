@@ -112,7 +112,7 @@ exports.canvas = {
 function loadImage(uuid) {
 	game = b_canvas.pGame;
 
-	var img_path = nwPATH.join(b_project.curr_project, b_library.getByUUID('image', uuid).path);
+	var img_path = nwPATH.join(b_project.getResourceFolder('image'), b_library.getByUUID('image', uuid).path);
 
 	$(".img-preview-container > img").attr("src", img_path);
 

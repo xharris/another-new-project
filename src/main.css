@@ -168,6 +168,28 @@ body[project-open="1"] .titlebar {
   border-radius: 100%;
   background-color: #e0e0e0;
 }
+.titlebar .gamebuttons {
+  -webkit-app-region: no-drag;
+  display: inline-block;
+  margin-left: 20px;
+}
+.titlebar .gamebuttons button {
+  height: 30px;
+  width: 30px;
+  margin: 3px;
+  padding: 0px;
+  border: none;
+  border-radius: 2px;
+  outline: none;
+  background-color: transparent;
+  font-size: 15px;
+  cursor: default;
+  transition: all ease-in-out 0.4s;
+}
+.titlebar .gamebuttons button:hover {
+  border-radius: 100%;
+  background-color: #e0e0e0;
+}
 .titlebar .titlebuttons {
   -webkit-app-region: no-drag;
   white-space: nowrap;

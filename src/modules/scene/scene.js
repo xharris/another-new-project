@@ -1,3 +1,6 @@
+var ZOOM_AMT = .05;
+var DEC_PLACES = 2;
+
 var sel_uuid, sel_prop;
 
 var game;
@@ -58,6 +61,9 @@ exports.onDblClick = function(uuid, properties) {
 
 	$(".workspace").append(
 		"<div class='data-bar'>"+
+			"<div class='zoom'>"+
+				"<div class='amount'>100</div>%"+
+			"</div>"+
 			"<div class='mouse-coords'>"+
 				"<div class='title'>mouse</div>"+
 				"<div class='x'></div>"+
@@ -102,7 +108,7 @@ document.addEventListener("library.select", function(e) {
 			b_library.disableDrag();
 
 			var img_uuid = selected_obj.properties.img_source;
-			var tile_img_src = nwPATH.join(b_project.curr_project, b_library.getByUUID('image', img_uuid).path);
+			var tile_img_src = nwPATH.join(b_project.getResourceFolder('image'), b_library.getByUUID('image', img_uuid).path);
 
 			$(".library .object[data-uuid='"+e.detail.uuid+"']").append(
 				"<div class='tile-selector'>"+
@@ -167,6 +173,12 @@ document.addEventListener("library.deselect", function(e) {
 	$(".tile-selector").remove();
 });
 
+function round(number) {
+	if (world_scale === 1)
+		return number;
+	return number.toFixed(DEC_PLACES);
+}
+
 // place_obj should be structured like 'selected_obj' ^^^^^^^
 function placeObject(place_obj, x, y) {
 	var type = place_obj.type;
@@ -210,6 +222,8 @@ function placeObject(place_obj, x, y) {
 function setupObject(obj, uuid, tooltip) {
 	obj.uuid = uuid;
 	obj.tooltip = tooltip;
+	obj.lib_type = b_library.getTypeByUUID(uuid);
+
 	obj.real_x = obj.x - camera.x;
     obj.real_y = obj.y - camera.y;
 	obj.inputEnabled = true;
@@ -217,27 +231,40 @@ function setupObject(obj, uuid, tooltip) {
 	obj.input.enableSnap(grid_settings.width, grid_settings.height, true, true);
 	obj.snapX = grid_settings.width;
 	obj.snapY = grid_settings.height;
-	obj.events.onDragStart.add(function(sprite, pointer, x, y) {
-		
+	obj.events.onDragStart.add(function(sprite, pointer, x, y, snap_coord) {
+		if (selected_obj.type === sprite.lib_type) {
+			sprite.input.enableDrag(true);
+
+			sprite.x = sprite.real_x + camera.x;
+			sprite.y = sprite.real_y + camera.y;
+
+			sprite.input.snapOffsetX = camera.x;
+			sprite.input.snapOffsetY = camera.y;
+		} else {
+			sprite.input.disableDrag();
+		}
 	});
-	obj.events.onDragUpdate.add(function(sprite, pointer, x, y) {
+	obj.events.onDragUpdate.add(function(sprite, pointer, x, y, snap_coord) {
 		sprite.input.snapOnDrag = !k_ctrl.isDown;
-			 
-		sprite.real_x = sprite.x - camera.x;
-		sprite.real_y = sprite.y - camera.y;	
+
+		sprite.real_x = sprite.x - (camera.x / world_scale);
+		sprite.real_y = sprite.y - (camera.y / world_scale);	
 		
 	});		
 	obj.events.onInputOver.add(function(sprite, pointer) {
 		// show tooltip
 		$(".workspace .data-bar .tooltip > .title").html(sprite.tooltip);
-		$(".workspace .data-bar .tooltip > .x").html(sprite.real_x);
-		$(".workspace .data-bar .tooltip > .y").html(sprite.real_y);
+		$(".workspace .data-bar .tooltip > .x").html(round(sprite.real_x));
+		$(".workspace .data-bar .tooltip > .y").html(round(sprite.real_y));
 	});
 	obj.events.onInputOut.add(function() {
 		// hide tooltip
 		$(".workspace .data-bar .tooltip > .title").html("");
 		$(".workspace .data-bar .tooltip > .x").html("");
 		$(".workspace .data-bar .tooltip > .y").html("");
+	});
+	obj.events.onInputUp.add(function(sprite, pointer) {
+		console.log(pointer)
 	});
 }
 
@@ -255,11 +282,11 @@ exports.canvas = {
 				var obj = b_library.objects[cat][o];
 
 				if (cat === "image") {
-					var img_path = nwPATH.join(b_project.curr_project, obj.path);
+					var img_path = nwPATH.join(b_project.getResourceFolder('image'), obj.path);
 					game.load.image(obj.name, img_path);
 				}
 				if (cat === "spritesheet") {
-					var img_path = nwPATH.join(b_project.curr_project, b_library.getByUUID(obj.img_source).path)
+					var img_path = nwPATH.join(b_project.getResourceFolder('image'), b_library.getByUUID(obj.img_source).path)
 					game.load.spritesheet(obj.name, img_path, obj.frameWidth, obj.frameHeight, obj.frameMax, obj.margin, obj.spacing)
 				}
 			}
@@ -271,12 +298,20 @@ exports.canvas = {
 		cursors = game.input.keyboard.createCursorKeys();
 		k_ctrl = game.input.keyboard.addKey(Phaser.Keyboard.CONTROL);
 
-		game.input.onTap.add(function(p) {
-			var place_x = p.x;
-			var place_y = p.y;
+		game.input.mouse.mouseWheelCallback = function(event) {
+			if(game.input.mouse.wheelDelta === Phaser.Mouse.WHEEL_UP) {
+				zoom(ZOOM_AMT);
+			} else {
+				zoom(-ZOOM_AMT);
+			}
+		};
 
-			var mx = p.x - (camera.x % grid_settings.width);
-			var my = p.y - (camera.y % grid_settings.height);
+		game.input.onTap.add(function(p) {
+			var place_x = (p.x / world_scale);
+			var place_y = (p.y / world_scale);
+
+			var mx = (p.x / world_scale) - (camera.x % grid_settings.width);
+			var my = (p.y / world_scale) - (camera.y % grid_settings.height);
 
 			var place_x = (mx - (mx % grid_settings.width)) + (camera.x % grid_settings.width);
 			var place_y = (my - (my % grid_settings.height)) + (camera.y % grid_settings.height);
@@ -288,15 +323,28 @@ exports.canvas = {
 		});
 
 		game.input.addMoveCallback(function(pointer, x, y) {
-			var mx = x - camera.x;
-			var my = y - camera.y;
+			var mx = (x / world_scale) - camera.x;
+			var my = (y / world_scale) - camera.y;
 
-			$(".workspace .data-bar > .mouse-coords .x").html(mx);
-			$(".workspace .data-bar > .mouse-coords .y").html(my);
+			$(".workspace .data-bar > .mouse-coords .x").html(round(mx));
+			$(".workspace .data-bar > .mouse-coords .y").html(round(my));
 		});
+
+
+	    game.camera.x = (game.width * -0.5);
+	    game.camera.y = (game.height * -0.5);
 	}
 }
 
+var world_scale = 1;
+function zoom(amt) {
+	var game = b_canvas.pGame;
+	world_scale += amt;
+	world_scale = Phaser.Math.clamp(world_scale, 0.25, 2);
+	game.world.scale.set(world_scale);
+
+	$(".workspace .zoom >.amount").html(round(world_scale * 100));
+}
 
 var camera_start = {x:0, y:0};
 function createGrid() {
@@ -352,15 +400,15 @@ function createGrid() {
 		sprite.x = 0;
 		sprite.y = 0;
 
-		camera.x = camera_start.x + x;
-		camera.y = camera_start.y + y;
+		camera.x = camera_start.x + (x / world_scale);
+		camera.y = camera_start.y + (y / world_scale);
 		
 		grid_tiles.tilePosition.x = camera.x;
 		grid_tiles.tilePosition.y = camera.y;
 
 		// update origin position
 		origin_g.clear();
-		origin_g.lineStyle(1, 0x000000, grid_opacity);
+		origin_g.lineStyle(2, 0x000000, grid_opacity);
 		origin_g.moveTo(0 + camera.x, 0);
 		origin_g.lineTo(0 + camera.x,game.height);
 		origin_g.moveTo(0,0 + camera.y);

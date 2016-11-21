@@ -156,7 +156,10 @@ b_library = {
 
 	loadTree: function(data) {
 		$(".object-tree[data-uuid='0'] > .children").empty();
-		b_library._loadTree(data['0'].children);
+
+		if (data) {
+			b_library._loadTree(data['0'].children);
+		}
 	},
 
 	_loadTree: function(container,sel='.object-tree[data-uuid="0"] > .children') {

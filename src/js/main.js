@@ -13,10 +13,12 @@ var nwCHILD = require('child_process');
 var nwOS = require('os');
 var nwNET = require('net');
 
+var nwENGINES = {};
 var nwMODULES = {};
 var nwMAC = require("getmac");
 var nwMKDIRP = require("mkdirp");
 var nwLESS = require("less");
+var nwFILEX = require("fs-extra");
 //var nwUA = require("universal-analytics");
 
 var eIPC = require('electron').ipcRenderer;
@@ -27,7 +29,8 @@ var eMENU = eREMOTE.Menu;
 var eMENUITEM = eREMOTE.MenuItem;
 var eDIALOG = eREMOTE.dialog;
 
-var game_items = [];   
+var game_items = []; 
+var engine_names = [];  
 var last_open;   
 
 $(function(){
@@ -43,19 +46,27 @@ $(function(){
 
     // title bar buttons
     $(".titlebar .actionbuttons .btn-newproject").on("click", function() {
-        eDIALOG.showSaveDialog(
-            {
-                title: "save new project",
-                defaultPath: "new_project.bip",
-                filters: [{name: 'BlankE IDE project', extensions: ['bip']}]
-            },
-            function (path) {
-                if (path) {
-                    b_project.newProject(path);
-                }
-            }
-        );
+        const menu = new eMENU();
+        for (var m = 0; m < engine_names.length; m++) {
+            menu.append(new eMENUITEM({label: engine_names[m], click(item, focusedWindow) {
+                eDIALOG.showSaveDialog(
+                    {
+                        title: "save new project",
+                        defaultPath: "new_project.bip",
+                        filters: [{name: 'BlankE IDE project', extensions: ['bip']}]
+                    },
+                    function (path) {
+                        if (path) {
+                            b_project.newProject(path, item.label);
+                        }
+                    }
+                );
+
+            }}))
+        }
+        menu.popup(eREMOTE.getCurrentWindow());
     });
+
     $(".titlebar .actionbuttons .btn-openproject").on("click", function() {
         eDIALOG.showOpenDialog(
             {
@@ -85,6 +96,10 @@ $(function(){
     loadModules(function(){
         dispatchEvent("ide.ready",{});
     });
+
+    loadEngines(function(){
+        dispatchEvent("ide.engines.ready",{});
+    })
         
     // btn-add : menu for adding things to the library
     $(".library .actions .btn-add").on('click', function(){
@@ -106,6 +121,22 @@ $(function(){
             lib_hideDeleteBtn();
         }
     });
+
+    $(".titlebar .gamebuttons .btn-build").on('click', function(){
+        var targets = Object.keys(nwENGINES[b_project.getData('engine')].targets);
+
+        const menu = new eMENU();
+        for (var m = 0; m < targets.length; m++) {
+            menu.append(new eMENUITEM({label: targets[m], click(item, focusedWindow) {
+                nwENGINES[b_project.getData('engine')].targets[item.label].build(b_library.objects)
+            }}))
+        }
+        menu.popup(eREMOTE.getCurrentWindow());
+    });
+    $(".titlebar .gamebuttons .btn-run").on('click', function(){
+        nwENGINES[b_project.getData('engine')].run(b_library.objects)
+    });
+
     $(".object-tree").on('click', '.object > .btn-delete-obj', function(e) {
         b_library.delete($(this).data('uuid'));
 
@@ -115,7 +146,7 @@ $(function(){
         }
         b_library.saveTree();
 
-    })
+    });
 
     // set user id
     nwMAC.getMac(function(err, address) {
@@ -431,6 +462,29 @@ function loadModules(callback) {
                 nwMODULES[mod_name] = require(nwPATH.join(__dirname, "modules", mod_name));
                 if (nwMODULES[mod_name].loaded) {
                     nwMODULES[mod_name].loaded();
+                }
+            }
+        });
+
+    });
+
+    if (callback) {
+        callback();
+    }
+}
+
+function loadEngines(callback) {
+    // import module files
+    nwFILE.readdir(nwPATH.join(__dirname, "engines"), function(err, mods) {
+
+        mods.forEach(function(eng_name, m) {
+            if (!engine_names.includes(eng_name)) {
+                engine_names.push(eng_name);
+                
+                nwENGINES[eng_name] = require(nwPATH.join(__dirname, "engines", eng_name));
+                
+                if (nwENGINES[eng_name].loaded) {
+                    nwENGINES[eng_name].loaded();
                 }
             }
         });
