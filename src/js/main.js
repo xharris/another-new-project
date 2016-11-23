@@ -19,6 +19,7 @@ var nwMAC = require("getmac");
 var nwMKDIRP = require("mkdirp");
 var nwLESS = require("less");
 var nwFILEX = require("fs-extra");
+var nwOPEN = require("open");
 //var nwUA = require("universal-analytics");
 
 var eIPC = require('electron').ipcRenderer;
@@ -217,8 +218,7 @@ $(function(){
 
         last_open = uuid;
 
-        $(".workspace").empty();
-        $(".workspace")[0].className = "workspace";
+        b_ide.clearWorkspace();
         $(".workspace").addClass(type);
 
         b_library.enableDrag();

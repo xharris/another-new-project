@@ -30,6 +30,11 @@ var b_ide = {
 
 	setHTMLattr: function(key, value) {
 		$("body").attr(key, value);
+	},
+
+	clearWorkspace: function() {
+        $(".workspace").empty();
+        $(".workspace")[0].className = "workspace";
 	}
 
 }

@@ -3,10 +3,6 @@
  *
  */
 
-<NAME>.prototype.onInit = function(/* constructor arguments */) {
-
-}
-
-<NAME>.prototype.onDestroy = function() {
+function <NAME>(/* constructor arguments */) {
 
 }

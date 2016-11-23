@@ -123,8 +123,6 @@ var b_project = {
 		nwFILEX.copy(nwPATH.join(this.curr_project, 'assets'), dest_path, function (err) {
 			if (err) {
 				console.error(err);
-			} else {
-				console.log("success!");
 			}
 		});
 	},

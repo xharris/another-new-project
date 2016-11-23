@@ -3,10 +3,7 @@
  *
  */
 
-entity0.prototype.onInit = function(/* constructor arguments */) {
-
-}
-
-entity0.prototype.onDestroy = function() {
-
+function entity0(/* constructor arguments */) {
+	this.sprite = game.add.sprite(40, 100, 'spritesheet0');
+	
 }

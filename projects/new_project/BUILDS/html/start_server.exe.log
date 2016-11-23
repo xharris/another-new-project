@@ -1,0 +1,10 @@
+127.0.0.1 - - [22/Nov/2016 23:03:46] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [22/Nov/2016 23:03:46] "GET /assets/scripts/entity/entity0_46b301c5.js HTTP/1.1" 200 -
+127.0.0.1 - - [22/Nov/2016 23:03:46] "GET /assets/scripts/state/state0_85234cdd.js HTTP/1.1" 200 -
+127.0.0.1 - - [22/Nov/2016 23:03:46] "GET /phaser.min.js HTTP/1.1" 200 -
+127.0.0.1 - - [22/Nov/2016 23:03:46] "GET /main.js HTTP/1.1" 200 -
+127.0.0.1 - - [22/Nov/2016 23:03:47] "GET /assets/image/player_walk.png HTTP/1.1" 200 -
+127.0.0.1 - - [22/Nov/2016 23:03:47] code 404, message File not found
+127.0.0.1 - - [22/Nov/2016 23:03:47] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [22/Nov/2016 23:04:00] code 404, message File not found
+127.0.0.1 - - [22/Nov/2016 23:04:00] "GET /phaser.map HTTP/1.1" 404 -
