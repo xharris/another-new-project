@@ -3,13 +3,6 @@ var obj_uuid,
 
 var codemirror;
 
-require('codemirror/mode/xml/xml');
-require('codemirror/mode/javascript/javascript');
-require('codemirror/mode/css/css');
-require('codemirror/mode/htmlmixed/htmlmixed');
-
-var nwCODE = require("codemirror/lib/codemirror");
-
 function setCodePath() {
 	obj_prop.code_path = nwPATH.join('entity', obj_prop.name + '_' + obj_uuid + '.js');
 }
@@ -32,7 +25,7 @@ exports.onDblClick = function(uuid, properties) {
 		"<div id='code'></div>"
 	);
 
-	codemirror = nwCODE(document.getElementById("code"), {
+	codemirror = nwPLUGINS['code_editor'].init('code', {
 		mode: 'javascript',
 		lineWrapping: true,
 		extraKeys: {

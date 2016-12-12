@@ -439,7 +439,25 @@
 			"file": "src/js/main.js",
 			"settings":
 			{
-				"buffer_size": 18314,
+				"buffer_size": 18315,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/modules/state/state.js",
+			"settings":
+			{
+				"buffer_size": 2256,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/modules/entity/entity.js",
+			"settings":
+			{
+				"buffer_size": 2168,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -448,17 +466,9 @@
 			"file": "src/engines/phaser/phaser.js",
 			"settings":
 			{
-				"buffer_size": 3091,
+				"buffer_size": 3149,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "projects/2d_platformer/BUILDS/html/assets/scripts/state/state0_35cee3f8.js",
-			"settings":
-			{
-				"buffer_size": 3922,
-				"line_ending": "Unix"
 			}
 		}
 	],
@@ -544,16 +554,16 @@
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/2d_platformer/BUILDS/html/assets/scripts",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/2d_platformer/BUILDS/html/assets/scripts/state",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/engines",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/engines/phaser",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/entity/less",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/state/less"
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/entity",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/spritesheet",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/state"
 	],
 	"file_history":
 	[
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/ide.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/main.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/ide.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/2d_platformer/BUILDS/html/assets/scripts/state/state0_35cee3f8.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/2d_platformer/BUILDS/html/main.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/2d_platformer/BUILDS/html/index.html",
@@ -757,7 +767,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 1,
 			"sheets":
 			[
 				{
@@ -766,74 +776,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 18314,
+						"buffer_size": 18315,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								561,
-								561
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": -0.0,
-						"translation.y": 108.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "src/engines/phaser/phaser.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3091,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								282,
-								282
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": -0.0,
-						"translation.y": 108.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "projects/2d_platformer/BUILDS/html/assets/scripts/state/state0_35cee3f8.js",
-					"semi_transient": true,
-					"settings":
-					{
-						"buffer_size": 3922,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								143,
-								770
+								64,
+								64
 							]
 						],
 						"settings":
@@ -843,10 +794,97 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 162.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "src/modules/state/state.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2256,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								175,
+								175
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "src/modules/entity/entity.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2168,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								971,
+								971
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 378.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "src/engines/phaser/phaser.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3149,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								389,
+								389
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 270.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
 					"type": "text"
 				}
 			]
@@ -937,7 +975,7 @@
 	"show_open_files": true,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 276.0,
+	"side_bar_width": 329.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{

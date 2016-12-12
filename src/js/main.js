@@ -1,6 +1,6 @@
 var IDE_NAME = "project";
 var ZOOM_AMT = 1;
-var DEV_MODE = true; // use dev_data instead of data for saving
+var DEV_MODE = false; // use dev_data instead of data for saving
 
 var LIBRARY_RENAME_HOLD_TIME = 600;
 
@@ -15,6 +15,8 @@ var nwNET = require('net');
 
 var nwENGINES = {};
 var nwMODULES = {};
+var nwPLUGINS = {};
+
 var nwMAC = require("getmac");
 var nwMKDIRP = require("mkdirp");
 var nwLESS = require("less");
@@ -31,7 +33,8 @@ var eMENUITEM = eREMOTE.MenuItem;
 var eDIALOG = eREMOTE.dialog;
 
 var game_items = []; 
-var engine_names = [];  
+var engine_names = []; 
+var plugin_names = []; 
 var last_open;   
 
 $(function(){
@@ -94,13 +97,17 @@ $(function(){
         eIPC.send('minimize');
     });
 
+    loadPlugins(function(){
+        dispatchEvent("ide.plugins.ready", {});
+    })
+
     loadModules(function(){
         dispatchEvent("ide.ready",{});
     });
 
     loadEngines(function(){
         dispatchEvent("ide.engines.ready",{});
-    })
+    });
         
     // btn-add : menu for adding things to the library
     $(".library .actions .btn-add").on('click', function(){
@@ -437,6 +444,29 @@ function importLess(module, file) {
 function callModuleFn(type, fn_name) {
     if (nwMODULES[type][fn_name]) {
         nwMODULES[type][fn_name]();
+    }
+}
+
+function loadPlugins(callback) {
+    // import module files
+    nwFILE.readdir(nwPATH.join(__dirname, "plugins"), function(err, mods) {
+
+        mods.forEach(function(plug_name, m) {
+            if (!plugin_names.includes(plug_name)) {
+                plugin_names.push(plug_name);
+                
+                nwPLUGINS[plug_name] = require(nwPATH.join(__dirname, "plugins", plug_name));
+                
+                if (nwPLUGINS[plug_name].loaded) {
+                    nwPLUGINS[plug_name].loaded();
+                }
+            }
+        });
+
+    });
+
+    if (callback) {
+        callback();
     }
 }
 
