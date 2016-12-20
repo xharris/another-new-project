@@ -1,0 +1,9 @@
+{
+	"general" : [
+		{
+			"type" : "bool",
+			"name" : "Autosave changes",
+			"default" : "true"
+		}
+	]
+}

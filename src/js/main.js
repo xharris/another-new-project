@@ -144,6 +144,9 @@ $(function(){
     $(".titlebar .gamebuttons .btn-run").on('click', function(){
         nwENGINES[b_project.getData('engine')].run(b_library.objects)
     });
+    $(".titlebar .gamebuttons .btn-settings").on('click', function(){
+        b_ui.toggleSettings();
+    });
 
     $(".object-tree").on('click', '.object > .btn-delete-obj', function(e) {
         b_library.delete($(this).data('uuid'));
@@ -627,5 +630,6 @@ function parseXML(str) {
 }
 
 function ifndef(value, default_value) {
+    console.log(value);
     return (typeof value === 'undefined') ? default_value : value;
 }

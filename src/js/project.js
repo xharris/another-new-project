@@ -2,7 +2,7 @@ var b_project = {
 	bip_path: '',
 	curr_project: '', // path to current project folder
 	proj_data: {},
-	autosave_on: true,
+	autosave_on: false,
 
 	// asks user where project should be saved and creates folder and project file
 	newProject: function(bip_path, engine) {
@@ -39,9 +39,7 @@ var b_project = {
 
 		try {
 			b_project.proj_data = JSON.parse(nwFILE.readFileSync(bip_path, 'utf8'));
-
-			// if not type OBJECT, set it 
-			// ...
+			b_ide.clearWorkspace();
 
 		} catch (e) {
 			b_project.proj_data = {};
@@ -56,8 +54,41 @@ var b_project = {
 			b_ide.setHTMLattr("project-open", 0);
 		}
 
+		// get/set ide and engine settings
+		b_project.proj_data.settings = ifndef(b_project.proj_data.settings, {});
+
+		if (!("ide" in b_project.proj_data.settings)) {
+			b_project.proj_data.settings["ide"] = {};
+			nwFILE.readFile(nwPATH.join(__dirname, "settings.json"), 'utf8', function(err, data) {
+	    		if (!err) {
+	    			input_info = JSON.parse(data);
+	    			b_project._populateSettings("ide", input_info);
+		    	}
+	    	});
+		}
+		if (!("engine" in b_project.proj_data.settings)) {
+			b_project.proj_data.settings["engine"] = {};
+			if ("settings" in nwENGINES[b_project.getData("engine")]) {
+				input_info = nwENGINES[b_project.getData("engine")].settings;
+				b_project._populateSettings("engine", input_info);
+			}
+		}
+
+
 		b_ide.saveSetting("last_project_open", this.bip_path);
 		dispatchEvent('project.open');
+	},
+
+	_populateSettings : function(type, input_info) {
+		for (var subcat in input_info) {
+			for (var i = 0; i < input_info[subcat].length; i++) {
+				var input = input_info[subcat][i];
+				if (!(input.name in b_project.proj_data.settings[type])) {
+					b_project.proj_data.settings[type][input.name] = input.default;
+				}
+			}
+		}
+		console.log(b_project.proj_data);
 	},
 
 	// saves project file
@@ -67,6 +98,7 @@ var b_project = {
 
 			b_ide.saveSetting("last_project_open", this.bip_path);
 			dispatchEvent('project.post-save');
+			dispatchEvent('something.saved', {what: 'project'});
 		}
 	},
 

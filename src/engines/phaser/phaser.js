@@ -17,14 +17,32 @@ exports.targets = {
 	}
 }
 
+exports.settings = {
+	"general" : [
+		{
+			"type" : "select",
+			"name" : "rendering",
+			"default" : "auto",
+			"options" : ["auto", "web", "canvas"]
+		}
+	]
+}
+
+var last_object_set;
 var server_running = false;
-document.addEventListener("project.post-save", function(){
-	console.log('auto save')
-	if (server_running)
-		build(path, objects);
+document.addEventListener("something.saved", function(e){
+	if (server_running && ["entity", "state"].includes(e.detail.what)) {
+		var path = nwPATH.join(b_project.curr_project, 'temp');
+		build(path, last_object_set);
+	}
 });
 
+document.addEventListener("project.open", function(e){
+	server_running = false;
+})
+
 exports.run = function(objects) {
+	last_object_set = objects;
 	var path = nwPATH.join(b_project.curr_project, 'temp');
 	build(path, objects);
 

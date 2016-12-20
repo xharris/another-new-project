@@ -32,13 +32,28 @@
     outline: none;
     background-color: transparent;
     font-size: 15px;
-    cursor: default;
+    cursor: pointer;
 
     transition: all ease-in-out 0.4s;
 
     &:hover {
     	border-radius: 100%;
     	background-color: #e0e0e0;
+    }
+}
+
+.ui-text-button {
+    background-color: white;
+    border: none;
+    outline: none;
+    border-radius: 2px;
+    cursor: pointer;
+
+    transition: all ease-in-out 0.4s;
+
+    &:hover {
+        border-radius: 4px;
+        background-color: #e0e0e0;
     }
 }
 
@@ -62,28 +77,37 @@
 .ui-checkbox {
     .win-nodrag();
 
-    width: 30px;
     height: 30px;
     margin: 3px;
     display: inline-block;
     vertical-align: top;
     position: relative;
 
+    label {
+        margin-left: 40px;
+        vertical-align: top;
+        line-height: 30px;
+    }
+
     input {
         height: 100%;
         width: 100%;
         margin: 0px;
         opacity: 0;
+        border-style: solid;
+        position: absolute;
+        top: 0px;
+        left: 0px;
 
         &:not(:checked) + .mdi {
-            border-color: transparent;
+            border-color: rgba(0,0,0,0.2);
             border-style: dashed;
         }
 
         &:checked + .mdi {
-            border-radius: 100%;
             border-color: black;
             border-style: solid;
+            background-color: #e0e0e0;
         }
     }
 
@@ -106,7 +130,6 @@
 
     &:hover {
         .mdi {
-            border-radius: 100%;
             background-color: #e0e0e0;
         }
     }

@@ -29,7 +29,8 @@ exports.onDblClick = function(uuid, properties) {
 		mode: 'javascript',
 		lineWrapping: true,
 		extraKeys: {
-			'Ctrl-Space': 'autocomplete'
+			'Ctrl-Space': 'autocomplete',
+			'Ctrl-S': saveScript
 		},
 		lineNumbers: true,
 		theme: 'monokai',
@@ -85,6 +86,8 @@ function saveScript(retry=false) {
 			// try again
 			obj_prop.code_path = nwPATH.join('entity', obj_prop.name + '_' + obj_uuid + '.js');
 			saveScript(true);
+		} else {
+			dispatchEvent('something.saved', {what: 'entity'});
 		}
 	});
 }

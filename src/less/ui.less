@@ -1,0 +1,50 @@
+@import "imports";
+
+.ui-settings {
+    position: absolute;
+    top: 45px;
+    bottom: 0px;
+    left: 200px;
+    right: 0px;
+    outline: 1px solid black;
+    z-index: @ide-z-front - 1;
+    background: @ide-background;
+
+    .categories {
+    	position: relative;
+	    display: inline-block;
+	    height: 100%;
+	    vertical-align: top;
+	    text-align: center;
+
+    	.category {
+    		.ui-text-button();
+
+    		font-size: 18px;
+		    width: 100%;
+		    height: 36px;
+    	}
+
+    	.btn-close {
+    		.ui-text-button();
+
+    		position: absolute;
+		    bottom: 0px;
+		    width: 80px;
+		    height: 40px;
+
+		    left: 0;
+		    right: 0;
+		    margin: 10px auto;
+    	}
+    }
+
+    .inputs-container {
+    	display: inline-block;
+
+    	.subcategory {
+		    font-size: 20px;
+			margin: 10px;
+    	}
+    }
+}
