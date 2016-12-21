@@ -1,5 +1,6 @@
 var nwCONNECT = require('connect');
 var nwSERVE = require('serve-static');
+var nwBUILD = require('nw-builder');
 
 exports.targets = {
 	"html": {
@@ -11,10 +12,83 @@ exports.targets = {
 
 	"windows" : {
 		build: function(objects) {
-			var path = nwPATH.join(b_project.curr_project, 'BUILDS', 'windows');
-			build(path, objects);
+			b_console.log('build: windows')
+			buildDesktop(objects, 'win');
+		}
+	},
+	"mac" : {
+		build: function(objects) {
+			b_console.log('build: osx')
+			buildDesktop(objects, 'osx');
+		}
+	},
+	"linux" : {
+		build: function(objects) {
+			b_console.log('build: linux')
+			buildDesktop(objects, 'linux');
 		}
 	}
+}
+
+function buildDesktop(objects, os) {
+	var path = nwPATH.join(b_project.curr_project, 'temp');
+	var build_path = nwPATH.join(b_project.curr_project, 'BUILDS', os);
+
+	nwFILEX.remove(build_path, function(err) {
+		if (err) {
+			console.error(err);
+			b_console.error(
+				'Cannot delete '+
+				'<a>'+build_path+'</a>'+ // TODO: turn into clickable path
+				'. Please delete manually.'
+			);
+			return;
+		}
+		b_console.log("removed "+build_path);
+
+		build(path, objects, function(){
+			// create package.json
+			var win_height_offset = 31;
+			var json_text = JSON.stringify({
+				'name': 'my-game',
+				'version': '1.0.0',
+				'main': 'index.html',
+				'window': {
+					"frame": true,
+					"toolbar": false,
+					"width": b_project.getSetting("engine", "game width"),
+					"height": b_project.getSetting("engine", "game height")-win_height_offset,
+					"min_width": b_project.getSetting("engine", "game width"),
+					"min_height": b_project.getSetting("engine", "game height")-win_height_offset,
+					"max_width": b_project.getSetting("engine", "game width"),
+					"max_height": b_project.getSetting("engine", "game height")-win_height_offset,
+					"resizable": false,
+					"fullscreen": false
+				}
+			});
+			nwFILE.writeFile(nwPATH.join(path, 'package.json'), json_text, function(err){
+				if (!err) {
+					b_console.log('building ' + path)
+					var nw = new nwBUILD({
+						files: nwPATH.join(path, '**'),
+						platforms: [os],
+						//flavor: 'normal',
+						buildDir: build_path
+					});
+					nw.on('log', b_console.log);
+					nw.build().then(function(){
+						b_console.success("finished building ("+os+")");
+						eSHELL.openItem(build_path);
+					}).catch(function(err){
+						b_console.error(err);
+					});
+				}
+			});
+			
+		});
+	});
+	
+
 }
 
 exports.settings = {
@@ -114,16 +188,23 @@ function build(build_path, objects, callback) {
 		preload += "\tgame.load.spritesheet(\'"+spr.name+"\', \'assets/image/"+b_library.getByUUID("image", spr.img_source).path+"\', "+params.frameWidth+", "+params.frameHeight+", "+params.frameMax+", "+params.margin+", "+params.spacing+");\n";
 	}
 
-	html_code = html_code.replace("<SCRIPTS>", script_includes);
+	html_replacements = [
+		['<TITLE>', 'my game'],
+		['<SCRIPTS>', script_includes]
+	];
 
 	js_replacements = [
 		["<PRELOAD>", preload],
 		["<CREATE>", ""],
 		["<STATE_INIT>", state_init],
-		["<WIDTH>", 500],
-		["<HEIGHT>", 200],
+		["<WIDTH>", b_project.getSetting("engine", "game width")],
+		["<HEIGHT>", b_project.getSetting("engine", "game height")],
 		['<RENDERER>', b_project.getSetting("engine", "renderer").toUpperCase()]
 	];
+
+	for (var h in html_replacements) {
+		html_code = html_code.replace(html_replacements[h][0],html_replacements[h][1]);
+	}
 
 	for (var r in js_replacements) {
 		js_code = js_code.replace(js_replacements[r][0],js_replacements[r][1]);

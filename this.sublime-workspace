@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"buil",
+				"buildDesktop"
+			],
+			[
 				"sett",
 				"setting_type"
 			],
@@ -451,7 +455,7 @@
 			"file": "src/index.html",
 			"settings":
 			{
-				"buffer_size": 3090,
+				"buffer_size": 3180,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -460,25 +464,16 @@
 			"file": "src/js/main.js",
 			"settings":
 			{
-				"buffer_size": 19197,
+				"buffer_size": 19315,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "src/js/project.js",
+			"file": "src/main.js",
 			"settings":
 			{
-				"buffer_size": 4919,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "src/js/ui.js",
-			"settings":
-			{
-				"buffer_size": 4166,
+				"buffer_size": 5160,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -487,7 +482,16 @@
 			"file": "src/engines/phaser/phaser.js",
 			"settings":
 			{
-				"buffer_size": 3799,
+				"buffer_size": 5379,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/engines/phaser/index.html",
+			"settings":
+			{
+				"buffer_size": 344,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -568,8 +572,12 @@
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/lorenz",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/lorenz/BUILDS",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/lorenz/BUILDS/win",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/lorenz/BUILDS/win/my-game",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/lorenz/temp",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/lorenz/temp/assets",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/lorenz/temp/assets/scripts",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/lorenz/temp/assets/scripts/state",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/engines",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/engines/phaser",
@@ -580,17 +588,18 @@
 	],
 	"file_history":
 	[
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/ui.less",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/lorenz/lorenz.bip",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/lorenz/temp/index.html",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/engines/phaser/main.js",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/main.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/project.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/lorenz/lorenz.bip",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/engines/phaser/phaser.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/ui.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/ui.less",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/main.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/variables.less",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/classes.less",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/main.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/settings.json",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/engines/phaser/phaser.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/titlebar.less",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/ide.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/main.less",
@@ -598,7 +607,6 @@
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/state/state.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/plugins/code_editor/less/main.less",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/entity/entity.js",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/lorenz/temp/index.html",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/2d_platformer/temp/index.html",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/plugins/code_editor.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/plugins/code_editor/package.json",
@@ -787,7 +795,7 @@
 	"groups":
 	[
 		{
-			"selected": 4,
+			"selected": 3,
 			"sheets":
 			[
 				{
@@ -796,15 +804,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3090,
+						"buffer_size": 3180,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1079,
-								1079
+								1571,
+								1571
 							]
 						],
 						"settings":
@@ -814,10 +822,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 82.0,
+						"translation.y": 522.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
@@ -826,15 +834,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 19197,
+						"buffer_size": 19315,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								173,
-								173
+								2249,
+								2249
 							]
 						],
 						"settings":
@@ -843,7 +851,7 @@
 							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
-						"translation.x": 0.0,
+						"translation.x": -0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
@@ -852,77 +860,49 @@
 				},
 				{
 					"buffer": 2,
-					"file": "src/js/project.js",
+					"file": "src/main.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 4919,
+						"buffer_size": 5160,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2285,
-								2285
+								63,
+								63
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
-							"translate_tabs_to_spaces": false
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1363.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "src/js/ui.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4166,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2378,
-								2378
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1728.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 2,
 					"type": "text"
 				},
 				{
-					"buffer": 4,
+					"buffer": 3,
 					"file": "src/engines/phaser/phaser.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3799,
+						"buffer_size": 5379,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3317,
-								3317
+								1136,
+								1136
 							]
 						],
 						"settings":
@@ -931,10 +911,38 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 2161.0,
+						"translation.y": 125.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "src/engines/phaser/index.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 344,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								281,
+								281
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
 					"type": "text"
 				}
 			]
@@ -1025,7 +1033,7 @@
 	"show_open_files": true,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 288.0,
+	"side_bar_width": 237.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{

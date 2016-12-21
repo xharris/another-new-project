@@ -72,6 +72,10 @@ $(function(){
         menu.popup(eREMOTE.getCurrentWindow());
     });
 
+    $(".titlebar .actionbuttons .btn-saveproject").on("click", function() {
+        b_project.saveProject();
+    });
+
     $(".titlebar .actionbuttons .btn-openproject").on("click", function() {
         eDIALOG.showOpenDialog(
             {
@@ -147,6 +151,9 @@ $(function(){
     });
     $(".titlebar .gamebuttons .btn-settings").on('click', function(){
         b_ui.toggleSettings();
+    });
+    $(".titlebar .gamebuttons .btn-console").on('click', function(){
+        b_console.showConsole();
     });
 
     $(".object-tree").on('click', '.object > .btn-delete-obj', function(e) {
@@ -632,4 +639,8 @@ function parseXML(str) {
 
 function ifndef(value, default_value) {
     return (typeof value === 'undefined') ? default_value : value;
+}
+
+function openExternal(path) {
+    eSHELL.openItem(path);
 }

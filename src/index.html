@@ -24,6 +24,7 @@
 
     <link rel="stylesheet" href="main.css" media="screen"/>
 
+    <script src="js/console.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/ide.js"></script>
     <script src="js/project.js"></script>
@@ -41,6 +42,7 @@
     <div class="titlebar">
         <div class="ui-btn-group actionbuttons">
             <button class="btn-newproject"><i class="mdi mdi-file-outline"></i></button>
+            <button class="btn-saveproject"><i class="mdi mdi-content-save"></i></button>
             <button class="btn-openproject"><i class="mdi mdi-folder-outline"></i></button>
             <button class="btn-devtools" onclick="eIPC.send('show-dev-tools');">
                 <i class="mdi mdi-code-tags"></i>
@@ -48,8 +50,9 @@
         </div>
         <div class="ui-btn-group gamebuttons">
             <button class="btn-run"><i class="mdi mdi-play"></i></button>
-            <button class="btn-build"><i class="mdi mdi-package-variant-closed"></i></button>
-            <button class="btn-settings"><i class="mdi mdi-settings"></i></button>
+            <button class="btn-build" title="deploy project "><i class="mdi mdi-package-variant-closed"></i></button>
+            <button class="btn-settings" title="edit ide/project settings"><i class="mdi mdi-settings"></i></button>
+            <button class="btn-console" title="show the console"><i class="mdi mdi-console"></i></button>
         </div>
         <div class="ui-btn-group titlebuttons">
             <button class="btn-minimize"><i class="mdi mdi-window-minimize"></i></button>
@@ -77,6 +80,8 @@
     <div class="workspace"></div>
 
     <div class="ui-dialog-container"></div>
+
+    <div class="console"></div>
 
 </body>
 </html>

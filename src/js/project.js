@@ -39,6 +39,7 @@ var b_project = {
 
 		try {
 			b_project.proj_data = JSON.parse(nwFILE.readFileSync(bip_path, 'utf8'));
+			b_project.autosave_on = b_project.proj_data.settings.ide["Autosave changes"];
 			b_ide.clearWorkspace();
 
 		} catch (e) {
@@ -120,6 +121,7 @@ var b_project = {
 
 	setSetting: function(type, key, value) {
 		this.proj_data.settings[type][key] = value;
+		dispatchEvent('project.setting.set', {type: type, key: key, value: value});
 		b_project.autoSaveProject();
 	},
 
@@ -180,5 +182,17 @@ document.addEventListener("ide.settings.loaded", function(e) {
 		// TODO: if project file doesn't exist
 		// set last_project_open to 0
 		b_project.openProject(b_ide.settings.last_project_open);
+	}
+});
+
+document.addEventListener("project.setting.set", function(e) {
+	if (e.detail.type === "ide" && e.detail.key === "Autosave changes") {
+		b_project.autosave_on = e.detail.value;
+
+		console.log(e.detail);
+		if (e.detail.value == false) {
+			console.log('here it is')
+			b_project.saveProject();
+		}
 	}
 });

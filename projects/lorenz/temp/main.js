@@ -1,4 +1,4 @@
-var game = new Phaser.Game(500, 200, Phaser.AUTO, 'phaser-game', {
+var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-game', {
 	preload: _preload,
 	create: _create
 });

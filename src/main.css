@@ -295,6 +295,9 @@ body[project-open="1"] .library {
 .library .actions .btn-add:hover {
   background-color: #E5E5E5;
 }
+.library .actions .ui-checkbox {
+  width: 30px;
+}
 .library .object-tree {
   -webkit-touch-callout: none;
   /* iOS Safari */
@@ -432,7 +435,7 @@ body[project-open="1"] .library {
   bottom: 0px;
   left: 200px;
   right: 0px;
-  outline: 1px solid black;
+  outline: 1px solid rgba(0, 0, 0, 0.25);
   z-index: 19;
   background: #FFFFFF;
 }
@@ -486,6 +489,62 @@ body[project-open="1"] .library {
 }
 .ui-settings .inputs-container > div {
   margin: 4px 25px;
+}
+.console {
+  display: none;
+  pointer-events: none;
+  position: fixed;
+  z-index: 20;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  background-color: #FFFFFF;
+  outline: 1px solid black;
+  margin: 5px;
+  max-height: 182px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.console.active {
+  display: initial;
+  pointer-events: all;
+}
+.console > div {
+  width: 100%;
+  white-space: nowrap;
+}
+.console > div > .btn-close {
+  height: 30px;
+  width: 30px;
+  margin: 3px;
+  padding: 0px;
+  border: none;
+  border-radius: 2px;
+  outline: none;
+  background-color: transparent;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all ease-in-out 0.4s;
+  width: 20px;
+  height: 20px;
+  vertical-align: top;
+}
+.console > div > .btn-close:hover {
+  border-radius: 100%;
+  background-color: #e0e0e0;
+}
+.console > div > .message {
+  display: inline-block;
+  margin: 2px;
+  padding: 2px;
+  border-radius: 2px;
+  white-space: normal;
+}
+.console .error > .message {
+  background-color: #ffcdd2;
+}
+.console .success > .message {
+  background-color: #c5e1a5;
 }
 html {
   width: 100%;

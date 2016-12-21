@@ -3,6 +3,7 @@
   "main": "phaser.js",
   "dependencies": {
     "connect": "^3.5.0",
+    "nw-builder": "^3.1.2",
     "serve-static": "^1.11.1"
   }
 }
