@@ -18,10 +18,24 @@ exports.targets = {
 }
 
 exports.settings = {
-	"general" : [
+	"initialization" : [
+		{
+			"type" : "number",
+			"name" : "game width",
+			"default" : 800,
+			"min" : 0,
+			"max" : 1000000
+		},
+		{
+			"type" : "number",
+			"name" : "game height",
+			"default" : 600,
+			"min" : 0,
+			"max" : 1000000
+		},
 		{
 			"type" : "select",
-			"name" : "rendering",
+			"name" : "renderer",
 			"default" : "auto",
 			"options" : ["auto", "web", "canvas"]
 		}
@@ -31,7 +45,7 @@ exports.settings = {
 var last_object_set;
 var server_running = false;
 document.addEventListener("something.saved", function(e){
-	if (server_running && ["entity", "state"].includes(e.detail.what)) {
+	if (server_running && ["entity", "state", "project"].includes(e.detail.what)) {
 		var path = nwPATH.join(b_project.curr_project, 'temp');
 		build(path, last_object_set);
 	}
@@ -107,15 +121,13 @@ function build(build_path, objects, callback) {
 		["<CREATE>", ""],
 		["<STATE_INIT>", state_init],
 		["<WIDTH>", 500],
-		["<HEIGHT>", 200]
+		["<HEIGHT>", 200],
+		['<RENDERER>', b_project.getSetting("engine", "renderer").toUpperCase()]
 	];
 
 	for (var r in js_replacements) {
 		js_code = js_code.replace(js_replacements[r][0],js_replacements[r][1]);
 	}
-
-	console.log(html_code);
-	console.log(js_code);
 
 	nwMKDIRP(nwPATH.join(build_path, 'assets'), function(){
 		// move game resources

@@ -2,7 +2,7 @@ var b_project = {
 	bip_path: '',
 	curr_project: '', // path to current project folder
 	proj_data: {},
-	autosave_on: false,
+	autosave_on: true,
 
 	// asks user where project should be saved and creates folder and project file
 	newProject: function(bip_path, engine) {
@@ -58,6 +58,7 @@ var b_project = {
 		b_project.proj_data.settings = ifndef(b_project.proj_data.settings, {});
 
 		if (!("ide" in b_project.proj_data.settings)) {
+			console.log("add em!")
 			b_project.proj_data.settings["ide"] = {};
 			nwFILE.readFile(nwPATH.join(__dirname, "settings.json"), 'utf8', function(err, data) {
 	    		if (!err) {
@@ -84,19 +85,18 @@ var b_project = {
 			for (var i = 0; i < input_info[subcat].length; i++) {
 				var input = input_info[subcat][i];
 				if (!(input.name in b_project.proj_data.settings[type])) {
-					b_project.proj_data.settings[type][input.name] = input.default;
+					b_project.setSetting(type, input.name, input.default);
 				}
 			}
 		}
-		console.log(b_project.proj_data);
 	},
 
 	// saves project file
 	saveProject: function() {
-		if (this.isProjectOpen()) {
-			nwFILE.writeFileSync(this.bip_path, JSON.stringify(this.proj_data));
+		if (b_project.isProjectOpen()) {
+			nwFILE.writeFileSync(b_project.bip_path, JSON.stringify(b_project.proj_data));
 
-			b_ide.saveSetting("last_project_open", this.bip_path);
+			b_ide.saveSetting("last_project_open", b_project.bip_path);
 			dispatchEvent('project.post-save');
 			dispatchEvent('something.saved', {what: 'project'});
 		}
@@ -104,17 +104,27 @@ var b_project = {
 
 	autoSaveProject: function() {
 		if (this.autosave_on) {
-			this.saveProject();
+			save_timeout = setTimeout(b_project.saveProject, PROJECT_SAVE_TIME);
 		}
 	},
 
 	// data that is saved to project file
 	setData: function(key, value) {
 		this.proj_data[key] = value;
+		b_project.autoSaveProject();
 	},
 
 	getData: function(key) {
 		return this.proj_data[key];
+	},
+
+	setSetting: function(type, key, value) {
+		this.proj_data.settings[type][key] = value;
+		b_project.autoSaveProject();
+	},
+
+	getSetting: function(type, key) {
+		return this.proj_data.settings[type][key];
 	},
 
 	importResource: function(type, path, callback) {

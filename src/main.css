@@ -118,15 +118,14 @@
 .ui-checkbox:hover .mdi {
   background-color: #e0e0e0;
 }
+.ui-input-group label {
+  margin-right: 20px;
+}
 .ui-input-group input {
-  -webkit-app-region: no-drag;
-  border: 20px solid transparent;
-  border-image: linear-gradient(to right, black 0%, transparent 90%, transparent 100%);
-  border-image-slice: 1;
-  border-width: 0px;
-  padding: 3px;
-  border-bottom-width: 1px;
-  outline: none;
+  margin: 5px;
+}
+.ui-input-group .ui-input {
+  margin: 5px;
 }
 @font-face {
   font-family: "Inconsolata";
@@ -160,7 +159,7 @@ body[project-open="1"] .titlebar {
   top: 0px;
   right: 0px;
   height: auto;
-  padding: 5px;
+  padding: 3px 5px;
   margin: 1px;
   z-index: 20;
   transition: all ease-in-out 0.2s;
@@ -213,7 +212,7 @@ body[project-open="1"] .titlebar {
   -webkit-app-region: no-drag;
   white-space: nowrap;
   position: absolute;
-  top: 5px;
+  top: 3px;
   right: 5px;
 }
 .titlebar .titlebuttons button {
@@ -484,6 +483,9 @@ body[project-open="1"] .library {
 .ui-settings .inputs-container .subcategory {
   font-size: 20px;
   margin: 10px;
+}
+.ui-settings .inputs-container > div {
+  margin: 4px 25px;
 }
 html {
   width: 100%;

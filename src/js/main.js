@@ -3,6 +3,7 @@ var ZOOM_AMT = 1;
 var DEV_MODE = false; // use dev_data instead of data for saving
 
 var LIBRARY_RENAME_HOLD_TIME = 600;
+var PROJECT_SAVE_TIME = 500;
 
 require('electron-cookies');
 
@@ -630,6 +631,5 @@ function parseXML(str) {
 }
 
 function ifndef(value, default_value) {
-    console.log(value);
     return (typeof value === 'undefined') ? default_value : value;
 }

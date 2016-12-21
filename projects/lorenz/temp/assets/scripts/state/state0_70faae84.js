@@ -40,9 +40,6 @@ var state0 = {
         this.gfx_points = this.game.add.graphics(400, 300);
         this.gfx_history = this.game.add.graphics(400, 300);
         //this.graphics.scale.setTo(0.8, 0.8);
-        
-        this.gfx_points.z = 0;
-        this.gfx_history.z = 10;
 	},
 	
     update: function() {
