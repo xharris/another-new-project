@@ -87,7 +87,7 @@ function saveScript(retry=false) {
 			obj_prop.code_path = nwPATH.join('entity', obj_prop.name + '_' + obj_uuid + '.js');
 			saveScript(true);
 		} else {
-			dispatchEvent('something.saved', {what: 'entity'});
+			dispatchEvent('something.saved', {what: 'entity.script'});
 		}
 	});
 }

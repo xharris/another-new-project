@@ -298,6 +298,21 @@ body[project-open="1"] .library {
 .library .actions .ui-checkbox {
   width: 30px;
 }
+.library .constant-items .item {
+  position: relative;
+  cursor: default;
+  outline: 1.5px dashed;
+  outline-color: transparent;
+  transition: background-color ease-in-out 0.1s;
+  transition: outline-color ease-in-out 0.5s;
+}
+.library .constant-items .item .name {
+  margin: 0px;
+  padding: 4px;
+}
+.library .constant-items .item .name:hover {
+  background-color: #e0e0e0;
+}
 .library .object-tree {
   -webkit-touch-callout: none;
   /* iOS Safari */
@@ -312,7 +327,7 @@ body[project-open="1"] .library {
   user-select: none;
   /* Non-prefixed version, currently
     not supported by any browser */
-  position: absolute;
+  /*position: absolute;*/
   top: 36px;
   left: 0px;
   right: 0px;
@@ -331,14 +346,17 @@ body[project-open="1"] .library {
   padding: 1px;
   position: absolute;
 }
-.library .object-tree .folder,
-.library .object-tree .object {
+.library .object-tree > .name {
   position: relative;
   cursor: default;
   outline: 1.5px dashed;
   outline-color: transparent;
   transition: background-color ease-in-out 0.1s;
   transition: outline-color ease-in-out 0.5s;
+}
+.library .object-tree .folder,
+.library .object-tree .object {
+  position: relative;
 }
 .library .object-tree .folder.dragover,
 .library .object-tree .object.dragover {

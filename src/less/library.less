@@ -49,10 +49,31 @@ body{
 		}
 	}
 
+	.constant-items {
+		.item {
+			position: relative;
+			cursor: default;
+			outline: 1.5px dashed;
+			outline-color: transparent;
+
+			transition: background-color ease-in-out 0.1s;
+			transition: outline-color ease-in-out 0.5s;
+
+			.name {
+				margin: 0px;
+				padding: 4px;
+
+				&:hover {
+					background-color: #e0e0e0;
+				}
+			}
+		}
+	}
+
 	.object-tree {
 		.no-select();
 
-	    position: absolute;
+	    /*position: absolute;*/
 	    top: 36px;
 	    left: 0px;
 	    right: 0px;
@@ -77,16 +98,17 @@ body{
 
 		>.name {
 			//height: 100%;
-		}
-
-		.folder,.object{
-			position: relative;
+					position: relative;
 			cursor: default;
 			outline: 1.5px dashed;
 			outline-color: transparent;
 
 			transition: background-color ease-in-out 0.1s;
 			transition: outline-color ease-in-out 0.5s;
+}
+
+		.folder,.object{
+			position: relative;
 
 			&.dragover {
 				outline-color: @ide-fave-color-400;

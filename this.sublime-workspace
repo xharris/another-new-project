@@ -4,8 +4,16 @@
 		"selected_items":
 		[
 			[
+				"wr",
+				"writeFile"
+			],
+			[
+				"ovefl",
+				"overflow-x"
+			],
+			[
 				"buil",
-				"buildDesktop"
+				"build_path"
 			],
 			[
 				"sett",
@@ -452,28 +460,10 @@
 	"buffers":
 	[
 		{
-			"file": "src/index.html",
+			"file": "src/less/library.less",
 			"settings":
 			{
-				"buffer_size": 3180,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "src/js/main.js",
-			"settings":
-			{
-				"buffer_size": 19315,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "src/main.js",
-			"settings":
-			{
-				"buffer_size": 5160,
+				"buffer_size": 2765,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -482,18 +472,43 @@
 			"file": "src/engines/phaser/phaser.js",
 			"settings":
 			{
-				"buffer_size": 5379,
+				"buffer_size": 7307,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "src/engines/phaser/index.html",
+			"file": "src/modules/entity/entity.js",
 			"settings":
 			{
-				"buffer_size": 344,
+				"buffer_size": 2041,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/modules/state/state.js",
+			"settings":
+			{
+				"buffer_size": 2007,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/js/project.js",
+			"settings":
+			{
+				"buffer_size": 6112,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "projects/lorenz/assets/scripts/state/state0_70faae84.js",
+			"settings":
+			{
+				"buffer_size": 3516,
+				"line_ending": "Unix"
 			}
 		}
 	],
@@ -572,40 +587,52 @@
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/lorenz",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/lorenz/BUILDS",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/lorenz/BUILDS/win",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/lorenz/BUILDS/win/my-game",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/lorenz/temp",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/lorenz/temp/assets/scripts",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/lorenz/temp/assets/scripts/state",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/lorenz/assets",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/lorenz/assets/scripts",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/lorenz/assets/scripts/state",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/engines",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/engines/phaser",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/spritesheet"
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/entity",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/state",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/state/less"
 	],
 	"file_history":
 	[
+		"/C/Users/XHH/AppData/Local/Temp/scp28263/afs/umbc.edu/users/s/l/slupoli/pub/cs341/xharris1/proj5/src/#output.txt#",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/entity/less/main.less",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/releases/gamething-win32-ia32/resources/app/main.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/main.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/library.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/ui.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/project.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/index.html",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/dig/dig.bip",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/engines/phaser/phaser.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/plugins/code_editor/code_editor.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/dig/assets/scripts/state/state0_4f3b8a96.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/assets/index.html",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/plugins/code_editor/less/main.less",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/lorenz/assets/index.html",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/library.less",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/main.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/console.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/console.less",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/.gitignore",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/variables.less",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/ui.less",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/main.less",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/engines/phaser/index.html",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/lorenz/temp/index.html",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/engines/phaser/main.js",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/project.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/lorenz/lorenz.bip",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/engines/phaser/phaser.js",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/ui.js",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/ui.less",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/main.js",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/variables.less",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/classes.less",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/main.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/settings.json",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/titlebar.less",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/ide.js",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/main.less",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/plugins/code_editor/code_editor.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/state/state.js",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/plugins/code_editor/less/main.less",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/entity/entity.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/2d_platformer/temp/index.html",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/plugins/code_editor.js",
@@ -615,18 +642,14 @@
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/2d_platformer/BUILDS/html/index.html",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/state/less/main.less",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/2d_platformer/assets/scripts/state/state0_35cee3f8.js",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/entity/less/main.less",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/new_project/BUILDS/html/assets/scripts/state/state0_85234cdd.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/new_project/BUILDS/html/main.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/state/state_template.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/new_project/assets/scripts/state/state0_85234cdd.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/entity/entity_template.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/new_project/assets/scripts/entity/entity0_46b301c5.js",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/engines/phaser/index.html",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/scene/scene.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/state/package.json",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/library.js",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/index.html",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/image/image.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/new_project/assets/scripts/entity/entity0_b5477a78.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/new_project/new_project.bip",
@@ -637,7 +660,6 @@
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/README.md",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/map/package.json",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/scene/less/main.less",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/library.less",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/tile/less/main.less",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/image/less/main.less",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/tile/package.json",
@@ -662,7 +684,6 @@
 		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ3/Makefile",
 		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ3/AVLTreeNode.h",
 		"/C/Users/XHH/Documents/UMBC/Fall16/CMPE212/QuineMcCluskey/tabular.py",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/releases/gamething-win32-ia32/resources/app/main.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/engines/phaser/entity.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/engines/phaser/package.json",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/engines/phaser.js",
@@ -707,15 +728,7 @@
 		"/C/Users/XHH/AppData/Local/Temp/scp10980/afs/umbc.edu/users/x/h/xharris1/home/CMSC341/PJ2/Game.h",
 		"/C/Users/XHH/AppData/Local/Temp/scp10016/afs/umbc.edu/users/x/h/xharris1/home/CMSC341/PJ2/driver.cpp",
 		"/C/Users/XHH/AppData/Local/Temp/scp10042/afs/umbc.edu/users/x/h/xharris1/home/CMSC341/PJ2/CommodityStore.h",
-		"/C/Users/XHH/AppData/Local/Temp/scp10296/afs/umbc.edu/users/x/h/xharris1/home/CMSC341/PJ2/CommodityStore.cpp",
-		"/C/Users/XHH/AppData/Local/Temp/scp09017/afs/umbc.edu/users/x/h/xharris1/home/CMSC341/PJ2/Commodity.h",
-		"/C/Users/XHH/AppData/Local/Temp/scp09706/afs/umbc.edu/users/x/h/xharris1/home/CMSC341/PJ2/Commodity.cpp",
-		"/C/Users/XHH/AppData/Local/Temp/scp09445/afs/umbc.edu/users/x/h/xharris1/home/CMSC341/PJ2/Card.h",
-		"/C/Users/XHH/AppData/Local/Temp/scp08031/afs/umbc.edu/users/x/h/xharris1/home/CMSC341/PJ2/Card.cpp",
-		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ2/Makefile",
-		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ2/driver.cpp",
-		"/C/Users/XHH/AppData/Roaming/Sublime Text 3/Packages/User/cmsc341.sublime-build",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/.gitignore"
+		"/C/Users/XHH/AppData/Local/Temp/scp10296/afs/umbc.edu/users/x/h/xharris1/home/CMSC341/PJ2/CommodityStore.cpp"
 	],
 	"find":
 	{
@@ -795,114 +808,53 @@
 	"groups":
 	[
 		{
-			"selected": 3,
+			"selected": 5,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "src/index.html",
+					"file": "src/less/library.less",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3180,
+						"buffer_size": 2765,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1571,
-								1571
+								1668,
+								1668
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/HTML/HTML.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
+							"syntax": "Packages/CSS/CSS.sublime-syntax",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 522.0,
+						"translation.y": 1728.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 5,
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "src/js/main.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 19315,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2249,
-								2249
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": -0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "src/main.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5160,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								63,
-								63
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
 					"file": "src/engines/phaser/phaser.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 5379,
+						"buffer_size": 7307,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1136,
-								1136
+								3665,
+								3665
 							]
 						],
 						"settings":
@@ -911,38 +863,127 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 125.0,
+						"translation.y": 2718.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
-					"buffer": 4,
-					"file": "src/engines/phaser/index.html",
+					"buffer": 2,
+					"file": "src/modules/entity/entity.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 344,
+						"buffer_size": 2041,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								281,
-								281
+								2026,
+								2026
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/HTML/HTML.sublime-syntax"
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1156.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "src/modules/state/state.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2007,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1991,
+								1991
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1277.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "src/js/project.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6112,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3650,
+								3650
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1967.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "projects/lorenz/assets/scripts/state/state0_70faae84.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3516,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 474.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
 					"type": "text"
 				}
 			]
@@ -981,7 +1022,7 @@
 	"menu_visible": true,
 	"output.exec":
 	{
-		"height": 177.0
+		"height": 184.0
 	},
 	"output.find_results":
 	{
@@ -1033,7 +1074,7 @@
 	"show_open_files": true,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 237.0,
+	"side_bar_width": 257.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{

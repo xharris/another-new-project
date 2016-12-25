@@ -18,6 +18,8 @@ var b_project = {
 		b_library.reset();
 		b_project.setData('engine', engine);
 
+		b_project._setupProject();
+
 		// make dir if it doesn't exist
 		nwMKDIRP(folder_path, function() {
 			b_project.saveProject();
@@ -29,6 +31,8 @@ var b_project = {
 			b_ide.setHTMLattr("project-open", 0);
 		}
 
+		b_console.log("created "+nwPATH.basename(b_project.bip_path));
+
 		dispatchEvent('project.new');
 	},
 
@@ -37,16 +41,25 @@ var b_project = {
 		this.bip_path = bip_path;
 		this.curr_project = nwPATH.dirname(bip_path);
 
+		b_project.proj_data.settings = ifndef(b_project.proj_data.settings, {});
+
+		b_library.reset();
+		b_ide.clearWorkspace();
+
 		try {
 			b_project.proj_data = JSON.parse(nwFILE.readFileSync(bip_path, 'utf8'));
+
+			b_project._setupProject();
+
 			b_project.autosave_on = b_project.proj_data.settings.ide["Autosave changes"];
-			b_ide.clearWorkspace();
+			b_console.log("opened "+nwPATH.basename(bip_path));
 
 		} catch (e) {
+			b_console.error("ERR: Can't open " + nwPATH.basename(bip_path));
+
 			b_project.proj_data = {};
 			b_project.bip_path = '';
 			b_project.curr_project = '';
-			console.log("ERR: Can't open " + nwPATH.basename(bip_path));
 		}
 
 		if (b_project.bip_path !== '') {
@@ -55,11 +68,26 @@ var b_project = {
 			b_ide.setHTMLattr("project-open", 0);
 		}
 
-		// get/set ide and engine settings
-		b_project.proj_data.settings = ifndef(b_project.proj_data.settings, {});
+		b_ide.saveSetting("last_project_open", this.bip_path);
+		dispatchEvent('project.open');
+	},
 
-		if (!("ide" in b_project.proj_data.settings)) {
-			console.log("add em!")
+	// fill in settings/values that may be undefined
+	_setupProject: function() {
+		// add constant library items
+        if ("library_const" in nwENGINES[b_project.getData("engine")]) {
+        	for (var c = 0; c < nwENGINES[b_project.getData("engine")].library_const.length; c++) {
+        		var info = nwENGINES[b_project.getData("engine")].library_const[c];
+        		var id = b_library.addConstant(info.name);
+        		
+        		$(id).on('dblclick', info.dbl_click);
+        	}
+        }
+
+        // get/set ide and engine settings
+        b_project.proj_data.settings = ifndef(b_project.proj_data.settings, {});
+
+		if (!b_project.getData("settings").ide) {
 			b_project.proj_data.settings["ide"] = {};
 			nwFILE.readFile(nwPATH.join(__dirname, "settings.json"), 'utf8', function(err, data) {
 	    		if (!err) {
@@ -68,17 +96,13 @@ var b_project = {
 		    	}
 	    	});
 		}
-		if (!("engine" in b_project.proj_data.settings)) {
+		if (!b_project.getData("settings").engine) {
 			b_project.proj_data.settings["engine"] = {};
 			if ("settings" in nwENGINES[b_project.getData("engine")]) {
 				input_info = nwENGINES[b_project.getData("engine")].settings;
 				b_project._populateSettings("engine", input_info);
 			}
 		}
-
-
-		b_ide.saveSetting("last_project_open", this.bip_path);
-		dispatchEvent('project.open');
 	},
 
 	_populateSettings : function(type, input_info) {
@@ -189,7 +213,6 @@ document.addEventListener("project.setting.set", function(e) {
 	if (e.detail.type === "ide" && e.detail.key === "Autosave changes") {
 		b_project.autosave_on = e.detail.value;
 
-		console.log(e.detail);
 		if (e.detail.value == false) {
 			console.log('here it is')
 			b_project.saveProject();

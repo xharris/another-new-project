@@ -1,6 +1,5 @@
 var IDE_NAME = "project";
 var ZOOM_AMT = 1;
-var DEV_MODE = false; // use dev_data instead of data for saving
 
 var LIBRARY_RENAME_HOLD_TIME = 600;
 var PROJECT_SAVE_TIME = 500;
@@ -85,7 +84,6 @@ $(function(){
             },
             function (path) {
                 if (path) {
-                    console.log(path)
                     b_project.openProject(path[0]);
                 }
             }
@@ -169,7 +167,7 @@ $(function(){
 
     // set user id
     nwMAC.getMac(function(err, address) {
-       if (!err && !DEV_MODE) {
+       if (!err) {
             var hash = address.hashCode();
             // analytics.userID = hash;
             // analytics.clientID = hash;
@@ -253,7 +251,6 @@ $(function(){
         }
 
         // call select/deselect events
-        
         $(".object-tree .object.selected").each(function(e) {
             var uuid2 = $(this).data('uuid');
             var type2 = $(this).data('type');
@@ -430,13 +427,13 @@ function dispatchEvent(ev_name, ev_properties) {
     document.dispatchEvent(new_event);
 }
 
-function importLess(module, file) {
+function importLess(name, file, type='modules') {
     nwFILE.readFile(file, 'utf8', function(err, data) {
 
         if (!err) {
             nwLESS.render(data,
                 {
-                    paths: [nwPATH.join(__dirname,"less"),nwPATH.join(__dirname, "modules", module, "less")],
+                    paths: [nwPATH.join(__dirname,"less"),nwPATH.join(__dirname, type, name, "less")],
                 },
                 function (e, output) {
                     var head  = document.getElementsByTagName('head')[0];
@@ -465,6 +462,16 @@ function loadPlugins(callback) {
         mods.forEach(function(plug_name, m) {
             if (!plugin_names.includes(plug_name)) {
                 plugin_names.push(plug_name);
+
+                // import less files
+                nwFILE.readdir(nwPATH.join(__dirname, "plugins", plug_name, "less"), function(err, files) {
+                    if (!err) {
+                        files.forEach(function(file, l) {
+                            importLess(plug_name, nwPATH.join(__dirname, "plugins", plug_name, "less", file), 'plugins');
+
+                        });
+                    }
+                });
                 
                 nwPLUGINS[plug_name] = require(nwPATH.join(__dirname, "plugins", plug_name));
                 
@@ -490,7 +497,6 @@ function loadModules(callback) {
             nwFILE.readdir(nwPATH.join(__dirname, "modules", mod_name, "less"), function(err, files) {
                 if (!err) {
                     files.forEach(function(file, l) {
-
                         importLess(mod_name, nwPATH.join(__dirname, "modules", mod_name, "less", file));
 
                     });
@@ -499,7 +505,7 @@ function loadModules(callback) {
 
             if (!game_items.includes(mod_name)) {
                 game_items.push(mod_name);
-                
+
                 nwMODULES[mod_name] = require(nwPATH.join(__dirname, "modules", mod_name));
                 if (nwMODULES[mod_name].loaded) {
                     nwMODULES[mod_name].loaded();

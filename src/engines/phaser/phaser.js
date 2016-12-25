@@ -116,10 +116,49 @@ exports.settings = {
 	]
 }
 
+var codemirror;
+exports.library_const = [
+	{
+		"name": "index.html",
+		dbl_click: function() {
+			b_ide.clearWorkspace();
+			$(".workspace").append(
+				"<div id='code'></div>"
+			);
+
+			codemirror = nwPLUGINS['code_editor'].init('code', {
+				mode: 'htmlmixed',
+				lineWrapping: true,
+				extraKeys: {
+					'Ctrl-Space': 'autocomplete',
+					'Ctrl-S': function(){
+						var text = codemirror.getValue();
+						nwFILE.writeFile(nwPATH.join(b_project.curr_project, "assets", "index.html"), text, function(err){
+							if (err)
+								b_console.error(err);
+							else
+								dispatchEvent('something.saved', {what: 'index.html'});
+						});
+					}
+				},
+				lineNumbers: true,
+				theme: 'monokai',
+				value: ""
+			});
+
+			nwFILE.readFile(nwPATH.join(b_project.curr_project, "assets", "index.html"), 'utf-8', function(err, data){
+				if (!err) {
+					codemirror.setValue(data);
+				}
+			});
+		}
+	}
+]
+
 var last_object_set;
 var server_running = false;
 document.addEventListener("something.saved", function(e){
-	if (server_running && ["entity", "state", "project"].includes(e.detail.what)) {
+	if (server_running && ["entity.script", "state.script", "project", "index.html"].includes(e.detail.what)) {
 		var path = nwPATH.join(b_project.curr_project, 'temp');
 		build(path, last_object_set);
 	}
@@ -127,24 +166,36 @@ document.addEventListener("something.saved", function(e){
 
 document.addEventListener("project.open", function(e){
 	server_running = false;
+
+	// copy index.html template to project folder
+	nwFILE.readFile(nwPATH.join(b_project.curr_project, "assets", "index.html"), function(err, data){
+		if (err) {
+			var html_code = nwFILEX.copy(
+				nwPATH.join(__dirname, 'index.html'),
+				nwPATH.join(b_project.curr_project, "assets", "index.html")
+			);
+		}
+	});
+		
 })
 
 exports.run = function(objects) {
 	last_object_set = objects;
 	var path = nwPATH.join(b_project.curr_project, 'temp');
-	build(path, objects);
+	build(path, objects, function(){
+		if (!server_running) {
+			nwCONNECT().use(nwSERVE(path)).listen(8080, function(){
+				server_running = true;
+				nwOPEN('http://localhost:8080/');
+			});
+		}
+	});
 
-	if (!server_running) {
-		nwCONNECT().use(nwSERVE(path)).listen(8080, function(){
-			server_running = true;
-			nwOPEN('http://localhost:8080/');
-		});
-	}
 } 
 
 function build(build_path, objects, callback) {
 	// get main file template code
-	var html_code = nwFILE.readFileSync(nwPATH.join(__dirname, 'index.html'), 'utf8');
+	var html_code = nwFILE.readFileSync(nwPATH.join(b_project.curr_project, "assets", "index.html"), 'utf8');
 	var js_code = nwFILE.readFileSync(nwPATH.join(__dirname, 'main.js'), 'utf8');
 
 	// ENTITIES

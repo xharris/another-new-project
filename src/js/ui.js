@@ -36,7 +36,7 @@ var b_ui = {
 				"<div class='inputs-container'></div>"+
 			"</div>"
 		);
-		
+
 		// selecting a setting category
 		$(".ui-dialog-container").on('click', '.ui-settings > .categories > .category', function(){
 			var type = $(this).data('type');
@@ -80,6 +80,8 @@ var b_ui = {
 				b_project.setSetting(setting_type, name, value);
 			});
 		});
+
+		$(".ui-dialog-container > .ui-settings .category[data-type='ide']").click();
 	},
 
 	_populateInputs : function(type, input_info, input_values) {

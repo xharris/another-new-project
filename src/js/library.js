@@ -5,6 +5,22 @@ b_library = {
 	reset: function() {
 		b_library.objects = {};
 		b_library.tree = {};
+		$(".library > .constant-items").empty();
+	},
+
+	addConstant: function(name) {
+		var uuid = guid();
+		$(".library > .constant-items").append(
+			"<div class='item' data-uuid='"+uuid+"'>"+
+				"<p class='name'>"+name+"</p>"+
+			"</div>"
+		);
+
+		return ".library > .constant-items > .item[data-uuid='"+uuid+"'";
+	},
+
+	removeConstant: function(uuid) {
+		$(".library > .constant-items > .item[data-uuid='"+uuid+"']").remove();
 	},
 
 	add: function(type, fromMenu=false) {
