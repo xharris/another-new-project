@@ -19,18 +19,25 @@
 .win-nodrag {
   -webkit-app-region: no-drag;
 }
-.ui-btn-group {
+/*
+    HEADER
+*/
+.ui-header {
+  font-weight: 900;
+  font-size: 20px;
+  margin: 10px 0px;
+}
+/*
+    BUTTONS
+*/
+.ui-group-button {
   cursor: default;
-  background-color: rgba(255, 255, 255, 0.6);
+  background-color: rgba(255, 255, 255, 0.4);
   border-radius: 4px;
 }
 .ui-button {
-  height: 30px;
-  width: 30px;
   margin: 3px;
-  padding: 0px;
-  border: none;
-  border-radius: 2px;
+  border: none !important;
   outline: none;
   background-color: transparent;
   font-size: 15px;
@@ -38,18 +45,55 @@
   transition: all ease-in-out 0.4s;
 }
 .ui-button:hover {
-  border-radius: 100%;
   background-color: #e0e0e0;
 }
-.ui-text-button {
+.ui-button:hover:disabled {
+  background-color: transparent;
+  cursor: default;
+}
+.ui-button-sphere {
+  margin: 3px;
+  border: none !important;
+  outline: none;
+  background-color: transparent;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all ease-in-out 0.4s;
+  padding: 0px;
+  height: 30px;
+  width: 30px;
+}
+.ui-button-sphere:hover {
+  background-color: #e0e0e0;
+}
+.ui-button-sphere:hover:disabled {
+  background-color: transparent;
+  cursor: default;
+}
+.ui-button-sphere:hover {
+  border-radius: 100%;
+}
+.ui-button-rect {
+  margin: 3px;
+  border: none !important;
+  background-color: transparent;
+  font-size: 15px;
+  padding: 5px 10px;
   background-color: white;
   border: none;
   outline: none;
-  border-radius: 2px;
+  border-radius: 0px;
   cursor: pointer;
   transition: all ease-in-out 0.4s;
 }
-.ui-text-button:hover {
+.ui-button-rect:hover {
+  background-color: #e0e0e0;
+}
+.ui-button-rect:hover:disabled {
+  background-color: transparent;
+  cursor: default;
+}
+.ui-button-rect:hover {
   border-radius: 4px;
   background-color: #e0e0e0;
 }
@@ -159,8 +203,8 @@ body[project-open="1"] .titlebar {
   top: 0px;
   right: 0px;
   height: auto;
-  padding: 3px 5px;
-  margin: 1px;
+  padding: 0px 2px;
+  margin: 3px;
   z-index: 20;
   transition: all ease-in-out 0.2s;
 }
@@ -170,21 +214,26 @@ body[project-open="1"] .titlebar {
   display: inline-block;
 }
 .titlebar .actionbuttons button {
-  height: 30px;
-  width: 30px;
   margin: 3px;
-  padding: 0px;
-  border: none;
-  border-radius: 2px;
+  border: none !important;
   outline: none;
   background-color: transparent;
   font-size: 15px;
   cursor: pointer;
   transition: all ease-in-out 0.4s;
+  padding: 0px;
+  height: 30px;
+  width: 30px;
+}
+.titlebar .actionbuttons button:hover {
+  background-color: #e0e0e0;
+}
+.titlebar .actionbuttons button:hover:disabled {
+  background-color: transparent;
+  cursor: default;
 }
 .titlebar .actionbuttons button:hover {
   border-radius: 100%;
-  background-color: #e0e0e0;
 }
 .titlebar .gamebuttons {
   -webkit-app-region: no-drag;
@@ -192,21 +241,26 @@ body[project-open="1"] .titlebar {
   margin-left: 20px;
 }
 .titlebar .gamebuttons button {
-  height: 30px;
-  width: 30px;
   margin: 3px;
-  padding: 0px;
-  border: none;
-  border-radius: 2px;
+  border: none !important;
   outline: none;
   background-color: transparent;
   font-size: 15px;
   cursor: pointer;
   transition: all ease-in-out 0.4s;
+  padding: 0px;
+  height: 30px;
+  width: 30px;
+}
+.titlebar .gamebuttons button:hover {
+  background-color: #e0e0e0;
+}
+.titlebar .gamebuttons button:hover:disabled {
+  background-color: transparent;
+  cursor: default;
 }
 .titlebar .gamebuttons button:hover {
   border-radius: 100%;
-  background-color: #e0e0e0;
 }
 .titlebar .titlebuttons {
   -webkit-app-region: no-drag;
@@ -216,22 +270,27 @@ body[project-open="1"] .titlebar {
   right: 5px;
 }
 .titlebar .titlebuttons button {
-  height: 30px;
-  width: 30px;
   margin: 3px;
-  padding: 0px;
-  border: none;
-  border-radius: 2px;
+  border: none !important;
   outline: none;
   background-color: transparent;
   font-size: 15px;
   cursor: pointer;
   transition: all ease-in-out 0.4s;
+  padding: 0px;
+  height: 30px;
+  width: 30px;
   vertical-align: top;
 }
 .titlebar .titlebuttons button:hover {
-  border-radius: 100%;
   background-color: #e0e0e0;
+}
+.titlebar .titlebuttons button:hover:disabled {
+  background-color: transparent;
+  cursor: default;
+}
+.titlebar .titlebuttons button:hover {
+  border-radius: 100%;
 }
 .titlebar .titlebuttons button:hover.btn-close {
   background-color: #E81123;
@@ -251,7 +310,7 @@ body[project-open="1"] .library {
   bottom: 0px;
   left: 0px;
   background-color: #ffffff;
-  box-shadow: 1px 0px 5px black;
+  /*box-shadow: 1px 0px 5px black;*/
   z-index: 20;
   overflow: hidden;
   transition: all ease-in-out 0.2s;
@@ -275,22 +334,27 @@ body[project-open="1"] .library {
   z-index: 10;
 }
 .library .actions button {
-  height: 30px;
-  width: 30px;
   margin: 3px;
-  padding: 0px;
-  border: none;
-  border-radius: 2px;
+  border: none !important;
   outline: none;
   background-color: transparent;
   font-size: 15px;
   cursor: pointer;
   transition: all ease-in-out 0.4s;
+  padding: 0px;
+  height: 30px;
+  width: 30px;
   -webkit-app-region: no-drag;
 }
 .library .actions button:hover {
-  border-radius: 100%;
   background-color: #e0e0e0;
+}
+.library .actions button:hover:disabled {
+  background-color: transparent;
+  cursor: default;
+}
+.library .actions button:hover {
+  border-radius: 100%;
 }
 .library .actions .btn-add:hover {
   background-color: #E5E5E5;
@@ -394,17 +458,16 @@ body[project-open="1"] .library {
 }
 .library .object-tree .folder .btn-delete-obj,
 .library .object-tree .object .btn-delete-obj {
-  height: 30px;
-  width: 30px;
   margin: 3px;
-  padding: 0px;
-  border: none;
-  border-radius: 2px;
+  border: none !important;
   outline: none;
   background-color: transparent;
   font-size: 15px;
   cursor: pointer;
   transition: all ease-in-out 0.4s;
+  padding: 0px;
+  height: 30px;
+  width: 30px;
   position: absolute;
   top: 0px;
   left: -25px;
@@ -415,8 +478,16 @@ body[project-open="1"] .library {
 }
 .library .object-tree .folder .btn-delete-obj:hover,
 .library .object-tree .object .btn-delete-obj:hover {
-  border-radius: 100%;
   background-color: #e0e0e0;
+}
+.library .object-tree .folder .btn-delete-obj:hover:disabled,
+.library .object-tree .object .btn-delete-obj:hover:disabled {
+  background-color: transparent;
+  cursor: default;
+}
+.library .object-tree .folder .btn-delete-obj:hover,
+.library .object-tree .object .btn-delete-obj:hover {
+  border-radius: 100%;
 }
 .library .object-tree .folder .btn-delete-obj:hover,
 .library .object-tree .object .btn-delete-obj:hover {
@@ -465,25 +536,43 @@ body[project-open="1"] .library {
   text-align: center;
 }
 .ui-settings .categories .category {
+  margin: 3px;
+  border: none !important;
+  background-color: transparent;
+  font-size: 15px;
+  padding: 5px 10px;
   background-color: white;
   border: none;
   outline: none;
-  border-radius: 2px;
+  border-radius: 0px;
   cursor: pointer;
   transition: all ease-in-out 0.4s;
   font-size: 18px;
   width: 100%;
   height: 36px;
+  margin: 0px;
+}
+.ui-settings .categories .category:hover {
+  background-color: #e0e0e0;
+}
+.ui-settings .categories .category:hover:disabled {
+  background-color: transparent;
+  cursor: default;
 }
 .ui-settings .categories .category:hover {
   border-radius: 4px;
   background-color: #e0e0e0;
 }
 .ui-settings .categories .btn-close {
+  margin: 3px;
+  border: none !important;
+  background-color: transparent;
+  font-size: 15px;
+  padding: 5px 10px;
   background-color: white;
   border: none;
   outline: none;
-  border-radius: 2px;
+  border-radius: 0px;
   cursor: pointer;
   transition: all ease-in-out 0.4s;
   position: absolute;
@@ -493,6 +582,13 @@ body[project-open="1"] .library {
   left: 0;
   right: 0;
   margin: 10px auto;
+}
+.ui-settings .categories .btn-close:hover {
+  background-color: #e0e0e0;
+}
+.ui-settings .categories .btn-close:hover:disabled {
+  background-color: transparent;
+  cursor: default;
 }
 .ui-settings .categories .btn-close:hover {
   border-radius: 4px;
@@ -532,24 +628,29 @@ body[project-open="1"] .library {
   white-space: nowrap;
 }
 .console > div > .btn-close {
-  height: 30px;
-  width: 30px;
   margin: 3px;
-  padding: 0px;
-  border: none;
-  border-radius: 2px;
+  border: none !important;
   outline: none;
   background-color: transparent;
   font-size: 15px;
   cursor: pointer;
   transition: all ease-in-out 0.4s;
+  padding: 0px;
+  height: 30px;
+  width: 30px;
   width: 20px;
   height: 20px;
   vertical-align: top;
 }
 .console > div > .btn-close:hover {
-  border-radius: 100%;
   background-color: #e0e0e0;
+}
+.console > div > .btn-close:hover:disabled {
+  background-color: transparent;
+  cursor: default;
+}
+.console > div > .btn-close:hover {
+  border-radius: 100%;
 }
 .console > div > .message {
   display: inline-block;

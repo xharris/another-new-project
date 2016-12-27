@@ -102,10 +102,6 @@ $(function(){
 
     loadPlugins(function(){
         dispatchEvent("ide.plugins.ready", {});
-    })
-
-    loadModules(function(){
-        dispatchEvent("ide.ready",{});
     });
 
     loadEngines(function(){
@@ -488,11 +484,14 @@ function loadPlugins(callback) {
     }
 }
 
-function loadModules(callback) {
+function loadModules(engine, callback) {
     // import module files
     nwFILE.readdir(nwPATH.join(__dirname, "modules"), function(err, mods) {
-
+        if (engine) {
+            mods = nwENGINES[b_project.getData('engine')].modules;
+        }
         mods.forEach(function(mod_name, m) {
+            $(".library > .actions > .btn-add").removeAttr("disabled");
             // import less files
             nwFILE.readdir(nwPATH.join(__dirname, "modules", mod_name, "less"), function(err, files) {
                 if (!err) {
@@ -562,26 +561,6 @@ function chooseFile(path, callback) {
     eIPC.on('selected-directory', function (event, path) {
         callback(path);
     })
-}
-
-function guid() {
-  function s4() {
-    return Math.floor((1 + Math.random()) * 0x10000)
-      .toString(16)
-      .substring(1);
-  }
-  return s4() + s4();
-}
-
-String.prototype.hashCode = function(){
-	var hash = 0;
-	if (this.length == 0) return hash;
-	for (i = 0; i < this.length; i++) {
-		char = this.charCodeAt(i);
-		hash = ((hash<<5)-hash)+char;
-		hash = hash & hash; // Convert to 32bit integer
-	}
-	return Math.abs(hash).toString();
 }
 
 function copyObj(obj) {

@@ -2,6 +2,8 @@ var nwCONNECT = require('connect');
 var nwSERVE = require('serve-static');
 var nwBUILD = require('nw-builder');
 
+exports.modules = ['entity', 'image', 'state'];
+
 exports.targets = {
 	"html": {
 		build: function(objects) {
@@ -66,11 +68,12 @@ function buildDesktop(objects, os) {
 					"fullscreen": false
 				}
 			});
+			console.log(nwPATH.join(path, 'package.json'))
 			nwFILE.writeFile(nwPATH.join(path, 'package.json'), json_text, function(err){
 				if (!err) {
 					b_console.log('building ' + path)
 					var nw = new nwBUILD({
-						files: nwPATH.join(path, '**'),
+						files: nwPATH.join(path),
 						platforms: [os],
 						//flavor: 'normal',
 						buildDir: build_path

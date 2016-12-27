@@ -74,6 +74,11 @@ var b_project = {
 
 	// fill in settings/values that may be undefined
 	_setupProject: function() {
+		// load up engine modules
+	    loadModules(b_project.getData("engine"), function(){
+	        dispatchEvent("ide.ready",{});
+	    });
+
 		// add constant library items
         if ("library_const" in nwENGINES[b_project.getData("engine")]) {
         	for (var c = 0; c < nwENGINES[b_project.getData("engine")].library_const.length; c++) {

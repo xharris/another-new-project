@@ -2,12 +2,17 @@ b_library = {
 	objects: {},
 	tree: {}, // used for saveTree to get library tree structure
 
+	setBackColor: function(color) {
+		$(".library").animate({"background-color": color}, 200);
+	},
+
 	reset: function() {
 		b_library.objects = {};
 		b_library.tree = {};
 		$(".library > .constant-items").empty();
 	},
 
+	// constant item: an item that is in every project and cannot be deleted by the user
 	addConstant: function(name) {
 		var uuid = guid();
 		$(".library > .constant-items").append(
@@ -212,5 +217,9 @@ document.addEventListener('project.open', function(e) {
 	b_library.tree = ifndef(b_project.getData('tree'), {});
 
 	b_library.loadTree(b_library.tree);
+
+	// (300)       red,      deep purple, indigo,   blue,     cyan,     green,    yellow,   orange,   brown,    grey,      blue grey
+	var colors = ['#e57373','#9575cd',    '#7986cb','#64b5f6','#4dd0e1','#81c784','#fff176','#ffb74d','#a1887f','#e0e0e0','#90a4ae'];
+	b_library.setBackColor(colors[Math.floor(Math.random()*colors.length)]);
 });	
 

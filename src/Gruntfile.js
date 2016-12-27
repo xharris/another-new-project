@@ -5,6 +5,10 @@ module.exports = function (grunt) {
           main: {
               src: ['less/main.less'],
               dest: 'main.css'
+          },
+          blankeui: {
+              src: ['includes/blanke-kit/blanke-ui.less'],
+              dest: 'includes/blanke-kit/blanke-ui.css'
           }
       }
     });

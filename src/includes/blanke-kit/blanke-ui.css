@@ -1,0 +1,173 @@
+.no-select {
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Chrome/Safari/Opera */
+  -khtml-user-select: none;
+  /* Konqueror */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+    not supported by any browser */
+}
+.win-drag {
+  -webkit-app-region: drag;
+}
+.win-nodrag {
+  -webkit-app-region: no-drag;
+}
+/*
+    HEADER
+*/
+.ui-header {
+  font-weight: 900;
+  font-size: 20px;
+  margin: 10px 0px;
+}
+/*
+    BUTTONS
+*/
+.ui-group-button {
+  cursor: default;
+  background-color: rgba(255, 255, 255, 0.4);
+  border-radius: 4px;
+}
+.ui-button {
+  margin: 3px;
+  border: none !important;
+  outline: none;
+  background-color: transparent;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all ease-in-out 0.4s;
+}
+.ui-button:hover {
+  background-color: #e0e0e0;
+}
+.ui-button:hover:disabled {
+  background-color: transparent;
+  cursor: default;
+}
+.ui-button-sphere {
+  margin: 3px;
+  border: none !important;
+  outline: none;
+  background-color: transparent;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all ease-in-out 0.4s;
+  padding: 0px;
+  height: 30px;
+  width: 30px;
+}
+.ui-button-sphere:hover {
+  background-color: #e0e0e0;
+}
+.ui-button-sphere:hover:disabled {
+  background-color: transparent;
+  cursor: default;
+}
+.ui-button-sphere:hover {
+  border-radius: 100%;
+}
+.ui-button-rect {
+  margin: 3px;
+  border: none !important;
+  background-color: transparent;
+  font-size: 15px;
+  padding: 5px 10px;
+  background-color: white;
+  border: none;
+  outline: none;
+  border-radius: 0px;
+  cursor: pointer;
+  transition: all ease-in-out 0.4s;
+}
+.ui-button-rect:hover {
+  background-color: #e0e0e0;
+}
+.ui-button-rect:hover:disabled {
+  background-color: transparent;
+  cursor: default;
+}
+.ui-button-rect:hover {
+  border-radius: 4px;
+  background-color: #e0e0e0;
+}
+.ui-select {
+  padding: 5px;
+  border-radius: 5px;
+  outline: none;
+}
+.ui-input {
+  -webkit-app-region: no-drag;
+  border: 20px solid transparent;
+  border-image: linear-gradient(to right, black 0%, transparent 90%, transparent 100%);
+  border-image-slice: 1;
+  border-width: 0px;
+  padding: 3px;
+  border-bottom-width: 1px;
+  outline: none;
+}
+.ui-checkbox {
+  -webkit-app-region: no-drag;
+  height: 30px;
+  margin: 3px;
+  display: inline-block;
+  vertical-align: top;
+  position: relative;
+}
+.ui-checkbox label {
+  margin-left: 40px;
+  vertical-align: top;
+  line-height: 30px;
+}
+.ui-checkbox input {
+  height: 100%;
+  width: 100%;
+  margin: 0px;
+  opacity: 0;
+  border-style: solid;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+.ui-checkbox input:not(:checked) + .mdi {
+  border-color: rgba(0, 0, 0, 0.2);
+  border-style: dashed;
+}
+.ui-checkbox input:checked + .mdi {
+  border-color: black;
+  border-style: solid;
+  background-color: #e0e0e0;
+}
+.ui-checkbox .mdi {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  pointer-events: none;
+  border: 1px solid black;
+  border-radius: 2px;
+  margin: 0px;
+  width: 30px;
+  height: 30px;
+  padding: 6px;
+  background-color: transparent;
+  box-sizing: border-box;
+  transition: all ease-in-out 0.2s;
+}
+.ui-checkbox:hover .mdi {
+  background-color: #e0e0e0;
+}
+.ui-input-group label {
+  margin-right: 20px;
+}
+.ui-input-group input {
+  margin: 5px;
+}
+.ui-input-group .ui-input {
+  margin: 5px;
+}

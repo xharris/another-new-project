@@ -17,6 +17,7 @@ b_console = {
 	},
 
 	error : function(error) {
+		console.error(error);
 		b_console._add(error, 'error');
 	},
 
