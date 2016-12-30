@@ -29,7 +29,8 @@ var b_ui = {
 		$(".ui-dialog-container").append(
 			"<div class='ui-settings'>"+
 				"<div class='categories'>"+
-					"<button class='category' data-type='ide'>IDE</button>"+
+					"<button class='category' data-type='ide'>ide</button>"+
+					"<button class='category' data-type='plugins'>plugins</button>"+
 					"<button class='category' data-type='engine'>"+b_project.proj_data.engine+"</button>"+
 					"<button class='btn-close' onclick='b_ui.toggleSettings()'>CLOSE</button>"+
 				"</div>"+
@@ -40,7 +41,6 @@ var b_ui = {
 		// selecting a setting category
 		$(".ui-dialog-container").on('click', '.ui-settings > .categories > .category', function(){
 			var type = $(this).data('type');
-			var inputs = b_project.proj_data[type];
 
 			$(".ui-settings > .inputs-container").attr("data-type",type);
 
@@ -50,18 +50,27 @@ var b_ui = {
 				nwFILE.readFile(nwPATH.join(__dirname, "settings.json"), 'utf8', function(err, data) {
 		    		if (!err) {
 		    			input_info = JSON.parse(data);
-		    			b_ui._populateInputs(type, input_info, inputs);
+		    			b_ui._populateInputs(type, input_info);
 			    	}
 		    	});
 			} else if (type === "engine") {
 				var eng_module = nwENGINES[b_project.getData('engine')];
 				if ("settings" in eng_module) {
 					input_info = eng_module.settings;
-		    		b_ui._populateInputs(type, input_info, inputs);
+		    		b_ui._populateInputs(type, input_info);
 				} else {
 					// no settings data so just remove this button
 					$(".ui-dialog-container > .ui-settings > .categories > .category[data-type='engine']").remove();
 				}
+			} else if (type === "plugins") {
+				var info = {};
+				for (var p = 0; p < plugin_names.length; p++) {
+					if ("settings" in nwPLUGINS[plugin_names[p]]) {
+						info[plugin_names[p]] = nwPLUGINS[plugin_names[p]].settings;
+					}
+				}
+
+				b_ui._populateInputs(type, info);
 			} else {
 				$(".ui-settings > .inputs-container").attr("data-type","");
 			}
@@ -71,34 +80,47 @@ var b_ui = {
 				var type = $(this).data("type");
 				var name = $(this).data("name");
 				var value = $(this).val();
+				var subcat = $(this).data("subcategory");
 
 				if (type === "bool")
 					value = $(this).is(':checked');
 				if (type === "number") 
 					value = parseInt(value);
 
-				b_project.setSetting(setting_type, name, value);
+				console.log(setting_type + subcat + name + value);
+
+				if (setting_type === "plugins")
+					b_project.setPluginSetting(subcat, name, value);
+				else 
+					b_project.setSetting(setting_type, name, value);
 			});
 		});
 
 		$(".ui-dialog-container > .ui-settings .category[data-type='ide']").click();
 	},
 
-	_populateInputs : function(type, input_info, input_values) {
-		var user_set = b_project.getData('settings')[type];
+	_populateInputs : function(type, input_info) {
+		var user_set = b_project.getData('settings')[type]; 
 
 		// populate input section with inputs
 		var html_inputs = '';
 		for (var subcat in input_info) {
-			html_inputs += "<div class='subcategory'>"+subcat+"</div>";
+			html_inputs += "<div class='subcategory'>"+subcat.replace("_"," ")+"</div>";
 			for (var i = 0; i < input_info[subcat].length; i++) {
 				var input = input_info[subcat][i];
+
+				if (type === "plugins") {
+					user_set = b_project.getData('settings')[type]; 
+					user_set = user_set[subcat];
+				}
+
+				var common_attr = ' data-subcategory="'+subcat+'" data-name="'+input.name+'" data-type="'+input.type+'" ';
 
 				if (input.type === "bool") {
 					html_inputs += 
 						'<div class="ui-checkbox">'+
 							'<label>'+input.name+'</label>'+
-                			'<input class="settings-input" type="checkbox" data-name="'+input.name+'" data-type="bool" '+(user_set[input.name] ? 'checked' : '')+'>'+
+                			'<input class="settings-input" type="checkbox" '+common_attr+' '+(user_set[input.name] ? 'checked' : '')+'>'+
                 			'<i class="mdi mdi-check"></i>'+
             			'</div>';
 				}
@@ -106,7 +128,7 @@ var b_ui = {
 					html_inputs += 
 						'<div class="ui-input-group">'+
 							'<label>'+input.name+'</label>'+
-							'<input class="ui-input" data-name="'+input.name+'" data-type="'+input.type+'" type="number" min="'+input.min+'" max="'+input.max+'" value="'+user_set[input.name]+'">'+
+							'<input class="ui-input" '+common_attr+' type="number" min="'+input.min+'" max="'+input.max+'" value="'+user_set[input.name]+'">'+
 						'</div>';
 				}
 				if (input.type === "select") {
@@ -117,10 +139,20 @@ var b_ui = {
 					html_inputs +=
 						'<div class="ui-input-group">'+
 							'<label>'+input.name+'</label>'+
-							'<select class="ui-select" data-name="'+input.name+'" data-type="'+input.type+'">'+
+							'<select class="ui-select" '+common_attr+'>'+
 								options+
 							'</select>'+
 						'</div>';
+				}
+				if (input.type === "file") {
+					html_inputs +=
+						'<div class="ui-file">'+
+							'<label>'+input.name+'</label>'+
+							'<button class="ui-button-rect" onclick="'+
+								escapeHtml('chooseFile(\'\',function(path){$(\'input[data-name=\"'+input.name+'\"\').val(path[0]).trigger(\'change\');})')+
+							'">Choose file</button>'+
+							'<input disabled '+common_attr+' type="text" value="'+user_set[input.name]+'">'+
+						'</div>'
 				}
 			}
 		}

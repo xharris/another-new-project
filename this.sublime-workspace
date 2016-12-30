@@ -460,36 +460,72 @@
 	"buffers":
 	[
 		{
-			"file": "/C/Users/XHH/Documents/PROJECTS/pseudo/index.php",
+			"file": "src/engines/phaser/phaser.js",
 			"settings":
 			{
-				"buffer_size": 689,
+				"buffer_size": 7400,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "src/index.html",
+			"file": "src/js/project.js",
 			"settings":
 			{
-				"buffer_size": 3471,
+				"buffer_size": 6248,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "/C/Users/XHH/Documents/PROJECTS/pseudo/js/Pseudo.js",
+			"file": "/C/Users/XHH/Documents/PROJECTS/texteditor/src/js/api/ide.js",
 			"settings":
 			{
-				"buffer_size": 44,
+				"buffer_size": 11159,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/js/library.js",
+			"settings":
+			{
+				"buffer_size": 6321,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "/C/Users/XHH/Documents/PROJECTS/pseudo/Gruntfile.js",
+			"file": "src/less/library.less",
 			"settings":
 			{
-				"buffer_size": 449,
+				"buffer_size": 2785,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/modules/image/less/main.less",
+			"settings":
+			{
+				"buffer_size": 257,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/modules/image/image.js",
+			"settings":
+			{
+				"buffer_size": 1636,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/includes/blanke-kit/blanke-ui.less",
+			"settings":
+			{
+				"buffer_size": 3267,
+				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
 		}
@@ -566,27 +602,52 @@
 	},
 	"expanded_folders":
 	[
-		"/C/Users/XHH/Documents/PROJECTS/pseudo"
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/dig - Copy/temp",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/cache/0.19.3-normal",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/includes",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/includes/blanke-kit",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/image",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/image/less"
 	],
 	"file_history":
 	[
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/package.json",
+		"/C/Users/XHH/Documents/PROJECTS/texteditor/src/js/api/search.js",
+		"/C/Users/XHH/Documents/PROJECTS/texteditor/src/js/suggestions.js",
+		"/C/Users/XHH/Documents/PROJECTS/texteditor/src/js/main.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/console.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/includes/blanke-kit/blanke-ui.less",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/library.less",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/index.html",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/main.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/project.js",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/ui.less",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/main.less",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/titlebar.less",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/console.less",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/imports.less",
+		"/C/Users/XHH/Documents/PROJECTS/pseudo/gruntfile.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/Gruntfile.js",
+		"/C/Users/XHH/Documents/PROJECTS/pseudo/Gruntfile.js",
+		"/C/Users/XHH/Documents/PROJECTS/pseudo/js/Pseudo.js",
+		"/C/Users/XHH/Documents/PROJECTS/pseudo/index.php",
+		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/package.json",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/builder.json",
 		"/C/Users/XHH/Documents/PROJECTS/eventsite/src/less/main.less",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/lorenz/assets/scripts/state/state0_70faae84.js",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/project.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/state/state.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/entity/entity.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/engines/phaser/phaser.js",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/library.less",
 		"/C/Users/XHH/AppData/Local/Temp/scp28263/afs/umbc.edu/users/s/l/slupoli/pub/cs341/xharris1/proj5/src/#output.txt#",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/entity/less/main.less",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/releases/gamething-win32-ia32/resources/app/main.js",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/main.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/library.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/ui.js",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/index.html",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/dig/dig.bip",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/plugins/code_editor/code_editor.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/dig/assets/scripts/state/state0_4f3b8a96.js",
@@ -594,19 +655,14 @@
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/plugins/code_editor/less/main.less",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/lorenz/assets/index.html",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/main.js",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/console.js",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/console.less",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/.gitignore",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/variables.less",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/ui.less",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/main.less",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/engines/phaser/index.html",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/lorenz/temp/index.html",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/engines/phaser/main.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/lorenz/lorenz.bip",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/classes.less",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/settings.json",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/titlebar.less",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/ide.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/2d_platformer/temp/index.html",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/plugins/code_editor.js",
@@ -664,7 +720,6 @@
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/another/scripts/entity/entity0_cf82a1a1.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/logo.ico",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/canvas.js",
-		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/less/imports.less",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/entity/package.json",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/projects/another_proj/another_proj.bip",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/modules/object/less/main.less",
@@ -689,25 +744,20 @@
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/modules/scene/package.json",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/src/js/modules/image.js",
 		"/C/Users/XHH/Documents/PROJECTS/another-new-project/releases/gamething-win32-ia32/resources/app/js/main.js",
-		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ2/CommodityStore.h",
-		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ2/Commodity.h",
-		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ2/Player.cpp",
-		"/C/Users/XHH/AppData/Local/Temp/scp10476/afs/umbc.edu/users/x/h/xharris1/home/CMSC341/PJ2/Game.cpp",
-		"/C/Users/XHH/AppData/Local/Temp/scp10734/afs/umbc.edu/users/x/h/xharris1/home/CMSC341/PJ2/Player.h",
-		"/C/Users/XHH/AppData/Local/Temp/scp10568/afs/umbc.edu/users/x/h/xharris1/home/CMSC341/PJ2/Player.cpp",
-		"/C/Users/XHH/AppData/Local/Temp/scp10312/afs/umbc.edu/users/x/h/xharris1/home/CMSC341/PJ2/output.out",
-		"/C/Users/XHH/AppData/Local/Temp/scp10671/afs/umbc.edu/users/x/h/xharris1/home/CMSC341/PJ2/Objective.h",
-		"/C/Users/XHH/AppData/Local/Temp/scp10737/afs/umbc.edu/users/x/h/xharris1/home/CMSC341/PJ2/Objective.cpp"
+		"/C/Users/XHH/Documents/UMBC/Fall16/CMSC341/PJ2/CommodityStore.h"
 	],
 	"find":
 	{
-		"height": 43.0
+		"height": 34.0
 	},
 	"find_in_files":
 	{
 		"height": 117.0,
 		"where_history":
 		[
+			"C:\\Users\\XHH\\Documents\\PROJECTS\\another-new-project\\src\\modules",
+			"C:\\Users\\XHH\\Documents\\PROJECTS\\another-new-project\\src\\js",
+			"C:\\Users\\XHH\\Documents\\PROJECTS\\another-new-project\\src\\less",
 			"C:\\Users\\XHH\\Documents\\PROJECTS\\another-new-project\\src\\js",
 			"C:\\Users\\XHH\\Documents\\PROJECTS\\another-new-project",
 			"C:\\Users\\XHH\\Documents\\PROJECTS\\another-new-project\\src",
@@ -719,6 +769,10 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"temp",
+			"ui-button",
+			"})\n",
+			"loadModules",
 			"timeout",
 			"console",
 			"mkdirp",
@@ -777,123 +831,242 @@
 	"groups":
 	[
 		{
-			"selected": 3,
+			"selected": 6,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "/C/Users/XHH/Documents/PROJECTS/pseudo/index.php",
+					"file": "src/engines/phaser/phaser.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 689,
+						"buffer_size": 7400,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								357,
-								357
+								881,
+								881
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/PHP/PHP.sublime-syntax"
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 5,
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "src/index.html",
+					"file": "src/js/project.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3471,
+						"buffer_size": 6248,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								1373
+								743,
+								743
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/HTML/HTML.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 49.0,
+						"translation.y": 210.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 6,
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "/C/Users/XHH/Documents/PROJECTS/pseudo/js/Pseudo.js",
+					"file": "/C/Users/XHH/Documents/PROJECTS/texteditor/src/js/api/ide.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 44,
+						"buffer_size": 11159,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								44,
-								44
+								11138,
+								11065
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax"
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": -0.0,
+						"translation.y": 3830.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "src/js/library.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6321,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								6237,
+								6237
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 13.0,
+						"translation.y": 2898.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "src/less/library.less",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2785,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1637,
+								1637
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CSS/CSS.sublime-syntax",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1260.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 3,
 					"type": "text"
 				},
 				{
-					"buffer": 3,
-					"file": "/C/Users/XHH/Documents/PROJECTS/pseudo/Gruntfile.js",
+					"buffer": 5,
+					"file": "src/modules/image/less/main.less",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 449,
+						"buffer_size": 257,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								257,
+								257
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
+							"syntax": "Packages/CSS/CSS.sublime-syntax",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "src/modules/image/image.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1636,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1007,
+								1007
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": -0.0,
+						"translation.y": 252.0,
+						"zoom_level": 1.0
+					},
 					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "src/includes/blanke-kit/blanke-ui.less",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3267,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								714,
+								714
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CSS/CSS.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 210.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
 					"type": "text"
 				}
 			]

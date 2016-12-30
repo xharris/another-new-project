@@ -38,7 +38,7 @@ var mainState = {
         // Make the player jump if he is touching the ground
         if (this.cursor.up.isDown && this.player.body.touching.down) 
             this.player.body.velocity.y = -250;
-      
+            
         // Create 3 groups that will contain our objects
         this.walls = game.add.group();
         this.coins = game.add.group();

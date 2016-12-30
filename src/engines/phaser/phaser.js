@@ -129,24 +129,14 @@ exports.library_const = [
 				"<div id='code'></div>"
 			);
 
-			codemirror = nwPLUGINS['code_editor'].init('code', {
-				mode: 'htmlmixed',
-				lineWrapping: true,
-				extraKeys: {
-					'Ctrl-Space': 'autocomplete',
-					'Ctrl-S': function(){
-						var text = codemirror.getValue();
-						nwFILE.writeFile(nwPATH.join(b_project.curr_project, "assets", "index.html"), text, function(err){
-							if (err)
-								b_console.error(err);
-							else
-								dispatchEvent('something.saved', {what: 'index.html'});
-						});
-					}
-				},
-				lineNumbers: true,
-				theme: 'monokai',
-				value: ""
+			codemirror = nwPLUGINS['code_editor'].init('code', function(){
+				var text = codemirror.getValue();
+				nwFILE.writeFile(nwPATH.join(b_project.curr_project, "assets", "index.html"), text, function(err){
+					if (err)
+						b_console.error(err);
+					else
+						dispatchEvent('something.saved', {what: 'index.html'});
+				});
 			});
 
 			nwFILE.readFile(nwPATH.join(b_project.curr_project, "assets", "index.html"), 'utf-8', function(err, data){
@@ -161,9 +151,14 @@ exports.library_const = [
 var last_object_set;
 var server_running = false;
 document.addEventListener("something.saved", function(e){
-	if (server_running && ["entity.script", "state.script", "project", "index.html"].includes(e.detail.what)) {
-		var path = nwPATH.join(b_project.curr_project, 'temp');
-		build(path, last_object_set);
+	if (["project"].includes(e.detail.what)) {
+		rebuild();
+	}
+});
+
+document.addEventListener("assets.modified", function(e) {
+	if (["project"].includes(e.detail.what)) {
+		rebuild();
 	}
 });
 
@@ -179,8 +174,14 @@ document.addEventListener("project.open", function(e){
 			);
 		}
 	});
-		
-})
+});
+
+function rebuild() {
+	if (server_running) {
+		var path = nwPATH.join(b_project.curr_project, 'temp');
+		build(path, last_object_set);
+	}
+}
 
 exports.run = function(objects) {
 	last_object_set = objects;
@@ -196,7 +197,11 @@ exports.run = function(objects) {
 
 } 
 
+var building = false;
 function build(build_path, objects, callback) {
+	if (building) return;
+	building = true;
+
 	// get main file template code
 	var html_code = nwFILE.readFileSync(nwPATH.join(b_project.curr_project, "assets", "index.html"), 'utf8');
 	var js_code = nwFILE.readFileSync(nwPATH.join(__dirname, 'main.js'), 'utf8');
@@ -275,6 +280,7 @@ function build(build_path, objects, callback) {
 		nwFILE.writeFileSync(nwPATH.join(build_path,'index.html'), html_code);
 		nwFILE.writeFileSync(nwPATH.join(build_path,'main.js'), js_code);
 
+		building = false;
 		if (callback)
 			callback();
 	});

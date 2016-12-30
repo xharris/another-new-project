@@ -162,6 +162,15 @@
 .ui-checkbox:hover .mdi {
   background-color: #e0e0e0;
 }
+.ui-file > input {
+  margin-left: 10px;
+  border: 1px solid gray;
+  border-radius: 4px;
+  outline: none;
+}
+.ui-file > label {
+  margin-left: 10px;
+}
 .ui-input-group label {
   margin-right: 20px;
 }

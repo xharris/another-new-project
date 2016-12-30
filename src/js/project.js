@@ -46,7 +46,7 @@ var b_project = {
 		b_library.reset();
 		b_ide.clearWorkspace();
 
-		try {
+		//try {
 			b_project.proj_data = JSON.parse(nwFILE.readFileSync(bip_path, 'utf8'));
 
 			b_project._setupProject();
@@ -54,13 +54,13 @@ var b_project = {
 			b_project.autosave_on = b_project.proj_data.settings.ide["Autosave changes"];
 			b_console.log("opened "+nwPATH.basename(bip_path));
 
-		} catch (e) {
+		/*} catch (e) {
 			b_console.error("ERR: Can't open " + nwPATH.basename(bip_path));
 
 			b_project.proj_data = {};
 			b_project.bip_path = '';
 			b_project.curr_project = '';
-		}
+		}*/
 
 		if (b_project.bip_path !== '') {
 			b_ide.setHTMLattr("project-open", 1);
@@ -69,6 +69,11 @@ var b_project = {
 		}
 
 		b_ide.saveSetting("last_project_open", this.bip_path);
+
+		nwFILE.watch(b_project.getResourceFolder(''), {'persistent':true, 'recursive':true}, function(action, file){
+			dispatchEvent('assets.modified', {'action':action, 'file':file});
+		});
+
 		dispatchEvent('project.open');
 	},
 
@@ -79,7 +84,7 @@ var b_project = {
 	        dispatchEvent("ide.ready",{});
 	    });
 
-		// add constant library items
+		// add constant library items (exports.library_const)
         if ("library_const" in nwENGINES[b_project.getData("engine")]) {
         	for (var c = 0; c < nwENGINES[b_project.getData("engine")].library_const.length; c++) {
         		var info = nwENGINES[b_project.getData("engine")].library_const[c];
@@ -89,7 +94,7 @@ var b_project = {
         	}
         }
 
-        // get/set ide and engine settings
+        // get/set IDE and ENGINE settings
         b_project.proj_data.settings = ifndef(b_project.proj_data.settings, {});
 
 		if (!b_project.getData("settings").ide) {
@@ -108,14 +113,39 @@ var b_project = {
 				b_project._populateSettings("engine", input_info);
 			}
 		}
+
+		// get/set PLUGIN settings
+		if (!b_project.getData("settings").plugins) {
+			b_project.proj_data.settings["plugins"] = {};
+			for (var p = 0; p < plugin_names.length; p++) {
+				if ("settings" in nwPLUGINS[plugin_names[p]]) {
+					input_info = nwPLUGINS[plugin_names[p]].settings;
+					b_project._populateSettings("plugins", input_info, plugin_names[p]);
+				}
+			}
+		}
 	},
 
-	_populateSettings : function(type, input_info) {
-		for (var subcat in input_info) {
-			for (var i = 0; i < input_info[subcat].length; i++) {
-				var input = input_info[subcat][i];
-				if (!(input.name in b_project.proj_data.settings[type])) {
-					b_project.setSetting(type, input.name, input.default);
+	_populateSettings : function(type, input_info, plugin_name="") {
+		if (type === "plugins") {
+			b_project.proj_data.settings[type][plugin_name] = ifndef(
+				b_project.proj_data.settings[type][plugin_name], {});
+
+			for (var i = 0; i < input_info.length; i++) {
+				var input = input_info[i];
+
+				if (!(input.name in b_project.proj_data.settings[type][plugin_name])) {
+					b_project.setPluginSetting(plugin_name, input.name, input.default);
+				}
+			}
+
+		} else {
+			for (var cat in input_info) {
+				for (var i = 0; i < input_info[cat].length; i++) {
+					var input = input_info[cat][i];
+					if (!(input.name in b_project.proj_data.settings[type])) {
+						b_project.setSetting(type, input.name, input.default);
+					}
 				}
 			}
 		}
@@ -158,21 +188,31 @@ var b_project = {
 		return this.proj_data.settings[type][key];
 	},
 
+	setPluginSetting: function(plugin, key, value) {
+		this.proj_data.settings.plugins[plugin][key] = value;
+		dispatchEvent('plugin.setting.set', {plugin: plugin, key: key, value: value});
+		b_project.autoSaveProject();
+	},
+
+	getPluginSetting: function(plugin, key) {
+		return this.proj_data.settings.plugins[plugin][key];
+	},
+
 	importResource: function(type, path, callback) {
 		if (this.isProjectOpen()) {
 			var cbCalled = false;
 
-			nwMKDIRP(nwPATH.join(this.curr_project, 'assets', type), function() {
+			nwMKDIRP(b_project.getResourceFolder(type), function() {
 				var rd = nwFILE.createReadStream(path);
 				rd.on("error", function(err) {
 					done(err);
 				});
-				var wr = nwFILE.createWriteStream(nwPATH.join(b_project.curr_project, 'assets', type, nwPATH.basename(path)));
+				var wr = nwFILE.createWriteStream(nwPATH.join(b_project.getResourceFolder(type), nwPATH.basename(path)));
 					wr.on("error", function(err) {
 					done(err);
 				});
 				wr.on("close", function(ex) {
-					done(nwPATH.join(b_project.curr_project, 'assets', type, nwPATH.basename(path)));
+					done(nwPATH.join(b_project.getResourceFolder(type), nwPATH.basename(path)));
 				});
 				rd.pipe(wr);
 
@@ -192,10 +232,11 @@ var b_project = {
 		return nwPATH.join(b_project.curr_project, 'assets', type);
 	},
 
+	// TODO: replace new resources
 	copyResources: function(dest_path) {
 		nwFILEX.copy(nwPATH.join(this.curr_project, 'assets'), dest_path, function (err) {
 			if (err) {
-				console.error(err);
+				//console.error(err);
 			}
 		});
 	},

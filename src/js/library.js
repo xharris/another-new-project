@@ -219,7 +219,7 @@ document.addEventListener('project.open', function(e) {
 	b_library.loadTree(b_library.tree);
 
 	// (300)       red,      deep purple, indigo,   blue,     cyan,     green,    yellow,   orange,   brown,    grey,      blue grey
-	var colors = ['#e57373','#9575cd',    '#7986cb','#64b5f6','#4dd0e1','#81c784','#fff176','#ffb74d','#a1887f','#e0e0e0','#90a4ae'];
+	var colors = ['#e57373','#9575cd',    '#7986cb','#64b5f6','#4dd0e1','#81c784','#fff176','#ffb74d','#a1887f','#bdbdbd','#90a4ae'];
 	b_library.setBackColor(colors[Math.floor(Math.random()*colors.length)]);
 });	
 

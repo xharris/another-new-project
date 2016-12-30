@@ -47,5 +47,5 @@ exports.onMouseEnter = function(uuid, properties) {
 }
 
 exports.onMouseLeave = function(uuid, properties) {
-    $('.library .img-hover-'+uuid).remove();
+    $('.library .img-hover').remove();
 }
