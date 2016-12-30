@@ -150,16 +150,16 @@ exports.library_const = [
 
 var last_object_set;
 var server_running = false;
+var rebuild_timeout = 0;
+var REBUILD_TIME = 500;
 document.addEventListener("something.saved", function(e){
 	if (["project"].includes(e.detail.what)) {
-		rebuild();
+		var rebuild_timeout = setTimeout(rebuild(), REBUILD_TIME);
 	}
 });
 
 document.addEventListener("assets.modified", function(e) {
-	if (["project"].includes(e.detail.what)) {
-		rebuild();
-	}
+	var rebuild_timeout = setTimeout(rebuild(), REBUILD_TIME);
 });
 
 document.addEventListener("project.open", function(e){
@@ -176,8 +176,10 @@ document.addEventListener("project.open", function(e){
 	});
 });
 
+
 function rebuild() {
 	if (server_running) {
+		console.log('rebuild');
 		var path = nwPATH.join(b_project.curr_project, 'temp');
 		build(path, last_object_set);
 	}
@@ -274,8 +276,11 @@ function build(build_path, objects, callback) {
 		b_project.copyResources(nwPATH.join(build_path, 'assets'));
 
 		// copy phaser itself
-		nwFILEX.copySync(nwPATH.join(__dirname, 'phaser.min.js'), nwPATH.join(build_path, "phaser.min.js"));
-	
+		nwFILE.readFile(nwPATH.join(build_path, "phaser.min.js"), function(err){
+			if (err)
+				nwFILEX.copySync(nwPATH.join(__dirname, 'phaser.min.js'), nwPATH.join(build_path, "phaser.min.js"));
+		});
+		
 		// write main game files
 		nwFILE.writeFileSync(nwPATH.join(build_path,'index.html'), html_code);
 		nwFILE.writeFileSync(nwPATH.join(build_path,'main.js'), js_code);

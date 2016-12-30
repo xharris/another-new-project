@@ -46,7 +46,7 @@ var b_project = {
 		b_library.reset();
 		b_ide.clearWorkspace();
 
-		//try {
+		try {
 			b_project.proj_data = JSON.parse(nwFILE.readFileSync(bip_path, 'utf8'));
 
 			b_project._setupProject();
@@ -54,13 +54,13 @@ var b_project = {
 			b_project.autosave_on = b_project.proj_data.settings.ide["Autosave changes"];
 			b_console.log("opened "+nwPATH.basename(bip_path));
 
-		/*} catch (e) {
+		} catch (e) {
 			b_console.error("ERR: Can't open " + nwPATH.basename(bip_path));
 
 			b_project.proj_data = {};
 			b_project.bip_path = '';
 			b_project.curr_project = '';
-		}*/
+		}
 
 		if (b_project.bip_path !== '') {
 			b_ide.setHTMLattr("project-open", 1);
@@ -71,6 +71,7 @@ var b_project = {
 		b_ide.saveSetting("last_project_open", this.bip_path);
 
 		nwFILE.watch(b_project.getResourceFolder(''), {'persistent':true, 'recursive':true}, function(action, file){
+			console.log('do it')
 			dispatchEvent('assets.modified', {'action':action, 'file':file});
 		});
 
