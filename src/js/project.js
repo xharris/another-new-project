@@ -71,7 +71,6 @@ var b_project = {
 		b_ide.saveSetting("last_project_open", this.bip_path);
 
 		nwFILE.watch(b_project.getResourceFolder(''), {'persistent':true, 'recursive':true}, function(action, file){
-			console.log('do it')
 			dispatchEvent('assets.modified', {'action':action, 'file':file});
 		});
 
@@ -80,6 +79,9 @@ var b_project = {
 
 	// fill in settings/values that may be undefined
 	_setupProject: function() {
+
+		nwMKDIRP(nwPATH.join(b_project.curr_project, 'assets'));
+
 		// load up engine modules
 	    loadModules(b_project.getData("engine"), function(){
 	        dispatchEvent("ide.ready",{});
@@ -90,7 +92,6 @@ var b_project = {
         	for (var c = 0; c < nwENGINES[b_project.getData("engine")].library_const.length; c++) {
         		var info = nwENGINES[b_project.getData("engine")].library_const[c];
         		var id = b_library.addConstant(info.name);
-        		
         		$(id).on('dblclick', info.dbl_click);
         	}
         }

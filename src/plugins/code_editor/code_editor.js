@@ -1,11 +1,6 @@
 require('codemirror/addon/edit/matchbrackets');
 require('codemirror/addon/edit/closebrackets');
 
-require('codemirror/mode/xml/xml');
-require('codemirror/mode/javascript/javascript');
-require('codemirror/mode/css/css');
-require('codemirror/mode/htmlmixed/htmlmixed');
-
 var nwCODE = require("codemirror/lib/codemirror");
 
 // sel_id : ID of the element that will hold the code editor
@@ -32,8 +27,15 @@ exports.settings = [
 var b_code = function(sel_id, fn_saveScript) {
 	this.file = '';
 
+	var language = nwENGINES[b_project.getData('engine')].language;
+	if (language) {
+		require('codemirror/mode/' + language + '/' + language);
+	} else {
+		language = '';
+	}
+
 	this.codemirror = nwCODE(document.getElementById(sel_id), {
-		mode: 'javascript',
+		mode: language,
 		lineWrapping: false,
 		extraKeys: {
 			'Ctrl-Space': 'autocomplete',
@@ -75,12 +77,14 @@ var b_code = function(sel_id, fn_saveScript) {
 	this.saveFile = function(path, callback) {
 		code = this.codemirror.getValue();
 
-		nwFILE.writeFile(path, code, function(err) {
-			if (err) 
-				b_console.error('ERR: Cannot save ' +path);
+		nwMKDIRP(nwPATH.dirname(path), function(){
+			nwFILE.writeFile(path, code, function(err) {
+				if (err) 
+					b_console.error('ERR: Cannot save ' +path);
 
-			if (callback)
-				callback(err);
+				if (callback)
+					callback(err);
+			});
 		});
 	};
 }

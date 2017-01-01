@@ -3,6 +3,9 @@
  *
  */
 
+var cam_follow;
+var cam_not_follow;
+
 var group_penguin;
 var player;
 
@@ -19,6 +22,7 @@ var address = "http://localhost:8080/";
 
 var promises = [];
 
+var limit = 100;
 
 var StatePlay = {
 	preload: function() {
@@ -33,8 +37,6 @@ var StatePlay = {
         
         group_penguin = game.add.group();
         group_layerground = game.add.group();
-
-		player = new Player();
 
         // parse information about levels
         $.getJSON(address+"assets/levels.json", function(data){
@@ -54,9 +56,9 @@ var StatePlay = {
             }
             $.when.apply($, promises).then(function() {
                 load_level("starter");
-                load_random_level();
-                load_random_level();
-                load_random_level();
+                load_level("stairs");
+                load_level("stairs");
+                load_level("stairs");
             }, function() {
                 // error occurred
             });
@@ -71,7 +73,7 @@ var StatePlay = {
         // setup fragging wall
         kill_wall = {
             x: 0,
-            speed: 1,
+            speed: 0,//1,
             line: new Phaser.Line(0,game.world.top,0,game.world.bottom),
 
             update: function(){
@@ -86,17 +88,31 @@ var StatePlay = {
                 }
             }
         }
+
+        player = new Player();
+
 	},
 
 	update: function() {
         player.update();
 
-        kill_wall.update()
+        kill_wall.update();
+
+        if (layer_ground) {
+            //layer_ground.fixedToCamera = false;
+            layer_ground.cameraOffset.setTo(-player.penguin.spr_main.body.x, -player.penguin.spr_main.body.y);
+        }
+
+        if (player.penguin.spr_main.x > limit) {
+            //limit += 500;
+        }
     },
 
     render: function() {
-        //game.debug.geom(game.world.bounds);
-        game.debug.geom(kill_wall.line);
+        if (layer_ground) {
+            //var bounds = new Phaser.Rectangle(layer_ground.left, layer_ground.top, layer_ground.width, layer_ground.height);
+            //game.debug.geom(bounds);
+        }
     }
 };
 

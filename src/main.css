@@ -509,6 +509,9 @@ body[project-open="1"] .library {
   margin-left: 15px;
   transition: ease-in-out 0.05s all;
 }
+.library .object-tree .folder > .name {
+  text-decoration: underline;
+}
 .library .object-tree .folder.expanded > .name {
   font-style: italic;
 }
@@ -536,6 +539,7 @@ body[project-open="1"] .library {
   outline: 1px solid rgba(0, 0, 0, 0.25);
   z-index: 19;
   background: #FFFFFF;
+  white-space: nowrap;
 }
 .ui-settings .categories {
   position: relative;
@@ -543,6 +547,7 @@ body[project-open="1"] .library {
   height: 100%;
   vertical-align: top;
   text-align: center;
+  white-space: normal;
 }
 .ui-settings .categories .category {
   margin: 3px;
@@ -605,6 +610,7 @@ body[project-open="1"] .library {
 }
 .ui-settings .inputs-container {
   display: inline-block;
+  white-space: normal;
 }
 .ui-settings .inputs-container .subcategory {
   font-size: 20px;

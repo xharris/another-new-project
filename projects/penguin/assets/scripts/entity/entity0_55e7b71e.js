@@ -32,7 +32,7 @@ function Penguin(x=0, y=0) {
     this.spr_outline.anchor.setTo(.5, 0);
   	this.spr_fill.anchor.setTo(.5,0);
 
-    this.spr_main.smoothed = false;
+    this.spr_outline.smoothed = false;
     this.spr_fill.smoothed = false;
 }
 

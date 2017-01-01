@@ -4,7 +4,7 @@
  */
 
 function Player() {
-	this.penguin = new Penguin(300,0);
+	this.penguin = new Penguin(50,0);
 
   	this.vx = 120;
   	this.vy = 300;
@@ -13,11 +13,11 @@ function Player() {
   		y: 550
   	}
 
-  	this.penguin.camFollow();
+  	//this.penguin.camFollow();
 
   	game.physics.arcade.enable(this.penguin.spr_main);
 	  this.penguin.spr_main.body.setCircle(12);
-    this.penguin.spr_main.body.collideWorldBounds = true;
+    this.penguin.spr_main.body.collideWorldBounds = false;
     this.penguin.spr_main.body.gravity.y = this.gravity.y;
 	  this.penguin.spr_main.body.offset.setTo(-12,8);
 }

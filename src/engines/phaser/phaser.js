@@ -2,7 +2,9 @@ var nwCONNECT = require('connect');
 var nwSERVE = require('serve-static');
 var nwBUILD = require('nw-builder');
 
-exports.modules = ['entity', 'image', 'state'];
+exports.modules = ['entity', 'image', 'state', 'spritesheet'];
+exports.language = 'javascript';
+exports.file_ext = 'js';
 
 exports.targets = {
 	"html": {
@@ -163,6 +165,7 @@ document.addEventListener("assets.modified", function(e) {
 });
 
 document.addEventListener("project.open", function(e){
+	if (b_project.getData("engine") !== "phaser") return;
 	server_running = false;
 
 	// copy index.html template to project folder

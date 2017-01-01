@@ -4,7 +4,7 @@ var obj_uuid,
 var editor_obj;
 
 function setCodePath() {
-	obj_prop.code_path = nwPATH.join('state', obj_prop.name + '_' + obj_uuid + '.js');
+	obj_prop.code_path = nwPATH.join('state', obj_prop.name + '_' + obj_uuid + '.' + nwENGINES[b_project.getData('engine')].file_ext);
 }
 
 function getCodePath() {
@@ -43,8 +43,13 @@ function loadScript(uuid) {
 		if (obj_prop.code_path === '') {
 			setCodePath();
 
+			var template_path = (nwENGINES[b_project.getData('engine')].state_template ? 
+						nwENGINES[b_project.getData('engine')].state_template :
+						nwPATH.join(__dirname, "state_template.js")
+					)
+
 			// get code from template
-			nwFILE.readFile(nwPATH.join(__dirname, "state_template.js"), 'utf8', function(err, data) {
+			nwFILE.readFile(template_path, 'utf8', function(err, data) {
 				var code = data;
 				var replacements = [
 					['UUID', obj_uuid],
