@@ -161,9 +161,7 @@ function build(build_path, objects, callback) {
 	main_replacements = [
 		['<INCLUDES>', script_includes],
 		['<STATE_INIT>', state_init],
-		['<FIRST_STATE>', first_state],
-		['<IMAGES>', images],
-		['<SPRITES>', sprites]
+		['<FIRST_STATE>', first_state]
 	];
 
 	conf_replacements = [
