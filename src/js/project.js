@@ -54,6 +54,8 @@ var b_project = {
 			b_project.autosave_on = b_project.proj_data.settings.ide["Autosave changes"];
 			b_console.log("opened "+nwPATH.basename(bip_path));
 
+			b_ide.setTitle(nwPATH.basename(bip_path));
+
 		} catch (e) {
 			b_console.error("ERR: Can't open " + nwPATH.basename(bip_path));
 
@@ -245,6 +247,12 @@ var b_project = {
 
 	isProjectOpen: function() {
 		return this.bip_path != '';
+	},
+
+	openProjectDir : function() {
+		if (b_project.isProjectOpen()) {
+			eSHELL.openItem(nwPATH.dirname(this.bip_path));
+		}
 	}
 };
 

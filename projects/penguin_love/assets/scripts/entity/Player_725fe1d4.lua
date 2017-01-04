@@ -18,11 +18,12 @@ function Player:init()
         HC.rectangle(200, 160, 20, 40)
     }
     
-    
     self.dx = 2
+    self.jump_power = 5
+    self.GRAVITY = 8.5
+    
     self.dy = 0
     self.gravity = 0
-    self.GRAVITY = 5
     self.can_jump = false
     
     HC.register(self.body)
@@ -54,7 +55,7 @@ function Player:update(dt)
     
     -- jumping
     if love.keyboard.isDown("up") and self.can_jump then
-        self.dy = -4
+        self.dy = -self.jump_power
         self.can_jump = false
     end
        

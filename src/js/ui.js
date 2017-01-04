@@ -87,8 +87,6 @@ var b_ui = {
 				if (type === "number") 
 					value = parseInt(value);
 
-				console.log(setting_type + subcat + name + value);
-
 				if (setting_type === "plugins")
 					b_project.setPluginSetting(subcat, name, value);
 				else 
@@ -114,13 +112,19 @@ var b_ui = {
 					user_set = user_set[subcat];
 				}
 
+				if (!(input.name in user_set)) {
+					user_set[input.name] = input.default;
+				}
+
 				var common_attr = ' data-subcategory="'+subcat+'" data-name="'+input.name+'" data-type="'+input.type+'" ';
+
+				console.log(input.name + ' ' + user_set[input.name])
 
 				if (input.type === "bool") {
 					html_inputs += 
 						'<div class="ui-checkbox">'+
 							'<label>'+input.name+'</label>'+
-                			'<input class="settings-input" type="checkbox" '+common_attr+' '+(user_set[input.name] ? 'checked' : '')+'>'+
+                			'<input class="settings-input" type="checkbox" '+common_attr+' '+(user_set[input.name] === true ? 'checked' : '')+'>'+
                 			'<i class="mdi mdi-check"></i>'+
             			'</div>';
 				}
@@ -160,6 +164,14 @@ var b_ui = {
 							'<label>'+input.name+'</label>'+
 							'<input '+common_attr+' type="text" value="'+user_set[input.name]+'">'+
 						'</div>'
+				}
+				if (input.type === "button") {
+					if (input.shape == "rectangle") {
+						html_inputs +=
+							'<br>'+
+							'<button class="ui-button-rect" onclick="'+input.function+'">'+input.name+'</button>'+
+							'<br>';
+					}
 				}
 			}
 		}

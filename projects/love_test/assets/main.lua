@@ -8,15 +8,9 @@ anim8 = require 'plugins.anim8'
 
 assets = require 'assets'
 
-<IMAGES_DECLARE>
-<SPRITES_DECLARE>
-
 <INCLUDES>
 
 function love.load()
-	<IMAGES>
-	<SPRITES>
-
 	-- register gamestates
 	Gamestate.registerEvents()
 	Gamestate.switch(<FIRST_STATE>)
@@ -29,7 +23,7 @@ function love.update(dt)
 end
 
 function love.draw()
-	Signal.emit('love.render')
+	Signal.emit('love.draw')
 end
 
 function love.mousepressed(x, y, button, istouch)

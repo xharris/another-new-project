@@ -21,7 +21,7 @@ exports.run = function(objects) {
 	last_object_set = objects;
 	var path = nwPATH.join(b_project.curr_project, 'BUILDS', 'love');
 	build(path, objects, function(){
-		nwCHILD.exec('\"'+nwPATH.join(__dirname, "love-0.10.2-win32", "love.exe")+'\" \"'+path+'\"', function(err, stdout, stderr){
+		nwCHILD.exec('\"'+nwPATH.join(__dirname, "love-0.10.2-win32", "love.exe")+'\" \"'+path+'\"  --console', function(err, stdout, stderr){
 
 		})
 	});
@@ -29,6 +29,8 @@ exports.run = function(objects) {
 
 exports.settings = {
 	"misc" : [
+		{"type" : "text", "name" : "identity", "default" : "nil"},
+		{"type" : "text", "name" : "version", "default" : "0.10.2"},
 		{"type" : "bool", "name" : "console", "default" : "false"},
 		{"type" : "bool", "name" : "accelerometer joystick", "default" : "true"},
 		{"type" : "bool", "name" : "external storage", "default" : "false"},
@@ -36,6 +38,7 @@ exports.settings = {
 	],
 	"window" : [
 		{"type" : "text", "name" : "title", "default" : "Untitled"},
+		// icon
 		{"type" : "number", "name" : "width", "default" : 800, "min" : 0, "max" : 1000000},
 		{"type" : "number", "name" : "height", "default" : 600, "min" : 0, "max" : 1000000},
 		{"type" : "bool", "name" : "borderless", "default" : "false"},
@@ -43,8 +46,15 @@ exports.settings = {
 		{"type" : "number", "name" : "minwidth", "default" : 1, "min" : 0, "max" : 1000000},
 		{"type" : "number", "name" : "minheight", "default" : 1, "min" : 0, "max" : 1000000},
 
+		{"type" : "bool", "name" : "fullscreen", "default" : "false"},
 		{"type" : "select", "name" : "fullscreen type", "default" : "desktop", "options" : ["desktop", "exclusive"]},
-		{"type" : "bool", "name" : "vsync", "default" : "true"}
+		{"type" : "bool", "name" : "vsync", "default" : "true"},
+
+		{"type" : "number", "name" : "msaa", "default" : 0, "min" : 0, "max" : 16},
+		{"type" : "number", "name" : "display", "default" : 0, "min" : 0, "max" : 16},
+		{"type" : "bool", "name" : "highdpi", "default" : "false"}
+		// window.x
+		// window.y	
 	], 
 	"modules" : [
 		{"type" : "bool", "name" : "audio", "default" : "true"},
@@ -162,7 +172,7 @@ function build(build_path, objects, callback) {
 				  "end\n\n";
 	}
 
-	// LOVE.CONF
+	// CONF.LUA
 	var conf = '';
 	for (var cat in exports.settings) {
 		for (var s = 0; s < exports.settings[cat].length; s++) {
@@ -178,7 +188,8 @@ function build(build_path, objects, callback) {
 
 			var input_type = exports.settings[cat][s].type;
 			if (input_type === "text") {
-				value = "\""+value.addSlashes()+"\"";
+				if (value !== "nil") 
+					value = "\""+value.addSlashes()+"\"";
 			}
 			if (input_type === "select") {
 				value = "\""+value+"\"";
@@ -204,7 +215,7 @@ function build(build_path, objects, callback) {
 		['<ASSETS>', assets]
 	];
 
-	nwHELPER.copyScript(nwPATH.join(__dirname, 'love.conf'), nwPATH.join(build_path,'love.conf'), conf_replacements);
+	nwHELPER.copyScript(nwPATH.join(__dirname, 'conf.lua'), nwPATH.join(build_path,'conf.lua'), conf_replacements);
 	nwHELPER.copyScript(nwPATH.join(__dirname, 'assets.lua'), nwPATH.join(build_path,'assets.lua'), assets_replacements);
 
 	nwMKDIRP(nwPATH.join(build_path, 'assets'), function(){

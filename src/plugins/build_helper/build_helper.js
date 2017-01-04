@@ -8,6 +8,8 @@ exports.copyScript = function(src, dest, replacements, cb_done) {
 				if (cb_done)
 					cb_done(err); 
 			});
+		} else {
+			b_console.error(err);
 		}
 	});
 }

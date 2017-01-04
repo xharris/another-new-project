@@ -4,6 +4,12 @@
 			"type" : "bool",
 			"name" : "Autosave changes",
 			"default" : "true"
+		},
+		{
+			"type" : "button",
+			"name" : "open project dir",
+			"shape" : "rectangle",
+			"function" : "b_project.openProjectDir()"
 		}
 	]
 }
