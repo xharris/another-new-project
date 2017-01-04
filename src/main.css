@@ -36,6 +36,19 @@
   border-radius: 4px;
 }
 .ui-button {
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Chrome/Safari/Opera */
+  -khtml-user-select: none;
+  /* Konqueror */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+    not supported by any browser */
   margin: 3px;
   border: none !important;
   outline: none;
@@ -52,6 +65,19 @@
   cursor: default;
 }
 .ui-button-sphere {
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Chrome/Safari/Opera */
+  -khtml-user-select: none;
+  /* Konqueror */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+    not supported by any browser */
   margin: 3px;
   border: none !important;
   outline: none;
@@ -74,6 +100,19 @@
   border-radius: 100%;
 }
 .ui-button-rect {
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Chrome/Safari/Opera */
+  -khtml-user-select: none;
+  /* Konqueror */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+    not supported by any browser */
   margin: 3px;
   border: none !important;
   background-color: transparent;
@@ -180,6 +219,17 @@
 .ui-input-group .ui-input {
   margin: 5px;
 }
+.ui-text > input {
+  -webkit-app-region: no-drag;
+  border: 20px solid transparent;
+  border-image: linear-gradient(to right, black 0%, transparent 90%, transparent 100%);
+  border-image-slice: 1;
+  border-width: 0px;
+  padding: 3px;
+  border-bottom-width: 1px;
+  outline: none;
+  margin-left: 10px;
+}
 @font-face {
   font-family: "Inconsolata";
   src: url("includes/fonts/inconsolata/inconsolata.otf") format("opentype");
@@ -223,6 +273,19 @@ body[project-open="1"] .titlebar {
   display: inline-block;
 }
 .titlebar .actionbuttons button {
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Chrome/Safari/Opera */
+  -khtml-user-select: none;
+  /* Konqueror */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+    not supported by any browser */
   margin: 3px;
   border: none !important;
   outline: none;
@@ -250,6 +313,19 @@ body[project-open="1"] .titlebar {
   margin-left: 20px;
 }
 .titlebar .gamebuttons button {
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Chrome/Safari/Opera */
+  -khtml-user-select: none;
+  /* Konqueror */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+    not supported by any browser */
   margin: 3px;
   border: none !important;
   outline: none;
@@ -279,6 +355,19 @@ body[project-open="1"] .titlebar {
   right: 5px;
 }
 .titlebar .titlebuttons button {
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Chrome/Safari/Opera */
+  -khtml-user-select: none;
+  /* Konqueror */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+    not supported by any browser */
   margin: 3px;
   border: none !important;
   outline: none;
@@ -343,6 +432,19 @@ body[project-open="1"] .library {
   z-index: 10;
 }
 .library .actions button {
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Chrome/Safari/Opera */
+  -khtml-user-select: none;
+  /* Konqueror */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+    not supported by any browser */
   margin: 3px;
   border: none !important;
   outline: none;
@@ -455,6 +557,19 @@ body[project-open="1"] .library {
 }
 .library .object-tree .folder .name,
 .library .object-tree .object .name {
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Chrome/Safari/Opera */
+  -khtml-user-select: none;
+  /* Konqueror */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+    not supported by any browser */
   padding: 4px;
 }
 .library .object-tree .folder .name:hover,
@@ -467,6 +582,19 @@ body[project-open="1"] .library {
 }
 .library .object-tree .folder .btn-delete-obj,
 .library .object-tree .object .btn-delete-obj {
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Chrome/Safari/Opera */
+  -khtml-user-select: none;
+  /* Konqueror */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+    not supported by any browser */
   margin: 3px;
   border: none !important;
   outline: none;
@@ -550,6 +678,19 @@ body[project-open="1"] .library {
   white-space: normal;
 }
 .ui-settings .categories .category {
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Chrome/Safari/Opera */
+  -khtml-user-select: none;
+  /* Konqueror */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+    not supported by any browser */
   margin: 3px;
   border: none !important;
   background-color: transparent;
@@ -578,6 +719,19 @@ body[project-open="1"] .library {
   background-color: #e0e0e0;
 }
 .ui-settings .categories .btn-close {
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Chrome/Safari/Opera */
+  -khtml-user-select: none;
+  /* Konqueror */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+    not supported by any browser */
   margin: 3px;
   border: none !important;
   background-color: transparent;
@@ -611,6 +765,7 @@ body[project-open="1"] .library {
 .ui-settings .inputs-container {
   display: inline-block;
   white-space: normal;
+  max-width: 75%;
 }
 .ui-settings .inputs-container .subcategory {
   font-size: 20px;
@@ -643,6 +798,19 @@ body[project-open="1"] .library {
   white-space: nowrap;
 }
 .console > div > .btn-close {
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Chrome/Safari/Opera */
+  -khtml-user-select: none;
+  /* Konqueror */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+    not supported by any browser */
   margin: 3px;
   border: none !important;
   outline: none;

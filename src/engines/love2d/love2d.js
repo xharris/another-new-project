@@ -36,10 +36,14 @@ exports.settings = {
 	],
 	"window" : [
 		{"type" : "text", "name" : "title", "default" : "Untitled"},
-		{"type" : "number", "name" : "game width", "default" : 800, "min" : 0, "max" : 1000000},
-		{"type" : "number", "name" : "game height", "default" : 600, "min" : 0, "max" : 1000000},
+		{"type" : "number", "name" : "width", "default" : 800, "min" : 0, "max" : 1000000},
+		{"type" : "number", "name" : "height", "default" : 600, "min" : 0, "max" : 1000000},
+		{"type" : "bool", "name" : "borderless", "default" : "false"},
+		{"type" : "bool", "name" : "resizable", "default" : "true"},
+		{"type" : "number", "name" : "minwidth", "default" : 1, "min" : 0, "max" : 1000000},
+		{"type" : "number", "name" : "minheight", "default" : 1, "min" : 0, "max" : 1000000},
 
-		{"type" : "select", "name" : "fullscreen type", "default" : "desktop", "options" : ["dekstop", "exclusive"]},
+		{"type" : "select", "name" : "fullscreen type", "default" : "desktop", "options" : ["desktop", "exclusive"]},
 		{"type" : "bool", "name" : "vsync", "default" : "true"}
 	], 
 	"modules" : [
@@ -158,6 +162,34 @@ function build(build_path, objects, callback) {
 				  "end\n\n";
 	}
 
+	// LOVE.CONF
+	var conf = '';
+	for (var cat in exports.settings) {
+		for (var s = 0; s < exports.settings[cat].length; s++) {
+			var setting = exports.settings[cat][s].name;
+			var value = b_project.getSetting("engine", setting)
+			var category = cat;
+
+			if (category === "misc") {
+				category = "";
+			} else {
+				category += ".";
+			}
+
+			var input_type = exports.settings[cat][s].type;
+			if (input_type === "text") {
+				value = "\""+value.addSlashes()+"\"";
+			}
+			if (input_type === "select") {
+				value = "\""+value+"\"";
+			}
+
+			if (value != undefined)
+				conf += "t."+category+setting.replace(' ','')+" = "+value+"\n";
+		}
+		conf += "\n";
+	}
+
 	main_replacements = [
 		['<INCLUDES>', script_includes],
 		['<STATE_INIT>', state_init],
@@ -165,8 +197,7 @@ function build(build_path, objects, callback) {
 	];
 
 	conf_replacements = [
-		["<WIDTH>", b_project.getSetting("engine", "game width")],
-		["<HEIGHT>", b_project.getSetting("engine", "game height")]
+		["<CONF>", conf]
 	];
 
 	assets_replacements = [

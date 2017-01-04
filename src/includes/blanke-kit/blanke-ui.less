@@ -37,6 +37,8 @@
 }
 
 .ui-button {
+    .no-select();
+    
     margin: 3px;
     border: none !important;
     outline: none;
@@ -188,5 +190,17 @@
 
     .ui-input {
         margin: 5px;
+    }
+}
+
+.ui-text {
+    > input {
+        .ui-input();
+
+        margin-left: 10px;
+    }
+
+    > label {
+
     }
 }

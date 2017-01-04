@@ -154,6 +154,13 @@ var b_ui = {
 							'<input disabled '+common_attr+' type="text" value="'+user_set[input.name]+'">'+
 						'</div>'
 				}
+				if (input.type === "text") {
+					html_inputs +=
+						'<div class="ui-text">'+
+							'<label>'+input.name+'</label>'+
+							'<input '+common_attr+' type="text" value="'+user_set[input.name]+'">'+
+						'</div>'
+				}
 			}
 		}
 		$(".ui-dialog-container > .ui-settings > .inputs-container").html("");

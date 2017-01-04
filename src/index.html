@@ -45,32 +45,32 @@
 <body>
     <div class="titlebar">
         <div class="ui-btn-group actionbuttons">
-            <button class="btn-newproject"><i class="mdi mdi-file-outline"></i></button>
-            <button class="btn-saveproject"><i class="mdi mdi-content-save"></i></button>
-            <button class="btn-openproject"><i class="mdi mdi-folder-outline"></i></button>
+            <button class="btn-newproject" title="new project"><i class="mdi mdi-file-outline"></i></button>
+            <button class="btn-saveproject" title="save"><i class="mdi mdi-content-save"></i></button>
+            <button class="btn-openproject" title="open..."><i class="mdi mdi-folder-outline"></i></button>
             <button class="btn-devtools" onclick="eIPC.send('show-dev-tools');">
                 <i class="mdi mdi-code-tags"></i>
             </button>
         </div>
         <div class="ui-btn-group gamebuttons">
-            <button class="btn-run"><i class="mdi mdi-play"></i></button>
-            <button class="btn-build" title="deploy project "><i class="mdi mdi-package-variant-closed"></i></button>
+            <button class="btn-run" title="run project"><i class="mdi mdi-play"></i></button>
+            <button class="btn-build" title="deploy project..."><i class="mdi mdi-package-variant-closed"></i></button>
             <button class="btn-settings" title="edit ide/project settings"><i class="mdi mdi-settings"></i></button>
             <button class="btn-console" title="show the console"><i class="mdi mdi-console"></i></button>
         </div>
         <div class="ui-btn-group titlebuttons">
-            <button class="btn-minimize"><i class="mdi mdi-window-minimize"></i></button>
-            <button class="btn-maximize"><i class="mdi mdi-window-maximize"></i></button>
-            <button class="btn-close"><i class="mdi mdi-close"></i></button>
+            <button class="btn-minimize" title="Minimize"><i class="mdi mdi-window-minimize"></i></button>
+            <button class="btn-maximize" title="Maximize"><i class="mdi mdi-window-maximize"></i></button>
+            <button class="btn-close" title="Close"><i class="mdi mdi-close"></i></button>
         </div>
     </div>
 
     <div class="library">
         <div class="actions">
-            <button class="btn-add hidden" disabled><i class="mdi mdi-plus"></i></button>
-            <button class="btn-folder hidden"><i class="mdi mdi-folder-plus"></i></button>
+            <button class="btn-add hidden" title="add element..." disabled><i class="mdi mdi-plus"></i></button>
+            <button class="btn-folder hidden" title="add folder"><i class="mdi mdi-folder-plus"></i></button>
             <div class="ui-checkbox">
-                <input class="btn-delete" type="checkbox">
+                <input class="btn-delete" title="delete elements..." type="checkbox">
                 <i class="mdi mdi-minus"></i>
             </div>
         </div>

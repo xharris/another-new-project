@@ -5,16 +5,17 @@ Timer = require 'plugins.hump.timer'
 Vector = require 'plugins.hump.vector'
 Camera = require 'plugins.hump.camera'
 anim8 = require 'plugins.anim8'
+HC = require 'assets.HC'
 
 assets = require 'assets'
 
 <INCLUDES>
 
-function love.load()
+function love.load()    
 	-- register gamestates
 	Gamestate.registerEvents()
 	Gamestate.switch(<FIRST_STATE>)
-
+    
 	Signal.emit('love.load')
 end
 
@@ -23,7 +24,7 @@ function love.update(dt)
 end
 
 function love.draw()
-	Signal.emit('love.render')
+	Signal.emit('love.draw')
 end
 
 function love.mousepressed(x, y, button, istouch)
@@ -48,4 +49,8 @@ end
 
 function love.quit()
 	Signal.emit('love.quit')
+end
+
+function on_collide(dt, shape_a, shape_b)
+    
 end

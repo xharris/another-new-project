@@ -23,7 +23,7 @@ function love.update(dt)
 end
 
 function love.draw()
-	Signal.emit('love.render')
+	Signal.emit('love.draw')
 end
 
 function love.mousepressed(x, y, button, istouch)
