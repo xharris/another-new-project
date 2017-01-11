@@ -552,7 +552,7 @@ body[project-open="1"] .library {
   border-bottom-width: 1px;
   background: transparent;
   outline: none;
-  font-size: 16px;
+  font-size: 12px;
   padding: 0px;
 }
 .library .object-tree .folder .name,
@@ -570,7 +570,8 @@ body[project-open="1"] .library {
   user-select: none;
   /* Non-prefixed version, currently
     not supported by any browser */
-  padding: 4px;
+  padding: 1px;
+  font-size: 12px;
 }
 .library .object-tree .folder .name:hover,
 .library .object-tree .object .name:hover {
@@ -765,7 +766,10 @@ body[project-open="1"] .library {
 .ui-settings .inputs-container {
   display: inline-block;
   white-space: normal;
-  max-width: 75%;
+  max-width: 100%;
+  max-height: 100%;
+  overflow-y: auto;
+  margin-right: 204px;
 }
 .ui-settings .inputs-container .subcategory {
   font-size: 20px;

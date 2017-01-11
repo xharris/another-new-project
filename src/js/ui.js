@@ -83,7 +83,7 @@ var b_ui = {
 				var subcat = $(this).data("subcategory");
 
 				if (type === "bool")
-					value = $(this).is(':checked');
+					value = $(this).is(':checked') ? true : false;
 				if (type === "number") 
 					value = parseInt(value);
 
@@ -118,13 +118,11 @@ var b_ui = {
 
 				var common_attr = ' data-subcategory="'+subcat+'" data-name="'+input.name+'" data-type="'+input.type+'" ';
 
-				console.log(input.name + ' ' + user_set[input.name])
-
 				if (input.type === "bool") {
 					html_inputs += 
 						'<div class="ui-checkbox">'+
 							'<label>'+input.name+'</label>'+
-                			'<input class="settings-input" type="checkbox" '+common_attr+' '+(user_set[input.name] === true ? 'checked' : '')+'>'+
+                			'<input class="settings-input" type="checkbox" '+common_attr+' '+(user_set[input.name] == "true" || user_set[input.name] == true ? 'checked' : '')+'>'+
                 			'<i class="mdi mdi-check"></i>'+
             			'</div>';
 				}

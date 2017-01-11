@@ -21,9 +21,13 @@ exports.run = function(objects) {
 	last_object_set = objects;
 	var path = nwPATH.join(b_project.curr_project, 'BUILDS', 'love');
 	build(path, objects, function(){
-		nwCHILD.exec('\"'+nwPATH.join(__dirname, "love-0.10.2-win32", "love.exe")+'\" \"'+path+'\"  --console', function(err, stdout, stderr){
-
-		})
+		var cmd = '';
+		if (b_project.getSetting("engine","console")) 
+			cmd = 'start cmd.exe /K \"'+nwPATH.join(__dirname, "love-0.10.2-win32", "love.exe")+' '+path+'\"';
+		else 
+			cmd = '\"'+nwPATH.join(__dirname, "love-0.10.2-win32", "love.exe")+'\" \"'+path+'\"';
+		
+		nwCHILD.exec(cmd);
 	});
 } 
 
@@ -188,7 +192,7 @@ function build(build_path, objects, callback) {
 
 			var input_type = exports.settings[cat][s].type;
 			if (input_type === "text") {
-				if (value !== "nil") 
+				if (value !== "nil" || value == undefined) 
 					value = "\""+value.addSlashes()+"\"";
 			}
 			if (input_type === "select") {

@@ -6,8 +6,8 @@
 
 function <NAME>:init()
 	-- self.variable = value
-	-- Signal.register('update', self.update)
-	-- Signal.register('draw', self.draw)
+	-- Signal.register('love.update', function(dt) self:update(dt) end)
+	-- Signal.register('love.draw', function() self:draw() end)
 end
 
 function <NAME>:update(dt)

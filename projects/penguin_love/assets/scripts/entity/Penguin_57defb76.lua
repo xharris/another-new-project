@@ -17,6 +17,7 @@ function Penguin:init(x, y)
     self.x = x
     self.y = y
     self.xscale = 1
+    self.angle = 0
     self.animation = "stand"
     
     math.randomseed(os.time())
@@ -42,16 +43,16 @@ end
 function Penguin:draw()
     love.graphics.setColor(self.color)
 	if self.animation == "stand" then
-    	self.ani_stand:draw(self.img_fill, self.x, self.y, 0, self.xscale, 1, 16)
+    	self.ani_stand:draw(self.img_fill, self.x, self.y, math.rad(self.angle), self.xscale, 1, 16)
     elseif self.animation == "walk" then
-		self.ani_walk:draw(self.img_fill, self.x, self.y, 0, self.xscale, 1, 16)
+		self.ani_walk:draw(self.img_fill, self.x, self.y, math.rad(self.angle), self.xscale, 1, 16)
     end
     
     love.graphics.setColor(255,255,255)
     if self.animation == "stand" then
-    	self.ani_stand:draw(self.img_outline, self.x, self.y, 0, self.xscale, 1, 16)
+    	self.ani_stand:draw(self.img_outline, self.x, self.y, math.rad(self.angle), self.xscale, 1, 16)
     elseif self.animation == "walk" then
-    	self.ani_walk:draw(self.img_outline, self.x, self.y, 0, self.xscale, 1, 16)
+    	self.ani_walk:draw(self.img_outline, self.x, self.y, math.rad(self.angle), self.xscale, 1, 16)
     end
 end
 

@@ -5,13 +5,16 @@ Timer = require 'plugins.hump.timer'
 Vector = require 'plugins.hump.vector'
 Camera = require 'plugins.hump.camera'
 anim8 = require 'plugins.anim8'
-HC = require 'assets.HC'
+HC = require 'assets.includes.HC'
+require 'assets.includes.LUBE'
+
+require "assets.includes.printr"
 
 assets = require 'assets'
 
 <INCLUDES>
 
-function love.load()    
+function love.load()        
 	-- register gamestates
 	Gamestate.registerEvents()
 	Gamestate.switch(<FIRST_STATE>)
