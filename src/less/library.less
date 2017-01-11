@@ -25,6 +25,7 @@ body{
     /*box-shadow: 1px 0px 5px black;*/
     z-index: 20;
     overflow: hidden;
+    overflow-y: auto;
 
     transition: all ease-in-out 0.2s;
 
@@ -62,6 +63,7 @@ body{
 			.name {
 				margin: 0px;
 				padding: 4px;
+				font-size: @font-size;
 
 				&:hover {
 					background-color: #e0e0e0;
@@ -82,7 +84,6 @@ body{
 	    line-height: 20px;
 	    overflow: auto;
 	    bottom: 0px;
-	    height: 100%;
 
 		&.can-delete {
 			.children {
@@ -124,14 +125,14 @@ body{
 
 				background: transparent;
 				outline: none;
-				font-size: 12px;
+				font-size: @font-size;
 				padding: 0px;
 			}
 
 			.name {
 				.no-select();
 				padding: 1px;
-				font-size: 12px;
+				font-size: @font-size;
 
 				&:hover {
 					background-color: #e0e0e0;

@@ -411,6 +411,7 @@ body[project-open="1"] .library {
   /*box-shadow: 1px 0px 5px black;*/
   z-index: 20;
   overflow: hidden;
+  overflow-y: auto;
   transition: all ease-in-out 0.2s;
 }
 .library .actions {
@@ -484,6 +485,7 @@ body[project-open="1"] .library {
 .library .constant-items .item .name {
   margin: 0px;
   padding: 4px;
+  font-size: 12px;
 }
 .library .constant-items .item .name:hover {
   background-color: #e0e0e0;
@@ -511,7 +513,6 @@ body[project-open="1"] .library {
   line-height: 20px;
   overflow: auto;
   bottom: 0px;
-  height: 100%;
 }
 .library .object-tree.can-delete .children {
   margin-left: 0px !important;

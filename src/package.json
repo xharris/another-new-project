@@ -1,9 +1,9 @@
 {
-  "name": "gamething",
-  "description": "another thing",
+  "name": "BlankE",
+  "description": "i use this to make games now",
   "repository": {
     "type": "git",
-    "url": "git://github.com/xharris/texteditor.git"
+    "url": "git://github.com/xharris/blanke4.git"
   },
   "main": "main.js",
   "author": "Xavier Harris <xhh950@gmail.com> (http://xhhstuff.me)",
