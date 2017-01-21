@@ -45,6 +45,7 @@
     background-color: transparent;
     font-size: 12px;
     cursor: pointer;
+    vertical-align: top;
     /*height: @button-width;
     width: @button-height;*/
 
@@ -57,6 +58,11 @@
             background-color: transparent;
             cursor: default;
         }
+    }
+
+    .mdi-svg {
+        vertical-align: top;
+        text-align: center;
     }
 }
 
@@ -131,19 +137,19 @@
         top: 0px;
         left: 0px;
 
-        &:not(:checked) + .mdi {
+        &:not(:checked) + .mdi, &:not(:checked) + .mdi-svg {
             border-color: rgba(0,0,0,0.2);
             border-style: dashed;
         }
 
-        &:checked + .mdi {
+        &:checked + .mdi, &:checked + .mdi-svg {
             border-color: black;
             border-style: solid;
             background-color: #e0e0e0;
         }
     }
 
-    .mdi {
+    .mdi, .mdi-svg {
         position: absolute;
         top: 0px;
         left: 0px;
@@ -160,8 +166,13 @@
         transition: all ease-in-out 0.2s;
     }
 
+    .mdi-svg {
+        vertical-align: top;
+        text-align: center;
+    }
+
     &:hover {
-        .mdi {
+        .mdi, .mdi-svg {
             background-color: #e0e0e0;
         }
     }

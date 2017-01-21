@@ -32,6 +32,11 @@ body{
 
     transition: all ease-in-out 0.2s;
 
+    .mdi-svg {
+    	width: 12px;
+    	height: 12px;
+    }
+
     .actions {
     	.win-drag();
     	.no-select();
@@ -52,7 +57,12 @@ body{
 			background-color: #E5E5E5;
 		}
 
-		.ui-checkbox .mdi{
+		.ui-checkbox {
+    		width:@button-width;
+    		height:@button-height;			
+		}
+
+		.ui-checkbox .mdi, .ui-checkbox .mdi-svg{
     		width:@button-width;
     		height:@button-height;
 		}

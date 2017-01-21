@@ -55,6 +55,7 @@
   background-color: transparent;
   font-size: 12px;
   cursor: pointer;
+  vertical-align: top;
   /*height: @button-width;
     width: @button-height;*/
   transition: all ease-in-out 0.4s;
@@ -65,6 +66,10 @@
 .ui-button:hover:disabled {
   background-color: transparent;
   cursor: default;
+}
+.ui-button .mdi-svg {
+  vertical-align: top;
+  text-align: center;
 }
 .ui-button-sphere {
   -webkit-touch-callout: none;
@@ -86,6 +91,7 @@
   background-color: transparent;
   font-size: 12px;
   cursor: pointer;
+  vertical-align: top;
   /*height: @button-width;
     width: @button-height;*/
   transition: all ease-in-out 0.4s;
@@ -97,6 +103,10 @@
 .ui-button-sphere:hover:disabled {
   background-color: transparent;
   cursor: default;
+}
+.ui-button-sphere .mdi-svg {
+  vertical-align: top;
+  text-align: center;
 }
 .ui-button-sphere:hover {
   border-radius: 100%;
@@ -119,6 +129,7 @@
   border: none !important;
   background-color: transparent;
   font-size: 12px;
+  vertical-align: top;
   /*height: @button-width;
     width: @button-height;*/
   padding: 5px 10px;
@@ -135,6 +146,10 @@
 .ui-button-rect:hover:disabled {
   background-color: transparent;
   cursor: default;
+}
+.ui-button-rect .mdi-svg {
+  vertical-align: top;
+  text-align: center;
 }
 .ui-button-rect:hover {
   border-radius: 4px;
@@ -179,16 +194,19 @@
   top: 0px;
   left: 0px;
 }
-.ui-checkbox input:not(:checked) + .mdi {
+.ui-checkbox input:not(:checked) + .mdi,
+.ui-checkbox input:not(:checked) + .mdi-svg {
   border-color: rgba(0, 0, 0, 0.2);
   border-style: dashed;
 }
-.ui-checkbox input:checked + .mdi {
+.ui-checkbox input:checked + .mdi,
+.ui-checkbox input:checked + .mdi-svg {
   border-color: black;
   border-style: solid;
   background-color: #e0e0e0;
 }
-.ui-checkbox .mdi {
+.ui-checkbox .mdi,
+.ui-checkbox .mdi-svg {
   position: absolute;
   top: 0px;
   left: 0px;
@@ -203,7 +221,12 @@
   box-sizing: border-box;
   transition: all ease-in-out 0.2s;
 }
-.ui-checkbox:hover .mdi {
+.ui-checkbox .mdi-svg {
+  vertical-align: top;
+  text-align: center;
+}
+.ui-checkbox:hover .mdi,
+.ui-checkbox:hover .mdi-svg {
   background-color: #e0e0e0;
 }
 .ui-file > input {
@@ -276,6 +299,10 @@ body[project-open="1"] .titlebar {
   width: 22px;
   height: 22px;
 }
+.titlebar .mdi-svg {
+  width: 12px;
+  height: 12px;
+}
 .titlebar .actionbuttons {
   -webkit-app-region: no-drag;
   white-space: nowrap;
@@ -301,6 +328,7 @@ body[project-open="1"] .titlebar {
   background-color: transparent;
   font-size: 12px;
   cursor: pointer;
+  vertical-align: top;
   /*height: @button-width;
     width: @button-height;*/
   transition: all ease-in-out 0.4s;
@@ -312,6 +340,10 @@ body[project-open="1"] .titlebar {
 .titlebar .actionbuttons button:hover:disabled {
   background-color: transparent;
   cursor: default;
+}
+.titlebar .actionbuttons button .mdi-svg {
+  vertical-align: top;
+  text-align: center;
 }
 .titlebar .actionbuttons button:hover {
   border-radius: 100%;
@@ -341,6 +373,7 @@ body[project-open="1"] .titlebar {
   background-color: transparent;
   font-size: 12px;
   cursor: pointer;
+  vertical-align: top;
   /*height: @button-width;
     width: @button-height;*/
   transition: all ease-in-out 0.4s;
@@ -352,6 +385,10 @@ body[project-open="1"] .titlebar {
 .titlebar .gamebuttons button:hover:disabled {
   background-color: transparent;
   cursor: default;
+}
+.titlebar .gamebuttons button .mdi-svg {
+  vertical-align: top;
+  text-align: center;
 }
 .titlebar .gamebuttons button:hover {
   border-radius: 100%;
@@ -396,6 +433,10 @@ body[project-open="1"] .titlebar {
   background-color: transparent;
   cursor: default;
 }
+.titlebar .titlebuttons button .mdi-svg {
+  vertical-align: top;
+  text-align: center;
+}
 .titlebar .titlebuttons button:hover {
   border-radius: 100%;
 }
@@ -422,6 +463,10 @@ body[project-open="1"] .library {
   overflow: hidden;
   overflow-y: auto;
   transition: all ease-in-out 0.2s;
+}
+.library .mdi-svg {
+  width: 12px;
+  height: 12px;
 }
 .library .actions {
   -webkit-app-region: drag;
@@ -462,6 +507,7 @@ body[project-open="1"] .library {
   background-color: transparent;
   font-size: 12px;
   cursor: pointer;
+  vertical-align: top;
   /*height: @button-width;
     width: @button-height;*/
   transition: all ease-in-out 0.4s;
@@ -477,13 +523,22 @@ body[project-open="1"] .library {
   background-color: transparent;
   cursor: default;
 }
+.library .actions button .mdi-svg {
+  vertical-align: top;
+  text-align: center;
+}
 .library .actions button:hover {
   border-radius: 100%;
 }
 .library .actions .btn-add:hover {
   background-color: #E5E5E5;
 }
-.library .actions .ui-checkbox .mdi {
+.library .actions .ui-checkbox {
+  width: 22px;
+  height: 22px;
+}
+.library .actions .ui-checkbox .mdi,
+.library .actions .ui-checkbox .mdi-svg {
   width: 22px;
   height: 22px;
 }
@@ -616,6 +671,7 @@ body[project-open="1"] .library {
   background-color: transparent;
   font-size: 12px;
   cursor: pointer;
+  vertical-align: top;
   /*height: @button-width;
     width: @button-height;*/
   transition: all ease-in-out 0.4s;
@@ -636,6 +692,11 @@ body[project-open="1"] .library {
 .library .object-tree .object .btn-delete-obj:hover:disabled {
   background-color: transparent;
   cursor: default;
+}
+.library .object-tree .folder .btn-delete-obj .mdi-svg,
+.library .object-tree .object .btn-delete-obj .mdi-svg {
+  vertical-align: top;
+  text-align: center;
 }
 .library .object-tree .folder .btn-delete-obj:hover,
 .library .object-tree .object .btn-delete-obj:hover {
@@ -710,6 +771,7 @@ body[project-open="1"] .library {
   border: none !important;
   background-color: transparent;
   font-size: 12px;
+  vertical-align: top;
   /*height: @button-width;
     width: @button-height;*/
   padding: 5px 10px;
@@ -730,6 +792,10 @@ body[project-open="1"] .library {
 .ui-settings .categories .category:hover:disabled {
   background-color: transparent;
   cursor: default;
+}
+.ui-settings .categories .category .mdi-svg {
+  vertical-align: top;
+  text-align: center;
 }
 .ui-settings .categories .category:hover {
   border-radius: 4px;
@@ -753,6 +819,7 @@ body[project-open="1"] .library {
   border: none !important;
   background-color: transparent;
   font-size: 12px;
+  vertical-align: top;
   /*height: @button-width;
     width: @button-height;*/
   padding: 5px 10px;
@@ -776,6 +843,10 @@ body[project-open="1"] .library {
 .ui-settings .categories .btn-close:hover:disabled {
   background-color: transparent;
   cursor: default;
+}
+.ui-settings .categories .btn-close .mdi-svg {
+  vertical-align: top;
+  text-align: center;
 }
 .ui-settings .categories .btn-close:hover {
   border-radius: 4px;
@@ -854,6 +925,10 @@ body[project-open="1"] .library {
   background-color: transparent;
   cursor: default;
 }
+.console > div > .btn-close .mdi-svg {
+  vertical-align: top;
+  text-align: center;
+}
 .console > div > .btn-close:hover {
   border-radius: 100%;
 }
@@ -874,6 +949,7 @@ html {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  -webkit-font-smoothing: none;
 }
 body {
   margin: 0px;
