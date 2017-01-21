@@ -1,3 +1,4 @@
+/*
 require('codemirror/addon/edit/matchbrackets');
 require('codemirror/addon/edit/closebrackets');
 require('codemirror/addon/scroll/annotatescrollbar');
@@ -8,8 +9,8 @@ require('codemirror/addon/search/match-highlighter');
 require('codemirror/addon/dialog/dialog')
 require('codemirror/addon/search/search')
 require('codemirror/addon/search/jump-to-line')
+*/
 
-var nwCODE = require("codemirror");
 
 // sel_id : ID of the element that will hold the code editor
 // options : options to pass to CodeMirror
@@ -37,6 +38,24 @@ var b_code = function(sel_id, fn_saveScript) {
 
 	this.file = '';
 
+	this.nwCODE = require("codemirror/lib/codemirror");
+
+	/*
+	require('codemirror/addon/edit/matchbrackets');
+	require('codemirror/addon/edit/closebrackets');
+	require('codemirror/addon/scroll/annotatescrollbar');
+	require('codemirror/addon/search/matchesonscrollbar');
+	require('codemirror/addon/search/searchcursor');
+	require('codemirror/addon/search/match-highlighter');
+
+	require('codemirror/addon/dialog/dialog')
+	require('codemirror/addon/search/search')
+	require('codemirror/addon/search/jump-to-line')
+	*/
+
+	//console.log(this.nwCODE)
+	//console.log(this.nwCODE.defaults.hasOwnProperty("highlightSelectionMatches"))
+
 	var language = nwENGINES[b_project.getData('engine')].language;
 	if (language) {
 		require('codemirror/mode/' + language + '/' + language);
@@ -44,7 +63,7 @@ var b_code = function(sel_id, fn_saveScript) {
 		language = '';
 	}
 	this.fontSize = 12
-	this.codemirror = nwCODE(document.getElementById(sel_id), {
+	this.codemirror = this.nwCODE(document.getElementById(sel_id), {
 		mode: language,
 		lineWrapping: false,
 		extraKeys: {
@@ -59,6 +78,8 @@ var b_code = function(sel_id, fn_saveScript) {
 		indentUnit: 4,
 		highlightSelectionMatches: {showToken: /\w/, annotateScrollbar: true},
 	});
+
+	//console.log(this.codemirror)
 
 	this.setFontSize = function(size) {
 		this.fontSize = size;
@@ -83,12 +104,7 @@ var b_code = function(sel_id, fn_saveScript) {
 		nwFILE.readFile(path, 'utf8', function(err, data){
 			if (!err)
 				_this.codemirror.setValue(data);
-			else {
-				nwFILE.writeFile(path, '', function(err){
-					_this.openFile(path);
-				})
-			}
-
+			
 			if (callback)
 				callback(err);
 		});

@@ -1,3 +1,6 @@
+@button-width: 22px ;
+@button-height: 22px ;
+
 body{
     &[project-open="0"] {
         .titlebar {
@@ -20,11 +23,16 @@ body{
     top: 0px;
     right: 0px;
     height: auto;
-    padding: 0px 2px;
+    padding: 0px;
     margin: 3px;
     z-index: @ide-z-front;
     
     transition: all ease-in-out 0.2s;
+
+    button {
+        width:@button-width;
+        height:@button-height;
+    }
 
     .actionbuttons {
         .win-nodrag();
@@ -53,8 +61,8 @@ body{
 
         white-space: nowrap;
     	position: absolute;
-    	top: 3px;
-    	right: 5px;
+    	top: 0px;
+    	right: 0px;
 
     	button {
             .ui-button-sphere();

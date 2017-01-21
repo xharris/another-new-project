@@ -30,7 +30,7 @@
 /*
     BUTTONS
 */
-.ui-group-button {
+.ui-btn-group {
   cursor: default;
   background-color: rgba(255, 255, 255, 0.4);
   border-radius: 4px;
@@ -53,8 +53,10 @@
   border: none !important;
   outline: none;
   background-color: transparent;
-  font-size: 15px;
+  font-size: 12px;
   cursor: pointer;
+  /*height: @button-width;
+    width: @button-height;*/
   transition: all ease-in-out 0.4s;
 }
 .ui-button:hover {
@@ -82,12 +84,12 @@
   border: none !important;
   outline: none;
   background-color: transparent;
-  font-size: 15px;
+  font-size: 12px;
   cursor: pointer;
+  /*height: @button-width;
+    width: @button-height;*/
   transition: all ease-in-out 0.4s;
   padding: 0px;
-  height: 30px;
-  width: 30px;
 }
 .ui-button-sphere:hover {
   background-color: #e0e0e0;
@@ -116,7 +118,9 @@
   margin: 3px;
   border: none !important;
   background-color: transparent;
-  font-size: 15px;
+  font-size: 12px;
+  /*height: @button-width;
+    width: @button-height;*/
   padding: 5px 10px;
   background-color: white;
   border: none;
@@ -153,7 +157,8 @@
 }
 .ui-checkbox {
   -webkit-app-region: no-drag;
-  height: 30px;
+  /*width: @button-width;
+    height: @button-height;*/
   margin: 3px;
   display: inline-block;
   vertical-align: top;
@@ -191,9 +196,9 @@
   border: 1px solid black;
   border-radius: 2px;
   margin: 0px;
-  width: 30px;
-  height: 30px;
-  padding: 6px;
+  /*width: @button-width;
+        height: @button-height;*/
+  padding: 2px;
   background-color: transparent;
   box-sizing: border-box;
   transition: all ease-in-out 0.2s;

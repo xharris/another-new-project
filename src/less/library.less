@@ -1,3 +1,6 @@
+@button-width: 22px;
+@button-height: 22px;
+
 body{
 	&[project-open="0"] {
 		.library {
@@ -33,20 +36,25 @@ body{
     	.win-drag();
     	.no-select();
     	
+    	margin: 3px;
     	white-space: nowrap;
     	z-index: @library-z-front;
 
     	button {
     		.ui-button-sphere();
     		.win-nodrag();
+
+    		width:@button-width;
+    		height:@button-height;
 		}
 
 		.btn-add:hover {
 			background-color: #E5E5E5;
 		}
 
-		.ui-checkbox {
-			width: 30px;
+		.ui-checkbox .mdi{
+    		width:@button-width;
+    		height:@button-height;
 		}
 	}
 

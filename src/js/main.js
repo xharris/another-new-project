@@ -304,13 +304,19 @@ $(function(){
         clearTimeout(library_timeout);
         dragged = $(e.target);
 
-    }).on('drop', '.folder > .name', function(e) {
+    }).on('drop', '.folder > .name, .object > .name', function(e) {
         var dragged_uuid = $(dragged).data('uuid');
         var target_uuid = $(e.target).parent().data('uuid');
 
         if (dragged_uuid !== target_uuid) {
             // drag object onto folder
             if ($(dragged).is(".object") && $(e.target).parent().is(".folder")) {
+                // is object already in this folder?
+                if ($(dragged).parent().parent().data('uuid') == target_uuid) {
+                    // move it right outside folder
+                    // (not working) target_uuid = $('.object-tree .folder[data-uuid="'+target_uuid+'"]').parent().parent().data('uuid');
+                }
+                // put it in the folder
                 var moving_el = $(dragged).detach();
                 $('.object-tree .folder[data-uuid="'+target_uuid+'"] > .children').append(moving_el);
             }
@@ -319,6 +325,12 @@ $(function(){
             if ($(dragged).is(".folder") && $(e.target).parent().is(".folder") && !$(dragged).has(".folder[data-uuid='"+target_uuid+"']").length) {
                 var moving_el = $(dragged).detach();
                 $('.object-tree .folder[data-uuid="'+target_uuid+'"] > .children').append(moving_el);
+            }
+
+            // drag object onto object
+            if ($(dragged).is(".object") && $(e.target).parent().is(".object")) {
+                var moving_el = $(dragged).detach();
+                $(e.target).parent().after(moving_el);
             }
 
             b_library.saveTree();

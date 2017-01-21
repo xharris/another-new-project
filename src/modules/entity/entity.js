@@ -66,7 +66,12 @@ function loadScript(uuid) {
 				editor_obj.saveFile(getCodePath());
 			});
 		} else {
-			editor_obj.openFile(getCodePath());
+			editor_obj.openFile(getCodePath(), function(err){
+				if (err) {
+					obj_prop.code_path = ''
+					loadScript(uuid);
+				}
+			});
 		}
 	});
 }
