@@ -1,7 +1,4 @@
 {
   "name": "code_editor",
-  "main": "code_editor.js",
-  "dependencies": {
-    "codemirror": "^5.20.2"
-  }
+  "main": "code_editor.js"
 }

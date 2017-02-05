@@ -8,18 +8,83 @@ exports.state_template = nwPATH.join(__dirname, 'state_template.lua');
 exports.language = 'lua';
 exports.file_ext = 'lua';
 
+function getBuildPath() {
+	return nwPATH.join(b_project.curr_project, 'BUILDS');
+}
+
 exports.targets = {
+	"love" : {
+		build: function(objects) {
+			b_console.log('build: love')
+
+			buildLove(objects, function(path){
+				eSHELL.openItem(nwPATH.dirname(path));
+			});
+		}
+	},
+
 	"windows" : {
 		build: function(objects) {
 			b_console.log('build: windows')
-			buildDesktop(objects, 'win');
+
+			var build_path = nwPATH.join(getBuildPath(), 'windows',  b_project.getSetting("engine", "title")+'.exe');
+			nwMKDIRP(nwPATH.dirname(build_path), function(){
+
+				buildLove(objects, function(path){
+					switch(nwOS.platform()) {
+						case "win32":
+							// combine love.exe and .love
+							// Ex. copy /b love.exe+SuperGame.love SuperGame.exe
+							cmd = 'copy /b \"'+nwPATH.join(__dirname, "love-0.10.2-win32", "love.exe")+'\"+\"'+path+'\" \"'+build_path+'\"';
+							nwCHILD.exec(cmd);
+
+							// copy required dlls
+							var other_files = ["love.dll", "lua51.dll", "mpg123.dll", "SDL2.dll"];
+							for (var o = 0; o < other_files.length; o++) {
+								var file = other_files[o];
+								nwFILEX.copy(nwPATH.join(__dirname, "love-0.10.2-win32", file), nwPATH.join(nwPATH.dirname(build_path), file));
+							}
+							
+							eSHELL.openItem(nwPATH.dirname(build_path));
+						break;
+					}
+				});
+
+			});
+		}
+	},
+
+	"mac" : {
+		build: function(objects) {
+			var build_path = nwPATH.join(getBuildPath(), 'mac')
+
+			nwMKDIRP(build_path, function(){
+				// copy love.app and rename it
+				build_path = nwPATH.join(build_path, b_project.getSetting("engine", "title")+'.app');
+				nwFILEX.copy(nwPATH.join(__dirname, "love-0.10.2-macosx-x64", "love.app"), build_path, function(){
+					// create .love and copy it into app/Contents/Resources/
+					buildLove(objects, function(path){
+						nwFILEX.copy(path, nwPATH.join(build_path, 'Contents', 'Resources', b_project.getSetting("engine", "title")+'.love'));
+
+						// modify app/Contents/Info.plist			
+						plist_repl = [
+							['<COMPANY>', 'BlankEXHH'],
+							['<TITLE>', b_project.getSetting("engine", "title")]
+						];
+						plist_path = nwPATH.join(build_path, 'Contents', 'Info.plist');
+						nwHELPER.copyScript(plist_path, plist_path, plist_repl);
+
+						eSHELL.openItem(nwPATH.dirname(build_path));
+					});
+				});
+			});
 		}
 	}
 }
 
 exports.run = function(objects) {
 	last_object_set = objects;
-	var path = nwPATH.join(b_project.curr_project, 'BUILDS', 'love');
+	var path = nwPATH.join(getBuildPath(), 'temp');
 	build(path, objects, function(){
 		var cmd = '';
 		if (b_project.getSetting("engine","console")) 
@@ -171,8 +236,8 @@ function build(build_path, objects, callback) {
 		params = spr.parameters;
 
 		assets += "function assets:"+spr.name+'()\n'+
-				  "\tlocal img = self:"+img.name+"()\n"+
-				  "\treturn anim8.newGrid("+params.frameWidth+", "+params.frameHeight+", img:getWidth(), img:getHeight());\n"+
+				  "\tlocal img = assets:"+img.name+"()\n"+
+				  "\treturn anim8.newGrid("+params.frameWidth+", "+params.frameHeight+", img:getWidth(), img:getHeight()), img\n"+
 				  "end\n\n";
 	}
 
@@ -239,5 +304,19 @@ function build(build_path, objects, callback) {
 				});
 			}
 		});
+	});
+}
+
+function buildLove(objects, callback) {
+	var love_path = nwPATH.join(getBuildPath(), 'love', b_project.getSetting("engine", "title")+'.love');
+	var path = nwPATH.join(getBuildPath(), 'temp');
+
+	build(path, objects, function(){
+		nwHELPER.zip(path, love_path, function(){
+			// remove temp folder
+			nwFILEX.removeSync(path);
+			if (callback) 
+				callback(love_path)
+		});		
 	});
 }

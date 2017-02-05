@@ -465,8 +465,8 @@ body[project-open="1"] .library {
   transition: all ease-in-out 0.2s;
 }
 .library .mdi-svg {
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
 }
 .library .actions {
   -webkit-app-region: drag;
@@ -578,7 +578,7 @@ body[project-open="1"] .library {
   right: 0px;
   z-index: 10;
   box-sizing: border-box;
-  line-height: 20px;
+  line-height: 16px;
   overflow: auto;
   bottom: 0px;
 }
@@ -601,10 +601,16 @@ body[project-open="1"] .library {
 .library .object-tree .folder,
 .library .object-tree .object {
   position: relative;
+  transition: all ease-in-out 0.4s;
 }
 .library .object-tree .folder.dragover,
 .library .object-tree .object.dragover {
   outline-color: #26c6da;
+}
+.library .object-tree .folder.dragover > .name,
+.library .object-tree .object.dragover > .name {
+  line-height: 18px;
+  font-size: 14px;
 }
 .library .object-tree .folder.selected > .name,
 .library .object-tree .object.selected > .name {
@@ -641,6 +647,7 @@ body[project-open="1"] .library {
     not supported by any browser */
   padding: 1px;
   font-size: 12px;
+  transition: all ease-in-out 0.1s;
 }
 .library .object-tree .folder .name:hover,
 .library .object-tree .object .name:hover {
@@ -648,7 +655,7 @@ body[project-open="1"] .library {
 }
 .library .object-tree .folder.can-delete,
 .library .object-tree .object.can-delete {
-  margin-left: 25px;
+  margin-left: 18px;
 }
 .library .object-tree .folder .btn-delete-obj,
 .library .object-tree .object .btn-delete-obj {
@@ -678,9 +685,9 @@ body[project-open="1"] .library {
   padding: 0px;
   position: absolute;
   top: 0px;
-  left: -25px;
-  width: 25px;
-  height: 28px;
+  left: -18px;
+  width: 18px;
+  height: 18px;
   margin: 0px;
   transition: ease-in-out 0.1s background-color;
 }
@@ -736,12 +743,11 @@ body[project-open="1"] .library {
 }
 .ui-settings {
   position: absolute;
-  top: 45px;
+  top: 34px;
   bottom: 0px;
   left: 200px;
   right: 0px;
-  outline: 1px solid rgba(0, 0, 0, 0.25);
-  z-index: 19;
+  z-index: 20;
   background: #FFFFFF;
   white-space: nowrap;
 }
@@ -959,6 +965,9 @@ body {
 body .workspace {
   height: 100%;
   margin-left: 200px;
+  margin-top: 34px;
+  padding-bottom: 34px;
+  box-sizing: border-box;
   z-index: -20;
 }
 ::selection {

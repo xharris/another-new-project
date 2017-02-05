@@ -1,4 +1,7 @@
 {
   "name": "build_helper",
-  "main": "build_helper.js"
+  "main": "build_helper.js",
+  "dependencies": {
+    "archiver": "^1.3.0"
+  }
 }

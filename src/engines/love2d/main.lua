@@ -7,6 +7,8 @@ Camera = require 'plugins.hump.camera'
 anim8 = require 'plugins.anim8'
 
 assets = require 'assets'
+_Entity = require 'plugins.blanke.Entity'
+
 
 <INCLUDES>
 

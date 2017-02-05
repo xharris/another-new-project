@@ -220,6 +220,7 @@ $(function(){
         var uuid = $(this).parent(".object").data('uuid');
         var type = $(this).parent(".object").data('type');
 
+        // call onClose for last open module
         var module_calls = $(".workspace")[0].classList;
         for (var c in module_calls) {
             var mod = module_calls.item(c);
@@ -228,15 +229,23 @@ $(function(){
             }
         }
 
-        last_open = uuid;
-
+        // clear the workspace
         b_ide.clearWorkspace();
         $(".workspace").addClass(type);
 
-        b_library.enableDrag();
-        if (nwMODULES[type].onDblClick) {
-            nwMODULES[type].onDblClick(uuid, b_library.getByUUID(type, uuid))
+        // if the last open module is the same, do nothing
+        if (last_open == uuid) {
+            last_open = undefined; 
+        } 
+        // else: open the module
+        else {
+            last_open = uuid;
+            b_library.enableDrag();
+            if (nwMODULES[type].onDblClick) {
+                nwMODULES[type].onDblClick(uuid, b_library.getByUUID(type, uuid))
+            }  
         }
+
 
     }).on("click", ".object .name", function(){
         var uuid = $(this).parent(".object").data('uuid');
@@ -354,7 +363,7 @@ $(function(){
 
     })
 
-
+    b_ui.replaceSVGicons();
 });
 
 function lib_showDeleteBtn() {
@@ -444,14 +453,18 @@ function importLess(name, file, type='modules') {
                     paths: [nwPATH.join(__dirname,"less"),nwPATH.join(__dirname, type, name, "less")],
                 },
                 function (e, output) {
-                    var head  = document.getElementsByTagName('head')[0];
-                    var link  = document.createElement('style');
-                    link.id   = file.hashCode();
-                    link.rel  = 'stylesheet';
-                    link.type = 'text/css';
-                    link.media = 'all';
-                    $(link).html(output.css);
-                    head.appendChild(link);
+                    try {
+                        var head  = document.getElementsByTagName('head')[0];
+                        var link  = document.createElement('style');
+                        link.id   = file.hashCode();
+                        link.rel  = 'stylesheet';
+                        link.type = 'text/css';
+                        link.media = 'all';
+                        $(link).html(output.css);
+                        head.appendChild(link);
+                    } catch (e) {
+                        b_console.error(e)
+                    }
                 });
         }
     });

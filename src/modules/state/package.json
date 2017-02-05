@@ -1,7 +1,4 @@
 {
   "name": "state",
-  "main": "state.js",
-  "dependencies": {
-    "codemirror": "^5.20.2"
-  }
+  "main": "state.js"
 }

@@ -1,5 +1,8 @@
-@button-width: 22px;
-@button-height: 22px;
+@lib-button-width: 22px;
+@lib-button-height: 22px;
+
+@lib-svg-width: 14px;
+@lib-svg-height: 14px;
 
 body{
 	&[project-open="0"] {
@@ -33,8 +36,8 @@ body{
     transition: all ease-in-out 0.2s;
 
     .mdi-svg {
-    	width: 12px;
-    	height: 12px;
+    	width: @lib-svg-width;
+    	height: @lib-svg-height;
     }
 
     .actions {
@@ -49,8 +52,8 @@ body{
     		.ui-button-sphere();
     		.win-nodrag();
 
-    		width:@button-width;
-    		height:@button-height;
+    		width:@lib-button-width;
+    		height:@lib-button-height;
 		}
 
 		.btn-add:hover {
@@ -58,13 +61,13 @@ body{
 		}
 
 		.ui-checkbox {
-    		width:@button-width;
-    		height:@button-height;			
+    		width:@lib-button-width;
+    		height:@lib-button-height;			
 		}
 
 		.ui-checkbox .mdi, .ui-checkbox .mdi-svg{
-    		width:@button-width;
-    		height:@button-height;
+    		width:@lib-button-width;
+    		height:@lib-button-height;
 		}
 	}
 
@@ -99,7 +102,7 @@ body{
 	    right: 0px;
 	    z-index: 10;
 	    box-sizing: border-box;
-	    line-height: 20px;
+	    line-height: 16px;
 	    overflow: auto;
 	    bottom: 0px;
 
@@ -127,9 +130,15 @@ body{
 
 		.folder,.object{
 			position: relative;
+			transition: all ease-in-out 0.4s;
 
 			&.dragover {
 				outline-color: @ide-fave-color-400;
+				
+				>.name{
+					line-height: 18px;
+					font-size: @font-size + 2;
+				}
 			}
 
 			&.selected {
@@ -151,6 +160,7 @@ body{
 				.no-select();
 				padding: 1px;
 				font-size: @font-size;
+				transition: all ease-in-out 0.1s;
 
 				&:hover {
 					background-color: #e0e0e0;
@@ -158,7 +168,7 @@ body{
 			}
 
 			&.can-delete {
-				margin-left: 25px;
+				margin-left: 18px;
 			}
 
 			.btn-delete-obj {
@@ -166,10 +176,10 @@ body{
 
     			position: absolute;
     			top: 0px;
-    			left: -25px;
+    			left: -18px;
 
-    			width: 25px;
-    			height: 28px;
+    			width: 18px;
+    			height: 18px;
     			margin: 0px;
 
 				transition: ease-in-out 0.1s background-color;
