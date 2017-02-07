@@ -1,4 +1,7 @@
-The world's first unformatted readme.
+# BlankE - Game Development Tool
+WIKI: https://github.com/xharris/blanke4/wiki
+
+Unformatted stuff that's not in the wiki
 
 UI classes or whatever
 
