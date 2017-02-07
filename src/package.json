@@ -10,7 +10,8 @@
   "license": "CC-BY-NC-SA-4.0",
   "scripts": {
     "start": "grunt && electron .",
-    "release": "npm run clean_modules && epi",
+    "release": "npm run clean_modules && npm run asar",
+    "asar": "asar pack \"../src\" \"../releases/BlankE-win32-ia32/resources/app.asar\" --unpack-dir \"**/engines/**\"",
     "clean_modules": "npm prune --production"
   },
   "webkit": {
@@ -20,6 +21,7 @@
     "electron-cookies": "^1.1.0",
     "fs-extra": "^0.26.7",
     "getmac": "^1.2.1",
+    "hazardous": "^0.2.3",
     "image-size": "^0.4.0",
     "less": "^2.7.1",
     "mdi": "^1.6.50",

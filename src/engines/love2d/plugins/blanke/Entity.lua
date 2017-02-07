@@ -1,20 +1,21 @@
 local assets = require "assets"
 
 _Entity = {
-	_images = {},
+	_images = {},		
 	_sprites = {}, 			-- is actually the animations
-	sprite = nil,
+	sprite = nil,			-- currently active animation
 
-	x = 0,
+	-- x and y coordinate of sprite
+	x = 0,	
 	y = 0,
 
 	-- sprite/animation variables
-	sprite_prev = '', 		-- previously used sprites
-	sprite_index = '',
+	_sprite_prev = '', 		-- previously used sprite
+	sprite_index = '',		-- string index of the current sprite
 	sprite_width = 0, 		-- readonly
 	sprite_height = 0,		-- readonly
 	sprite_angle = 0, 		-- angle of sprite in degrees
-	sprite_xscale = 1,
+	sprite_xscale = 1,		
 	sprite_yscale = 1,
 	sprite_xoffset = 0,
 	sprite_yoffset = 0,
@@ -104,9 +105,9 @@ _Entity = {
 
 		if self.sprite ~= nil then
 			-- sprite dimensions
-			if self.sprite_prev ~= self.sprite_index  then
+			if self._sprite_prev ~= self.sprite_index  then
 				self.sprite_width, self.sprite_height = self.sprite:getDimensions()
-				self.sprite_prev = self.sprite_index
+				self._sprite_prev = self.sprite_index
 			end
 
 			-- draw current sprite (image, x,y, angle, sx, sy, ox, oy, kx, ky) s=scale, o=origin, k=shear
@@ -129,21 +130,36 @@ _Entity = {
 
 		local ani_name = args[2]
 		local name = args[3]
-		local speed = args[#args]
+		local frames = args[4]
 		local other_args = {}
 
+		print_r(other_args)
+
 		-- get other args
-		for a = 4,#args-1 do
+		for a = 5,#args do
 			table.insert(other_args, args[a])
 		end
 
 		if assets[name] ~= nil then
 			local sprite, image = assets[name]()
-			local sprite = anim8.newAnimation(sprite(unpack(other_args)), speed)
+			local sprite = anim8.newAnimation(sprite(unpack(frames)), unpack(other_args))
 
 			self._images[ani_name] = image
 			self._sprites[ani_name] = sprite
 		end	
+	end,
+
+	-- other : Entity object
+	-- returns distance between center of self and other object in pixels
+	distance = function(self, other)
+		return math.sqrt((other.x - self.x)^2 + (other.y - self.y)^2)
+	end,
+
+	-- self direction and speed will be set towards the given point
+	-- this method will not set the speed back to 0 
+	move_towards_point = function(self, x, y, speed)
+		self.direction = math.deg(math.atan2(y - self.y, x - self.x))
+		self.speed = speed
 	end
 }
 

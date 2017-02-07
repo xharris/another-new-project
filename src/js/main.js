@@ -4,6 +4,7 @@ var ZOOM_AMT = 1;
 var LIBRARY_RENAME_HOLD_TIME = 600;
 var PROJECT_SAVE_TIME = 500;
 
+require('hazardous');
 require('electron-cookies');
 
 var nwFILE = require('fs');
