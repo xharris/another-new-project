@@ -44,7 +44,7 @@ _Entity = {
 			self:preUpdate(dt)
 		end	
 
-		if self.sprite ~= nil then
+		if self.sprite ~= nil and self.sprite.update ~= nil then
 			self.sprite:update(dt)
 		end
 
@@ -66,11 +66,12 @@ _Entity = {
 			self._gravityx = 0
 			self._gravityy = 0
 		end	
-		self._gravityx = self._gravityx + gravx
-		self._gravityy = self._gravityy + gravy
 		
-		self.x = self.x + self.hspeed*dt + speedx*dt + self._gravityx*dt
-		self.y = self.y + self.vspeed*dt + speedy*dt + self._gravityy*dt
+		self.hspeed = self.hspeed + speedx + gravx
+		self.vspeed = self.vspeed + speedy + gravy
+
+		self.x = self.x + self.hspeed*dt
+		self.y = self.y + self.vspeed*dt
 
 		if self.speed > 0 then
 			self.speed = self.speed - (self.speed * self.friction)
@@ -113,7 +114,13 @@ _Entity = {
 			-- draw current sprite (image, x,y, angle, sx, sy, ox, oy, kx, ky) s=scale, o=origin, k=shear
 			local img = self._images[self.sprite_index]
 			love.graphics.setColor(self.sprite_color.r, self.sprite_color.g, self.sprite_color.b, self.sprite_alpha)
-			self.sprite:draw(img, self.x, self.y, math.rad(self.sprite_angle), self.sprite_xscale, self.sprite_yscale, self.sprite_xoffset, self.sprite_yoffset, self.sprite_xshear, self.sprite_yshear)
+			
+			-- is it an Animation or an Image
+			if self.sprite.update ~= nil then
+				self.sprite:draw(img, self.x, self.y, math.rad(self.sprite_angle), self.sprite_xscale, self.sprite_yscale, self.sprite_xoffset, self.sprite_yoffset, self.sprite_xshear, self.sprite_yshear)
+			else
+				love.graphics.draw(img, self.x, self.y, math.rad(self.sprite_angle), self.sprite_xscale, self.sprite_yscale, self.sprite_xoffset, self.sprite_yoffset, self.sprite_xshear, self.sprite_yshear)
+			end
 		else
 			self.sprite_width = 0
 			self.sprite_height = 0
@@ -133,8 +140,6 @@ _Entity = {
 		local frames = args[4]
 		local other_args = {}
 
-		print_r(other_args)
-
 		-- get other args
 		for a = 5,#args do
 			table.insert(other_args, args[a])
@@ -142,10 +147,17 @@ _Entity = {
 
 		if assets[name] ~= nil then
 			local sprite, image = assets[name]()
-			local sprite = anim8.newAnimation(sprite(unpack(frames)), unpack(other_args))
 
-			self._images[ani_name] = image
-			self._sprites[ani_name] = sprite
+			-- this is an image not a spritesheet
+			if image == nil then
+				self._images[ani_name] = sprite
+				self._sprites[ani_name] = sprite
+			else
+				local sprite = anim8.newAnimation(sprite(unpack(frames)), unpack(other_args))
+
+				self._images[ani_name] = image
+				self._sprites[ani_name] = sprite
+			end
 		end	
 	end,
 
