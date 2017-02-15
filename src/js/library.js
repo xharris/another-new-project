@@ -6,6 +6,10 @@ b_library = {
 		$(".library").animate({"background-color": color}, 200);
 	},
 
+	getBackColor: function() {
+		return $(".library").css("background-color");
+	},
+
 	reset: function() {
 		b_library.objects = {};
 		b_library.tree = {};
@@ -109,6 +113,8 @@ b_library = {
 		var type = html_obj.data('type');
 		var obj = b_library.getByUUID(type, uuid);
 
+		var old_name = obj.name;
+
 		// check new name for validity
 		if (new_name === '') {
 			new_name = obj.name;
@@ -120,8 +126,10 @@ b_library = {
 		// set 'new name'
 		obj.name = new_name;
 
+		if (old_name != new_name)
+			dispatchEvent('library.rename', {uuid: uuid, old: old_name, new: new_name});
+
 	    b_project.setData('library', b_library.objects);
-		
 		b_project.autoSaveProject();
 
 		return new_name;
@@ -223,3 +231,14 @@ document.addEventListener('project.open', function(e) {
 	b_library.setBackColor(colors[Math.floor(Math.random()*colors.length)]);
 });	
 
+$(function(){
+	$(".library").resizable({
+		handles: "e",
+		resize: function(event, ui){
+			$(".workspace").css("margin-left", ui.size.width)
+			$(".workspace").css("padding-right", ui.size.width)
+			$("body[project-open='1'] .titlebar").css("left", ui.size.width);
+			$(".ui-dialog-container").css("margin-left", ui.size.width);
+		}
+	});
+});

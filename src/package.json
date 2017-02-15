@@ -27,6 +27,7 @@
     "mdi": "^1.6.50",
     "mkdirp": "^0.5.1",
     "open": "0.0.5",
+    "replace-in-file": "^2.3.0",
     "rimraf": "^2.5.4"
   },
   "devDependencies": {

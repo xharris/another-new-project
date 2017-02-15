@@ -154,6 +154,9 @@ function updatePreview(img_key) {
     var img_width = $(".img-preview-container > img").width();
     var img_height = $(".img-preview-container > img").height();
 
+    // resize canvas
+    game.scale.setGameSize(img_width, img_height);
+
 	// change width/height input constraints
 	$(".inputs-section input[name='frameWidth']").attr('max', img_width);
 	$(".inputs-section input[name='frameHeight']").attr('max', img_width);

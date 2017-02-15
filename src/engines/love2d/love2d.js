@@ -88,7 +88,7 @@ exports.run = function(objects) {
 	build(path, objects, function(){
 		var cmd = '';
 		if (b_project.getSetting("engine","console")) 
-			cmd = 'start cmd.exe /K \"'+nwPATH.join(__dirname, "love-0.10.2-win32", "love.exe")+' '+path+'\"';
+			cmd = 'start cmd.exe /K \"\"'+nwPATH.join(__dirname, "love-0.10.2-win32", "love.exe")+'\" \"'+path+'\"\"';
 		else 
 			cmd = '\"'+nwPATH.join(__dirname, "love-0.10.2-win32", "love.exe")+'\" \"'+path+'\"';
 		

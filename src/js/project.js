@@ -172,6 +172,10 @@ var b_project = {
 		}
 	},
 
+	getEngine: function() {
+		return nwENGINES[b_project.getData('engine')]
+	},
+
 	// data that is saved to project file
 	setData: function(key, value) {
 		this.proj_data[key] = value;

@@ -5,6 +5,7 @@ Timer = require 'plugins.hump.timer'
 Vector = require 'plugins.hump.vector'
 Camera = require 'plugins.hump.camera'
 anim8 = require 'plugins.anim8'
+HC = require 'plugins.HC'
 
 assets = require 'assets'
 _Entity = require 'plugins.blanke.Entity'

@@ -1,4 +1,4 @@
-const DEV_MODE = false; // show dev tools
+const DEV_MODE = true; // show dev tools
 
 /* electron start */
 const electron = require('electron');
@@ -65,11 +65,11 @@ function createWindow () {
   }
 
   mainWindow.setMenu(null);
-
+/*
   globalShortcut.register('Control+R', () => {
       mainWindow.webContents.send("focus-search");
   });
-
+*/
     var template = [{
         label: "Application",
         submenu: [
@@ -92,7 +92,14 @@ function createWindow () {
             { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
             { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
             { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
-        ]}
+        ]}, {
+          label: "Project",
+          submenu: [
+            { label: "Run", accelerator: "CmdOrCtrl+R", click: function(){
+              mainWindow.webContents.send("run-project");
+            }}
+          ]
+        }
     ];
 
     Menu.setApplicationMenu(Menu.buildFromTemplate(template));

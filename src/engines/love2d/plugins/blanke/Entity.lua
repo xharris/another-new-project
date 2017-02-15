@@ -39,6 +39,10 @@ _Entity = {
 	xstart = 0,
 	ystart = 0,
 
+	-- collision
+	shapes = {},
+	_main_shape = '',
+
 	update = function(self, dt)
 		if self.preUpdate then
 			self:preUpdate(dt)
@@ -48,33 +52,64 @@ _Entity = {
 			self.sprite:update(dt)
 		end
 
+		-- x/y extra coordinates
 		if self.xstart == 0 then
 			self.xstart = self.x
 		end
 		if self.ystart == 0 then
 			self.ystart = self.y
 		end
+
+		-- move shapes if the x/y is different
+		if self.xprevious ~= self.x or self.yprevious ~= self.y then
+			for s, shape in pairs(self.shapes) do
+				shape:moveTo(self.x, self.y)
+			end
+		end
+
 		self.xprevious = self.x
 		self.yprevious = self.y
 
+		-- calculate speed/direction
 		local speedx = self.speed * math.cos(math.rad(self.direction))
 		local speedy = self.speed * math.sin(math.rad(self.direction))
+
+		-- calculate gravity/gravity_direction
 		local gravx = self.gravity * math.cos(math.rad(self.gravity_direction))
 		local gravy = self.gravity * math.sin(math.rad(self.gravity_direction))
-
 		if self.gravity == 0 then
 			self._gravityx = 0
 			self._gravityy = 0
 		end	
 		
-		self.hspeed = self.hspeed + speedx + gravx
-		self.vspeed = self.vspeed + speedy + gravy
+		self.hspeed = self.hspeed + gravx
+		self.vspeed = self.vspeed + gravy
 
-		self.x = self.x + self.hspeed*dt
-		self.y = self.y + self.vspeed*dt
+		local dx = self.hspeed + speedx
+		local dy = self.vspeed + speedy
+
+		-- move all shapes
+		for s, shape in pairs(self.shapes) do
+			shape:move(dx*dt, dy*dt)
+		end
+
+		-- check for collisions
+		for s, shape in pairs(self.shapes) do
+			if self.onCollision then
+				self.onCollision(HC.collisions(shape))
+			end
+		end
+
+		-- set position of sprite
+		if self.shapes[self._main_shape] ~= nil then
+			self.x, self.y = self.shapes[self._main_shape]:center()
+		else
+			self.x = self.x + dx*dt
+			self.y = self.y + dy*dt
+		end
 
 		if self.speed > 0 then
-			self.speed = self.speed - (self.speed * self.friction)
+			self.speed = self.speed - (self.speed * self.friction)*dt
 		end
 
 		if self.postUpdate then
@@ -82,7 +117,7 @@ _Entity = {
 		end	
 	end,
 
-	debugDraw = function(self)
+	debugSprite = function(self)
 		local sx = self.sprite_xoffset
 		local sy = self.sprite_yoffset
 
@@ -91,10 +126,22 @@ _Entity = {
 		love.graphics.rotate(math.rad(self.sprite_angle))
 		love.graphics.shear(self.sprite_xshear, self.sprite_yshear)
 		love.graphics.scale(self.sprite_xscale, self.sprite_yscale)
+
+		-- draw sprite outline
 		love.graphics.rectangle("line", -sx, -sy, self.sprite_width, self.sprite_height)
+
+		-- draw origin point
 		love.graphics.circle("line", 0, 0, 2)
 		love.graphics.rotate(0)
+
 		love.graphics.pop()
+	end,
+
+	debugCollision = function(self)
+		-- draw collision shapes
+		for s, shape in pairs(self.shapes) do
+			shape:draw("line")
+		end
 	end,
 
 	draw = function(self)
@@ -159,6 +206,56 @@ _Entity = {
 				self._sprites[ani_name] = sprite
 			end
 		end	
+	end,
+
+	-- add a collision shape
+	-- str shape: rectangle, polygon, circle, point
+	-- str name: reference name of shape
+	addShape = function(self, name, shape, args, tag)
+		local new_shape
+
+		local xoffset = self.x
+		local yoffset = self.y
+
+		if shape == "rectangle" then
+			args[1] = args[1] + xoffset
+			args[2] = args[2] + yoffset
+			new_shape = HC.rectangle(unpack(args))
+		elseif shape == "polygon" then
+			for a = 0, #args, 2 do
+				args[a] = args[a] + xoffset
+				args[a+1] = args[a+1] + yoffset
+			end
+			new_shape = HC.polygon(unpack(args))
+		elseif shape == "circle" then
+			args[1] = args[1] + xoffset
+			args[2] = args[2] + yoffset
+			new_shape = HC.circle(unpack(args))
+		elseif shape == "point" then
+			args[1] = args[1] + xoffset
+			args[2] = args[2] + yoffset
+			new_shape = HC.point(unpack(args))
+		end
+
+		new_shape.xoffset = xoffset
+		new_shape.yoffset = yoffset
+		new_shape.tag = tag
+		self.shapes[name] = new_shape
+		HC.register(new_shape)
+	end,
+
+	-- remove a collision shape
+	removeShape = function(self, name)
+		if self.shapes[name] ~= nil then
+			HC.remove(self.shapes[name])
+		end
+	end,
+
+	-- the shape that the sprite will follow
+	setMainShape = function(self, name, x_offset, y_offset) 
+		if self.shapes[name] ~= nil then
+			self._main_shape = name
+		end 
 	end,
 
 	-- other : Entity object

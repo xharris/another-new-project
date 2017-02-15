@@ -3,6 +3,7 @@
 ]]--
 
 <NAME> = Class{}
+<NAME>:include(_Entity) 
 
 function <NAME>:init()
 	-- self.variable = value
@@ -26,5 +27,4 @@ function <NAME>:postDraw()
 
 end
 
-<NAME>:include(_Entity) 
 return <NAME>

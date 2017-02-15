@@ -17,12 +17,13 @@
     padding: 10px;
 }
 */
-.workspace.spritesheet {
+body .workspace.spritesheet {
+    width: 100%;
+
     .preview-container {
         .no-select();
 
         height: 50%;
-        margin-top: 46px;
         padding: 0px 10px;
 
         >* {
@@ -59,11 +60,14 @@
         display: inline-block;
         width: 100%;
         padding: 10px;
+        box-sizing: border-box;
+        height: 50%;
+        overflow: auto;
 
         .ui-input-group {
-            margin: 10px 0px;
-
             input {
+                .ui-input();
+
                 margin-left: 10px;
                 width: 60px;
             }

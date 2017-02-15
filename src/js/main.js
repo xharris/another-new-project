@@ -23,6 +23,7 @@ var nwMKDIRP = require("mkdirp");
 var nwLESS = require("less");
 var nwFILEX = require("fs-extra");
 var nwOPEN = require("open");
+var nwREPLACE = require('replace-in-file');
 //var nwUA = require("universal-analytics");
 
 var eIPC = require('electron').ipcRenderer;
@@ -131,18 +132,18 @@ $(function(){
     });
 
     $(".titlebar .gamebuttons .btn-build").on('click', function(){
-        var targets = Object.keys(nwENGINES[b_project.getData('engine')].targets);
+        var targets = Object.keys(b_project.getEngine().targets);
 
         const menu = new eMENU();
         for (var m = 0; m < targets.length; m++) {
             menu.append(new eMENUITEM({label: targets[m], click(item, focusedWindow) {
-                nwENGINES[b_project.getData('engine')].targets[item.label].build(b_library.objects)
+                b_project.getEngine().targets[item.label].build(b_library.objects)
             }}))
         }
         menu.popup(eREMOTE.getCurrentWindow());
     });
     $(".titlebar .gamebuttons .btn-run").on('click', function(){
-        nwENGINES[b_project.getData('engine')].run(b_library.objects)
+        b_project.getEngine().run(b_library.objects)
     });
     $(".titlebar .gamebuttons .btn-settings").on('click', function(){
         b_ui.toggleSettings();
@@ -180,6 +181,11 @@ $(function(){
         // b_ide.saveData();
         eIPC.send('confirm-window-close');
     });
+
+    // run project shortcut
+    eIPC.on('run-project', function(event){
+        b_project.getEngine().run(b_library.objects);
+    })
 
     var drop_mainwin = $("body")[0];
 	drop_mainwin.ondragover = () => {
@@ -256,7 +262,7 @@ $(function(){
             nwMODULES[type].onClick(uuid, b_library.getByUUID(type, uuid))
         }
 
-        // call select/deselect events
+        /*/ call select/deselect events
         $(".object-tree .object.selected").each(function(e) {
             var uuid2 = $(this).data('uuid');
             var type2 = $(this).data('type');
@@ -274,6 +280,7 @@ $(function(){
             dispatchEvent("library.select", {type: type3, uuid: uuid3, properties: b_library.getByUUID(type3, uuid3)});
         
         }
+        */
 
         dispatchEvent("library.click", {type: type, uuid: uuid, properties: b_library.getByUUID(type, uuid)});
         
@@ -514,7 +521,7 @@ function loadModules(engine, callback) {
     // import module files
     nwFILE.readdir(nwPATH.join(__dirname, "modules"), function(err, mods) {
         if (engine) {
-            mods = nwENGINES[b_project.getData('engine')].modules;
+            mods = b_project.getEngine().modules;
         }
         mods.forEach(function(mod_name, m) {
             $(".library > .actions > .btn-add").removeAttr("disabled");
@@ -655,3 +662,8 @@ function ifndef(value, default_value) {
 function openExternal(path) {
     eSHELL.openItem(path);
 }
+
+String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    return target.replace(new RegExp(search, 'g'), replacement);
+};

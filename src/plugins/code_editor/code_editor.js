@@ -30,6 +30,18 @@ exports.settings = [
 		"type" : "bool",
 		"name" : "save on close",
 		"default" : false
+	},
+	{
+		"type" : "bool",
+		"name" : "find/replace on rename",
+		"default" : true
+	},
+	{
+		"type" : "number",
+		"name" : "font size",
+		"default" : 14,
+		"min" : 1,
+		"max" : 60
 	}
 ]
 
@@ -62,7 +74,7 @@ var b_code = function(sel_id, fn_saveScript) {
 	} else {
 		language = '';
 	}
-	this.fontSize = 12
+	this.fontSize = b_project.getPluginSetting("code_editor", "font size");
 	this.codemirror = this.nwCODE(document.getElementById(sel_id), {
 		mode: language,
 		lineWrapping: false,
@@ -85,6 +97,7 @@ var b_code = function(sel_id, fn_saveScript) {
 		this.fontSize = size;
 		this.codemirror.display.wrapper.style.fontSize = size + "px";
 		this.codemirror.refresh();
+		b_project.setPluginSetting("code_editor", "font size", size);
 	}
 	this.setFontSize(this.fontSize)
 
@@ -123,4 +136,31 @@ var b_code = function(sel_id, fn_saveScript) {
 			});
 		});
 	};
+
+	document.addEventListener('library.rename', function(e) {
+		if (b_project.getPluginSetting("code_editor", "find/replace on rename")) {
+			// replace in currently open editor if one is open
+			var code = _this.codemirror.getValue();
+			_this.codemirror.setValue(code.replaceAll(e.detail.old, e.detail.new));
+		}
+	});	
 }
+
+	document.addEventListener('library.rename', function(e) {
+		if (b_project.getPluginSetting("code_editor", "find/replace on rename")) {
+			var repl_path = nwPATH.join(b_project.curr_project, 'assets', 'scripts', '**','*');
+
+			// replace in scripts folder
+			nwREPLACE({
+				files: repl_path,
+				from: e.detail.old,
+				to: e.detail.new
+			}).then(changedFiles => {
+				b_console.log("Replaced "+e.detail.old+
+					"<i class='background-color:'>-></i>"+
+					e.detail.new+" in files: " + changedFiles.join(', '));
+			}).catch(error => {
+				b_console.error("error!", error)
+			})
+		}
+	});	
