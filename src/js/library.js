@@ -1,18 +1,36 @@
+var SAVE_TREE_TIME = 1000;
+var save_tree_timeout = 0;
+
 b_library = {
 	objects: {},
 	tree: {}, // used for saveTree to get library tree structure
 
 	setBackColor: function(color) {
 		$(".library").animate({"background-color": color}, 200);
+		$("body").animate({"background-color": shadeColor(color, .85)}, 200);
 	},
 
 	getBackColor: function() {
 		return $(".library").css("background-color");
 	},
 
+	randomizeBackColor: function() {
+		// (300)       red,      deep purple, indigo,   blue,     cyan,     green,    yellow,   orange,   brown,    grey,      blue grey
+		var colors = ['#e57373','#9575cd',    '#7986cb','#64b5f6','#4dd0e1','#81c784','#fff176','#ffb74d','#a1887f','#bdbdbd','#90a4ae'];
+		
+		// check if engine comes with colors
+		var engine = b_project.getEngine();
+		if (engine.colors) {
+			colors = engine.colors;
+		}
+
+		b_library.setBackColor(colors[Math.floor(Math.random()*colors.length)]);
+	},
+
 	reset: function() {
 		b_library.objects = {};
 		b_library.tree = {};
+		$(".library > .object-tree > .children").empty();
 		$(".library > .constant-items").empty();
 	},
 
@@ -32,7 +50,7 @@ b_library = {
 		$(".library > .constant-items > .item[data-uuid='"+uuid+"']").remove();
 	},
 
-	add: function(type, fromMenu=false) {
+	add: function(type, fromMenu=false, sel=".library .object-tree > .children") {
 	    if (!(type in this.objects)) {
 	    	this.objects[type] = {};
 	    }
@@ -52,12 +70,14 @@ b_library = {
 	    if (this.objects[type][uuid] == undefined) {
 	    	this.objects[type][uuid] = {};
 	    }
+
 	    // give name if it wasn't assigned
 	    if (!('name' in this.objects[type][uuid])) {
 	    	this.objects[type][uuid].name = name;
 	    }
+	    this.objects[type][uuid].uuid = uuid;
 
-	    $(".library .object-tree > .children").append(
+	    $(sel).append(
 	    	"<div class='object' data-type='" + type + "' data-uuid='" + uuid + "' draggable='true'>"+
 	    		"<div class='name'>"+this.objects[type][uuid].name+"</div>"+
 	    	"</div>"
@@ -109,8 +129,9 @@ b_library = {
 	},
 
 	rename: function(uuid, new_name) {
-		var html_obj = $(".library .object-tree .object[data-uuid='"+uuid+"']");
-		var type = html_obj.data('type');
+		var sel = ".library .object-tree .object[data-uuid='"+uuid+"']";
+
+		var type = $(sel).data('type');
 		var obj = b_library.getByUUID(type, uuid);
 
 		var old_name = obj.name;
@@ -122,6 +143,8 @@ b_library = {
 		new_name = new_name.split(' ').join('_');
 		// ADD: name cannot start with number or special char
 		// ...
+
+		$(sel + " > .name").html(new_name);
 
 		// set 'new name'
 		obj.name = new_name;
@@ -135,9 +158,13 @@ b_library = {
 		return new_name;
 	},
 
-	addFolder: function(sel_location='.library .object-tree > .children') {
-		b_library.loadFolder(sel_location, guid());
-		b_library.saveTree();
+	addFolder: function(sel_location='.library .object-tree > .children', name=undefined) {
+		var sel = b_library.loadFolder(sel_location, guid(), name);
+
+        clearTimeout(save_tree_timeout);
+        save_tree_timeout = setTimeout(b_library.saveTree, SAVE_TREE_TIME);
+
+		return sel;
 	},
 
 	loadFolder: function(sel_location, uuid, name='folder') {
@@ -147,11 +174,12 @@ b_library = {
 				"<div class='children'></div>"+
 			"</div>"
 		);
+		return ".library .folder[data-uuid='"+uuid+"']";
 	},
 
 	saveTree: function() {
 		b_library.tree = {};
-		this._saveTree(".object-tree", b_library.tree);
+		b_library._saveTree(".object-tree", b_library.tree);
 		b_project.setData('tree', b_library.tree);
 
 		b_project.autoSaveProject();
@@ -165,6 +193,9 @@ b_library = {
 			var uuid = $(sel).data('uuid');
 			var name = $(sel+' > .name').html();
 			var child_container = sel + ' > .children';
+
+			// save data 
+			// ...
 
 			container[uuid] = {
 				name: name,
@@ -180,13 +211,12 @@ b_library = {
 		else if ($(sel).hasClass('object')) {
 			container[$(sel).data('uuid')] = $(sel).data('type');
 		}
-		
 	},
 
 	loadTree: function(data) {
 		$(".object-tree[data-uuid='0'] > .children").empty();
 
-		if (data) {
+		if (data && data['0']) {
 			b_library._loadTree(data['0'].children);
 		}
 	},
@@ -196,6 +226,10 @@ b_library = {
 			// folder
 			if (container[obj].children)  {
 				b_library.loadFolder(sel, obj, container[obj].name)
+				
+				// add on data attributes
+				// ...
+
 				if (container[obj].expanded)
 					$(".object-tree .folder[data-uuid='"+obj+"']").addClass('expanded');
 				b_library._loadTree(container[obj].children, '.object-tree .folder[data-uuid="'+obj+'"] > .children');
@@ -224,11 +258,10 @@ document.addEventListener('project.open', function(e) {
 	b_library.objects = ifndef(b_project.getData('library'), {});
 	b_library.tree = ifndef(b_project.getData('tree'), {});
 
-	b_library.loadTree(b_library.tree);
+	if (b_library.tree)
+		b_library.loadTree(b_library.tree);
 
-	// (300)       red,      deep purple, indigo,   blue,     cyan,     green,    yellow,   orange,   brown,    grey,      blue grey
-	var colors = ['#e57373','#9575cd',    '#7986cb','#64b5f6','#4dd0e1','#81c784','#fff176','#ffb74d','#a1887f','#bdbdbd','#90a4ae'];
-	b_library.setBackColor(colors[Math.floor(Math.random()*colors.length)]);
+	b_library.randomizeBackColor();
 });	
 
 $(function(){

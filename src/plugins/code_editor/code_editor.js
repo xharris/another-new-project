@@ -51,8 +51,7 @@ var b_code = function(sel_id, fn_saveScript) {
 	this.file = '';
 
 	this.nwCODE = require("codemirror/lib/codemirror");
-
-	/*
+/*
 	require('codemirror/addon/edit/matchbrackets');
 	require('codemirror/addon/edit/closebrackets');
 	require('codemirror/addon/scroll/annotatescrollbar');
@@ -63,8 +62,7 @@ var b_code = function(sel_id, fn_saveScript) {
 	require('codemirror/addon/dialog/dialog')
 	require('codemirror/addon/search/search')
 	require('codemirror/addon/search/jump-to-line')
-	*/
-
+*/
 	//console.log(this.nwCODE)
 	//console.log(this.nwCODE.defaults.hasOwnProperty("highlightSelectionMatches"))
 
@@ -160,7 +158,7 @@ var b_code = function(sel_id, fn_saveScript) {
 					"<i class='background-color:'>-></i>"+
 					e.detail.new+" in files: " + changedFiles.join(', '));
 			}).catch(error => {
-				b_console.error("error!", error)
+				console.log('code_editor: could not rename');//b_console.error("error!")
 			})
 		}
 	});	

@@ -1,6 +1,6 @@
 local assets = require "assets"
 
-_Entity = {
+_Entity = Class{
 	_images = {},		
 	_sprites = {}, 			-- is actually the animations
 	sprite = nil,			-- currently active animation
@@ -63,7 +63,8 @@ _Entity = {
 		-- move shapes if the x/y is different
 		if self.xprevious ~= self.x or self.yprevious ~= self.y then
 			for s, shape in pairs(self.shapes) do
-				shape:moveTo(self.x, self.y)
+				-- account for x/y offset?
+				--shape:moveTo(self.x + shape.xoffset, self.y + shape.yoffset)
 			end
 		end
 
@@ -132,7 +133,6 @@ _Entity = {
 
 		-- draw origin point
 		love.graphics.circle("line", 0, 0, 2)
-		love.graphics.rotate(0)
 
 		love.graphics.pop()
 	end,
@@ -160,6 +160,7 @@ _Entity = {
 
 			-- draw current sprite (image, x,y, angle, sx, sy, ox, oy, kx, ky) s=scale, o=origin, k=shear
 			local img = self._images[self.sprite_index]
+			love.graphics.push()
 			love.graphics.setColor(self.sprite_color.r, self.sprite_color.g, self.sprite_color.b, self.sprite_alpha)
 			
 			-- is it an Animation or an Image
@@ -168,13 +169,14 @@ _Entity = {
 			else
 				love.graphics.draw(img, self.x, self.y, math.rad(self.sprite_angle), self.sprite_xscale, self.sprite_yscale, self.sprite_xoffset, self.sprite_yoffset, self.sprite_xshear, self.sprite_yshear)
 			end
+			love.graphics.pop()
 		else
 			self.sprite_width = 0
 			self.sprite_height = 0
 		end
 
-		if self.preDraw then
-			self:preDraw()
+		if self.postDraw then
+			self:postDraw()
 		end
 	end,
 
@@ -237,10 +239,11 @@ _Entity = {
 			new_shape = HC.point(unpack(args))
 		end
 
-		new_shape.xoffset = xoffset
-		new_shape.yoffset = yoffset
+		new_shape.xoffset = args[1] - xoffset
+		new_shape.yoffset = args[2] - yoffset
 		new_shape.tag = tag
 		self.shapes[name] = new_shape
+
 		HC.register(new_shape)
 	end,
 

@@ -86,6 +86,8 @@ body{
 			transition: outline-color ease-in-out 0.5s;
 
 			.name {
+				.no-select();
+				
 				margin: 0px;
 				padding: 4px;
 				font-size: @font-size;
@@ -213,7 +215,6 @@ body{
 			}
 
 			&.expanded > .children{
-				max-height: 1800px;
 				opacity: 1;
 			}
 

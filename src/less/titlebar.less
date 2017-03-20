@@ -26,8 +26,8 @@ body{
     top: 0px;
     right: 0px;
     height: auto;
-    padding: 0px;
-    margin: 3px;
+    padding: 3px;
+    margin: 0px;
     z-index: @ide-z-front;
     
     transition: all ease-in-out 0.2s;
@@ -71,6 +71,7 @@ body{
     	position: absolute;
     	top: 0px;
     	right: 0px;
+        margin: 3px;
 
     	button {
             .ui-button-sphere();
@@ -82,5 +83,15 @@ body{
 		    	}
 		    }
     	}
+    }
+
+    >.progress-bar {
+        transition: all ease-in-out 0.2s;
+        position: absolute;
+        left: 0px;
+        width: 0%;
+        background-color: rgba(0,0,0,0.3);
+        height: 2px;
+        bottom: 0px;
     }
 }

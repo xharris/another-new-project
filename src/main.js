@@ -1,4 +1,4 @@
-const DEV_MODE = true; // show dev tools
+const DEV_MODE = false; // show dev tools - deprecate?
 
 /* electron start */
 const electron = require('electron');
@@ -10,6 +10,7 @@ const BrowserWindow = electron.BrowserWindow;
 const {ipcMain} = require('electron');
 const {ipcRenderer} = require('electron');
 const {globalShortcut} = require('electron');
+const {remote} = require('electron');
 const dialog = require('electron').dialog;
 const {Menu} = require("electron");
 

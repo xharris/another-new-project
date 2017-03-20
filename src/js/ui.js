@@ -14,7 +14,7 @@ var b_ui = {
 			number : min, max
 			select : options[]
 			bool : ...
-			
+
 	*/
 	settingsOpen: false,
 
@@ -86,6 +86,9 @@ var b_ui = {
 					value = $(this).is(':checked') ? true : false;
 				if (type === "number") 
 					value = parseInt(value);
+				// encrypt password
+				if (type === "password")
+					value = b_util.encrypt(value);
 
 				if (setting_type === "plugins")
 					b_project.setPluginSetting(subcat, name, value);
@@ -156,11 +159,17 @@ var b_ui = {
 							'<input disabled '+common_attr+' type="text" value="'+user_set[input.name]+'">'+
 						'</div>'
 				}
-				if (input.type === "text") {
+				if (input.type === "text" || input.type === "password") {
+					var value = user_set[input.name];
+
+					// decrypt password
+					if (input.type === "password")
+						value = b_util.decrypt(value)
+
 					html_inputs +=
 						'<div class="ui-text">'+
 							'<label>'+input.name+'</label>'+
-							'<input '+common_attr+' type="text" value="'+user_set[input.name]+'">'+
+							'<input '+common_attr+' type="'+input.type+'" value="'+value+'">'+
 						'</div>'
 				}
 				if (input.type === "button") {

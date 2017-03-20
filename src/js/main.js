@@ -24,6 +24,7 @@ var nwLESS = require("less");
 var nwFILEX = require("fs-extra");
 var nwOPEN = require("open");
 var nwREPLACE = require('replace-in-file');
+var nwCRYPT = require("cryptr");
 //var nwUA = require("universal-analytics");
 
 var eIPC = require('electron').ipcRenderer;
@@ -45,6 +46,13 @@ $(function(){
       throw new Error("Sorry, BlankE does not support window.eval() for security reasons.");
     };
     */
+    
+    // check arguments
+    var args = eREMOTE.process.argv;
+    if (args.includes("--dev")) {
+        eIPC.send('show-dev-tools');
+    }
+
     b_ide.setAppDataDir(eAPP.getPath('userData'));
     b_ide.loadSettings();
 
@@ -253,6 +261,7 @@ $(function(){
             }  
         }
 
+        dispatchEvent("library.dbl_click", {type: type, uuid: uuid, properties: b_library.getByUUID(type, uuid)});
 
     }).on("click", ".object .name", function(){
         var uuid = $(this).parent(".object").data('uuid');
@@ -364,6 +373,9 @@ $(function(){
         if (!$(this).children('.in-rename').length) {
             $(this).parent().toggleClass("expanded");
             b_library.saveTree();
+
+            var uuid = $(this).parent(".folder").data('uuid');
+            dispatchEvent("library.folder.click", {uuid: uuid, selector: ".library .folder[data-uuid='"+uuid+"']"});
         }
 
     }).on('mouseup', '.object,.folder', function(e) {
@@ -523,28 +535,30 @@ function loadModules(engine, callback) {
         if (engine) {
             mods = b_project.getEngine().modules;
         }
-        mods.forEach(function(mod_name, m) {
-            $(".library > .actions > .btn-add").removeAttr("disabled");
-            // import less files
-            nwFILE.readdir(nwPATH.join(__dirname, "modules", mod_name, "less"), function(err, files) {
-                if (!err) {
-                    files.forEach(function(file, l) {
-                        importLess(mod_name, nwPATH.join(__dirname, "modules", mod_name, "less", file));
 
-                    });
+        if (mods && mods.length > 0) {
+            mods.forEach(function(mod_name, m) {
+                $(".library > .actions > .btn-add").removeAttr("disabled");
+                // import less files
+                nwFILE.readdir(nwPATH.join(__dirname, "modules", mod_name, "less"), function(err, files) {
+                    if (!err) {
+                        files.forEach(function(file, l) {
+                            importLess(mod_name, nwPATH.join(__dirname, "modules", mod_name, "less", file));
+
+                        });
+                    }
+                });
+
+                if (!game_items.includes(mod_name)) {
+                    game_items.push(mod_name);
+
+                    nwMODULES[mod_name] = require(nwPATH.join(__dirname, "modules", mod_name));
+                    if (nwMODULES[mod_name].loaded) {
+                        nwMODULES[mod_name].loaded();
+                    }
                 }
             });
-
-            if (!game_items.includes(mod_name)) {
-                game_items.push(mod_name);
-
-                nwMODULES[mod_name] = require(nwPATH.join(__dirname, "modules", mod_name));
-                if (nwMODULES[mod_name].loaded) {
-                    nwMODULES[mod_name].loaded();
-                }
-            }
-        });
-
+        }
     });
 
     if (callback) {
@@ -558,12 +572,17 @@ function loadEngines(callback) {
 
         mods.forEach(function(eng_name, m) {
             if (!engine_names.includes(eng_name)) {
-                engine_names.push(eng_name);
                 
                 nwENGINES[eng_name] = require(nwPATH.join(__dirname, "engines", eng_name));
-                
-                if (nwENGINES[eng_name].loaded) {
-                    nwENGINES[eng_name].loaded();
+
+                // check if engine is disabled (not allowed to load at all)
+                if (!nwENGINES[eng_name].disabled) {
+                    engine_names.push(eng_name);
+
+                    // call engine load event
+                    if (nwENGINES[eng_name].loaded) {
+                        nwENGINES[eng_name].loaded();
+                    }
                 }
             }
         });
@@ -667,3 +686,8 @@ String.prototype.replaceAll = function(search, replacement) {
     var target = this;
     return target.replace(new RegExp(search, 'g'), replacement);
 };
+
+function shadeColor(color, percent) {   
+    var f=parseInt(color.slice(1),16),t=percent<0?0:255,p=percent<0?percent*-1:percent,R=f>>16,G=f>>8&0x00FF,B=f&0x0000FF;
+    return "#"+(0x1000000+(Math.round((t-R)*p)+R)*0x10000+(Math.round((t-G)*p)+G)*0x100+(Math.round((t-B)*p)+B)).toString(16).slice(1);
+}

@@ -3,9 +3,10 @@
 ]]--
 
 <NAME> = Class{}
-<NAME>:include(_Entity) 
 
 function <NAME>:init()
+	<NAME>:include(_Entity) 
+	
 	-- self.variable = value
 	-- Signal.register('love.update', function(dt) self:update(dt) end)
 	-- Signal.register('love.draw', function() self:draw() end)

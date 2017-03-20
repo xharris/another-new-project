@@ -1,6 +1,20 @@
 var nwHELPER = nwPLUGINS['build_helper'];
 
 exports.modules = ['entity', 'image', 'state', 'spritesheet'];
+exports.colors = [
+/*
+	'#ef9a9a', // red 200
+	'#e57373', // red 300
+	'#ef5350', // red 400
+*/
+	'#f48fb1', // pink 200
+	'#f06292', // pink 300
+	'#ec407a', // pink 400
+
+	'#90caf9', // blue 200
+	'#64b5f6', // blue 300
+	'#42a5f5', // blue 400
+]
 
 // code editor
 exports.entity_template = nwPATH.join(__dirname, 'entity_template.lua');
@@ -174,18 +188,20 @@ exports.library_const = [
 	}
 ]
 
-document.addEventListener("project.open", function(e){
-	if (b_project.getData("engine") !== "love2d") return;
-	// copy main.lua template to project folder
-	nwFILE.readFile(nwPATH.join(b_project.curr_project, "assets", "main.lua"), function(err, data){
-		if (err) {
-			var html_code = nwFILEX.copy(
-				nwPATH.join(__dirname, 'main.lua'),
-				nwPATH.join(b_project.curr_project, "assets", "main.lua")
-			);
-		}
+exports.loaded = function() {
+	document.addEventListener("project.open", function(e){
+		if (b_project.getData("engine") !== "love2d") return;
+		// copy main.lua template to project folder
+		nwFILE.readFile(nwPATH.join(b_project.curr_project, "assets", "main.lua"), function(err, data){
+			if (err) {
+				var html_code = nwFILEX.copy(
+					nwPATH.join(__dirname, 'main.lua'),
+					nwPATH.join(b_project.curr_project, "assets", "main.lua")
+				);
+			}
+		});
 	});
-});
+}
 
 var building = false;
 function build(build_path, objects, callback) {
@@ -194,6 +210,7 @@ function build(build_path, objects, callback) {
 
 	// ENTITIES
 	var script_includes = '';
+
 	for (var e in objects['entity']) {
 		var ent = objects['entity'][e];
 
@@ -271,7 +288,6 @@ function build(build_path, objects, callback) {
 	}
 
 	main_replacements = [
-		['<INCLUDES>', script_includes],
 		['<STATE_INIT>', state_init],
 		['<FIRST_STATE>', first_state]
 	];
@@ -284,8 +300,13 @@ function build(build_path, objects, callback) {
 		['<ASSETS>', assets]
 	];
 
+	includes_replacements = [
+		['<INCLUDES>', script_includes]
+	];
+
 	nwHELPER.copyScript(nwPATH.join(__dirname, 'conf.lua'), nwPATH.join(build_path,'conf.lua'), conf_replacements);
 	nwHELPER.copyScript(nwPATH.join(__dirname, 'assets.lua'), nwPATH.join(build_path,'assets.lua'), assets_replacements);
+	nwHELPER.copyScript(nwPATH.join(__dirname, 'includes.lua'), nwPATH.join(build_path,'includes.lua'), includes_replacements);
 
 	nwMKDIRP(nwPATH.join(build_path, 'assets'), function(){
 		nwHELPER.copyScript(nwPATH.join(b_project.curr_project, "assets", "main.lua"), nwPATH.join(build_path,'main.lua'), main_replacements);

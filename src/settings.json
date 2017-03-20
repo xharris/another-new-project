@@ -11,5 +11,14 @@
 			"shape" : "rectangle",
 			"function" : "b_project.openProjectDir()"
 		}
+	],
+
+	"appearance" : [
+		{
+			"type" : "button",
+			"name" : "shuffle IDE color",
+			"shape" : "rectangle",
+			"function" : "b_library.randomizeBackColor()"
+		}
 	]
 }

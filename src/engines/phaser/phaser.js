@@ -3,6 +3,14 @@ var nwSERVE = require('serve-static');
 var nwBUILD = require('nw-builder');
 
 exports.modules = ['entity', 'image', 'state', 'spritesheet'];
+exports.colors = [
+	'#e1bee7', // purple 100
+	'#ce93d8', // purple 200
+
+	'#d1c4e9', // deep purp 100
+	'#b39ddb', // deep purp 200
+]
+
 exports.language = 'javascript';
 exports.file_ext = 'js';
 
@@ -154,31 +162,33 @@ var last_object_set;
 var server_running = false;
 var rebuild_timeout = 0;
 var REBUILD_TIME = 500;
-document.addEventListener("something.saved", function(e){
-	if (["project"].includes(e.detail.what)) {
-		var rebuild_timeout = setTimeout(rebuild(), REBUILD_TIME);
-	}
-});
 
-document.addEventListener("assets.modified", function(e) {
-	var rebuild_timeout = setTimeout(rebuild(), REBUILD_TIME);
-});
-
-document.addEventListener("project.open", function(e){
-	if (b_project.getData("engine") !== "phaser") return;
-	server_running = false;
-
-	// copy index.html template to project folder
-	nwFILE.readFile(nwPATH.join(b_project.curr_project, "assets", "index.html"), function(err, data){
-		if (err) {
-			var html_code = nwFILEX.copy(
-				nwPATH.join(__dirname, 'index.html'),
-				nwPATH.join(b_project.curr_project, "assets", "index.html")
-			);
+exports.loaded = function() {
+	document.addEventListener("something.saved", function(e){
+		if (["project"].includes(e.detail.what)) {
+			var rebuild_timeout = setTimeout(rebuild(), REBUILD_TIME);
 		}
 	});
-});
 
+	document.addEventListener("assets.modified", function(e) {
+		var rebuild_timeout = setTimeout(rebuild(), REBUILD_TIME);
+	});
+
+	document.addEventListener("project.open", function(e){
+		if (b_project.getData("engine") !== "phaser") return;
+		server_running = false;
+
+		// copy index.html template to project folder
+		nwFILE.readFile(nwPATH.join(b_project.curr_project, "assets", "index.html"), function(err, data){
+			if (err) {
+				var html_code = nwFILEX.copy(
+					nwPATH.join(__dirname, 'index.html'),
+					nwPATH.join(b_project.curr_project, "assets", "index.html")
+				);
+			}
+		});
+	});
+}
 
 function rebuild() {
 	if (server_running) {

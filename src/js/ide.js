@@ -39,6 +39,9 @@ var b_ide = {
 
 	setTitle: function(title) {
 		$('head > title').html('BlankE :: ' + title)
-	}
+	},
 
+	setProgress: function(amount) {
+		$(".titlebar > .progress-bar").css("width", amount + "%");
+	}
 }

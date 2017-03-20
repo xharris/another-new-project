@@ -262,6 +262,26 @@
   font-family: "Inconsolata";
   src: url("includes/fonts/inconsolata/Inconsolata.otf") format("opentype");
 }
+@font-face {
+  font-family: "Roboto-Regular";
+  src: url("includes/fonts/roboto/Roboto-Regular.ttf") format("truetype");
+}
+@font-face {
+  font-family: "ProggySquare";
+  src: url("includes/fonts/proggy/ProggySquare.ttf/ProggySquare.ttf") format("truetype");
+}
+@font-face {
+  font-family: "ProggyClean";
+  src: url("includes/fonts/proggy/ProggyClean.ttf/ProggyClean.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Monofur";
+  src: url("includes/fonts/monofur/monof55.ttf") format("truetype");
+}
+@font-face {
+  font-family: "ProFont";
+  src: url("includes/fonts/profont/ProFontWindows.ttf") format("truetype");
+}
 * {
   font-family: 'Inconsolata', sans-serif;
 }
@@ -290,8 +310,8 @@ body[project-open="1"] .titlebar {
   top: 0px;
   right: 0px;
   height: auto;
-  padding: 0px;
-  margin: 3px;
+  padding: 3px;
+  margin: 0px;
   z-index: 20;
   transition: all ease-in-out 0.2s;
 }
@@ -399,6 +419,7 @@ body[project-open="1"] .titlebar {
   position: absolute;
   top: 0px;
   right: 0px;
+  margin: 3px;
 }
 .titlebar .titlebuttons button {
   -webkit-touch-callout: none;
@@ -442,6 +463,15 @@ body[project-open="1"] .titlebar {
 }
 .titlebar .titlebuttons button:hover.btn-close {
   background-color: #E81123;
+}
+.titlebar > .progress-bar {
+  transition: all ease-in-out 0.2s;
+  position: absolute;
+  left: 0px;
+  width: 0%;
+  background-color: rgba(0, 0, 0, 0.3);
+  height: 2px;
+  bottom: 0px;
 }
 body[project-open="0"] .library {
   width: 0px;
@@ -554,9 +584,22 @@ body[project-open="1"] .library {
   transition: outline-color ease-in-out 0.5s;
 }
 .library .constant-items .item .name {
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Chrome/Safari/Opera */
+  -khtml-user-select: none;
+  /* Konqueror */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+    not supported by any browser */
   margin: 0px;
   padding: 4px;
-  font-size: 12px;
+  font-size: 16px;
 }
 .library .constant-items .item .name:hover {
   background-color: #e0e0e0;
@@ -614,7 +657,7 @@ body[project-open="1"] .library {
 .library .object-tree .folder.dragover > .name,
 .library .object-tree .object.dragover > .name {
   line-height: 18px;
-  font-size: 14px;
+  font-size: 18px;
 }
 .library .object-tree .folder.selected > .name,
 .library .object-tree .object.selected > .name {
@@ -631,7 +674,7 @@ body[project-open="1"] .library {
   border-bottom-width: 1px;
   background: transparent;
   outline: none;
-  font-size: 12px;
+  font-size: 16px;
   padding: 0px;
 }
 .library .object-tree .folder .name,
@@ -650,7 +693,7 @@ body[project-open="1"] .library {
   /* Non-prefixed version, currently
     not supported by any browser */
   padding: 1px;
-  font-size: 12px;
+  font-size: 16px;
   transition: all ease-in-out 0.1s;
 }
 .library .object-tree .folder .name:hover,
@@ -731,7 +774,6 @@ body[project-open="1"] .library {
   font-style: italic;
 }
 .library .object-tree .folder.expanded > .children {
-  max-height: 1800px;
   opacity: 1;
 }
 .library .object-tree .folder:not(.expanded) > .children {
@@ -752,6 +794,10 @@ body[project-open="1"] .library {
   bottom: 0px;
   right: 0px;
   left: 0px;
+  pointer-events: none;
+}
+.ui-dialog-container * {
+  pointer-events: all;
 }
 .ui-settings {
   position: absolute;
@@ -799,7 +845,7 @@ body[project-open="1"] .library {
   border-radius: 0px;
   cursor: pointer;
   transition: all ease-in-out 0.4s;
-  font-size: 18px;
+  font-size: 16px;
   width: 100%;
   height: 36px;
   margin: 0px;
@@ -876,10 +922,24 @@ body[project-open="1"] .library {
   max-width: 100%;
   max-height: 100%;
   overflow-y: auto;
-  margin-right: 204px;
+  margin-right: 172px;
 }
 .ui-settings .inputs-container .subcategory {
-  font-size: 20px;
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Chrome/Safari/Opera */
+  -khtml-user-select: none;
+  /* Konqueror */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+    not supported by any browser */
+  cursor: default;
+  font-size: 24px;
   margin: 10px;
 }
 .ui-settings .inputs-container > div {
