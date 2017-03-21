@@ -56,8 +56,6 @@
   font-size: 12px;
   cursor: pointer;
   vertical-align: top;
-  /*height: @button-width;
-    width: @button-height;*/
   transition: all ease-in-out 0.4s;
 }
 .ui-button:hover {
@@ -92,9 +90,9 @@
   font-size: 12px;
   cursor: pointer;
   vertical-align: top;
-  /*height: @button-width;
-    width: @button-height;*/
   transition: all ease-in-out 0.4s;
+  height: 30px;
+  width: 30px;
   padding: 0px;
 }
 .ui-button-sphere:hover {
@@ -130,8 +128,6 @@
   background-color: transparent;
   font-size: 12px;
   vertical-align: top;
-  /*height: @button-width;
-    width: @button-height;*/
   padding: 5px 10px;
   background-color: white;
   border: none;
@@ -159,21 +155,27 @@
   padding: 5px;
   border-radius: 5px;
   outline: none;
+  border-color: black;
+  border-width: 2px;
 }
 .ui-input {
   -webkit-app-region: no-drag;
   border: 20px solid transparent;
-  border-image: linear-gradient(to right, black 0%, transparent 90%, transparent 100%);
+  border-image: linear-gradient(to right, rgba(0, 0, 0, 0.5) 0%, transparent 90%, transparent 100%);
   border-image-slice: 1;
   border-width: 0px;
   padding: 3px;
   border-bottom-width: 1px;
   outline: none;
+  margin-left: 10px;
+  width: 60px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 2px;
 }
 .ui-checkbox {
   -webkit-app-region: no-drag;
-  /*width: @button-width;
-    height: @button-height;*/
+  width: 30px;
+  height: 30px;
   margin: 3px;
   display: inline-block;
   vertical-align: top;
@@ -196,11 +198,19 @@
 }
 .ui-checkbox input:not(:checked) + .mdi,
 .ui-checkbox input:not(:checked) + .mdi-svg {
+  width: 30px;
+  height: 30px;
+  padding: 6px;
+  text-align: center;
   border-color: rgba(0, 0, 0, 0.2);
   border-style: dashed;
 }
 .ui-checkbox input:checked + .mdi,
 .ui-checkbox input:checked + .mdi-svg {
+  width: 30px;
+  height: 30px;
+  padding: 6px;
+  text-align: center;
   border-color: black;
   border-style: solid;
   background-color: #e0e0e0;
@@ -214,8 +224,8 @@
   border: 1px solid black;
   border-radius: 2px;
   margin: 0px;
-  /*width: @button-width;
-        height: @button-height;*/
+  width: 30px;
+  height: 30px;
   padding: 2px;
   background-color: transparent;
   box-sizing: border-box;
@@ -227,6 +237,74 @@
 }
 .ui-checkbox:hover .mdi,
 .ui-checkbox:hover .mdi-svg {
+  background-color: #e0e0e0;
+}
+.ui-checkbox-label {
+  -webkit-app-region: no-drag;
+  width: 30px;
+  height: 30px;
+  margin: 3px;
+  display: inline-block;
+  vertical-align: top;
+  position: relative;
+  width: auto;
+}
+.ui-checkbox-label label {
+  margin-left: 40px;
+  vertical-align: top;
+  line-height: 30px;
+}
+.ui-checkbox-label input {
+  height: 100%;
+  width: 100%;
+  margin: 0px;
+  opacity: 0;
+  border-style: solid;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+.ui-checkbox-label input:not(:checked) + .mdi,
+.ui-checkbox-label input:not(:checked) + .mdi-svg {
+  width: 30px;
+  height: 30px;
+  padding: 6px;
+  text-align: center;
+  border-color: rgba(0, 0, 0, 0.2);
+  border-style: dashed;
+}
+.ui-checkbox-label input:checked + .mdi,
+.ui-checkbox-label input:checked + .mdi-svg {
+  width: 30px;
+  height: 30px;
+  padding: 6px;
+  text-align: center;
+  border-color: black;
+  border-style: solid;
+  background-color: #e0e0e0;
+}
+.ui-checkbox-label .mdi,
+.ui-checkbox-label .mdi-svg {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  pointer-events: none;
+  border: 1px solid black;
+  border-radius: 2px;
+  margin: 0px;
+  width: 30px;
+  height: 30px;
+  padding: 2px;
+  background-color: transparent;
+  box-sizing: border-box;
+  transition: all ease-in-out 0.2s;
+}
+.ui-checkbox-label .mdi-svg {
+  vertical-align: top;
+  text-align: center;
+}
+.ui-checkbox-label:hover .mdi,
+.ui-checkbox-label:hover .mdi-svg {
   background-color: #e0e0e0;
 }
 .ui-file > input {
@@ -250,11 +328,14 @@
 .ui-text > input {
   -webkit-app-region: no-drag;
   border: 20px solid transparent;
-  border-image: linear-gradient(to right, black 0%, transparent 90%, transparent 100%);
+  border-image: linear-gradient(to right, rgba(0, 0, 0, 0.5) 0%, transparent 90%, transparent 100%);
   border-image-slice: 1;
   border-width: 0px;
   padding: 3px;
   border-bottom-width: 1px;
   outline: none;
+  width: 60px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 2px;
   margin-left: 10px;
 }

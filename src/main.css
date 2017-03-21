@@ -56,8 +56,6 @@
   font-size: 12px;
   cursor: pointer;
   vertical-align: top;
-  /*height: @button-width;
-    width: @button-height;*/
   transition: all ease-in-out 0.4s;
 }
 .ui-button:hover {
@@ -92,9 +90,9 @@
   font-size: 12px;
   cursor: pointer;
   vertical-align: top;
-  /*height: @button-width;
-    width: @button-height;*/
   transition: all ease-in-out 0.4s;
+  height: 30px;
+  width: 30px;
   padding: 0px;
 }
 .ui-button-sphere:hover {
@@ -130,8 +128,6 @@
   background-color: transparent;
   font-size: 12px;
   vertical-align: top;
-  /*height: @button-width;
-    width: @button-height;*/
   padding: 5px 10px;
   background-color: white;
   border: none;
@@ -159,21 +155,27 @@
   padding: 5px;
   border-radius: 5px;
   outline: none;
+  border-color: black;
+  border-width: 2px;
 }
 .ui-input {
   -webkit-app-region: no-drag;
   border: 20px solid transparent;
-  border-image: linear-gradient(to right, black 0%, transparent 90%, transparent 100%);
+  border-image: linear-gradient(to right, rgba(0, 0, 0, 0.5) 0%, transparent 90%, transparent 100%);
   border-image-slice: 1;
   border-width: 0px;
   padding: 3px;
   border-bottom-width: 1px;
   outline: none;
+  margin-left: 10px;
+  width: 60px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 2px;
 }
 .ui-checkbox {
   -webkit-app-region: no-drag;
-  /*width: @button-width;
-    height: @button-height;*/
+  width: 30px;
+  height: 30px;
   margin: 3px;
   display: inline-block;
   vertical-align: top;
@@ -196,11 +198,19 @@
 }
 .ui-checkbox input:not(:checked) + .mdi,
 .ui-checkbox input:not(:checked) + .mdi-svg {
+  width: 30px;
+  height: 30px;
+  padding: 6px;
+  text-align: center;
   border-color: rgba(0, 0, 0, 0.2);
   border-style: dashed;
 }
 .ui-checkbox input:checked + .mdi,
 .ui-checkbox input:checked + .mdi-svg {
+  width: 30px;
+  height: 30px;
+  padding: 6px;
+  text-align: center;
   border-color: black;
   border-style: solid;
   background-color: #e0e0e0;
@@ -214,8 +224,8 @@
   border: 1px solid black;
   border-radius: 2px;
   margin: 0px;
-  /*width: @button-width;
-        height: @button-height;*/
+  width: 30px;
+  height: 30px;
   padding: 2px;
   background-color: transparent;
   box-sizing: border-box;
@@ -227,6 +237,74 @@
 }
 .ui-checkbox:hover .mdi,
 .ui-checkbox:hover .mdi-svg {
+  background-color: #e0e0e0;
+}
+.ui-checkbox-label {
+  -webkit-app-region: no-drag;
+  width: 30px;
+  height: 30px;
+  margin: 3px;
+  display: inline-block;
+  vertical-align: top;
+  position: relative;
+  width: auto;
+}
+.ui-checkbox-label label {
+  margin-left: 40px;
+  vertical-align: top;
+  line-height: 30px;
+}
+.ui-checkbox-label input {
+  height: 100%;
+  width: 100%;
+  margin: 0px;
+  opacity: 0;
+  border-style: solid;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+.ui-checkbox-label input:not(:checked) + .mdi,
+.ui-checkbox-label input:not(:checked) + .mdi-svg {
+  width: 30px;
+  height: 30px;
+  padding: 6px;
+  text-align: center;
+  border-color: rgba(0, 0, 0, 0.2);
+  border-style: dashed;
+}
+.ui-checkbox-label input:checked + .mdi,
+.ui-checkbox-label input:checked + .mdi-svg {
+  width: 30px;
+  height: 30px;
+  padding: 6px;
+  text-align: center;
+  border-color: black;
+  border-style: solid;
+  background-color: #e0e0e0;
+}
+.ui-checkbox-label .mdi,
+.ui-checkbox-label .mdi-svg {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  pointer-events: none;
+  border: 1px solid black;
+  border-radius: 2px;
+  margin: 0px;
+  width: 30px;
+  height: 30px;
+  padding: 2px;
+  background-color: transparent;
+  box-sizing: border-box;
+  transition: all ease-in-out 0.2s;
+}
+.ui-checkbox-label .mdi-svg {
+  vertical-align: top;
+  text-align: center;
+}
+.ui-checkbox-label:hover .mdi,
+.ui-checkbox-label:hover .mdi-svg {
   background-color: #e0e0e0;
 }
 .ui-file > input {
@@ -250,12 +328,15 @@
 .ui-text > input {
   -webkit-app-region: no-drag;
   border: 20px solid transparent;
-  border-image: linear-gradient(to right, black 0%, transparent 90%, transparent 100%);
+  border-image: linear-gradient(to right, rgba(0, 0, 0, 0.5) 0%, transparent 90%, transparent 100%);
   border-image-slice: 1;
   border-width: 0px;
   padding: 3px;
   border-bottom-width: 1px;
   outline: none;
+  width: 60px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 2px;
   margin-left: 10px;
 }
 @font-face {
@@ -349,9 +430,9 @@ body[project-open="1"] .titlebar {
   font-size: 12px;
   cursor: pointer;
   vertical-align: top;
-  /*height: @button-width;
-    width: @button-height;*/
   transition: all ease-in-out 0.4s;
+  height: 30px;
+  width: 30px;
   padding: 0px;
 }
 .titlebar .actionbuttons button:hover {
@@ -394,9 +475,9 @@ body[project-open="1"] .titlebar {
   font-size: 12px;
   cursor: pointer;
   vertical-align: top;
-  /*height: @button-width;
-    width: @button-height;*/
   transition: all ease-in-out 0.4s;
+  height: 30px;
+  width: 30px;
   padding: 0px;
 }
 .titlebar .gamebuttons button:hover {
@@ -441,9 +522,9 @@ body[project-open="1"] .titlebar {
   background-color: transparent;
   font-size: 12px;
   cursor: pointer;
-  /*height: @button-width;
-    width: @button-height;*/
   transition: all ease-in-out 0.4s;
+  height: 30px;
+  width: 30px;
   padding: 0px;
   vertical-align: top;
 }
@@ -541,13 +622,11 @@ body[project-open="1"] .library {
   font-size: 12px;
   cursor: pointer;
   vertical-align: top;
-  /*height: @button-width;
-    width: @button-height;*/
   transition: all ease-in-out 0.4s;
+  height: 30px;
+  width: 30px;
   padding: 0px;
   -webkit-app-region: no-drag;
-  width: 22px;
-  height: 22px;
 }
 .library .actions button:hover {
   background-color: #e0e0e0;
@@ -565,15 +644,6 @@ body[project-open="1"] .library {
 }
 .library .actions .btn-add:hover {
   background-color: #E5E5E5;
-}
-.library .actions .ui-checkbox {
-  width: 22px;
-  height: 22px;
-}
-.library .actions .ui-checkbox .mdi,
-.library .actions .ui-checkbox .mdi-svg {
-  width: 22px;
-  height: 22px;
 }
 .library .constant-items .item {
   position: relative;
@@ -667,11 +737,15 @@ body[project-open="1"] .library {
 .library .object-tree .object input {
   -webkit-app-region: no-drag;
   border: 20px solid transparent;
-  border-image: linear-gradient(to right, black 0%, transparent 90%, transparent 100%);
+  border-image: linear-gradient(to right, rgba(0, 0, 0, 0.5) 0%, transparent 90%, transparent 100%);
   border-image-slice: 1;
   border-width: 0px;
   padding: 3px;
   border-bottom-width: 1px;
+  margin-left: 10px;
+  width: 60px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 2px;
   background: transparent;
   outline: none;
   font-size: 16px;
@@ -726,9 +800,9 @@ body[project-open="1"] .library {
   font-size: 12px;
   cursor: pointer;
   vertical-align: top;
-  /*height: @button-width;
-    width: @button-height;*/
   transition: all ease-in-out 0.4s;
+  height: 30px;
+  width: 30px;
   padding: 0px;
   position: absolute;
   top: 0px;
@@ -790,7 +864,7 @@ body[project-open="1"] .library {
 .ui-dialog-container {
   margin-left: 200px;
   position: absolute;
-  top: 34px;
+  top: 44px;
   bottom: 0px;
   right: 0px;
   left: 0px;
@@ -812,6 +886,7 @@ body[project-open="1"] .library {
 .ui-settings .categories {
   position: relative;
   display: inline-block;
+  width: 188px;
   height: 100%;
   vertical-align: top;
   text-align: center;
@@ -836,8 +911,6 @@ body[project-open="1"] .library {
   background-color: transparent;
   font-size: 12px;
   vertical-align: top;
-  /*height: @button-width;
-    width: @button-height;*/
   padding: 5px 10px;
   background-color: white;
   border: none;
@@ -884,8 +957,6 @@ body[project-open="1"] .library {
   background-color: transparent;
   font-size: 12px;
   vertical-align: top;
-  /*height: @button-width;
-    width: @button-height;*/
   padding: 5px 10px;
   background-color: white;
   border: none;
@@ -922,7 +993,7 @@ body[project-open="1"] .library {
   max-width: 100%;
   max-height: 100%;
   overflow-y: auto;
-  margin-right: 172px;
+  margin-right: 188px;
 }
 .ui-settings .inputs-container .subcategory {
   -webkit-touch-callout: none;
@@ -988,9 +1059,9 @@ body[project-open="1"] .library {
   background-color: transparent;
   font-size: 12px;
   cursor: pointer;
-  /*height: @button-width;
-    width: @button-height;*/
   transition: all ease-in-out 0.4s;
+  height: 30px;
+  width: 30px;
   padding: 0px;
   width: 20px;
   height: 20px;
@@ -1040,8 +1111,8 @@ body .workspace {
   height: 100%;
   margin-left: 200px;
   padding-right: 200px;
-  margin-top: 34px;
-  padding-bottom: 34px;
+  margin-top: 44px;
+  padding-bottom: 44px;
   box-sizing: border-box;
   z-index: -20;
   display: inline-block;

@@ -123,7 +123,7 @@ var b_ui = {
 
 				if (input.type === "bool") {
 					html_inputs += 
-						'<div class="ui-checkbox">'+
+						'<div class="ui-checkbox-label">'+
 							'<label>'+input.name+'</label>'+
                 			'<input class="settings-input" type="checkbox" '+common_attr+' '+(user_set[input.name] == "true" || user_set[input.name] == true ? 'checked' : '')+'>'+
                 			'<i class="mdi mdi-check"></i>'+

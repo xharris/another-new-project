@@ -29,6 +29,8 @@
     BUTTONS
 */
 @button-transition-speed: 0.4s;
+@button-size: 30px;
+@button-icon-padding: 6px;
 
 .ui-btn-group {
     cursor: default;
@@ -46,8 +48,6 @@
     font-size: 12px;
     cursor: pointer;
     vertical-align: top;
-    /*height: @button-width;
-    width: @button-height;*/
 
     transition: all ease-in-out @button-transition-speed;
 
@@ -69,6 +69,8 @@
 .ui-button-sphere {
     .ui-button();
     
+    height: @button-size;
+    width: @button-size;
     padding: 0px;
 
     &:hover {
@@ -117,11 +119,12 @@
     background: rgba(255,255,255,0.5);
     border-radius: 2px;
 }
+
 .ui-checkbox {
     .win-nodrag();
 
-    /*width: @button-width;
-    height: @button-height;*/
+    width: @button-size;
+    height: @button-size;
     margin: 3px;
     display: inline-block;
     vertical-align: top;
@@ -144,11 +147,19 @@
         left: 0px;
 
         &:not(:checked) + .mdi, &:not(:checked) + .mdi-svg {
+            width: @button-size;
+            height: @button-size;
+            padding: @button-icon-padding;
+            text-align: center;
             border-color: rgba(0,0,0,0.2);
             border-style: dashed;
         }
 
         &:checked + .mdi, &:checked + .mdi-svg {
+            width: @button-size;
+            height: @button-size;
+            padding: @button-icon-padding;
+            text-align: center;
             border-color: black;
             border-style: solid;
             background-color: #e0e0e0;
@@ -163,8 +174,8 @@
         border: 1px solid black;
         border-radius: 2px;
         margin: 0px;
-        /*width: @button-width;
-        height: @button-height;*/
+        width: @button-size;
+        height: @button-size;
         padding: 2px;
         background-color: transparent;
         box-sizing: border-box;
@@ -182,6 +193,12 @@
             background-color: #e0e0e0;
         }
     }
+}
+
+.ui-checkbox-label {
+    .ui-checkbox();
+
+    width: auto;
 }
 
 .ui-file {
