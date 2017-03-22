@@ -127,7 +127,7 @@ var b_code = function(sel_id, fn_saveScript) {
 
 		if (code === "" && !skipBlankCheck) {
 			console.log("blank script")
-			blanke.showModal("Last modified script was suspiciously blank. Still save it?",{
+			blanke.showModal("Last modified script was suspiciously empty (no text in it). Still save it?",{
 		        "yes": function() {_this.saveFile(path, callback, true)},
 		        "no": undefined
 		    }); 
