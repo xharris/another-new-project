@@ -65,11 +65,13 @@
         margin-right: @ui-categories-width;
 
     	.subcategory {
-            .no-select();
+            >.title {
+                .no-select();
 
-            cursor: default;
-		    font-size: @ui-subcategory-fsize;
-			margin: 10px;
+                cursor: default;
+    			margin: 10px;
+                font-size: @ui-subcategory-fsize;
+            }
     	}
   		>div {
   			margin: 4px 25px;

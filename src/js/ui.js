@@ -74,117 +74,29 @@ var b_ui = {
 			} else {
 				$(".ui-settings > .inputs-container").attr("data-type","");
 			}
-
-			$(".ui-dialog-container > .ui-settings > .inputs-container").on('change', 'input,select', function(){	
-				var setting_type = $(".ui-settings > .inputs-container").attr("data-type");
-				var type = $(this).data("type");
-				var name = $(this).data("name");
-				var value = $(this).val();
-				var subcat = $(this).data("subcategory");
-
-				if (type === "bool")
-					value = $(this).is(':checked') ? true : false;
-				if (type === "number") 
-					value = parseInt(value);
-				// encrypt password
-				if (type === "password")
-					value = b_util.encrypt(value);
-
-				if (setting_type === "plugins")
-					b_project.setPluginSetting(subcat, name, value);
-				else 
-					b_project.setSetting(setting_type, name, value);
-			});
 		});
 
 		$(".ui-dialog-container > .ui-settings .category[data-type='ide']").click();
 	},
 
+	_settingChange : function(type, name, value, subcategory) {
+		var setting_type = $(".ui-settings > .inputs-container").attr("data-type");
+
+		if (setting_type === "plugins")
+			b_project.setPluginSetting(subcat, name, value);
+		else 
+			b_project.setSetting(setting_type, name, value);
+	},
+
 	_populateInputs : function(type, input_info) {
 		var user_set = b_project.getData('settings')[type]; 
 
-		// populate input section with inputs
-		var html_inputs = '';
-		for (var subcat in input_info) {
-			html_inputs += "<div class='subcategory'>"+subcat.replace("_"," ")+"</div>";
-			for (var i = 0; i < input_info[subcat].length; i++) {
-				var input = input_info[subcat][i];
-
-				if (type === "plugins") {
-					user_set = b_project.getData('settings')[type]; 
-					user_set = user_set[subcat];
-				}
-
-				if (!(input.name in user_set)) {
-					user_set[input.name] = input.default;
-				}
-
-				var common_attr = ' data-subcategory="'+subcat+'" data-name="'+input.name+'" data-type="'+input.type+'" ';
-
-				if (input.type === "bool") {
-					html_inputs += 
-						'<div class="ui-checkbox-label">'+
-							'<label>'+input.name+'</label>'+
-                			'<input class="settings-input" type="checkbox" '+common_attr+' '+(user_set[input.name] == "true" || user_set[input.name] == true ? 'checked' : '')+'>'+
-                			'<i class="mdi mdi-check"></i>'+
-            			'</div>';
-				}
-				if (input.type === "number") {
-					html_inputs += 
-						'<div class="ui-input-group">'+
-							'<label>'+input.name+'</label>'+
-							'<input class="ui-input" '+common_attr+' type="number" min="'+input.min+'" max="'+input.max+'" value="'+user_set[input.name]+'">'+
-						'</div>';
-				}
-				if (input.type === "select") {
-					var options = '';
-					for (var o = 0; o < input.options.length; o++) {
-						options += "<option value='"+input.options[o]+"' "+(input.options[o] === user_set[input.name] ? 'selected' : '')+">"+input.options[o]+"</option>";
-					}
-					html_inputs +=
-						'<div class="ui-input-group">'+
-							'<label>'+input.name+'</label>'+
-							'<select class="ui-select" '+common_attr+'>'+
-								options+
-							'</select>'+
-						'</div>';
-				}
-				if (input.type === "file") {
-					html_inputs +=
-						'<div class="ui-file">'+
-							'<label>'+input.name+'</label>'+
-							'<button class="ui-button-rect" onclick="'+
-								escapeHtml('chooseFile(\'\',function(path){$(\'input[data-name=\"'+input.name+'\"\').val(path[0]).trigger(\'change\');})')+
-							'">Choose file</button>'+
-							'<input disabled '+common_attr+' type="text" value="'+user_set[input.name]+'">'+
-						'</div>'
-				}
-				if (input.type === "text" || input.type === "password") {
-					var value = user_set[input.name];
-
-					// decrypt password
-					if (input.type === "password")
-						value = b_util.decrypt(value)
-
-					html_inputs +=
-						'<div class="ui-text">'+
-							'<label>'+input.name+'</label>'+
-							'<input '+common_attr+' type="'+input.type+'" value="'+value+'">'+
-						'</div>'
-				}
-				if (input.type === "button") {
-					if (input.shape == "rectangle") {
-						html_inputs +=
-							'<br>'+
-							'<button class="ui-button-rect" onclick="'+input.function+'">'+input.name+'</button>'+
-							'<br>';
-					}
-				}
-			}
-		}
-		$(".ui-dialog-container > .ui-settings > .inputs-container").html("");
-		$(".ui-dialog-container > .ui-settings > .inputs-container").html(html_inputs);
-
+		blanke.createForm(
+			".ui-dialog-container > .ui-settings > .inputs-container",
+			input_info,
+			user_set,
+			b_ui._settingChange
+		);
 	},
 
 	svgData: {

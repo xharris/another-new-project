@@ -1016,7 +1016,7 @@ body[project-open="1"] .library {
   overflow-y: auto;
   margin-right: 188px;
 }
-.ui-settings .inputs-container .subcategory {
+.ui-settings .inputs-container .subcategory > .title {
   -webkit-touch-callout: none;
   /* iOS Safari */
   -webkit-user-select: none;
@@ -1031,8 +1031,8 @@ body[project-open="1"] .library {
   /* Non-prefixed version, currently
     not supported by any browser */
   cursor: default;
-  font-size: 24px;
   margin: 10px;
+  font-size: 24px;
 }
 .ui-settings .inputs-container > div {
   margin: 4px 25px;
@@ -1128,15 +1128,26 @@ body {
   display: inline-block;
 }
 body .workspace {
-  width: 100%;
-  height: 100%;
-  margin-left: 200px;
-  padding-right: 200px;
-  margin-top: 44px;
-  padding-bottom: 44px;
   box-sizing: border-box;
-  z-index: -20;
+  z-index: 20;
   display: inline-block;
+  position: absolute;
+  top: 44px;
+  left: 200px;
+  right: 0px;
+  bottom: 0px;
+  /*
+		width: 100%;
+		height: 100%;
+		margin-left: 200px;
+		padding-right: 200px;
+		margin-top: @titlebar-height;
+	    padding-bottom: @titlebar-height;
+	    box-sizing: border-box;
+		z-index: @ide-z-back;
+
+		display: inline-block;
+		*/
 }
 ::selection {
   background: #80deea;

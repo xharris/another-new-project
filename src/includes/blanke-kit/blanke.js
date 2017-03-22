@@ -71,5 +71,113 @@ var blanke = {
 
             $("body > .ui-modal[data-uuid='"+uuid+"'] > .modal-actions > button[data-action='" + choice_key + "']").on('click', choice_fn);
         }
+    },
+
+    // selector_parent: selector for where to put the form inputs
+    // input_info: inputs template (type, default, ...)
+    // input_values: the curret values of the inputs. can be blank object {}
+    // fn_onChange: called when an input value changes. args: type, name, value, subcategory
+    createForm: function(selector_parent, input_info, input_values, fn_onChange) {
+        console.log(input_values)
+        var user_set = input_values;
+
+        // populate input section with inputs
+        var html_inputs = '';
+        for (var subcat in input_info) {
+            html_inputs += "<div class='subcategory'><p class='title'>"+subcat.replace("_"," ")+"</p>";
+            for (var i = 0; i < input_info[subcat].length; i++) {
+                var input = input_info[subcat][i];
+
+                if (!(input.name in user_set)) {
+                    user_set[input.name] = input.default;
+                }
+
+                var common_attr = ' data-subcategory="'+subcat+'" data-name="'+input.name+'" data-type="'+input.type+'" title="'+ifndef(input.tooltip, "")+'"';
+
+                if (input.type === "bool") {
+                    html_inputs += 
+                        '<div class="ui-checkbox-label">'+
+                            '<label>'+input.name+'</label>'+
+                            '<input class="settings-input" type="checkbox" '+common_attr+' '+(user_set[input.name] == "true" || user_set[input.name] == true ? 'checked' : '')+'>'+
+                            '<i class="mdi mdi-check"></i>'+
+                        '</div>';
+                }
+                if (input.type === "number") {
+                    html_inputs += 
+                        '<div class="ui-input-group">'+
+                            '<label>'+input.name+'</label>'+
+                            '<input class="ui-input" '+common_attr+' type="number" min="'+input.min+'" max="'+input.max+'" step="'+input.step+'" value="'+user_set[input.name]+'">'+
+                        '</div>';
+                }
+                if (input.type === "select") {
+                    var options = '';
+                    for (var o = 0; o < input.options.length; o++) {
+                        options += "<option value='"+input.options[o]+"' "+(input.options[o] === user_set[input.name] ? 'selected' : '')+">"+input.options[o]+"</option>";
+                    }
+                    html_inputs +=
+                        '<div class="ui-input-group">'+
+                            '<label>'+input.name+'</label>'+
+                            '<select class="ui-select" '+common_attr+'>'+
+                                options+
+                            '</select>'+
+                        '</div>';
+                }
+                if (input.type === "file") {
+                    html_inputs +=
+                        '<div class="ui-file">'+
+                            '<label>'+input.name+'</label>'+
+                            '<button class="ui-button-rect" onclick="'+
+                                escapeHtml('chooseFile(\'\',function(path){$(\'input[data-name=\"'+input.name+'\"\').val(path[0]).trigger(\'change\');})')+
+                            '">Choose file</button>'+
+                            '<input disabled '+common_attr+' type="text" value="'+user_set[input.name]+'">'+
+                        '</div>'
+                }
+                if (input.type === "text" || input.type === "password") {
+                    var value = user_set[input.name];
+
+                    // decrypt password
+                    if (input.type === "password")
+                        value = b_util.decrypt(value)
+
+                    html_inputs +=
+                        '<div class="ui-text">'+
+                            '<label>'+input.name+'</label>'+
+                            '<input '+common_attr+' type="'+input.type+'" value="'+value+'">'+
+                        '</div>'
+                }
+                if (input.type === "button") {
+                    if (input.shape == "rectangle") {
+                        html_inputs +=
+                            '<br>'+
+                            '<button class="ui-button-rect" onclick="'+input.function+'">'+input.name+'</button>'+
+                            '<br>';
+                    }
+                }
+            } // for-loop
+
+            html_inputs += "</div>";
+        }
+
+        $(selector_parent).html("");
+        $(selector_parent).html(html_inputs);
+
+        // bind input change events
+        $(selector_parent).on('change', 'input,select', function(){
+            var type = $(this).data("type"); // bool, number, password
+            var name = $(this).data("name"); // x, y, width, jump_power, etc...
+            var value = $(this).val(); // 3, 1.4, true, ****
+            var subcat = $(this).data("subcategory");
+
+            if (type === "bool")
+                value = $(this).is(':checked') ? true : false;
+            if (type === "number") 
+                value = parseFloat(value);
+            // encrypt password
+            if (type === "password")
+                value = b_util.encrypt(value);
+
+            if (fn_onChange) 
+                fn_onChange(type, name, value, subcat);
+        });
     }
 }

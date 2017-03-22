@@ -1,6 +1,6 @@
 var nwHELPER = nwPLUGINS['build_helper'];
 
-exports.modules = ['entity', 'image', 'state', 'spritesheet'];
+exports.modules = ['entity', 'image', 'state', 'spritesheet', 'audio'];
 exports.colors = [
 /*
 	'#ef9a9a', // red 200
@@ -243,6 +243,28 @@ function build(build_path, objects, callback) {
 		assets += "function assets:"+img.name+"()\n"+
 			 	  "\treturn love.graphics.newImage(\'assets/image/"+img.path+"\');\n"+
 			 	  "end\n\n";			  
+	}
+
+	// AUDIO
+	for (var e in objects['audio']) {
+		var audio = objects['audio'][e];
+		var params = audio.parameters;
+
+		var values = [
+			["Looping", params.general.looping],
+			["Volume", params.general.volume],
+			["Pitch", params.general.pitch],
+			["VolumeLimits", params.volume_limits.min+", "+params.volume_limits.max],
+			["Position", params.position.x+", "+params.position.y+", "+params.position.z],
+			["Cone", params.cone.innerAngle+", "+params.cone.outerAngle+", "+params.cone.outerVolume]
+		];
+
+		assets += "function assets:"+audio.name+"()\n"+
+				  "\tlocal new_audio = love.audio.newSource(\'assets/audio/"+audio.path+"\', \'"+params.general.type+"\')\n";
+		for (var v = 0; v < values.length; v++) {
+			assets += "\tnew_audio:set"+values[v][0]+"("+values[v][1]+")\n";
+		}
+		assets += "\treturn new_audio\nend\n\n";
 	}
 
 	// SPRITESHEET

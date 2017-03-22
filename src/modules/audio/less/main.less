@@ -1,0 +1,46 @@
+@import "imports";
+
+body .workspace.audio {
+	.preview-container {
+		margin: 20px;
+
+		>#audio-controls {
+			padding: 6px;
+		}
+	}
+
+    .inputs-container {
+	   	padding: 20px;
+	    overflow-y: auto;
+	    position: absolute;
+	    left: 0px;
+	    right: 0px;
+	    bottom: 0px;
+	    top: 88px;
+
+	    column-count: 2;
+
+        .subcategory {
+        	> .title {
+	            font-weight: 500;
+	            font-size: 20px;
+	        }
+
+            >*:not(.title) {
+            	margin-left:20px;
+            }
+        }
+    }
+
+    /*
+    box-sizing: border-box;
+    z-index: 20;
+    display: inline-block;
+    position: absolute;
+    top: 44px;
+    left: 200px;
+    right: 0px;
+    bottom: 0px;
+    */
+}
+
