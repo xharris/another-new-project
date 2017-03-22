@@ -17,6 +17,12 @@ Map = Class{
 
 		-- load tilesets
 		for t, tileset in pairs(self.data.tilesets) do
+			-- resize tilesets that don't cover the entire image
+			tileset.cutwidth = tileset.imagewidth - (tileset.imagewidth % tileset.tilewidth)
+			tileset.cutheight = tileset.imageheight - (tileset.imageheight % tileset.tileheight)
+
+			print (tileset.name .. " [" .. tileset.cutwidth .. ", " .. tileset.cutheight .. "]")
+
 			self.tilesets[tileset.firstgid] = tileset
 
 			self._images[tileset.name] = assets[tileset.name]()
@@ -33,7 +39,7 @@ Map = Class{
 					if d > 0 then
 						-- get tileset that covers this gid
 						local tileset
-						for gid, _tileset in ipairs(self.tilesets) do
+						for gid, _tileset in pairs(self.tilesets) do
 							if d >= gid then
 								tileset = _tileset
 							end
@@ -45,19 +51,24 @@ Map = Class{
 						end
 
 						-- get tile x/y
-						i_d = i_d - 1
-						local tile_x = i_d % layer.width * tileset.tileheight
-						local tile_y = math.floor(i_d / layer.width) * tileset.tilewidth
+						local tile_x = i_d % layer.width * self.data.tilewidth - self.data.tilewidth -- offset, who knows why
+						local tile_y = math.floor(i_d / layer.width) * self.data.tileheight
 
 						-- get tile frame x/y
 						local frame = d - tileset.firstgid
-						local columns = tileset.imagewidth / tileset.tilewidth
+						local columns = tileset.cutwidth / tileset.tilewidth
 
-						local frame_x = frame % columns * tileset.tileheight
-						local frame_y = math.floor(frame / columns) * tileset.tilewidth
+						local frame_x = frame % columns * tileset.tilewidth
+						local frame_y = math.floor(frame / columns) * tileset.tileheight
+
+						print(d .. " -> " .. frame .. " - " .. frame_x .. ", " .. frame_y .. " (" .. tile_x .. ", " .. tile_y .. ") " .. tileset.name)
+
+						-- offset for tileset smaller than grid
+						local offx = 0--(tileset.tilewidth < self.data.tilewidth) and self.data.tilewidth - tileset.tilewidth or 0
+						local offy = (tileset.tileheight < self.data.tileheight) and self.data.tileheight - tileset.tileheight or 0
 
 						local quad = love.graphics.newQuad(frame_x, frame_y, tileset.tilewidth, tileset.tileheight, tileset.imagewidth, tileset.imageheight)
-						self._batches[layer.name][tileset.name]:add(quad, tile_x, tile_y, 0, 1, 1, 0, 0)
+						self._batches[layer.name][tileset.name]:add(quad, tile_x + offx, tile_y + offy, 0, 1, 1, tileset.tileoffset.y, tileset.tileoffset.x) -- yes offsetx and y are switched
 					end
 				end
 			end
