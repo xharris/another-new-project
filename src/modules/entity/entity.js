@@ -32,7 +32,6 @@ exports.onDblClick = function(uuid, properties) {
 
 exports.onClose = function(uuid) {
 	if (b_project.getPluginSetting('code_editor', 'save on close')) {
-		console.log("ok go")
 		saveScript();
 	}
 

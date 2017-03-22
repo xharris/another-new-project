@@ -124,15 +124,20 @@ var b_code = function(sel_id, fn_saveScript) {
 	this.saveFile = function(path, callback) {
 		code = this.codemirror.getValue();
 
-		nwMKDIRP(nwPATH.dirname(path), function(){
-			nwFILE.writeFile(path, code, function(err) {
-				if (err) 
-					b_console.error('ERR: Cannot save ' +path);
+		if (code === "") {
+			console.log("blank script")
+			return;
+		} else {
+			nwMKDIRP(nwPATH.dirname(path), function(){
+				nwFILE.writeFile(path, code, function(err) {
+					if (err) 
+						b_console.error('ERR: Cannot save ' +path);
 
-				if (callback)
-					callback(err);
+					if (callback)
+						callback(err);
+				});
 			});
-		});
+		}
 	};
 
 	document.addEventListener('library.rename', function(e) {
