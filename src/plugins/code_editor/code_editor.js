@@ -121,12 +121,16 @@ var b_code = function(sel_id, fn_saveScript) {
 		});
 	};
 
-	this.saveFile = function(path, callback) {
+	this.saveFile = function(path, callback, skipBlankCheck=false) {
 		code = this.codemirror.getValue();
+		var _this = this;
 
-		if (code === "") {
+		if (code === "" && !skipBlankCheck) {
 			console.log("blank script")
-			return;
+			blanke.showModal("Last modified script was suspiciously blank. Still save it?",{
+		        "yes": function() {_this.saveFile(path, callback, true)},
+		        "no": undefined
+		    }); 
 		} else {
 			nwMKDIRP(nwPATH.dirname(path), function(){
 				nwFILE.writeFile(path, code, function(err) {
