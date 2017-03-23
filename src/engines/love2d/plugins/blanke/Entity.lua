@@ -97,7 +97,7 @@ _Entity = Class{
 		-- check for collisions
 		for s, shape in pairs(self.shapes) do
 			if self.onCollision then
-				self.onCollision(HC.collisions(shape))
+				self.onCollision(shape, HC.collisions(shape))
 			end
 		end
 
@@ -261,10 +261,14 @@ _Entity = Class{
 		end 
 	end,
 
+	distance_point = function(self, x, y)
+		return math.sqrt((x - self.x)^2 + (y - self.y)^2)
+	end,
+
 	-- other : Entity object
 	-- returns distance between center of self and other object in pixels
 	distance = function(self, other)
-		return math.sqrt((other.x - self.x)^2 + (other.y - self.y)^2)
+		return self:distance(other.x, other.y)
 	end,
 
 	-- self direction and speed will be set towards the given point

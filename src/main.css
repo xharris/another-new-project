@@ -1034,6 +1034,9 @@ body[project-open="1"] .library {
   margin: 10px;
   font-size: 24px;
 }
+.ui-settings .inputs-container .subcategory > .ui-checkbox {
+  margin-right: 20px;
+}
 .ui-settings .inputs-container > div {
   margin: 4px 25px;
 }

@@ -75,12 +75,9 @@ var blanke = {
 
     // selector_parent: selector for where to put the form inputs
     // input_info: inputs template (type, default, ...)
-    // input_values: the curret values of the inputs. can be blank object {}
+    // user_val: the curret values of the inputs. can be blank object {}
     // fn_onChange: called when an input value changes. args: type, name, value, subcategory
-    createForm: function(selector_parent, input_info, input_values, fn_onChange) {
-        console.log(input_values)
-        var user_set = input_values;
-
+    createForm: function(selector_parent, input_info, user_val, fn_onChange) {
         // populate input section with inputs
         var html_inputs = '';
         for (var subcat in input_info) {
@@ -88,35 +85,38 @@ var blanke = {
             for (var i = 0; i < input_info[subcat].length; i++) {
                 var input = input_info[subcat][i];
 
-                if (!(input.name in user_set)) {
-                    user_set[input.name] = input.default;
+                if (!(input.name in user_val)) {
+                    user_val[input.name] = input.default;
                 }
 
                 var common_attr = ' data-subcategory="'+subcat+'" data-name="'+input.name+'" data-type="'+input.type+'" title="'+ifndef(input.tooltip, "")+'"';
+                // remove [hidden_name]
+                var display_name = input.name.replace(/\[([^\]]+)\]/g,'');
+
 
                 if (input.type === "bool") {
                     html_inputs += 
                         '<div class="ui-checkbox-label">'+
-                            '<label>'+input.name+'</label>'+
-                            '<input class="settings-input" type="checkbox" '+common_attr+' '+(user_set[input.name] == "true" || user_set[input.name] == true ? 'checked' : '')+'>'+
+                            '<label>'+display_name+'</label>'+
+                            '<input class="settings-input" type="checkbox" '+common_attr+' '+(user_val[input.name] == "true" || user_val[input.name] == true ? 'checked' : '')+'>'+
                             '<i class="mdi mdi-check"></i>'+
                         '</div>';
                 }
                 if (input.type === "number") {
                     html_inputs += 
                         '<div class="ui-input-group">'+
-                            '<label>'+input.name+'</label>'+
-                            '<input class="ui-input" '+common_attr+' type="number" min="'+input.min+'" max="'+input.max+'" step="'+input.step+'" value="'+user_set[input.name]+'">'+
+                            '<label>'+display_name+'</label>'+
+                            '<input class="ui-input" '+common_attr+' type="number" min="'+input.min+'" max="'+input.max+'" step="'+input.step+'" value="'+user_val[input.name]+'">'+
                         '</div>';
                 }
                 if (input.type === "select") {
                     var options = '';
                     for (var o = 0; o < input.options.length; o++) {
-                        options += "<option value='"+input.options[o]+"' "+(input.options[o] === user_set[input.name] ? 'selected' : '')+">"+input.options[o]+"</option>";
+                        options += "<option value='"+input.options[o]+"' "+(input.options[o] === user_val[input.name] ? 'selected' : '')+">"+input.options[o]+"</option>";
                     }
                     html_inputs +=
                         '<div class="ui-input-group">'+
-                            '<label>'+input.name+'</label>'+
+                            '<label>'+display_name+'</label>'+
                             '<select class="ui-select" '+common_attr+'>'+
                                 options+
                             '</select>'+
@@ -125,15 +125,15 @@ var blanke = {
                 if (input.type === "file") {
                     html_inputs +=
                         '<div class="ui-file">'+
-                            '<label>'+input.name+'</label>'+
+                            '<label>'+display_name+'</label>'+
                             '<button class="ui-button-rect" onclick="'+
                                 escapeHtml('chooseFile(\'\',function(path){$(\'input[data-name=\"'+input.name+'\"\').val(path[0]).trigger(\'change\');})')+
                             '">Choose file</button>'+
-                            '<input disabled '+common_attr+' type="text" value="'+user_set[input.name]+'">'+
+                            '<input disabled '+common_attr+' type="text" value="'+user_val[input.name]+'">'+
                         '</div>'
                 }
                 if (input.type === "text" || input.type === "password") {
-                    var value = user_set[input.name];
+                    var value = user_val[input.name];
 
                     // decrypt password
                     if (input.type === "password")
@@ -141,7 +141,7 @@ var blanke = {
 
                     html_inputs +=
                         '<div class="ui-text">'+
-                            '<label>'+input.name+'</label>'+
+                            '<label>'+display_name+'</label>'+
                             '<input '+common_attr+' type="'+input.type+'" value="'+value+'">'+
                         '</div>'
                 }
@@ -149,7 +149,7 @@ var blanke = {
                     if (input.shape == "rectangle") {
                         html_inputs +=
                             '<br>'+
-                            '<button class="ui-button-rect" onclick="'+input.function+'">'+input.name+'</button>'+
+                            '<button class="ui-button-rect" onclick="'+input.function+'">'+display_name+'</button>'+
                             '<br>';
                     }
                 }
@@ -176,6 +176,7 @@ var blanke = {
             if (type === "password")
                 value = b_util.encrypt(value);
 
+            b_project.autoSaveProject();
             if (fn_onChange) 
                 fn_onChange(type, name, value, subcat);
         });

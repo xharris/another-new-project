@@ -10,13 +10,13 @@ var audio_settings = {
 		{"type": "number", "name": "pitch", "default": 1, "min":-16, "max":16, "step":0.1},
 	],
 	"volume_limits" : [
-		{"type": "number", "name": "min", "default":0, "min":0, "max":1, "step":0.1, "tooltip": "not reflected in preview"},
-		{"type": "number", "name": "max", "default":1, "min":0, "max":1, "step":0.1, "tooltip": "not reflected in preview"},
+		{"type": "number", "name": "[volume]min", "default":0, "min":0, "max":1, "step":0.1, "tooltip": "not reflected in preview"},
+		{"type": "number", "name": "[volume]max", "default":1, "min":0, "max":1, "step":0.1, "tooltip": "not reflected in preview"},
 	],
 	"position" : [
-		{"type": "number", "name": "x", "default":0, "min":-1000, "max":1000, "step":1},
-		{"type": "number", "name": "y", "default":0, "min":-1000, "max":1000, "step":1},
-		{"type": "number", "name": "z", "default":0, "min":-1000, "max":1000, "step":1}
+		{"type": "number", "name": "[position]x", "default":0, "min":-1000, "max":1000, "step":1},
+		{"type": "number", "name": "[position]y", "default":0, "min":-1000, "max":1000, "step":1},
+		{"type": "number", "name": "[position]z", "default":0, "min":-1000, "max":1000, "step":1}
 	],
 	"cone" : [
 		{"type": "number", "name": "innerAngle", "default":360, "min":-360, "max":360, "step":1},
@@ -63,7 +63,7 @@ function importAudio(path) {
     			new_aud.parameters[categories[c]] = {};
     			for (var s = 0; s < audio_settings[categories[c]].length; s++) {
     				setting = audio_settings[categories[c]][s];
-    				new_aud.parameters[categories[c]][setting.name] = setting.default;
+    				new_aud.parameters[setting.name] = setting.default;
     			}
     		}
     	});
@@ -92,8 +92,9 @@ exports.onDblClick = function(uuid, properties) {
 	blanke.createForm(".workspace > .inputs-container", audio_settings, properties.parameters,
 		function (type, name, value, subcategory) {
 			aud_properties.parameters[subcategory] = ifndef(aud_properties.parameters[subcategory], {});
-			aud_properties.parameters[subcategory][name] = value;
+			aud_properties.parameters[name] = value;
 
+			// modify howler preview
 			if (name == "volume")
 				howler.volume(value);
 			if (name == "looping")
@@ -111,14 +112,17 @@ exports.onDblClick = function(uuid, properties) {
 					coneInnerAngle: props.innerAngle,
 					coneOuterAngle: props.outerAngle,
 					coneOuterGain: props.outerVolume
-				})
+				});
 			}
 		}
 	);
 
 	// create howl for playing the sound
 	howler = new nwAUDIO.Howl({
-		src: nwPATH.join(b_project.getResourceFolder('audio'), properties.path)
+		src: nwPATH.join(b_project.getResourceFolder('audio'), properties.path),
+		volume: properties.parameters.volume,
+		loop: properties.parameters.looping,
+		rate: properties.parameters.pitch
 	});
 
 	// music control event binding

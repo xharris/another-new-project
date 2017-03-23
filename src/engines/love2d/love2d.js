@@ -249,13 +249,13 @@ function build(build_path, objects, callback) {
 		var params = audio.parameters;
 		
 		assets += "function assets:"+audio.name+"()\n"+
-				  "\tlocal new_audio = love.audio.newSource(\'assets/audio/"+audio.path+"\', \'"+params.general.type+"\')\n";
+				  "\tlocal new_audio = love.audio.newSource(\'assets/audio/"+audio.path+"\', \'"+params.type+"\')\n";
 		
 		var values = [
-			["Looping", params.general.looping],
-			["Volume", params.general.volume],
-			["Pitch", params.general.pitch],
-			["VolumeLimits", params.volume_limits.min+", "+params.volume_limits.max],
+			["Looping", params.looping],
+			["Volume", params.volume],
+			["Pitch", params.pitch],
+			["VolumeLimits", params["[volume]min"]+", "+params["[volume]max"]],
 		];
 		for (var v = 0; v < values.length; v++) {
 			assets += "\tnew_audio:set"+values[v][0]+"("+values[v][1]+")\n";
@@ -263,8 +263,8 @@ function build(build_path, objects, callback) {
 
 		// add things only mono channel audio can do
 		var mono_values = [
-			["Position", params.position.x+", "+params.position.y+", "+params.position.z],
-			["Cone", params.cone.innerAngle+", "+params.cone.outerAngle+", "+params.cone.outerVolume]
+			["Position", params["[position]x"]+", "+params["[position]y"]+", "+params["[position]z"]],
+			["Cone", params.innerAngle+", "+params.outerAngle+", "+params.outerVolume]
 		];
 		assets += "\tif new_audio:getChannels() == 1 then\n"
 		for (var v = 0; v < mono_values.length; v++) {
