@@ -112,11 +112,11 @@ exports.run = function(objects) {
 
 exports.settings = {
 	"misc" : [
-		{"type" : "text", "name" : "identity", "default" : "nil"},
-		{"type" : "text", "name" : "version", "default" : "0.10.2"},
-		{"type" : "bool", "name" : "console", "default" : "false"},
-		{"type" : "bool", "name" : "accelerometer joystick", "default" : "true"},
-		{"type" : "bool", "name" : "external storage", "default" : "false"},
+		{"type" : "text", "name" : "identity", "default" : "nil", "tooltip": "The name of the save directory"},
+		{"type" : "text", "name" : "version", "default" : "0.10.2", "tooltip": "The LÖVE version this game was made for"},
+		{"type" : "bool", "name" : "console", "default" : "false", "tooltip": "Attach a console (Windows only)"},
+		{"type" : "bool", "name" : "accelerometer joystick", "default" : "true", "tooltip": "Enable the accelerometer on iOS and Android by exposing it as a Joystick"},
+		{"type" : "bool", "name" : "external storage", "default" : "false", "tooltip": "True to save files (and read from the save directory) in external storage on Android"},
 		{"type" : "bool", "name" : "gamma correct", "default" : "false"}
 	],
 	"window" : [
@@ -133,9 +133,9 @@ exports.settings = {
 		{"type" : "select", "name" : "fullscreen type", "default" : "desktop", "options" : ["desktop", "exclusive"]},
 		{"type" : "bool", "name" : "vsync", "default" : "true"},
 
-		{"type" : "number", "name" : "msaa", "default" : 0, "min" : 0, "max" : 16},
-		{"type" : "number", "name" : "display", "default" : 0, "min" : 0, "max" : 16},
-		{"type" : "bool", "name" : "highdpi", "default" : "false"}
+		{"type" : "number", "name" : "msaa", "default" : 0, "min" : 0, "max" : 16, "tooltip": "The number of samples to use with multi-sampled antialiasing"},
+		{"type" : "number", "name" : "display", "default" : 0, "min" : 0, "max" : 16, "tooltip": "Index of the monitor to show the window in"},
+		{"type" : "bool", "name" : "highdpi", "default" : "false", "tooltip": "Enable high-dpi mode for the window on a Retina display"}
 		// window.x
 		// window.y	
 	], 
@@ -151,7 +151,7 @@ exports.settings = {
 		{"type" : "bool", "name" : "physics", "default" : "true"},
 		{"type" : "bool", "name" : "sound", "default" : "true"},
 		{"type" : "bool", "name" : "system", "default" : "true"},
-		{"type" : "bool", "name" : "timer", "default" : "true"},
+		{"type" : "bool", "name" : "timer", "default" : "true", "tooltip": "Disabling it will result 0 delta time in love.update"},
 		{"type" : "bool", "name" : "touch", "default" : "true"},
 		{"type" : "bool", "name" : "video", "default" : "true"},
 		{"type" : "bool", "name" : "window", "default" : "true"},
@@ -230,8 +230,6 @@ function build(build_path, objects, callback) {
 
 		if (ent.code_path.length > 1)
 			script_includes += ent.name + " = require \"assets/scripts/"+ent.code_path.replace(/\\/g,"/").replace('.lua','')+"\"\n";
-
-		//state_init += "\tlocal "+ent.name+" = {}\n";
 	}
 
 	var assets = '';
@@ -249,22 +247,32 @@ function build(build_path, objects, callback) {
 	for (var e in objects['audio']) {
 		var audio = objects['audio'][e];
 		var params = audio.parameters;
-
+		
+		assets += "function assets:"+audio.name+"()\n"+
+				  "\tlocal new_audio = love.audio.newSource(\'assets/audio/"+audio.path+"\', \'"+params.general.type+"\')\n";
+		
 		var values = [
 			["Looping", params.general.looping],
 			["Volume", params.general.volume],
 			["Pitch", params.general.pitch],
 			["VolumeLimits", params.volume_limits.min+", "+params.volume_limits.max],
-			["Position", params.position.x+", "+params.position.y+", "+params.position.z],
-			["Cone", params.cone.innerAngle+", "+params.cone.outerAngle+", "+params.cone.outerVolume]
 		];
-
-		assets += "function assets:"+audio.name+"()\n"+
-				  "\tlocal new_audio = love.audio.newSource(\'assets/audio/"+audio.path+"\', \'"+params.general.type+"\')\n";
 		for (var v = 0; v < values.length; v++) {
 			assets += "\tnew_audio:set"+values[v][0]+"("+values[v][1]+")\n";
 		}
-		assets += "\treturn new_audio\nend\n\n";
+
+		// add things only mono channel audio can do
+		var mono_values = [
+			["Position", params.position.x+", "+params.position.y+", "+params.position.z],
+			["Cone", params.cone.innerAngle+", "+params.cone.outerAngle+", "+params.cone.outerVolume]
+		];
+		assets += "\tif new_audio:getChannels() == 1 then\n"
+		for (var v = 0; v < mono_values.length; v++) {
+			assets += "\t\tnew_audio:set"+mono_values[v][0]+"("+mono_values[v][1]+")\n";
+		}
+		assets += "\tend\n"+
+				  "\treturn new_audio\n"+
+				  "end\n\n";
 	}
 
 	// SPRITESHEET
