@@ -132,8 +132,7 @@ var b_project = {
 
 	_populateSettings : function(type, input_info, plugin_name="") {
 		if (type === "plugins") {
-			b_project.proj_data.settings[type][plugin_name] = ifndef(
-				b_project.proj_data.settings[type][plugin_name], {});
+			b_project.proj_data.settings[type][plugin_name] = ifndef(b_project.proj_data.settings[type][plugin_name], {});
 
 			for (var i = 0; i < input_info.length; i++) {
 				var input = input_info[i];
@@ -274,7 +273,6 @@ document.addEventListener("project.setting.set", function(e) {
 		b_project.autosave_on = e.detail.value;
 
 		if (e.detail.value == false) {
-			console.log('here it is')
 			b_project.saveProject();
 		}
 	}

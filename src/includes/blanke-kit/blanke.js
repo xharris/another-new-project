@@ -77,11 +77,19 @@ var blanke = {
     // input_info: inputs template (type, default, ...)
     // user_val: the curret values of the inputs. can be blank object {}
     // fn_onChange: called when an input value changes. args: type, name, value, subcategory
-    createForm: function(selector_parent, input_info, user_val, fn_onChange) {
+    createForm: function(selector_parent, input_info, user_val, fn_onChange, grouped=false) {
+        console.log(user_val)
+
         // populate input section with inputs
         var html_inputs = '';
         for (var subcat in input_info) {
             html_inputs += "<div class='subcategory'><p class='title'>"+subcat.replace("_"," ")+"</p>";
+
+            // get smaller group (for plugins atm)
+            if (grouped) {
+                user_val = user_val[subcat];
+            }
+
             for (var i = 0; i < input_info[subcat].length; i++) {
                 var input = input_info[subcat][i];
 
@@ -90,9 +98,9 @@ var blanke = {
                 }
 
                 var common_attr = ' data-subcategory="'+subcat+'" data-name="'+input.name+'" data-type="'+input.type+'" title="'+ifndef(input.tooltip, "")+'"';
+                
                 // remove [hidden_name]
                 var display_name = input.name.replace(/\[([^\]]+)\]/g,'');
-
 
                 if (input.type === "bool") {
                     html_inputs += 
@@ -162,11 +170,13 @@ var blanke = {
         $(selector_parent).html(html_inputs);
 
         // bind input change events
+        $(selector_parent).off('change', 'input,select');
         $(selector_parent).on('change', 'input,select', function(){
             var type = $(this).data("type"); // bool, number, password
             var name = $(this).data("name"); // x, y, width, jump_power, etc...
             var value = $(this).val(); // 3, 1.4, true, ****
             var subcat = $(this).data("subcategory");
+            var group = $(this).data("group");
 
             if (type === "bool")
                 value = $(this).is(':checked') ? true : false;
@@ -176,9 +186,8 @@ var blanke = {
             if (type === "password")
                 value = b_util.encrypt(value);
 
-            b_project.autoSaveProject();
             if (fn_onChange) 
-                fn_onChange(type, name, value, subcat);
+                fn_onChange(type, name, value, subcat, group);
         });
     }
 }

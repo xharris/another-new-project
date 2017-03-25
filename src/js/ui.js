@@ -45,6 +45,8 @@ var b_ui = {
 			$(".ui-settings > .inputs-container").attr("data-type",type);
 
 			var input_info;
+
+			// loading settings for IDE
 			if (type === "ide") {
 				// get setting info from settings.json
 				nwFILE.readFile(nwPATH.join(__dirname, "settings.json"), 'utf8', function(err, data) {
@@ -53,7 +55,10 @@ var b_ui = {
 		    			b_ui._populateInputs(type, input_info);
 			    	}
 		    	});
-			} else if (type === "engine") {
+			} 
+
+			// loading settings for ENGINE
+			else if (type === "engine") {
 				var eng_module = nwENGINES[b_project.getData('engine')];
 				if ("settings" in eng_module) {
 					input_info = eng_module.settings;
@@ -62,7 +67,10 @@ var b_ui = {
 					// no settings data so just remove this button
 					$(".ui-dialog-container > .ui-settings > .categories > .category[data-type='engine']").remove();
 				}
-			} else if (type === "plugins") {
+			} 
+
+			// loading settings for PLUGINS
+			else if (type === "plugins") {
 				var info = {};
 				for (var p = 0; p < plugin_names.length; p++) {
 					if ("settings" in nwPLUGINS[plugin_names[p]]) {
@@ -79,23 +87,24 @@ var b_ui = {
 		$(".ui-dialog-container > .ui-settings .category[data-type='ide']").click();
 	},
 
-	_settingChange : function(type, name, value, subcategory) {
+	_settingChange : function(type, name, value, subcategory, group) {
 		var setting_type = $(".ui-settings > .inputs-container").attr("data-type");
 
 		if (setting_type === "plugins")
-			b_project.setPluginSetting(subcat, name, value);
+			b_project.setPluginSetting(subcategory, name, value);
 		else 
 			b_project.setSetting(setting_type, name, value);
 	},
 
 	_populateInputs : function(type, input_info) {
-		var user_set = b_project.getData('settings')[type]; 
+		var user_set = b_project.getData('settings')[type];
 
 		blanke.createForm(
 			".ui-dialog-container > .ui-settings > .inputs-container",
 			input_info,
 			user_set,
-			b_ui._settingChange
+			b_ui._settingChange,
+			(type == "plugins")
 		);
 	},
 

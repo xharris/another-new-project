@@ -158,6 +158,8 @@ var b_code = function(sel_id, fn_saveScript) {
 			var repl_path = nwPATH.join(b_project.curr_project, 'assets', 'scripts', '**','*');
 
 			// replace in scripts folder
+			console.log('rename');
+			console.log(e.detail);
 			nwREPLACE({
 				files: repl_path,
 				from: e.detail.old,
