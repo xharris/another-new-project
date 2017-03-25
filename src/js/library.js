@@ -268,10 +268,15 @@ $(function(){
 	$(".library").resizable({
 		handles: "e",
 		resize: function(event, ui){
-			$(".workspace").css("left", ui.size.width)
-			$(".workspace").css("padding-right", ui.size.width)
+			$(".workspace").css("left", ui.size.width);
 			$("body[project-open='1'] .titlebar").css("left", ui.size.width);
 			$(".ui-dialog-container").css("margin-left", ui.size.width);
+		},
+		start: function(event, ui){
+			$(".library").css("transition-duration", "0s");
+		},
+		stop: function(event, ui){
+			$(".library").css("transition-duration", "0.2s");
 		}
 	});
 });

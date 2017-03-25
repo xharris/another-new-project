@@ -153,23 +153,24 @@ var b_code = function(sel_id, fn_saveScript) {
 	});	
 }
 
-	document.addEventListener('library.rename', function(e) {
-		if (b_project.getPluginSetting("code_editor", "find/replace on rename")) {
-			var repl_path = nwPATH.join(b_project.curr_project, 'assets', 'scripts', '**','*');
 
-			// replace in scripts folder
-			console.log('rename');
-			console.log(e.detail);
-			nwREPLACE({
-				files: repl_path,
-				from: e.detail.old,
-				to: e.detail.new
-			}).then(changedFiles => {
-				b_console.log("Replaced "+e.detail.old+
-					"<i class='background-color:'>-></i>"+
-					e.detail.new+" in files: " + changedFiles.join(', '));
-			}).catch(error => {
-				console.log('code_editor: could not rename');//b_console.error("error!")
-			})
-		}
-	});	
+document.addEventListener('library.rename', function(e) {
+	if (b_project.getPluginSetting("code_editor", "find/replace on rename")) {
+		var repl_path = nwPATH.join(b_project.curr_project, 'assets', 'scripts', '**','*');
+
+		// replace in scripts folder
+		console.log('rename');
+		console.log(e.detail);
+		nwREPLACE({
+			files: repl_path,
+			from: e.detail.old,
+			to: e.detail.new
+		}).then(changedFiles => {
+			b_console.log("Replaced "+e.detail.old+
+				"<i class='background-color:'>-></i>"+
+				e.detail.new+" in files: " + changedFiles.join(', '));
+		}).catch(error => {
+			console.log('code_editor: could not rename');//b_console.error("error!")
+		})
+	}
+});	
