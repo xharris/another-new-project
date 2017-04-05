@@ -274,9 +274,11 @@ $(function(){
 		},
 		start: function(event, ui){
 			$(".library").css("transition-duration", "0s");
+			$(".titlebar").css("transition-duration", "0s");
 		},
 		stop: function(event, ui){
 			$(".library").css("transition-duration", "0.2s");
+			$(".titlebar").css("transition-duration", "0.2s");
 		}
 	});
 });

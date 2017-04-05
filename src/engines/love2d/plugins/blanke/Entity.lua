@@ -28,8 +28,6 @@ _Entity = Class{
 	direction = 0,
 	friction = 0,
 	gravity = 0,
-	_gravityx = 0,
-	_gravityy = 0,
 	gravity_direction = 0,
 	hspeed = 0,
 	vspeed = 0,
@@ -42,6 +40,12 @@ _Entity = Class{
 	-- collision
 	shapes = {},
 	_main_shape = '',
+	_collision_stop = {},
+	collisionStop = nil,
+	collisionStopX = nil,
+	collisionStopY = nil,	
+
+	onCollision = {["*"] = function() end},
 
 	update = function(self, dt)
 		if self.preUpdate then
@@ -78,11 +82,7 @@ _Entity = Class{
 		-- calculate gravity/gravity_direction
 		local gravx = self.gravity * math.cos(math.rad(self.gravity_direction))
 		local gravy = self.gravity * math.sin(math.rad(self.gravity_direction))
-		if self.gravity == 0 then
-			self._gravityx = 0
-			self._gravityy = 0
-		end	
-		
+	
 		self.hspeed = self.hspeed + gravx
 		self.vspeed = self.vspeed + gravy
 
@@ -94,10 +94,33 @@ _Entity = Class{
 			shape:move(dx*dt, dy*dt)
 		end
 
+		local _main_shape = self.shapes[self._main_shape]
+		-- collision action functions
+		self.collisionStopX = function(self)
+			_main_shape:move(-dx*dt, 0)
+            self.hspeed = 0
+		end
+
+		self.collisionStopY = function(self)
+			_main_shape:move(0, -dy*dt)
+            self.vspeed = 0
+		end
+		self.collisionStop = function(self)
+			self:collisionStopX()
+			self:collisionStopY()
+		end
+
 		-- check for collisions
-		for s, shape in pairs(self.shapes) do
-			if self.onCollision then
-				self.onCollision(shape, HC.collisions(shape))
+		--print(table.getn(self.onCollision))
+		if _main_shape ~= nil then --and (#self.onCollision > 0) then
+			local collisions = HC.collisions(_main_shape)
+
+			for other, separating_vector in pairs(collisions) do
+				for tag, fn in pairs(self.onCollision) do
+					if tag == other.tag then
+    					fn(other, separating_vector)
+					end
+				end
 			end
 		end
 
@@ -116,6 +139,12 @@ _Entity = Class{
 		if self.postUpdate then
 			self:postUpdate(dt)
 		end	
+	end,
+
+	getCollisions = function(self, shape_name)
+		if self.shapes[shape_name] then
+			return HC.collisions(self.shapes[shape_name])
+		end
 	end,
 
 	debugSprite = function(self)

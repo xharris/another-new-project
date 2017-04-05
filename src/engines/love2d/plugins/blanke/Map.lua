@@ -90,17 +90,24 @@ Map = Class{
 				-- ENTITIES: does not spawn the entity, just stores its data
 				if layer.name == "entity" then
 					for i_o, object in ipairs(layer.objects) do
-						if not self.entities[object.type] then
-							self.entities[object.type] = {}
+						if not self.entities[object.name] then
+							self.entities[object.name] = {}
 						end
 
-						table.insert(self.entities[object.type], object)
+						table.insert(self.entities[object.name], object)
 					end
 				end
 
 				-- COLLISIONS
 				if layer.name == "collision" then
 					for i_o, object in ipairs(layer.objects) do
+
+						-- get hitbox id type
+						local object_tag = object.tag
+						
+						if layer.properties.tag then
+							object_tag = layer.properties.tag
+						end	
 
 						if object.shape == "rectangle" then
 							self:addShape(object.name, object.shape, {object.x, object.y, object.width, object.height}, object.type, layer.offsetx, layer.offsety)
@@ -116,14 +123,14 @@ Map = Class{
 								table.insert(points, point.x + object.x)
 								table.insert(points, point.y + object.y)
 							end
-							print_r(points)
-							self:addShape(object.name, "polygon", points, object.type, layer.offsetx, layer.offsety)
+
+							self:addShape(object.name, "polygon", points, object_tag, layer.offsetx, layer.offsety)
 						end
 
 					end
 				end
 			end
-		end
+		end -- for loop
 	end,
 
 	-- add a collision shape
@@ -141,7 +148,6 @@ Map = Class{
 		-- args {x1, y1, x2, y2, ...}
 		elseif shape == "polygon" then
 			for a = 1, #args, 2 do
-				print(args[a] .. " " .. args[a+1])
 				args[a] = args[a] + xoffset
 				args[a+1] = args[a+1] + yoffset
 			end
@@ -163,18 +169,20 @@ Map = Class{
 		HC.register(new_shape)
 	end,
 
-	getEntity = function (self, type, name) 
+	getEntity = function (self, name) 
 		-- only type is given
-		if not name then
-			return self.entities[type]
+		if self.entities[name] and #self.entities[name] == 1 then
+			return self.entities[name][1]
 		end
 
-		-- return entity with certain type & name
-		for i_e, entity in ipairs(self.entities[type]) do
+		return self.entities[name]
+
+		--[[ return entity with certain type & name (deprecated)
+		for i_e, entity in ipairs(self.entities[name]) do
 			if entity.name == name then
 				return entity
 			end
-		end
+		end]]--
 	end,
 
 	update = function (self, dt)
