@@ -195,6 +195,12 @@ $(function(){
         b_project.getEngine().run(b_library.objects);
     })
 
+    eIPC.on('finish-load', function(event){
+        setTimeout(function(){
+            $('body').removeClass('not-ready');
+        }, 2000);
+    })
+
     var drop_mainwin = $("body")[0];
 	drop_mainwin.ondragover = () => {
         // console.log(e.dataTransfer.files);
@@ -335,6 +341,15 @@ $(function(){
         var target_uuid = $(e.target).parent().data('uuid');
 
         if (dragged_uuid !== target_uuid) {
+            /* drag object/folder to top - DOESNT WORK YET
+            console.log(e.target);
+            if ($(e.target).is(".constant-items")) {
+                console.log("do it")
+                var moving_el = $(dragged).detach();
+                $(".object-tree > .children").prepend(moving_el);
+            }
+            */
+
             // drag object onto folder
             if ($(dragged).is(".object") && $(e.target).parent().is(".folder")) {
                 // is object already in this folder?
@@ -359,15 +374,44 @@ $(function(){
                 $(e.target).parent().after(moving_el);
             }
 
+            // drag folder onto object
+            if ($(dragged).is(".folder") && $(e.target).parent().is(".object")) {
+                var moving_el = $(dragged).detach();
+                $(e.target).parent().after(moving_el);
+            }
+
             b_library.saveTree();
         }
         $('.object-tree .object,.object-tree .folder').removeClass('dragover');
 
     }).on('dragover', '.object,.folder', function(e) {
-        $(e.target).parent().addClass("dragover");
+        var dragged_uuid = $(dragged).data('uuid');
+        var target_uuid = $(e.target).parent().data('uuid');
 
-    }).on('dragleave', '.object,.folder', function(e) {
-        $(e.target).parent().removeClass("dragover");
+        if (dragged_uuid !== target_uuid) {
+            // drag object onto folder
+            if ($(dragged).is(".object") && $(e.target).parent().is(".folder")) {
+                $(e.target).parent().addClass("dragover");  
+            }
+
+            // drag folder onto folder
+            if ($(dragged).is(".folder") && $(e.target).parent().is(".folder") && !$(dragged).has(".folder[data-uuid='"+target_uuid+"']").length) {
+                $(e.target).parent().addClass("dragover");     
+            }
+
+            // drag object onto object
+            if ($(dragged).is(".object") && $(e.target).parent().is(".object")) {
+                $(e.target).parent().addClass("dragover-insert");     
+            }
+
+            // drag folder onto object
+            if ($(dragged).is(".folder") && $(e.target).parent().is(".object")) {
+                $(e.target).parent().addClass("dragover-insert");  
+            }
+        }
+
+    }).on('dragleave mouseup drop', '.object,.folder', function(e) {
+        $('.library .object-tree .object, .folder').removeClass("dragover dragover-insert");
 
     }).on('click', '.folder > .name', function(e) {
         if (!$(this).children('.in-rename').length) {
@@ -378,10 +422,7 @@ $(function(){
             dispatchEvent("library.folder.click", {uuid: uuid, selector: ".library .folder[data-uuid='"+uuid+"']"});
         }
 
-    }).on('mouseup', '.object,.folder', function(e) {
-        $('.object,.folder').removeClass('dragover');
-
-    })
+    });
 
     b_ui.replaceSVGicons();
 });
@@ -466,11 +507,10 @@ function dispatchEvent(ev_name, ev_properties) {
 
 function importLess(name, file, type='modules') {
     nwFILE.readFile(file, 'utf8', function(err, data) {
-
         if (!err) {
             nwLESS.render(data,
                 {
-                    paths: [nwPATH.join(__dirname,"less"),nwPATH.join(__dirname, type, name, "less")],
+                   paths: [nwPATH.join(__dirname,"less"), nwPATH.join(__dirname, type, name, "less")],
                 },
                 function (e, output) {
                     try {
@@ -482,7 +522,7 @@ function importLess(name, file, type='modules') {
                         link.media = 'all';
                         $(link).html(output.css);
                         head.appendChild(link);
-                    } catch (e) {
+                    } catch (err) {
                         b_console.error(e)
                     }
                 });

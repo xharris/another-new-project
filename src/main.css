@@ -1,3 +1,6 @@
+:root {
+  --eng-color: white;
+}
 .no-select {
   -webkit-touch-callout: none;
   /* iOS Safari */
@@ -30,6 +33,7 @@
 /*
     BUTTONS
 */
+/* 4px is practically a random number */
 .ui-btn-group {
   cursor: default;
   background-color: rgba(255, 255, 255, 0.4);
@@ -91,8 +95,8 @@
   cursor: pointer;
   vertical-align: top;
   transition: all ease-in-out 0.4s;
-  height: 30px;
-  width: 30px;
+  height: 26px;
+  width: 26px;
   padding: 0px;
 }
 .ui-button-sphere:hover {
@@ -174,8 +178,8 @@
 }
 .ui-checkbox {
   -webkit-app-region: no-drag;
-  width: 30px;
-  height: 30px;
+  width: 26px;
+  height: 26px;
   margin: 3px;
   display: inline-block;
   vertical-align: top;
@@ -196,21 +200,20 @@
   top: 0px;
   left: 0px;
 }
+.ui-checkbox input + .mdi,
+.ui-checkbox input + .mdi-svg {
+  width: 26px;
+  height: 26px;
+  padding: 4px;
+  text-align: center;
+}
 .ui-checkbox input:not(:checked) + .mdi,
 .ui-checkbox input:not(:checked) + .mdi-svg {
-  width: 30px;
-  height: 30px;
-  padding: 6px;
-  text-align: center;
   border-color: rgba(0, 0, 0, 0.2);
   border-style: dashed;
 }
 .ui-checkbox input:checked + .mdi,
 .ui-checkbox input:checked + .mdi-svg {
-  width: 30px;
-  height: 30px;
-  padding: 6px;
-  text-align: center;
   border-color: black;
   border-style: solid;
   background-color: #e0e0e0;
@@ -224,8 +227,8 @@
   border: 1px solid black;
   border-radius: 2px;
   margin: 0px;
-  width: 30px;
-  height: 30px;
+  width: 26px;
+  height: 26px;
   padding: 2px;
   background-color: transparent;
   box-sizing: border-box;
@@ -241,8 +244,8 @@
 }
 .ui-checkbox-label {
   -webkit-app-region: no-drag;
-  width: 30px;
-  height: 30px;
+  width: 26px;
+  height: 26px;
   margin: 3px;
   display: inline-block;
   vertical-align: top;
@@ -264,21 +267,20 @@
   top: 0px;
   left: 0px;
 }
+.ui-checkbox-label input + .mdi,
+.ui-checkbox-label input + .mdi-svg {
+  width: 26px;
+  height: 26px;
+  padding: 4px;
+  text-align: center;
+}
 .ui-checkbox-label input:not(:checked) + .mdi,
 .ui-checkbox-label input:not(:checked) + .mdi-svg {
-  width: 30px;
-  height: 30px;
-  padding: 6px;
-  text-align: center;
   border-color: rgba(0, 0, 0, 0.2);
   border-style: dashed;
 }
 .ui-checkbox-label input:checked + .mdi,
 .ui-checkbox-label input:checked + .mdi-svg {
-  width: 30px;
-  height: 30px;
-  padding: 6px;
-  text-align: center;
   border-color: black;
   border-style: solid;
   background-color: #e0e0e0;
@@ -292,8 +294,8 @@
   border: 1px solid black;
   border-radius: 2px;
   margin: 0px;
-  width: 30px;
-  height: 30px;
+  width: 26px;
+  height: 26px;
   padding: 2px;
   background-color: transparent;
   box-sizing: border-box;
@@ -385,7 +387,7 @@
   font-family: "ProFont";
   src: url("includes/fonts/profont/ProFontWindows.ttf") format("truetype");
 }
-* {
+*:not(.no-global-font) {
   font-family: 'Inconsolata', sans-serif;
 }
 body[project-open="0"] .titlebar {
@@ -453,8 +455,8 @@ body[project-open="1"] .titlebar {
   cursor: pointer;
   vertical-align: top;
   transition: all ease-in-out 0.4s;
-  height: 30px;
-  width: 30px;
+  height: 26px;
+  width: 26px;
   padding: 0px;
 }
 .titlebar .actionbuttons button:hover {
@@ -498,8 +500,8 @@ body[project-open="1"] .titlebar {
   cursor: pointer;
   vertical-align: top;
   transition: all ease-in-out 0.4s;
-  height: 30px;
-  width: 30px;
+  height: 26px;
+  width: 26px;
   padding: 0px;
 }
 .titlebar .gamebuttons button:hover {
@@ -544,8 +546,8 @@ body[project-open="1"] .titlebar {
   font-size: 12px;
   cursor: pointer;
   transition: all ease-in-out 0.4s;
-  height: 30px;
-  width: 30px;
+  height: 26px;
+  width: 26px;
   padding: 0px;
   vertical-align: top;
 }
@@ -575,6 +577,9 @@ body[project-open="1"] .titlebar {
   height: 2px;
   bottom: 0px;
 }
+body {
+  background-color: var(--eng-color);
+}
 body[project-open="0"] .library {
   width: 0px;
 }
@@ -589,7 +594,7 @@ body[project-open="1"] .library {
   top: 0px;
   bottom: 0px;
   left: 0px;
-  background-color: #ffffff;
+  background-color: var(--eng-color);
   /*box-shadow: 1px 0px 5px black;*/
   z-index: 20;
   overflow: auto;
@@ -644,8 +649,8 @@ body[project-open="1"] .library {
   cursor: pointer;
   vertical-align: top;
   transition: all ease-in-out 0.4s;
-  height: 30px;
-  width: 30px;
+  height: 26px;
+  width: 26px;
   padding: 0px;
   -webkit-app-region: no-drag;
 }
@@ -671,6 +676,7 @@ body[project-open="1"] .library {
   cursor: default;
   outline: 1.5px dashed;
   outline-color: transparent;
+  padding: 0px;
   transition: background-color ease-in-out 0.1s;
   transition: outline-color ease-in-out 0.5s;
 }
@@ -689,8 +695,8 @@ body[project-open="1"] .library {
   /* Non-prefixed version, currently
     not supported by any browser */
   margin: 0px;
-  padding: 4px;
-  font-size: 16px;
+  padding: 2px;
+  font-size: 14px;
 }
 .library .constant-items .item .name:hover {
   background-color: #e0e0e0;
@@ -724,7 +730,7 @@ body[project-open="1"] .library {
 }
 .library .object-tree > .children {
   width: 100%;
-  padding: 1px;
+  padding: 0px;
   position: absolute;
   box-sizing: border-box;
 }
@@ -739,7 +745,7 @@ body[project-open="1"] .library {
 .library .object-tree .folder,
 .library .object-tree .object {
   position: relative;
-  transition: all ease-in-out 0.4s;
+  transition: all ease-in-out 0.2s;
 }
 .library .object-tree .folder.dragover,
 .library .object-tree .object.dragover {
@@ -747,15 +753,19 @@ body[project-open="1"] .library {
 }
 .library .object-tree .folder.dragover > .name,
 .library .object-tree .object.dragover > .name {
-  line-height: 18px;
-  font-size: 18px;
+  line-height: 16px;
+  font-size: 16px;
+}
+.library .object-tree .folder.dragover-insert,
+.library .object-tree .object.dragover-insert {
+  margin-bottom: 14px;
 }
 .library .object-tree .folder.selected > .name,
 .library .object-tree .object.selected > .name {
   font-weight: 900;
 }
-.library .object-tree .folder input,
-.library .object-tree .object input {
+.library .object-tree .folder .in-rename,
+.library .object-tree .object .in-rename {
   -webkit-app-region: no-drag;
   border: 20px solid transparent;
   border-image: linear-gradient(to right, rgba(0, 0, 0, 0.5) 0%, transparent 90%, transparent 100%);
@@ -769,8 +779,10 @@ body[project-open="1"] .library {
   border-radius: 2px;
   background: transparent;
   outline: none;
-  font-size: 16px;
+  font-size: 14px;
   padding: 0px;
+  margin: 0px;
+  width: 100%;
 }
 .library .object-tree .folder .name,
 .library .object-tree .object .name {
@@ -788,7 +800,7 @@ body[project-open="1"] .library {
   /* Non-prefixed version, currently
     not supported by any browser */
   padding: 1px;
-  font-size: 16px;
+  font-size: 14px;
   transition: all ease-in-out 0.1s;
 }
 .library .object-tree .folder .name:hover,
@@ -822,8 +834,8 @@ body[project-open="1"] .library {
   cursor: pointer;
   vertical-align: top;
   transition: all ease-in-out 0.4s;
-  height: 30px;
-  width: 30px;
+  height: 26px;
+  width: 26px;
   padding: 0px;
   position: absolute;
   top: 0px;
@@ -885,7 +897,7 @@ body[project-open="1"] .library {
 .ui-dialog-container {
   margin-left: 200px;
   position: absolute;
-  top: 44px;
+  top: 38px;
   bottom: 0px;
   right: 0px;
   left: 0px;
@@ -901,7 +913,7 @@ body[project-open="1"] .library {
   left: 0px;
   right: 0px;
   z-index: 20;
-  background: #FFFFFF;
+  background: var(--eng-color);
   white-space: nowrap;
 }
 .ui-settings .categories {
@@ -939,7 +951,8 @@ body[project-open="1"] .library {
   border-radius: 0px;
   cursor: pointer;
   transition: all ease-in-out 0.4s;
-  font-size: 16px;
+  background: none;
+  font-size: 14px;
   width: 100%;
   height: 36px;
   margin: 0px;
@@ -1084,8 +1097,8 @@ body[project-open="1"] .library {
   font-size: 12px;
   cursor: pointer;
   transition: all ease-in-out 0.4s;
-  height: 30px;
-  width: 30px;
+  height: 26px;
+  width: 26px;
   padding: 0px;
   width: 20px;
   height: 20px;
@@ -1135,23 +1148,70 @@ body .workspace {
   z-index: 20;
   display: inline-block;
   position: absolute;
-  top: 44px;
+  top: 38px;
   left: 200px;
   right: 0px;
   bottom: 0px;
-  /*
-		width: 100%;
-		height: 100%;
-		margin-left: 200px;
-		padding-right: 200px;
-		margin-top: @titlebar-height;
-	    padding-bottom: @titlebar-height;
-	    box-sizing: border-box;
-		z-index: @ide-z-back;
-
-		display: inline-block;
-		*/
+  background: rgba(255, 255, 255, 0.8);
 }
 ::selection {
-  background: #80deea;
+  background: var(--eng-color);
+}
+body.not-ready .load-splash {
+  opacity: 1;
+}
+body:not(.not-ready) .load-splash {
+  opacity: 0;
+  pointer-events: none;
+}
+.load-splash {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  z-index: 1000;
+  background-color: white;
+  transition: all 0.5s ease-in-out;
+}
+.load-splash > .draggable {
+  -webkit-app-region: drag;
+  margin: 3px;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  left: 0px;
+  bottom: 0px;
+}
+.load-splash div.circle1,
+.load-splash div.circle2 {
+  position: absolute;
+  border-radius: 100%;
+  background-color: white;
+  animation-name: loading1;
+  animation-iteration-count: infinite;
+  animation-duration: 3s;
+  animation-timing-function: ease-in-out;
+}
+.load-splash div.circle1 {
+  background-image: url("less/splash.png");
+  background-position: center center;
+  clip-path: circle(100% at 50% 50%);
+}
+.load-splash div.circle2 {
+  animation-delay: 0.075s;
+}
+@keyframes loading1 {
+  from {
+    width: 0%;
+    height: 0%;
+    top: 50%;
+    left: 50%;
+  }
+  to {
+    width: 200%;
+    height: 200%;
+    top: -50%;
+    left: -50%;
+  }
 }
