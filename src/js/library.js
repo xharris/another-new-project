@@ -1,13 +1,17 @@
 var SAVE_TREE_TIME = 1000;
 var save_tree_timeout = 0;
 
+
 b_library = {
 	objects: {},
 	tree: {}, // used for saveTree to get library tree structure
 
 	setBackColor: function(color) {
-		$(".library").animate({"background-color": color}, 200);
-		$("body").animate({"background-color": shadeColor(color, .85)}, 200);
+		// change variable in less
+		document.documentElement.style.setProperty('--eng-color', color);
+
+		//$(".library").animate({"background-color": color}, 200);
+		//$("body").animate({"background-color": shadeColor(color, .85)}, 200);
 	},
 
 	getBackColor: function() {
@@ -24,7 +28,8 @@ b_library = {
 			colors = engine.colors;
 		}
 
-		b_library.setBackColor(colors[Math.floor(Math.random()*colors.length)]);
+		var new_color = colors[Math.floor(Math.random()*colors.length)];
+		b_library.setBackColor(new_color);
 	},
 
 	reset: function() {

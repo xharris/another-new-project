@@ -30,6 +30,7 @@
 /*
     BUTTONS
 */
+/* 4px is practically a random number */
 .ui-btn-group {
   cursor: default;
   background-color: rgba(255, 255, 255, 0.4);
@@ -91,8 +92,8 @@
   cursor: pointer;
   vertical-align: top;
   transition: all ease-in-out 0.4s;
-  height: 30px;
-  width: 30px;
+  height: 26px;
+  width: 26px;
   padding: 0px;
 }
 .ui-button-sphere:hover {
@@ -174,8 +175,8 @@
 }
 .ui-checkbox {
   -webkit-app-region: no-drag;
-  width: 30px;
-  height: 30px;
+  width: 26px;
+  height: 26px;
   margin: 3px;
   display: inline-block;
   vertical-align: top;
@@ -196,21 +197,20 @@
   top: 0px;
   left: 0px;
 }
+.ui-checkbox input + .mdi,
+.ui-checkbox input + .mdi-svg {
+  width: 26px;
+  height: 26px;
+  padding: 4px;
+  text-align: center;
+}
 .ui-checkbox input:not(:checked) + .mdi,
 .ui-checkbox input:not(:checked) + .mdi-svg {
-  width: 30px;
-  height: 30px;
-  padding: 6px;
-  text-align: center;
   border-color: rgba(0, 0, 0, 0.2);
   border-style: dashed;
 }
 .ui-checkbox input:checked + .mdi,
 .ui-checkbox input:checked + .mdi-svg {
-  width: 30px;
-  height: 30px;
-  padding: 6px;
-  text-align: center;
   border-color: black;
   border-style: solid;
   background-color: #e0e0e0;
@@ -224,8 +224,8 @@
   border: 1px solid black;
   border-radius: 2px;
   margin: 0px;
-  width: 30px;
-  height: 30px;
+  width: 26px;
+  height: 26px;
   padding: 2px;
   background-color: transparent;
   box-sizing: border-box;
@@ -241,8 +241,8 @@
 }
 .ui-checkbox-label {
   -webkit-app-region: no-drag;
-  width: 30px;
-  height: 30px;
+  width: 26px;
+  height: 26px;
   margin: 3px;
   display: inline-block;
   vertical-align: top;
@@ -264,21 +264,20 @@
   top: 0px;
   left: 0px;
 }
+.ui-checkbox-label input + .mdi,
+.ui-checkbox-label input + .mdi-svg {
+  width: 26px;
+  height: 26px;
+  padding: 4px;
+  text-align: center;
+}
 .ui-checkbox-label input:not(:checked) + .mdi,
 .ui-checkbox-label input:not(:checked) + .mdi-svg {
-  width: 30px;
-  height: 30px;
-  padding: 6px;
-  text-align: center;
   border-color: rgba(0, 0, 0, 0.2);
   border-style: dashed;
 }
 .ui-checkbox-label input:checked + .mdi,
 .ui-checkbox-label input:checked + .mdi-svg {
-  width: 30px;
-  height: 30px;
-  padding: 6px;
-  text-align: center;
   border-color: black;
   border-style: solid;
   background-color: #e0e0e0;
@@ -292,8 +291,8 @@
   border: 1px solid black;
   border-radius: 2px;
   margin: 0px;
-  width: 30px;
-  height: 30px;
+  width: 26px;
+  height: 26px;
   padding: 2px;
   background-color: transparent;
   box-sizing: border-box;

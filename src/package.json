@@ -18,6 +18,7 @@
     "plugin": true
   },
   "dependencies": {
+    "codemirror": "^5.25.0",
     "cryptr": "^2.0.0",
     "electron-cookies": "^1.1.0",
     "fs-extra": "^0.26.7",

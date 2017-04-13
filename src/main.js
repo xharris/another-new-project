@@ -53,7 +53,11 @@ function createWindow () {
             height: win_bounds.height
         };
         fs.writeFileSync(initPath, JSON.stringify(data));
-    })
+    });
+
+    mainWindow.webContents.on('did-finish-load', function() {
+        mainWindow.webContents.send("finish-load");
+    });
 
   global.shareVars = {args: process.argv};
 

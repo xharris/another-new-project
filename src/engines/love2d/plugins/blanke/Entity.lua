@@ -23,6 +23,8 @@ _Entity = Class{
 	sprite_yshear = 0,
 	sprite_color = {['r']=255,['g']=255,['b']=255},
 	sprite_alpha = 255,
+	sprite_speed = 1,
+	sprite_frame = 0,
 
 	-- movement variables
 	direction = 0,
@@ -40,7 +42,6 @@ _Entity = Class{
 	-- collision
 	shapes = {},
 	_main_shape = '',
-	_collision_stop = {},
 	collisionStop = nil,
 	collisionStopX = nil,
 	collisionStopY = nil,	
@@ -53,7 +54,7 @@ _Entity = Class{
 		end	
 
 		if self.sprite ~= nil and self.sprite.update ~= nil then
-			self.sprite:update(dt)
+			self.sprite:update(self.sprite_speed*dt)
 		end
 
 		-- x/y extra coordinates
@@ -89,39 +90,46 @@ _Entity = Class{
 		local dx = self.hspeed + speedx
 		local dy = self.vspeed + speedy
 
+		local _main_shape = self.shapes[self._main_shape]
+
+		-- check for collisions
+		for name, fn in pairs(self.onCollision) do
+			-- make sure it actually exists
+			if self.shapes[name] ~= nil then
+				local collisions = HC.collisions(self.shapes[name])
+				for other, separating_vector in pairs(collisions) do
+
+					-- collision action functions
+					self.collisionStopX = function(self)
+						for name, shape in pairs(self.shapes) do
+							shape:move(separating_vector.x, 0)
+						end
+			            self.hspeed = 0
+			            dx = 0
+					end
+
+					self.collisionStopY = function(self)
+						for name, shape in pairs(self.shapes) do
+							shape:move(0, separating_vector.y)
+						end
+			            self.vspeed = 0
+			            dy = 0
+					end
+					
+					self.collisionStop = function(self)
+						self:collisionStopX()
+						self:collisionStopY()
+					end
+
+					-- call users collision callback if it exists
+					fn(other, separating_vector)
+				end
+			end
+		end
+
 		-- move all shapes
 		for s, shape in pairs(self.shapes) do
 			shape:move(dx*dt, dy*dt)
-		end
-
-		local _main_shape = self.shapes[self._main_shape]
-		-- collision action functions
-		self.collisionStopX = function(self)
-			_main_shape:move(-dx*dt, 0)
-            self.hspeed = 0
-		end
-
-		self.collisionStopY = function(self)
-			_main_shape:move(0, -dy*dt)
-            self.vspeed = 0
-		end
-		self.collisionStop = function(self)
-			self:collisionStopX()
-			self:collisionStopY()
-		end
-
-		-- check for collisions
-		--print(table.getn(self.onCollision))
-		if _main_shape ~= nil then --and (#self.onCollision > 0) then
-			local collisions = HC.collisions(_main_shape)
-
-			for other, separating_vector in pairs(collisions) do
-				for tag, fn in pairs(self.onCollision) do
-					if tag == other.tag then
-    					fn(other, separating_vector)
-					end
-				end
-			end
 		end
 
 		-- set position of sprite
@@ -145,6 +153,7 @@ _Entity = Class{
 		if self.shapes[shape_name] then
 			return HC.collisions(self.shapes[shape_name])
 		end
+		--return {}
 	end,
 
 	debugSprite = function(self)

@@ -37,13 +37,24 @@ function importImage(path) {
 }
 
 exports.onMouseEnter = function(uuid, properties) {
+    // show image preview in library
     if (properties.path.length > 0) {
         $(".library").append(
             "<img src='"+nwPATH.join(b_project.getResourceFolder('image'), properties.path)+"' class='img-hover img-hover-"+uuid+"'/>"
         );
         $(".img-hover .img-hover-"+uuid).offset({top: $('.library .object[data-uuid="'+uuid+'"]').position().top});
     }
-    $(".library .object[data-uuid='"+uuid+"'").attr("title", properties.path);
+
+    // set tooltip
+    var img = new Image();
+    img.onload = function() {
+      $(".library .object[data-uuid='"+uuid+"'").attr("title", 
+            properties.path+"\n"+
+            "Dimensions: "+this.width+" x "+this.height
+       );
+    }
+    img.src = nwPATH.join(b_project.getResourceFolder('image'), properties.path);
+
 }
 
 exports.onMouseLeave = function(uuid, properties) {

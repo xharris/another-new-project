@@ -5,6 +5,8 @@
 @lib-svg-height: 14px;
 
 body{
+	background-color: var(--eng-color);
+
 	&[project-open="0"] {
 		.library {
 			width: 0px;
@@ -27,7 +29,6 @@ body{
     top: 0px;
     bottom: 0px;
     left: 0px;
-    background-color: #ffffff;
     /*box-shadow: 1px 0px 5px black;*/
     z-index: 20;
     overflow: auto;
@@ -68,6 +69,7 @@ body{
 			cursor: default;
 			outline: 1.5px dashed;
 			outline-color: transparent;
+			padding: 0px;
 
 			transition: background-color ease-in-out 0.1s;
 			transition: outline-color ease-in-out 0.5s;
@@ -76,7 +78,7 @@ body{
 				.no-select();
 				
 				margin: 0px;
-				padding: 4px;
+				padding: 2px;
 				font-size: @font-size;
 
 				&:hover {
@@ -107,7 +109,7 @@ body{
 
 		>.children {
 			width: 100%;
-			padding: 1px;
+			padding: 0px;
 			position: absolute;
 			box-sizing: border-box;
 		}
@@ -124,15 +126,19 @@ body{
 
 		.folder,.object{
 			position: relative;
-			transition: all ease-in-out 0.4s;
+			transition: all ease-in-out 0.2s;
 
 			&.dragover {
 				outline-color: @ide-fave-color-400;
 				
 				>.name{
-					line-height: 18px;
+					line-height: @font-size + 2;
 					font-size: @font-size + 2;
 				}
+			}
+
+			&.dragover-insert {
+				margin-bottom: @font-size;
 			}
 
 			&.selected {
@@ -141,13 +147,15 @@ body{
 				}
 			}
 
-			input {
+			.in-rename {
 				.ui-input();
 
 				background: transparent;
 				outline: none;
 				font-size: @font-size;
 				padding: 0px;
+				margin: 0px;
+				width: 100%;
 			}
 
 			.name {

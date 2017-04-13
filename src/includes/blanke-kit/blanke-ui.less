@@ -29,8 +29,8 @@
     BUTTONS
 */
 @button-transition-speed: 0.4s;
-@button-size: 30px;
-@button-icon-padding: 6px;
+@button-size: 26px;
+@button-icon-padding: 4px; /* 4px is practically a random number */
 
 .ui-btn-group {
     cursor: default;
@@ -146,20 +146,19 @@
         top: 0px;
         left: 0px;
 
-        &:not(:checked) + .mdi, &:not(:checked) + .mdi-svg {
+        & + .mdi,& + .mdi-svg {
             width: @button-size;
             height: @button-size;
             padding: @button-icon-padding;
             text-align: center;
+        }
+
+        &:not(:checked) + .mdi, &:not(:checked) + .mdi-svg {
             border-color: rgba(0,0,0,0.2);
             border-style: dashed;
         }
 
         &:checked + .mdi, &:checked + .mdi-svg {
-            width: @button-size;
-            height: @button-size;
-            padding: @button-icon-padding;
-            text-align: center;
             border-color: black;
             border-style: solid;
             background-color: #e0e0e0;
