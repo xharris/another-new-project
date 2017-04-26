@@ -3,8 +3,8 @@ var nwZIP = require("archiver")
 exports.copyScript = function(src, dest, replacements, cb_done) {
 	nwFILE.readFile(src, 'utf8', function(err, data) {
 		if (!err) {
-			for (var r in replacements) {
-				data = data.replace(replacements[r][0],replacements[r][1]);
+			for (var r = 0; r < replacements.length; r++) {
+				data = data.replaceAll(replacements[r][0],replacements[r][1]);
 			}
 			nwFILE.writeFile(dest, data, function(err) {
 				if (cb_done)

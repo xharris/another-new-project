@@ -96,21 +96,29 @@ exports.targets = {
 	}
 }
 
+function runLove(love_path, show_cmd=b_project.getSetting("engine","console")) {
+	var cmd = '';
+	if (show_cmd) 
+		cmd = 'start cmd.exe /K \"\"'+nwPATH.join(__dirname, "love-0.10.2-win32", "love.exe")+'\" \"'+love_path+'\"\"';
+	else 
+		cmd = '\"'+nwPATH.join(__dirname, "love-0.10.2-win32", "love.exe")+'\" \"'+love_path+'\"';
+	
+	nwCHILD.exec(cmd);
+}
+
 exports.run = function(objects) {
 	last_object_set = objects;
 	var path = nwPATH.join(getBuildPath(), 'temp');
 	build(path, objects, function(){
-		var cmd = '';
-		if (b_project.getSetting("engine","console")) 
-			cmd = 'start cmd.exe /K \"\"'+nwPATH.join(__dirname, "love-0.10.2-win32", "love.exe")+'\" \"'+path+'\"\"';
-		else 
-			cmd = '\"'+nwPATH.join(__dirname, "love-0.10.2-win32", "love.exe")+'\" \"'+path+'\"';
-		
-		nwCHILD.exec(cmd);
+		runLove(path);
 	});
 } 
 
 exports.settings = {
+	"includes" : [
+		{"type" : "bool", "name" : "printr", "default" : "false", "tooltip": "Print tables using print_r", "include": 'require "plugins.printr"'},
+		{"type" : "bool", "name" : "luasocket", "default" : "false", "tooltip": "helper stuff for luasocket", "include": 'require "plugins.luasocket"'}
+	],
 	"misc" : [
 		{"type" : "text", "name" : "identity", "default" : "nil", "tooltip": "The name of the save directory"},
 		{"type" : "text", "name" : "version", "default" : "0.10.2", "tooltip": "The LÖVE version this game was made for"},
@@ -169,21 +177,11 @@ exports.library_const = [
 				"<div id='code'></div>"
 			);
 
-			codemirror = nwPLUGINS['code_editor'].init('code', function(){
-				var text = codemirror.getValue();
-				nwFILE.writeFile(nwPATH.join(b_project.curr_project, "assets", "main.lua"), text, function(err){
-					if (err)
-						b_console.error(err);
-					else
-						dispatchEvent('something.saved', {what: 'main.lua'});
-				});
+			codemirror = nwPLUGINS['code_editor'].init('code', function(err){
+				codemirror.saveFile(nwPATH.join(b_project.curr_project, "assets", "main.lua"));
 			});
 
-			nwFILE.readFile(nwPATH.join(b_project.curr_project, "assets", "main.lua"), 'utf-8', function(err, data){
-				if (!err) {
-					codemirror.setValue(data);
-				}
-			});
+			codemirror.openFile(nwPATH.join(b_project.curr_project, "assets", "main.lua"));
 		}
 	}
 ]
@@ -192,8 +190,8 @@ exports.loaded = function() {
 	document.addEventListener("project.open", function(e){
 		if (b_project.getData("engine") !== "love2d") return;
 		// copy main.lua template to project folder
-		nwFILE.readFile(nwPATH.join(b_project.curr_project, "assets", "main.lua"), function(err, data){
-			if (err) {
+		nwFILE.stat(nwPATH.join(b_project.curr_project, "assets", "main.lua"), function(err, stat){
+			if (err || !stat.isFile()) {
 				var html_code = nwFILEX.copy(
 					nwPATH.join(__dirname, 'main.lua'),
 					nwPATH.join(b_project.curr_project, "assets", "main.lua")
@@ -201,16 +199,34 @@ exports.loaded = function() {
 			}
 		});
 	});
+
+	document.addEventListener("filedrop", function(e){
+		var love_path = e.detail.path;
+		runLove(love_path);
+	});
 }
+
+
 
 var building = false;
 function build(build_path, objects, callback) {
 	if (building) return;
 	building = true;
 
-	// ENTITIES
 	var script_includes = '';
 
+	// PLUGINS
+	var remove_plugins = [];
+	for (var p = 0; p < exports.settings.includes.length; p++) {
+		var plugin = exports.settings.includes[p];
+
+		if (b_project.getSetting("engine", plugin.name))
+			script_includes += plugin.include + '\n';
+		else 
+			remove_plugins.push(plugin.name);
+	}
+
+	// ENTITIES
 	for (var e in objects['entity']) {
 		var ent = objects['entity'][e];
 
@@ -296,30 +312,31 @@ function build(build_path, objects, callback) {
 			var value = b_project.getSetting("engine", setting)
 			var category = cat;
 
-			if (category === "misc") {
-				category = "";
-			} else {
-				category += ".";
-			}
+			if (category != "includes") {
+				if (category === "misc") {
+					category = "";
+				} else {
+					category += ".";
+				}
 
-			var input_type = exports.settings[cat][s].type;
-			if (input_type === "text") {
-				if (value !== "nil" || value == undefined) 
-					value = "\""+value.addSlashes()+"\"";
-			}
-			if (input_type === "select") {
-				value = "\""+value+"\"";
-			}
+				var input_type = exports.settings[cat][s].type;
+				if (input_type === "text") {
+					if (value !== "nil" || value == undefined) 
+						value = "\""+value.addSlashes()+"\"";
+				}
+				if (input_type === "select") {
+					value = "\""+value+"\"";
+				}
 
-			if (value != undefined)
-				conf += "t."+category+setting.replace(' ','')+" = "+value+"\n";
+				if (value != undefined)
+					conf += "\tt."+category+setting.replace(' ','')+" = "+value+"\n";
+			}
 		}
 		conf += "\n";
 	}
 
 	main_replacements = [
-		['<STATE_INIT>', state_init],
-		['<FIRST_STATE>', first_state]
+		['<STATE_INIT>', state_init]
 	];
 
 	conf_replacements = [
@@ -331,7 +348,8 @@ function build(build_path, objects, callback) {
 	];
 
 	includes_replacements = [
-		['<INCLUDES>', script_includes]
+		['<INCLUDES>', script_includes],
+		['<FIRST_STATE>', first_state]
 	];
 
 	nwHELPER.copyScript(nwPATH.join(__dirname, 'conf.lua'), nwPATH.join(build_path,'conf.lua'), conf_replacements);
@@ -348,6 +366,11 @@ function build(build_path, objects, callback) {
 				nwFILE.unlink(nwPATH.join(build_path, 'assets', 'main.lua'), function(err){
 					// zip up .love (HEY: change line from folder to .love)
 					// ...
+
+					// remove removed plugins :P
+					for (var p = 0; p < remove_plugins.length; p++) {
+						nwFILEX.remove(nwPATH.join(build_path,'plugins',remove_plugins[p]));
+					}
 				
 					building = false;
 					if (callback)

@@ -12,3 +12,11 @@ _Entity = require 'plugins.blanke.Entity'
 Map = require 'plugins.blanke.Map'
 
 <INCLUDES>
+
+Signal.register('love.load', function()
+	-- register gamestates
+	if "<FIRST_STATE>" ~= "" then
+		Gamestate.registerEvents()
+		Gamestate.switch(<FIRST_STATE>)
+	end
+end)

@@ -14,6 +14,10 @@ function htmlEncode(s) {
     return s;
 }
 
+String.prototype.replaceAll = function(find, replace) {
+    return str.replace(new RegExp(find, 'g'), replace);
+};
+
 String.prototype.hashCode = function(){
 	var hash = 0;
 	if (this.length == 0) return hash;
@@ -78,8 +82,6 @@ var blanke = {
     // user_val: the curret values of the inputs. can be blank object {}
     // fn_onChange: called when an input value changes. args: type, name, value, subcategory
     createForm: function(selector_parent, input_info, user_val, fn_onChange, grouped=false) {
-        console.log(user_val)
-
         // populate input section with inputs
         var html_inputs = '';
         for (var subcat in input_info) {

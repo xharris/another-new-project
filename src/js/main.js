@@ -202,11 +202,12 @@ $(function(){
     })
 
     var drop_mainwin = $("body")[0];
-	drop_mainwin.ondragover = () => {
+	drop_mainwin.ondragover = (e) => {
         // console.log(e.dataTransfer.files);
 		if ($(".filedrop-overlay").hasClass("inactive")) {
 			//$(".filedrop-overlay").removeClass("inactive");
 		}
+        dispatchEvent("ondragover", {dataTransfers: e.dataTransfer});
 		return false;
 	};
 	drop_mainwin.ondragleave = drop_mainwin.ondragend = () => {

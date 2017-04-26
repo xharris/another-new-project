@@ -913,8 +913,8 @@ body[project-open="1"] .library {
   left: 0px;
   right: 0px;
   z-index: 20;
-  background: var(--eng-color);
   white-space: nowrap;
+  background-color: white;
 }
 .ui-settings .categories {
   position: relative;
@@ -1131,16 +1131,25 @@ body[project-open="1"] .library {
 .console .success > .message {
   background-color: #c5e1a5;
 }
-html {
+html,
+body {
+  margin: 0;
   width: 100%;
   height: 100%;
   overflow: hidden;
+}
+html {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
   -webkit-font-smoothing: none;
 }
+::selection {
+  background: var(--eng-color);
+}
 body {
-  margin: 0px;
-  width: 100%;
-  height: 100%;
   display: inline-block;
 }
 body .workspace {
@@ -1152,10 +1161,7 @@ body .workspace {
   left: 200px;
   right: 0px;
   bottom: 0px;
-  background: rgba(255, 255, 255, 0.8);
-}
-::selection {
-  background: var(--eng-color);
+  background: rgba(255, 255, 255, 0.5);
 }
 body.not-ready .load-splash {
   opacity: 1;
@@ -1163,6 +1169,9 @@ body.not-ready .load-splash {
 body:not(.not-ready) .load-splash {
   opacity: 0;
   pointer-events: none;
+}
+body:not(.not-ready) .load-splash > .draggable {
+  -webkit-app-region: no-drag;
 }
 .load-splash {
   position: absolute;

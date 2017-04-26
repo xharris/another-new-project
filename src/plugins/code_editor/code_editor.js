@@ -10,11 +10,11 @@ exports.init = function(sel_id, fn_saveScript) {
 }
 
 exports.settings = [
-	{
+    /*{
 		"type" : "file",
 		"name" : "external editor",
 		"default" : "",
-	},
+	},*/
 	{
 		"type" : "bool",
 		"name" : "save on close",
@@ -39,6 +39,7 @@ var b_code = function(sel_id, fn_saveScript) {
 
 	this.file = '';
 	this.sel_id = sel_id;
+	this.fn_save = fn_saveScript;
 
 	// initialize ace
 	this.nwCODE = require("codemirror");
@@ -57,7 +58,7 @@ var b_code = function(sel_id, fn_saveScript) {
 	// autocomplete
 	require("codemirror/addon/hint/show-hint.js");
 
-
+	/*
 	this.nwCODE.defineMode("mylanguage", function() {
 	  return {token: function(stream, state) {
 	    if (stream.match(/[@\w+]/)) return "variable";
@@ -66,7 +67,7 @@ var b_code = function(sel_id, fn_saveScript) {
 	  }};
 	});
 	// Register an array of completion words for this mode
-	/*
+	
 	this.nwCODE.registerHelper("hint", "blanke",
 	                          ["@cat", "@dog", "@bird"]);
 	this.nwCODE.registerHelper("hint", "blanke", function(){
@@ -77,11 +78,11 @@ var b_code = function(sel_id, fn_saveScript) {
 	this.editor = this.nwCODE(document.getElementById(sel_id), {
 		"extraKeys" : {
 			"Ctrl-Space": "autocomplete",
-			"Ctrl-s" : fn_saveScript,
+			"Ctrl-S" : _this.fn_save,
 			"Ctrl-=" : function(){_this.setFontSize(_this.fontSize+1);},
 			"Ctrl--" : function(){_this.setFontSize(_this.fontSize-1);}
 		},
-		highlightSelectionMatches: {showToken: /\w/, annotateScrollbar: true}
+		highlightSelectionMatches: {annotateScrollbar: true}
 		/*,
 		onKeyEvent: function (e, s) {
 		    if (s.type == "keyup") {
