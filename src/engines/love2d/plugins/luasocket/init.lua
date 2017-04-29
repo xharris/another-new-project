@@ -14,5 +14,5 @@ http.get = function(url)
     	url=url_encode(url),
     	sink=ltn12.sink.table(t)
     }
-  	return {["data"]=t, ["status"]=status, ["headers"]=headers, ["code"]=code}
+  	return {["data"]=assert(table.concat(t)), ["status"]=status, ["headers"]=headers, ["code"]=code}
 end

@@ -31,6 +31,20 @@ exports.settings = [
 		"default" : 14,
 		"min" : 1,
 		"max" : 60
+	},
+	{
+		"type" : "number",
+		"name" : "tab size",
+		"default" : 4,
+		"min" : 0,
+		"tooltip" : "The width of a tab character. (requires restart)"
+	},
+	{
+		"type" : "number",
+		"name" : "indent unit",
+		"default" : 2,
+		"min" : 0,
+		"tooltip" : "How many spaces a block (whatever that means in the edited language) should be indented. (requires restart)"
 	}
 ]
 
@@ -56,7 +70,7 @@ var b_code = function(sel_id, fn_saveScript) {
 	require("codemirror/addon/search/jump-to-line.js");
 	require("codemirror/addon/dialog/dialog.js");
 	// autocomplete
-	require("codemirror/addon/hint/show-hint.js");
+	//require("codemirror/addon/hint/show-hint.js");
 
 	/*
 	this.nwCODE.defineMode("mylanguage", function() {
@@ -82,7 +96,10 @@ var b_code = function(sel_id, fn_saveScript) {
 			"Ctrl-=" : function(){_this.setFontSize(_this.fontSize+1);},
 			"Ctrl--" : function(){_this.setFontSize(_this.fontSize-1);}
 		},
-		highlightSelectionMatches: {annotateScrollbar: true}
+		highlightSelectionMatches: {annotateScrollbar: true},
+		tabSize: b_project.getPluginSetting("code_editor", "tab size"),
+		indentUnit: b_project.getPluginSetting("code_editor", "indent unit"),
+		pollInterval: 1000
 		/*,
 		onKeyEvent: function (e, s) {
 		    if (s.type == "keyup") {
@@ -180,6 +197,11 @@ var b_code = function(sel_id, fn_saveScript) {
 			_this.editor.setValue(code.replaceAll(e.detail.old, e.detail.new));
 		}
 	});	
+
+	document.addEventListener('blanke.form.change', function(e) {
+		if (e.detail.name === "font size") 
+			_this.setFontSize(e.detail.value);
+	});
 }
 
 

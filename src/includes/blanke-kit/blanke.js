@@ -35,6 +35,11 @@ String.prototype.addSlashes = function()
    return this.replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
 } 
 
+function dispatchEvent(ev_name, ev_properties) {
+    var new_event = new CustomEvent(ev_name, {'detail': ev_properties});
+    document.dispatchEvent(new_event);
+}
+
 var blanke = {
     // possible choices: yes, no (MORE TO COME LATER)
     showModal: function(html_body, choices) {
@@ -188,6 +193,7 @@ var blanke = {
             if (type === "password")
                 value = b_util.encrypt(value);
 
+            dispatchEvent("blanke.form.change", {type: type, name: name, value: value, subcategory: subcat, group: group});
             if (fn_onChange) 
                 fn_onChange(type, name, value, subcat, group);
         });

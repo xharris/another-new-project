@@ -117,7 +117,8 @@ exports.run = function(objects) {
 exports.settings = {
 	"includes" : [
 		{"type" : "bool", "name" : "printr", "default" : "false", "tooltip": "Print tables using print_r", "include": 'require "plugins.printr"'},
-		{"type" : "bool", "name" : "luasocket", "default" : "false", "tooltip": "helper stuff for luasocket", "include": 'require "plugins.luasocket"'}
+		{"type" : "bool", "name" : "luasocket", "default" : "false", "tooltip": "helper for http requests", "include": 'require "plugins.luasocket"'},
+		{"type" : "bool", "name" : "enet", "default" : "false", "tooltip": "helper for multiplayer networking", "include": 'require "plugins.enet"'}
 	],
 	"misc" : [
 		{"type" : "text", "name" : "identity", "default" : "nil", "tooltip": "The name of the save directory"},

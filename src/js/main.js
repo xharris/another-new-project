@@ -501,11 +501,6 @@ function handleDropFile(in_path) {
     });
 }
 
-function dispatchEvent(ev_name, ev_properties) {
-    var new_event = new CustomEvent(ev_name, {'detail': ev_properties});
-    document.dispatchEvent(new_event);
-}
-
 function importLess(name, file, type='modules') {
     nwFILE.readFile(file, 'utf8', function(err, data) {
         if (!err) {

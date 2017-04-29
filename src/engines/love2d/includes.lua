@@ -10,6 +10,7 @@ HC = require 'plugins.HC'
 assets = require 'assets'
 _Entity = require 'plugins.blanke.Entity'
 Map = require 'plugins.blanke.Map'
+require 'plugins.blanke.Util'
 
 <INCLUDES>
 
