@@ -119,7 +119,10 @@ exports.settings = {
 		{"type" : "bool", "name" : "printr", "default" : "false", "tooltip": "Print tables using print_r", "include": 'require "plugins.printr"'},
 		{"type" : "bool", "name" : "luasocket", "default" : "false", "tooltip": "helper for http requests", "include": 'require "plugins.luasocket"'},
 		{"type" : "bool", "name" : "enet", "default" : "false", "tooltip": "helper for multiplayer networking", "include": 'require "plugins.enet"'}
-	],
+	],/*
+	"blanke helpers" : [
+		{"type" : "bool", "name" : "pause on lose focus", "default" : "true", "tooltip": "pause the game if the user minimizes the window or switches to a different window"}
+	],*/
 	"misc" : [
 		{"type" : "text", "name" : "identity", "default" : "nil", "tooltip": "The name of the save directory"},
 		{"type" : "text", "name" : "version", "default" : "0.10.2", "tooltip": "The LÖVE version this game was made for"},
@@ -202,8 +205,9 @@ exports.loaded = function() {
 	});
 
 	document.addEventListener("filedrop", function(e){
-		var love_path = e.detail.path;
-		runLove(love_path);
+		if (nwPATH.extname(e.detail.path) == ".love") {
+			runLove(e.detail.pat);
+		}
 	});
 }
 
@@ -313,7 +317,7 @@ function build(build_path, objects, callback) {
 			var value = b_project.getSetting("engine", setting)
 			var category = cat;
 
-			if (category != "includes") {
+			if (!["includes", "blanke helpers"].includes(category)) {
 				if (category === "misc") {
 					category = "";
 				} else {
@@ -351,6 +355,7 @@ function build(build_path, objects, callback) {
 	includes_replacements = [
 		['<INCLUDES>', script_includes],
 		['<FIRST_STATE>', first_state]
+		//['<PAUSE_LOSE_FOCUS>', b_project.getSetting("engine", "pause on lose focus")]
 	];
 
 	nwHELPER.copyScript(nwPATH.join(__dirname, 'conf.lua'), nwPATH.join(build_path,'conf.lua'), conf_replacements);

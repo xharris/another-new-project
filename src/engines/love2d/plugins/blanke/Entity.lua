@@ -14,7 +14,7 @@ _Entity = Class{
 	sprite_index = '',		-- string index of the current sprite
 	sprite_width = 0, 		-- readonly
 	sprite_height = 0,		-- readonly
-	sprite_angle = 0, 		-- angle of sprite in degrees
+	sprite_angle = 0, 		-- ang`le of sprite in degrees
 	sprite_xscale = 1,		
 	sprite_yscale = 1,
 	sprite_xoffset = 0,
@@ -49,6 +49,12 @@ _Entity = Class{
 	onCollision = {["*"] = function() end},
 
 	update = function(self, dt)
+		-- bootstrap sprite:goToFrame()
+		if not self.sprite then
+			self.sprite = {}
+			self.sprite.gotoFrame = function()end
+		end
+
 		if self.preUpdate then
 			self:preUpdate(dt)
 		end	
@@ -180,6 +186,11 @@ _Entity = Class{
 		for s, shape in pairs(self.shapes) do
 			shape:draw("line")
 		end
+	end,
+
+	setSpriteIndex = function(self, index)
+		self.sprite_index = index
+		self.sprite = self._sprites[self.sprite_index]
 	end,
 
 	draw = function(self)
