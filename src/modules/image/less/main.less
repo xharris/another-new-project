@@ -11,3 +11,55 @@
 	    border: 1px solid @ide-fave-color-400;
 	}
 }
+
+.workspace.image {
+	.preview-container {
+		height: 100%;
+
+		.img-preview-container, .img-settings {
+			width: 50%;
+			display: inline-block;
+		}
+
+		.img-preview-container {
+			position: relative;
+			height: 100%;
+    		vertical-align: top;
+    		overflow: auto;
+
+  			.preview {
+  				.no-select();
+
+  				position: absolute;
+			    top: 50%;
+			    left: 50%;
+			    transform: translate(-50%, -50%);
+			    transition: all ease-in-out 0.2s;
+			    image-rendering: pixelated;
+  			}
+
+  			#zoom-controls {
+  				position: fixed;
+			    bottom: 40px;
+			    right: 40px;
+  			}
+		}
+
+		.img-settings {
+			padding-left: 10px;
+    		box-sizing: border-box;
+
+			.subcategory {
+				.title {
+					font-size: 20px;
+					font-weight: 600;
+				}
+
+				.ui-input-group {
+					margin-left: 20px;
+					margin-bottom: 10px;
+				}
+			}
+		}
+	}
+}

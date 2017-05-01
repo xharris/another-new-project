@@ -258,9 +258,16 @@ function build(build_path, objects, callback) {
 	// IMAGES
 	for (var e in objects['image']) {
 		var img = objects['image'][e];
+		var params = img.parameters;
+
+		// wrap undefined bug
+		var comment_wrap = (params["[wrap]horizontal"] == undefined ? "--" : "");
 
 		assets += "function assets:"+img.name+"()\n"+
-			 	  "\treturn love.graphics.newImage(\'assets/image/"+img.path+"\');\n"+
+				  "\tlocal new_img = love.graphics.newImage(\'assets/image/"+img.path+"\')\n"+
+				  "\tnew_img:setFilter('"+params.min+"', '"+params.mag+"', "+params.anisotropy+")\n"+
+			 	  "\t"+comment_wrap+"new_img:setWrap('"+params["[wrap]horizontal"]+"', '"+params["[wrap]vertical"]+"')\n"+
+			 	  "\treturn new_img\n"+
 			 	  "end\n\n";			  
 	}
 
@@ -355,7 +362,6 @@ function build(build_path, objects, callback) {
 	includes_replacements = [
 		['<INCLUDES>', script_includes],
 		['<FIRST_STATE>', first_state]
-		//['<PAUSE_LOSE_FOCUS>', b_project.getSetting("engine", "pause on lose focus")]
 	];
 
 	nwHELPER.copyScript(nwPATH.join(__dirname, 'conf.lua'), nwPATH.join(build_path,'conf.lua'), conf_replacements);

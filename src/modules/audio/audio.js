@@ -54,18 +54,7 @@ function importAudio(path) {
     	b_project.importResource('audio', path, function(e) {
     		var new_aud = b_library.add('audio');
     		new_aud.path = nwPATH.basename(e);
-    		new_aud.parameters = {};
-
-    		// fill in parameters with default values of audio_settings
-    		var categories = Object.keys(audio_settings);
-    		for (var c = 0; c < categories.length; c++) {
-    			var setting;
-    			new_aud.parameters[categories[c]] = {};
-    			for (var s = 0; s < audio_settings[categories[c]].length; s++) {
-    				setting = audio_settings[categories[c]][s];
-    				new_aud.parameters[setting.name] = setting.default;
-    			}
-    		}
+    		new_aud.parameters = blanke.extractDefaults(audio_settings);
     	});
     }
 }

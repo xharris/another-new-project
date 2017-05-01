@@ -31,6 +31,10 @@ Map = Class{
 
 			self.tilesets[tileset.firstgid] = tileset
 
+			if not assets[tileset.name] then
+				error("image '" .. tileset.name .. "' not found in map '" .. map_name .."'")
+			end
+
 			self._images[tileset.name] = assets[tileset.name]()
 		end
 

@@ -73,7 +73,8 @@ var b_ui = {
 			else if (type === "plugins") {
 				var info = {};
 				for (var p = 0; p < plugin_names.length; p++) {
-					if ("settings" in nwPLUGINS[plugin_names[p]]) {
+					console.log(plugin_names[p]);
+					if (nwPLUGINS[plugin_names[p]].settings) {
 						info[plugin_names[p]] = nwPLUGINS[plugin_names[p]].settings;
 					}
 				}

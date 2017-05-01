@@ -197,5 +197,23 @@ var blanke = {
             if (fn_onChange) 
                 fn_onChange(type, name, value, subcat, group);
         });
+    },
+
+    extractDefaults: function(settings) {
+        var ret_parameters = {};
+
+        // fill in parameters with default values of audio_settings
+        var categories = Object.keys(settings);
+        for (var c = 0; c < categories.length; c++) {
+            var setting;
+            ret_parameters[categories[c]] = {};
+            for (var s = 0; s < settings[categories[c]].length; s++) {
+                setting = settings[categories[c]][s];
+                if (typeof setting.default != "object")
+                    ret_parameters[setting.name] = setting.default;
+            }
+        }
+
+        return ret_parameters;
     }
 }
