@@ -27,7 +27,7 @@ function createWindow () {
     var initPath = path.join(app.getPath('userData'), "init.json");
     var data = {};
     try {
-        data = JSON.parse(fs.readFileSync(initPath, 'utf8'));
+        //data = JSON.parse(fs.readFileSync(initPath, 'utf8'));
     }
     catch(e) {
     }
