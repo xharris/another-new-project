@@ -244,11 +244,15 @@ $(function(){
 
         // call onClose for last open module
         var module_calls = $(".workspace")[0].classList;
-        for (var c in module_calls) {
+        for (var c = 0; c < module_calls.length; c++) {
             var mod = module_calls.item(c);
             if (mod !== "workspace" && nwMODULES[mod].onClose) {
-                nwMODULES[mod].onClose(last_open);
+                    nwMODULES[mod].onClose(last_open);
             }
+        }
+
+        if (last_open != undefined) {
+            dispatchEvent("library.on_close", {uuid: uuid});
         }
 
         // clear the workspace

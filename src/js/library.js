@@ -108,7 +108,11 @@ b_library = {
 	},
 
 	getByUUID: function(type, uuid) {
-		return this.objects[type][uuid];
+		try {
+			return this.objects[type][uuid];
+		} catch (e) {
+			console.error("ERR: b_library.getByUUID('"+type+"', '"+uuid+"')");
+		}
 	},
 
 	getTypeByUUID: function(uuid) {

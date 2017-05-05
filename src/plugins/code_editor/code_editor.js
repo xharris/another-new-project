@@ -5,8 +5,9 @@
 // options : options to pass to CodeMirror
 //
 // returns CodeMirror instance
-exports.init = function(sel_id, fn_saveScript) {
-	return new b_code(sel_id, fn_saveScript);
+exports.init = function(options) {
+	var new_code = new b_code(options);
+	return new_code;
 }
 
 exports.settings = [
@@ -48,57 +49,14 @@ exports.settings = [
 	}
 ]
 
-var b_code = function(sel_id, fn_saveScript) {
+var b_code = function(options) { // sel_id, code_path, fn_saveScript
 	var _this = this;
 
-	this.file = '';
-	this.sel_id = sel_id;
-	this.fn_save = fn_saveScript;
-
-	if (b_project.getPluginSetting("code_editor", "use built-in editor")) {
-		// initialize ace
-		this.nwCODE = require("codemirror");
-		
-		// match highlights
-		require("codemirror/addon/scroll/annotatescrollbar.js");
-		require("codemirror/addon/search/matchesonscrollbar.js");
-		require("codemirror/addon/search/match-highlighter.js");
-		// match brackets
-		require("codemirror/addon/edit/matchbrackets.js");
-		// search
-		require("codemirror/addon/search/search.js");
-		require("codemirror/addon/search/searchcursor.js");
-		require("codemirror/addon/search/jump-to-line.js");
-		require("codemirror/addon/dialog/dialog.js");
-
-		this.editor = this.nwCODE(document.getElementById(sel_id), {
-			"extraKeys" : {
-				"Ctrl-Space": "autocomplete",
-				"Ctrl-S" : _this.fn_save,
-				"Ctrl-=" : function(){_this.setFontSize(_this.fontSize+1);},
-				"Ctrl--" : function(){_this.setFontSize(_this.fontSize-1);}
-			},
-			highlightSelectionMatches: {annotateScrollbar: true},
-			tabSize: b_project.getPluginSetting("code_editor", "tab size"),
-			indentUnit: b_project.getPluginSetting("code_editor", "indent unit"),
-			pollInterval: 1000
-		});
-
-		$(sel_id).addClass("no-global-font")
-
-		// set editor settings
-		this.fontSize = b_project.getPluginSetting("code_editor", "font size");
-
-		this.editor.setOption("theme", "monokai");
-		this.editor.setOption("lineNumbers", true);
-		this.editor.setOption("matchBrackets", true);
-
-		var language = nwENGINES[b_project.getData('engine')].language;
-		if (language) {
-			require("codemirror/mode/"+language+"/"+language+".js");
-			this.editor.setOption("mode", language);
-		}
-	}
+	this.file = options.file_path;
+	this.sel_id = options.id;
+	this.fn_save = options.fn_onSave;
+	this.template_path = options.template_path;
+	this.replacements = options.template_replacements;
 	
 	this.setFontSize = function(size) {
 		if (!this.editor) return;
@@ -119,28 +77,63 @@ var b_code = function(sel_id, fn_saveScript) {
 			this.editor.setValue(code);
 	}
 
-	this.openFile = function(path, callback) {
+	this.openFile = function(path=_this.file, callback) {
 		this.file = path;
 
-		if (!b_project.getPluginSetting("code_editor", "use built-in editor")) {
-			eSHELL.openItem(path);
-		} else {
-			var _this = this;
-			nwFILE.readFile(path, 'utf8', function(err, data){
-				if (!err)
+		// does the file exist
+		nwFILE.readFile(path, 'utf8', function(err, data){
+			// make it
+			if (err) {
+				console.log('replace stuff')
+				var code = '';
+
+				// get template code
+				if (_this.template_path) {
+					code = nwFILE.readFileSync(_this.template_path, 'utf8');
+				}
+
+				// make replacements if necessary
+				if (_this.replacements) {
+					for (var r=0; r < _this.replacements.length; r++) {
+						code = code.replace(new RegExp('<'+_this.replacements[r][0]+'>', 'g'), _this.replacements[r][1]);
+					}
+				}
+
+				// write file
+				nwMKDIRP(nwPATH.dirname(path), function(){
+					nwFILE.writeFile(path, code, function(err) {
+						if (err) 
+							b_console.error('ERR: Cannot save ' +path);
+
+						else 
+							_this.openFile(path, callback);
+
+						dispatchEvent('something.saved', {what: 'code'});
+					});
+				});
+			} 
+
+			// open the file
+			else {
+
+				if (!b_project.getPluginSetting("code_editor", "use built-in editor")) {
+					eSHELL.openItem(path);
+				} else {
 					_this.editor.setValue(data);
-				
-				if (callback)
-					callback(err);
-			});
-		}
+						
+					if (callback)
+						callback(err);
+				}
+			}
+		});
 	};
 
-	this.saveFile = function(path, callback, skipBlankCheck=false) {
+	this.saveFile = function(path=_this.file, callback, skipBlankCheck=false) {
 		if (!this.editor) return;
-		code = this.editor.getValue();
-		var _this = this;
 
+		var code = this.editor.getValue();
+
+		var _this = this;
 		if (code === "" && !skipBlankCheck) {
 			blanke.showModal("Last modified script was suspiciously empty (no text in it). Still save it?",{
 		        "yes": function() {_this.saveFile(path, callback, true)},
@@ -152,8 +145,13 @@ var b_code = function(sel_id, fn_saveScript) {
 					if (err) 
 						b_console.error('ERR: Cannot save ' +path);
 
+					if (_this.fn_save)
+						_this.fn_save();
+
 					if (callback)
 						callback(err);
+
+					dispatchEvent('something.saved', {what: 'code'});
 				});
 			});
 		}
@@ -171,6 +169,62 @@ var b_code = function(sel_id, fn_saveScript) {
 		if (e.detail.name === "font size") 
 			_this.setFontSize(e.detail.value);
 	});
+
+	document.addEventListener('library.on_close', function(e) {	
+		if (b_project.getPluginSetting('code_editor', 'save on close')) {
+			_this.saveFile();
+		}
+
+		b_project.autoSaveProject();
+	});
+
+	// constructor code
+	if (b_project.getPluginSetting("code_editor", "use built-in editor")) {
+		// initialize ace
+		this.nwCODE = require("codemirror");
+		
+		// match highlights
+		require("codemirror/addon/scroll/annotatescrollbar.js");
+		require("codemirror/addon/search/matchesonscrollbar.js");
+		require("codemirror/addon/search/match-highlighter.js");
+		// match brackets
+		require("codemirror/addon/edit/matchbrackets.js");
+		// search
+		require("codemirror/addon/search/search.js");
+		require("codemirror/addon/search/searchcursor.js");
+		require("codemirror/addon/search/jump-to-line.js");
+		require("codemirror/addon/dialog/dialog.js");
+
+		this.editor = this.nwCODE(document.getElementById(this.sel_id), {
+			"extraKeys" : {
+				"Ctrl-Space": "autocomplete",
+				"Ctrl-S" : function(){_this.saveFile();},
+				"Ctrl-=" : function(){_this.setFontSize(_this.fontSize+1);},
+				"Ctrl--" : function(){_this.setFontSize(_this.fontSize-1);}
+			},
+			highlightSelectionMatches: {annotateScrollbar: true},
+			tabSize: b_project.getPluginSetting("code_editor", "tab size"),
+			indentUnit: b_project.getPluginSetting("code_editor", "indent unit"),
+			pollInterval: 1000
+		});
+
+		$(this.sel_id).addClass("no-global-font")
+
+		// set editor settings
+		this.fontSize = b_project.getPluginSetting("code_editor", "font size");
+
+		this.editor.setOption("theme", "monokai");
+		this.editor.setOption("lineNumbers", true);
+		this.editor.setOption("matchBrackets", true);
+
+		var language = nwENGINES[b_project.getData('engine')].language;
+		if (language) {
+			require("codemirror/mode/"+language+"/"+language+".js");
+			this.editor.setOption("mode", language);
+		}
+	}
+
+	this.openFile(this.file);
 }
 
 

@@ -1,6 +1,6 @@
 var nwHELPER = nwPLUGINS['build_helper'];
 
-exports.modules = ['entity', 'image', 'state', 'spritesheet', 'audio'];
+exports.modules = ['entity', 'image', 'state', 'spritesheet', 'audio', 'script'];
 exports.colors = [
 /*
 	'#ef9a9a', // red 200
@@ -181,11 +181,10 @@ exports.library_const = [
 				"<div id='code'></div>"
 			);
 
-			codemirror = nwPLUGINS['code_editor'].init('code', function(err){
-				codemirror.saveFile(nwPATH.join(b_project.curr_project, "assets", "main.lua"));
+			codemirror = nwPLUGINS['code_editor'].init({
+				id: 'code',
+				file_path: nwPATH.join(b_project.curr_project, "assets", "main.lua")
 			});
-
-			codemirror.openFile(nwPATH.join(b_project.curr_project, "assets", "main.lua"));
 		}
 	}
 ]
@@ -254,6 +253,16 @@ function build(build_path, objects, callback) {
 	}
 
 	var assets = '';
+
+	// SCRIPTS
+	for (var e in objects['script']) {
+		var script = objects['script'][e];
+		var path = script.code_path;
+
+		assets += "function assets:"+script.name+"()\n"+
+				  "\treturn 'assets/scripts/"+path.replace(/\\/g,"/").replace('.lua','')+"'\n"+
+				  "end\n\n";
+	}
 
 	// IMAGES
 	for (var e in objects['image']) {

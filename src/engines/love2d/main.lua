@@ -5,10 +5,14 @@ function love.load()
   
 end
 
+function love.update(dt)
+    Signal.emit('love.update', dt)
+    
+end
+
 --[[
 
 other love functions:
-- love.update(dt)
 - love.draw()
 - love.mousepressed(x, y, button, istouch)
 - love.mousereleased(x, y, button, istouch)

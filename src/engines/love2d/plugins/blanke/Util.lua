@@ -6,3 +6,8 @@ function hex2rgb(hex)
         return tonumber("0x"..hex:sub(1,2)), tonumber("0x"..hex:sub(3,4)), tonumber("0x"..hex:sub(5,6))
     end
 end
+
+
+function lerp(a,b,d,t)
+	return a + (b-a) * d * t
+end

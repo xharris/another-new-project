@@ -40,6 +40,7 @@ HC = require 'plugins.HC'
 assets = require 'assets'
 _Entity = require 'plugins.blanke.Entity'
 Map = require 'plugins.blanke.Map'
+View = require 'plugins.blanke.View'
 require 'plugins.blanke.Util'
 
 <INCLUDES>

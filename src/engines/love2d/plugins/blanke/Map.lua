@@ -137,11 +137,20 @@ Map = Class{
 		end -- for loop
 	end,
 
+	--[[
+	getTileXY = function(self, x, y)
+
+	end,
+	]]--
+
 	-- add a collision shape
 	-- str shape: rectangle, polygon, circle, point
 	-- str name: reference name of shape
 	addShape = function(self, name, shape, args, tag, xoffset, yoffset)
 		local new_shape
+
+		--print('new ' .. tag)
+		--print_r(args)
 
 		-- args {x, y, width, height}
 		if shape == "rectangle" then
