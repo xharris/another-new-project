@@ -18,12 +18,14 @@ b_canvas = {
 			window.screen.availWidth,
 			window.screen.availHeight,
 			Phaser.CANVAS,
-			'main-canvas',{
+			'main-canvas',
+			{
 				preload:this.pPreload,
 				create: this.pCreate,
 				update: this.pUpdate,
 				render: this.pRender
-			}
+			},
+			true
 		);
 
 		$("#main-canvas").addClass(module);

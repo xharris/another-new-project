@@ -1,3 +1,5 @@
+
+require 'plugins.blanke.Util'
 Signal = require 'plugins.hump.signal'
 Gamestate = require 'plugins.hump.gamestate'
 
@@ -41,7 +43,6 @@ assets = require 'assets'
 _Entity = require 'plugins.blanke.Entity'
 Map = require 'plugins.blanke.Map'
 View = require 'plugins.blanke.View'
-require 'plugins.blanke.Util'
 
 <INCLUDES>
 

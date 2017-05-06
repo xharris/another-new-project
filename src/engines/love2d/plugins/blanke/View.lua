@@ -4,21 +4,33 @@ View = Class{
 		table.insert(_views, self)
 
 		self._dt = 0
+		self.auto_update = true
 
 		self.camera = Camera(0, 0)
 		self.follow_entity = nil
-		self._last_follow_x = 0
-		self._last_follow_y = 0
 		self.follow_x = 0
 		self.follow_y = 0
-		self.smoothness = 1 
 
-		self.speed_x = -1
-		self.speed_y = -1
+		self.motion_type = 'none' -- linear, smooth
+		self.speed = 1 
+		self.max_distance = 0
+		self._last_motion_type = self.motion_type
+		self._last_speed = self.speed
+		self._smoother = nil
+
+		self.angle = 0
+		self.rot_speed = 5
+		self.rot_type = 'none'
+
+		self.scale = 1
+		self.zoom_speed = 5
+		self.zoom_type = 'none'
 
 		Signal.register('love.update', function(dt)
 			self._dt = dt
-			self:update()
+			if self.auto_update then
+				self:update()
+			end
 		end)
 	end,
 
@@ -36,25 +48,9 @@ View = Class{
 		self:update()
 	end,
 
-	_checkFollowSpeed = function(self)
-		if self.speed_x == 0 then self.follow_x = self._last_follow_x end
-		if self.speed_y == 0 then self.follow_y = self._last_follow_y end
-	end,
-
 	move_towards_point = function(self, x, y, fromUpdate)
-		local direction = math.deg(math.atan2(y - self.follow_y, x - self.follow_x))
-
-		if self.speed_x > 0 then
-			self.follow_x = self.follow_x + (self.speed_x * math.cos(math.rad(direction))) * self._dt
-		elseif self.speed_x < 0 then
-			self.follow_x = x
-		end
-
-		if self.speed_y > 0 then
-			self.follow_y = self.follow_y + (self.speed_y * math.sin(math.rad(direction))) * self._dt
-		elseif self.speed_y < 0 then
-			self.follow_y = y
-		end
+		self.follow_x = x
+		self.follow_y = y
 
 		-- if called from 'update', fromUpdate = dt
 		if not fromUpdate then
@@ -62,25 +58,66 @@ View = Class{
 		end
 	end,
 
+	rotateTo = function(self, angle)
+		self.angle = angle
+	end,
+
+	zoom = function(self, scale)
+		self.scale = scale
+	end,
+
 	update = function(self)
 		if self.followEntity then
 			local follow_x = self.followEntity.x
 			local follow_y = self.followEntity.y
 
-			follow_x = lerp(self.follow_x, self.followEntity.x, self.smoothness, self._dt) 
-			follow_y = lerp(self.follow_y, self.followEntity.y, self.smoothness, self._dt)
 			self:move_towards_point(follow_x, follow_y, true)
 		end
 
-		if self.smoothness == 0 then
-			self:_checkFollowSpeed()	
+		-- determine the smoother to use 
+		if self._last_speed ~= self.speed or self._last_motion_type ~= self.motion_type then
+			if self.motion_type == 'none' then
+				self._smoother = Camera.smooth.none()
+
+			elseif self.motion_type == 'linear' then
+				self._smoother = Camera.smooth.linear(self.speed)
+
+			elseif self.motion_type == 'damped' then
+				self._smoother = Camera.smooth.damped(self.speed)
+
+			end
 		end
 
-		-- save previous follow position
-		self._last_follow_x = self.follow_x
-		self._last_follow_y = self.follow_y
+		-- rotation
+		if math.deg(self.camera.rot) ~= self.angle then
+			local new_angle
+			if self.rot_type == 'none' then
+				new_angle = self.angle
 
-		self.camera:lookAt(self.follow_x, self.follow_y)
+			elseif self.rot_type == 'damped' then
+				new_angle = lerp(math.deg(self.camera.rot), self.angle, self.rot_speed, self._dt)
+
+			end
+			self.camera:rotateTo(math.rad(new_angle))
+		end
+
+		-- zoom
+		if self.camera.scale ~= self.scale then
+			local new_zoom
+			if self.zoom_type == 'none' then
+				new_zoom = self.scale
+
+			elseif self.zoom_type == 'damped' then
+				new_zoom = lerp(self.camera.scale, self.scale, self.zoom_speed, self._dt)
+
+			end
+			self.camera:zoomTo(new_zoom)
+		end
+
+		-- move the camera
+		local wx = love.graphics.getWidth()/2
+		local wy = love.graphics.getHeight()/2
+		self.camera:lockWindow(self.follow_x, self.follow_y, wx-self.max_distance, wx+self.max_distance,  wy-self.max_distance, wy+self.max_distance, self._smoother)
 	end,
 
 	attach = function(self)

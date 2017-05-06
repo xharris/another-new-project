@@ -111,6 +111,7 @@ exports.canvas = {
 
 function loadImage(uuid) {
 	game = b_canvas.pGame;
+	game.transparent = true;
 
 	var img_path = nwPATH.join(b_project.getResourceFolder('image'), b_library.getByUUID('image', uuid).path);
 
