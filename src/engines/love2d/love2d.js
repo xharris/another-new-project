@@ -205,7 +205,7 @@ exports.loaded = function() {
 
 	document.addEventListener("filedrop", function(e){
 		if (nwPATH.extname(e.detail.path) == ".love") {
-			runLove(e.detail.pat);
+			runLove(e.detail.path);
 		}
 	});
 }

@@ -13,7 +13,7 @@ function getCodePath() {
 
 exports.libraryAdd = function(uuid, name) {
 	return {
-		code_path: getCodePath(),
+		code_path: '',
 	}
 }
 

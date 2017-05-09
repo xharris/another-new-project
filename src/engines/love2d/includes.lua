@@ -39,12 +39,14 @@ Camera = require 'plugins.hump.camera'
 anim8 = require 'plugins.anim8'
 HC = require 'plugins.HC'
 
+<INCLUDES>
+
 assets = require 'assets'
 _Entity = require 'plugins.blanke.Entity'
 Map = require 'plugins.blanke.Map'
 View = require 'plugins.blanke.View'
+Effect = require 'plugins.blanke.Effect'
 
-<INCLUDES>
 
 Signal.register('love.load', function()
 	-- register gamestates

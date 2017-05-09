@@ -21,7 +21,6 @@ exports.libraryAdd = function(uuid, name) {
         {
             title: "import image",
             properties: ["openFile"],
-            parameters: blanke.extractDefaults(image_settings),
             filters: [
             	{name: 'All supported image types', extensions: ['jpeg','jpg','png','bmp']},
             	{name: 'JPEG', extensions: ['jpeg','jpg']},
@@ -95,6 +94,7 @@ function importImage(path) {
     	b_project.importResource('image', path, function(e) {
     		var new_img = b_library.add('image');
     		new_img.path = nwPATH.basename(e);
+            new_img.parameters = blanke.extractDefaults(image_settings);
     	});
     }
 }

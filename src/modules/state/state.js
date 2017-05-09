@@ -13,7 +13,7 @@ function getCodePath() {
 
 exports.libraryAdd = function(uuid, name) {
 	return {
-		code_path: getCodePath(),
+		code_path: '',
 	}
 }
 
@@ -21,6 +21,7 @@ exports.onDblClick = function(uuid, properties) {
 	obj_uuid = uuid;
 	obj_prop = properties;
 
+	setCodePath();
 	$(".workspace.state").append(
 		"<div id='code'></div>"
 	);
