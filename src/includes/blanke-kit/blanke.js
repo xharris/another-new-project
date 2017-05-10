@@ -41,6 +41,8 @@ function dispatchEvent(ev_name, ev_properties) {
 }
 
 var blanke = {
+    _windows: {},
+
     // possible choices: yes, no (MORE TO COME LATER)
     showModal: function(html_body, choices) {
         html_actions = "";
@@ -225,13 +227,19 @@ var blanke = {
         var extra_class = options.class;
         var title = options.title;
         var html = ifndef(options.html, '');
+        var uuid = ifndef(options.uuid, guid());
         var onClose = options.onClose;
 
-        var uid = guid();
-        var el = "body > .blanke-window[data-guid='"+uid+"']";
+        if (this._windows[uuid] && $(this._windows[uuid])) {
+            $(this._windows[uuid]).trigger('mousedown');
+            return this._windows[uuid];
+        }
+
+        var el = "body > .blanke-window[data-guid='"+uuid+"']";
+        this._windows[uuid] = el;
 
         $("body").append(
-            "<div class='blanke-window "+extra_class+"' data-guid='"+uid+"'>"+
+            "<div class='blanke-window "+extra_class+"' data-guid='"+uuid+"'>"+
                 "<div class='title-bar'>"+
                     "<div class='title'>"+title+"</div>"+
                     "<button class='btn-close'>"+
@@ -256,7 +264,7 @@ var blanke = {
         $(el).resizable();
 
         // bring window to top
-        $(el).on("mousedown", function(e){
+        $(el).on("mousedown focus", function(e){
             $(".blanke-window").css("z-index", "0");
             $(this).css("z-index", "1");
         });

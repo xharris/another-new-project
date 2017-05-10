@@ -1,5 +1,6 @@
 var _last_mx = 0;
 var _last_my = 0;
+var _code_editors = {};
 
 var b_ui = {
 	/*
@@ -147,6 +148,46 @@ var b_ui = {
 		    $(this).off(e);
 		    $(this).remove();
 		});
+	},
+
+	openCodeEditor: function(options) {
+		var uuid = options.uuid;
+		var type = options.type;
+		var properties = options.properties;
+		var editor = options.editor;
+
+		var code_sel = 'code-'+uuid;
+		var editor_obj;
+		if (b_project.getPluginSetting("code_editor", "use built-in editor")) {
+
+			var win_sel = blanke.createWindow({
+		        x: 210, 
+		        y: 50,
+		        width: 550,
+		        height: 350,
+		        class: type+' code',
+		        title: properties.name,
+		        uuid: uuid,
+		        html: "<div id='"+code_sel+"'></div>",
+		        onClose: function(){
+		        	editor_obj.triggerClose();
+		        }
+			});
+
+
+			if (!_code_editors[uuid] && $(_code_editors[uuid] + " .CodeMirror").length == 0) {
+				editor.id = code_sel;
+				editor_obj = nwPLUGINS['code_editor'].init(editor);
+			}
+			
+			_code_editors[uuid] = win_sel;
+
+		} else {
+			editor.id = code_sel;
+			editor_obj = nwPLUGINS['code_editor'].init(editor);
+		}
+		
+		return editor_obj;
 	}
 }
 

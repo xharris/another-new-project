@@ -22,31 +22,22 @@ exports.onDblClick = function(uuid, properties) {
 	obj_prop = properties;
 
 	setCodePath();
-	if (b_project.getPluginSetting("code_editor", "use built-in editor")) {
-		var win_sel = blanke.createWindow({
-	        x: 210, 
-	        y: 50,
-	        width: 550,
-	        height: 350,
-	        class: 'state.code',
-	        title: properties.name,
-	        html: "<div id='code'></div>",
-	        onClose: function(){
-	        	editor_obj.triggerClose();
-	        }
-		});
-	}
 
-	editor_obj = nwPLUGINS['code_editor'].init({
-		id: 'code', 
-		file_path: getCodePath(), 
-		template_path: (nwENGINES[b_project.getData('engine')].state_template ? 
-									nwENGINES[b_project.getData('engine')].state_template :
-									nwPATH.join(__dirname, "state_template.js")
-						),
-		template_replacements: [
-			['UUID', obj_uuid],
-			['NAME', obj_prop.name]
-		]
+	b_ui.openCodeEditor({
+		uuid: uuid,
+		type: 'state',
+		properties: properties,
+		editor: { 
+			file_path: getCodePath(), 
+			template_path: (nwENGINES[b_project.getData('engine')].state_template ? 
+										nwENGINES[b_project.getData('engine')].state_template :
+										nwPATH.join(__dirname, "state_template.js")
+							),
+			template_replacements: [
+				['UUID', obj_uuid],
+				['NAME', obj_prop.name]
+			]
+		}
 	});
 }
+

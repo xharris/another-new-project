@@ -23,23 +23,12 @@ exports.onDblClick = function(uuid, properties) {
 
 	setCodePath();
 
-	if (b_project.getPluginSetting("code_editor", "use built-in editor")) {
-		var win_sel = blanke.createWindow({
-	        x: 210, 
-	        y: 50,
-	        width: 550,
-	        height: 350,
-	        class: 'script.code',
-	        title: properties.name,
-	        html: "<div id='code'></div>",
-	        onClose: function(){
-	        	editor_obj.triggerClose();
-	        }
-		});
-	}
-
-	editor_obj = nwPLUGINS['code_editor'].init({
-		id: 'code', 
-		file_path: getCodePath()
+	b_ui.openCodeEditor({
+		uuid: uuid,
+		type: 'script',
+		properties: properties,
+		editor: {
+			file_path: getCodePath()
+		}
 	});
 }
