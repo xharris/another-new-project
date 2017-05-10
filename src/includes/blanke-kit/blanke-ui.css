@@ -367,3 +367,61 @@
   background-color: #f44336;
   color: white;
 }
+/* Window CSS */
+.blanke-window {
+  display: none;
+  z-index: 100;
+  min-width: 100px;
+  min-height: 100px;
+  position: absolute;
+  border-radius: 2px;
+  border-width: 2px;
+  border-style: solid;
+}
+.blanke-window > .title-bar {
+  cursor: default;
+  background-color: black;
+  height: 20px;
+  overflow: hidden;
+}
+.blanke-window > .title-bar > * {
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Chrome/Safari/Opera */
+  -khtml-user-select: none;
+  /* Konqueror */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+    not supported by any browser */
+}
+.blanke-window > .title-bar > .title {
+  pointer-events: none;
+  color: white;
+  line-height: 20px;
+  padding-left: 2px;
+}
+.blanke-window > .title-bar > .btn-close {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  color: white;
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-size: 17px;
+}
+.blanke-window > .content {
+  margin-bottom: 0px;
+  overflow: auto;
+  position: absolute;
+  top: 20px;
+  bottom: 0px;
+  right: 0px;
+  left: 0px;
+}

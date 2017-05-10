@@ -370,6 +370,64 @@
   background-color: #f44336;
   color: white;
 }
+/* Window CSS */
+.blanke-window {
+  display: none;
+  z-index: 100;
+  min-width: 100px;
+  min-height: 100px;
+  position: absolute;
+  border-radius: 2px;
+  border-width: 2px;
+  border-style: solid;
+}
+.blanke-window > .title-bar {
+  cursor: default;
+  background-color: black;
+  height: 20px;
+  overflow: hidden;
+}
+.blanke-window > .title-bar > * {
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Chrome/Safari/Opera */
+  -khtml-user-select: none;
+  /* Konqueror */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+    not supported by any browser */
+}
+.blanke-window > .title-bar > .title {
+  pointer-events: none;
+  color: white;
+  line-height: 20px;
+  padding-left: 2px;
+}
+.blanke-window > .title-bar > .btn-close {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  color: white;
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-size: 17px;
+}
+.blanke-window > .content {
+  margin-bottom: 0px;
+  overflow: auto;
+  position: absolute;
+  top: 20px;
+  bottom: 0px;
+  right: 0px;
+  left: 0px;
+}
 @font-face {
   font-family: "Inconsolata";
   src: url("includes/fonts/inconsolata/Inconsolata.otf") format("opentype");
@@ -584,9 +642,6 @@ body[project-open="1"] .titlebar {
   height: 2px;
   bottom: 0px;
 }
-body {
-  background-color: var(--eng-color);
-}
 body[project-open="0"] .library {
   width: 0px;
 }
@@ -601,8 +656,7 @@ body[project-open="1"] .library {
   top: 0px;
   bottom: 0px;
   left: 0px;
-  background-color: var(--eng-color);
-  /*box-shadow: 1px 0px 5px black;*/
+  background-color: rgba(255, 255, 255, 0.75);
   z-index: 20;
   overflow: auto;
   transition: all ease-in-out 0.2s;
@@ -921,7 +975,8 @@ body[project-open="1"] .library {
   right: 0px;
   z-index: 20;
   white-space: nowrap;
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.75);
+  margin: 10px;
 }
 .ui-settings .categories {
   position: relative;
@@ -1060,6 +1115,46 @@ body[project-open="1"] .library {
 .ui-settings .inputs-container > div {
   margin: 4px 25px;
 }
+.grid {
+  z-index: -100;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  background-image: url('less/grid.png');
+  background-repeat: repeat;
+}
+.grid-ripple {
+  position: fixed;
+  border: 5px solid white;
+  border-radius: 100%;
+  z-index: -101;
+  transform: translate(-50%, -50%);
+  animation-name: anim_ripple;
+  animation-iteration-count: 1;
+  animation-duration: 1s;
+  animation-timing-function: ease-in-out;
+}
+@keyframes anim_ripple {
+  from {
+    width: 0vw;
+    height: 0vw;
+    opacity: 1;
+  }
+  to {
+    width: 100vw;
+    height: 100vw;
+    opacity: 0;
+  }
+}
+.blanke-window {
+  border-color: var(--eng-color);
+  background-color: var(--eng-color);
+}
+.blanke-window > .content {
+  background-color: rgba(255, 255, 255, 0.7);
+}
 .console {
   display: none;
   pointer-events: none;
@@ -1152,23 +1247,17 @@ html {
   right: 0px;
   bottom: 0px;
   -webkit-font-smoothing: none;
+  /*border-radius: 5px;*/
+  border: 3px solid var(--eng-color);
+  box-sizing: border-box;
+  transition: border 0.2s ease-in-out;
 }
 ::selection {
   background: var(--eng-color);
 }
 body {
+  background-color: #424242;
   display: inline-block;
-}
-body .workspace {
-  box-sizing: border-box;
-  z-index: 20;
-  display: inline-block;
-  position: absolute;
-  top: 38px;
-  left: 200px;
-  right: 0px;
-  bottom: 0px;
-  background: rgba(255, 255, 255, 0.5);
 }
 body.not-ready .load-splash {
   opacity: 1;
@@ -1204,6 +1293,9 @@ body:not(.not-ready) .load-splash > .draggable {
   position: absolute;
   border-radius: 100%;
   background-color: white;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   animation-name: loading1;
   animation-iteration-count: infinite;
   animation-duration: 3s;
@@ -1219,15 +1311,11 @@ body:not(.not-ready) .load-splash > .draggable {
 }
 @keyframes loading1 {
   from {
-    width: 0%;
-    height: 0%;
-    top: 50%;
-    left: 50%;
+    width: 0vw;
+    height: 0vw;
   }
   to {
-    width: 200%;
-    height: 200%;
-    top: -50%;
-    left: -50%;
+    width: 200vw;
+    height: 200vw;
   }
 }

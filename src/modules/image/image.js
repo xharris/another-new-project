@@ -42,8 +42,14 @@ exports.libraryAdd = function(uuid, name) {
 }
 
 exports.onDblClick = function(uuid, properties) {
-    $(".workspace.image").append(
-        "<div class='preview-container'>"+
+    var win_sel = blanke.createWindow({
+        x: 210, 
+        y: 50,
+        width: 550,
+        height: 350,
+        class: 'image',
+        title: properties.name,
+        html: "<div class='preview-container'>"+
             "<div class='img-preview-container'>"+
                 "<img src='"+nwPATH.join(b_project.getResourceFolder('image'), properties.path)+"' class='preview'>"+
                 "<div id='zoom-controls' class='ui-btn-group'>"+
@@ -57,23 +63,23 @@ exports.onDblClick = function(uuid, properties) {
             "</div>"+
             "<div class='img-settings'></div>"+
         "</div>"
-    );
+    });
 
     // load image preview
     // ...
 
     // add event listeners for zooming on image
-    $(".workspace.image #zoom-controls #btn-zoom-in").on('click', function(){
-        zoomImage(ZOOM_AMT);
+    $(win_sel + " #zoom-controls #btn-zoom-in").on('click', function(){
+        zoomImage(win_sel, ZOOM_AMT);
     });
-    $(".workspace.image #zoom-controls #btn-zoom-out").on('click', function(){
-        zoomImage(-ZOOM_AMT);
+    $(win_sel + " #zoom-controls #btn-zoom-out").on('click', function(){
+        zoomImage(win_sel, -ZOOM_AMT);
     });
 
     // load settings form
     if (!properties.parameters)
         properties.parameters = blanke.extractDefaults(image_settings);
-    blanke.createForm(".workspace .img-settings", image_settings, properties.parameters,
+    blanke.createForm(win_sel + " .img-settings", image_settings, properties.parameters,
         function (type, name, value, subcategory) {
             properties.parameters[name] = value;
         }
@@ -81,8 +87,8 @@ exports.onDblClick = function(uuid, properties) {
 }
 
 // zoom +1, -1, etc
-function zoomImage(amt) {
-    var img_sel = ".workspace.image .img-preview-container .preview";
+function zoomImage(sel_parent, amt) {
+    var img_sel = sel_parent + " .img-preview-container .preview";
     $(img_sel).css({
         "width": ($(img_sel).width()+($(img_sel).width()*(amt/100)))+"px",
         "height": ($(img_sel).height()+($(img_sel).height()*(amt/100)))+"px"

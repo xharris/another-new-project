@@ -22,9 +22,20 @@ exports.onDblClick = function(uuid, properties) {
 	obj_prop = properties;
 
 	setCodePath();
-	$(".workspace.state").append(
-		"<div id='code'></div>"
-	);
+	if (b_project.getPluginSetting("code_editor", "use built-in editor")) {
+		var win_sel = blanke.createWindow({
+	        x: 210, 
+	        y: 50,
+	        width: 550,
+	        height: 350,
+	        class: 'state.code',
+	        title: properties.name,
+	        html: "<div id='code'></div>",
+	        onClose: function(){
+	        	editor_obj.triggerClose();
+	        }
+		});
+	}
 
 	editor_obj = nwPLUGINS['code_editor'].init({
 		id: 'code', 

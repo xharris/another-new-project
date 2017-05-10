@@ -157,6 +157,14 @@ var b_code = function(options) { // sel_id, code_path, fn_saveScript
 		}
 	};
 
+	this.triggerClose = function() {
+		if (b_project.getPluginSetting('code_editor', 'save on close')) {
+			_this.saveFile();
+		}
+
+		b_project.autoSaveProject();
+	}
+
 	document.addEventListener('library.rename', function(e) {
 		if (b_project.getPluginSetting("code_editor", "find/replace on rename")) {
 			// replace in currently open editor if one is open
@@ -171,11 +179,7 @@ var b_code = function(options) { // sel_id, code_path, fn_saveScript
 	});
 
 	document.addEventListener('library.on_close', function(e) {	
-		if (b_project.getPluginSetting('code_editor', 'save on close')) {
-			_this.saveFile();
-		}
-
-		b_project.autoSaveProject();
+		_this.triggerClose();
 	});
 
 	// constructor code

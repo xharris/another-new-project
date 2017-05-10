@@ -33,8 +33,8 @@ var b_ide = {
 	},
 
 	clearWorkspace: function() {
-        $(".workspace").empty();
-        $(".workspace")[0].className = "workspace";
+        //$(".workspace").empty();
+        //$(".workspace")[0].className = "workspace";
 	},
 
 	setTitle: function(title) {

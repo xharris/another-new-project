@@ -9,13 +9,10 @@ b_library = {
 	setBackColor: function(color) {
 		// change variable in less
 		document.documentElement.style.setProperty('--eng-color', color);
-
-		//$(".library").animate({"background-color": color}, 200);
-		//$("body").animate({"background-color": shadeColor(color, .85)}, 200);
 	},
 
 	getBackColor: function() {
-		return $(".library").css("background-color");
+		return $("html").css("--eng-color");
 	},
 
 	randomizeBackColor: function() {
@@ -277,9 +274,9 @@ $(function(){
 	$(".library").resizable({
 		handles: "e",
 		resize: function(event, ui){
-			$(".workspace").css("left", ui.size.width);
+			//$(".workspace").css("left", ui.size.width);
 			$("body[project-open='1'] .titlebar").css("left", ui.size.width);
-			$(".ui-dialog-container").css("margin-left", ui.size.width);
+			$(".ui-dialog-container").css("margin-left", ui.size.width + 10);
 		},
 		start: function(event, ui){
 			$(".library").css("transition-duration", "0s");

@@ -1,3 +1,6 @@
+var _last_mx = 0;
+var _last_my = 0;
+
 var b_ui = {
 	/*
 		values = {
@@ -137,9 +140,23 @@ var b_ui = {
 				);
 			}
 		})
+	},
+	createGridRipple: function(x=_last_mx, y=_last_my) {
+		$("body").append("<div class='grid-ripple' style='top:"+y+"px;left:"+x+"px;'></div>");
+		$("body .grid-ripple").on("animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd", function(e){
+		    $(this).off(e);
+		    $(this).remove();
+		});
 	}
 }
 
 document.addEventListener('project.open', function(e) {
 	b_ui.replaceSVGicons();
+});
+
+$(function(){
+	$(window).on("mouseup", function(e){
+		_last_mx = e.clientX;
+		_last_my = e.clientY;
+	});
 });

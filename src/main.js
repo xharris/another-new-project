@@ -39,7 +39,7 @@ function createWindow () {
         autoHideMenuBar: true,
         width: data.width ? data.width : 800,
         height: data.height ? data.height : 600,
-        frame: false,
+        frame: false
     });
 
     mainWindow.on("close", function() {

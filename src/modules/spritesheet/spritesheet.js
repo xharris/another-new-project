@@ -7,6 +7,15 @@ var game,
 var sheet_data = {};
 var frame_rects = [];
 
+/*
+var sprite_settings = {
+	"Spritesheet" : [
+		{"type" : "select", "name" : "min", "default" : "linear", "options" : ["linear", "nearest"]},
+		{"type" : "number", "name" : "anisotropy", "default" : 1, "min" : 0, "max" : 1000000}
+	]
+}
+*/
+
 exports.libraryAdd = function(uuid, name) {
 	return {
 		img_source: '',
@@ -21,16 +30,23 @@ exports.libraryAdd = function(uuid, name) {
 	}
 }
 
+var win_sel;
 exports.onDblClick = function(uuid, properties) {
-	$(".workspace").append(
-		"<div class='preview-container'>"+
+	win_sel = blanke.createWindow({
+        x: 210, 
+        y: 50,
+        width: 550,
+        height: 350,
+        class: 'spritesheet',
+        title: properties.name,
+        html: "<div class='preview-container'>"+
 			"<div class='img-preview-container'>"+
 				"<img src='' class='preview'>"+
 				"<div class='frame-box-container'></div>"+
 			"</div>"+
 			"<div id='main-canvas'></div>"+
 		"</div>"
-	);
+	});
     b_canvas.init("spritesheet");
     sheet_uuid = uuid;
     sheet_prop = properties;
@@ -48,7 +64,7 @@ exports.canvas = {
 	    		"<option value='"+img+"'>"+obj.name+"</option>";
 	    }
 
-	    $(".workspace").append(
+	    $(win_sel + " .content").append(
 	        "<div class='inputs-section'>"+
         		"<select class='ui-select sp-image'>"+
         			"<option value='' disabled selected hidden>image source</option>"+
@@ -84,7 +100,7 @@ exports.canvas = {
 	        "</div>"
 	    );
 
-	    $(".workspace .inputs-section").on('change', 'input', function(){
+	    $(win_sel + " .inputs-section").on('change', 'input', function(){
 	    	b_library.getByUUID('spritesheet', sheet_uuid).parameters[$(this).attr('name')] = parseInt($(this).val());
 
 	    	sheet_data = b_library.getByUUID('spritesheet', sheet_uuid).parameters;
@@ -97,8 +113,8 @@ exports.canvas = {
 		    loadImage(sheet_prop.img_source);
 		}
 
-	    $(".workspace .sp-image").val(sheet_prop.img_source);
-	    $(".workspace .sp-image").on('change', function() {
+	    $(win_sel + " .sp-image").val(sheet_prop.img_source);
+	    $(win_sel + " .sp-image").on('change', function() {
 	    	b_library.getByUUID('spritesheet', sheet_uuid).img_source = $(this).val();
 	    	var new_img = 'img_'+$(this).val();
 
@@ -168,12 +184,12 @@ function updatePreview(img_key) {
 		$(".inputs-section input[name='frameHeight']").val(img_height);
 	}
 
-    $(".workspace .frame-box-container").empty();
-    $(".workspace .frame-box-container").width(img_width)
+    $(win_sel + " .frame-box-container").empty();
+    $(win_sel + " .frame-box-container").width(img_width)
     									.height(img_height);
 
-    $(".workspace .img-info .width").html(img_width);
-    $(".workspace .img-info .height").html(img_height);
+    $(win_sel + " .img-info .width").html(img_width);
+    $(win_sel + " .img-info .height").html(img_height);
 
     // add img frame rectangles
     var frame_count = sheet_data.frameMax;
@@ -191,11 +207,11 @@ function updatePreview(img_key) {
     }
 
     for (var f = 0; f < frame_count; f++) {
-    	$(".workspace .frame-box-container").append(
+    	$(win_sel + " .frame-box-container").append(
     		"<div class='frame-box' data-number='"+f+"'></div>"
     	);
     }
-    $(".workspace .frame-box-container .frame-box").css({
+    $(win_sel + " .frame-box-container .frame-box").css({
     	'width': sprite.width,
     	'height': sprite.height,
     	'margin': sheet_data.margin,

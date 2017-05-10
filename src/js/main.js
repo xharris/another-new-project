@@ -242,22 +242,11 @@ $(function(){
         var uuid = $(this).parent(".object").data('uuid');
         var type = $(this).parent(".object").data('type');
 
-        // call onClose for last open module
-        var module_calls = $(".workspace")[0].classList;
-        for (var c = 0; c < module_calls.length; c++) {
-            var mod = module_calls.item(c);
-            if (mod !== "workspace" && nwMODULES[mod].onClose) {
-                    nwMODULES[mod].onClose(last_open);
-            }
-        }
-
-        if (last_open != undefined) {
-            dispatchEvent("library.on_close", {uuid: uuid});
-        }
-
+        // dispatchEvent("library.on_close", {uuid: uuid});
+        
         // clear the workspace
-        b_ide.clearWorkspace();
-        $(".workspace").addClass(type);
+        //b_ide.clearWorkspace();
+        //$(".workspace").addClass(type);
 
         // if the last open module is the same, do nothing
         if (last_open == uuid) {

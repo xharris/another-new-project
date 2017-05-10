@@ -83,20 +83,20 @@ EffectManager.new(
 
 EffectManager.new(
 	'chroma shift',
-	{['chroma'] = {1, 1}, ['imageSize'] = {20, 20}},
+	{['strength'] = {1, 1}, ['size'] = {20, 20}},
 	[[ 
 		#ifdef PIXEL
-		extern vec2 chroma;
-		extern vec2 imageSize;
+		extern vec2 strength;
+		extern vec2 size;
 
 		vec4 effect(vec4 color, Image tex, vec2 tc, vec2 pc)
 		{
-			vec2 screenSize = love_ScreenSize.xy;        
-			number factor_x = pc.x/screenSize.x;
-			number factor_y = pc.y/screenSize.y;
-			number factor = (factor_x + factor_y)/2.0;
+			//vec2 screenSize = love_ScreenSize.xy;        
+			//number factor_x = pc.x/screenSize.x;
+			//number factor_y = pc.y/screenSize.y;
+			//number factor = (factor_x + factor_y)/2.0;
 
-            vec2 shift = (chroma / imageSize) * factor;
+            vec2 shift = (strength / size);// * factor;
 			return vec4(Texel(tex, tc+shift).r, Texel(tex,tc).g, Texel(tex,tc-shift).b, Texel(tex, tc).a);
 		}
 		#endif

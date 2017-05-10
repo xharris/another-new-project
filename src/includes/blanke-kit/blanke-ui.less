@@ -274,3 +274,56 @@
         }
     }
 }
+
+/* Window CSS */
+@title-bar-height: 20px;
+.blanke-window {
+    display: none;
+    z-index: 100;
+    min-width: 100px;
+    min-height: 100px;
+    position: absolute;
+    border-radius: 2px;
+    border-width: 2px;
+    border-style: solid;
+
+    >.title-bar {
+        cursor: default;
+        background-color: black;
+        height: @title-bar-height;
+        overflow: hidden;
+
+        >* {
+            .no-select();
+        }
+
+        >.title {
+            pointer-events: none;
+            color: white;
+            line-height: @title-bar-height;
+            padding-left: 2px;
+        }
+
+        >.btn-close {
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            color: white;
+            background: none;
+            border: none;
+            outline: none; 
+            cursor: pointer;
+            font-size: 17px;
+        }
+    }
+
+    >.content {
+        margin-bottom: 0px;
+        overflow: auto;
+        position: absolute;
+        top: @title-bar-height;
+        bottom: 0px;
+        right: 0px;
+        left: 0px;
+    }
+}

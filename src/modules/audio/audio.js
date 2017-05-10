@@ -65,8 +65,14 @@ exports.onDblClick = function(uuid, properties) {
 	aud_uuid = uuid;
 	aud_properties = properties;
 
-	$(".workspace").append(
-		"<div class='preview-container'>"+
+	var win_sel = blanke.createWindow({
+        x: 210, 
+        y: 50,
+        width: 520,
+        height: 465,
+        class: 'audio',
+        title: properties.name,
+		html: "<div class='preview-container'>"+
 			"<div id='audio-controls' class='ui-btn-group'>"+
 				"<button id='btn-audio-play' class='ui-button-sphere'><i class='mdi mdi-play'></i></button>"+
 				"<button id='btn-audio-stop' class='ui-button-sphere'><i class='mdi mdi-stop'></i></button>"+
@@ -75,10 +81,10 @@ exports.onDblClick = function(uuid, properties) {
 			"</div>"+
 		"</div>"+
 		"<div class='inputs-container'></div>"
-	);
+	});
 
 	// load audio manipulating controls
-	blanke.createForm(".workspace > .inputs-container", audio_settings, properties.parameters,
+	blanke.createForm(win_sel + " .inputs-container", audio_settings, properties.parameters,
 		function (type, name, value, subcategory) {
 			aud_properties.parameters[subcategory] = ifndef(aud_properties.parameters[subcategory], {});
 			aud_properties.parameters[name] = value;

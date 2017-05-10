@@ -3,25 +3,9 @@ document.addEventListener("filedrop", function(e) {
 });
 
 exports.libraryAdd = function(uuid, name) {
-    eDIALOG.showOpenDialog(
-        {
-            title: "import map",
-            properties: ["openFile"],
-            filters: [
-            	{name: 'Tiled Map', extensions: ['tmx']},
-            ]
-        },
-        function (path) {
-            if (path) {
-                for (var p = 0; p < path.length; p++) {
-	                importMap(path[p]);
-	            }
-            } else {
-            	b_library.delete(uuid);
-            }
-        }
-    );
-    return 0;
+    return {
+        
+    };
 }
 
 function importMap(path) {

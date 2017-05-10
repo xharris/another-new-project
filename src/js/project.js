@@ -167,6 +167,7 @@ var b_project = {
 
 	autoSaveProject: function() {
 		if (this.autosave_on) {
+            b_ui.createGridRipple();
 			save_timeout = setTimeout(b_project.saveProject, PROJECT_SAVE_TIME);
 		}
 	},
