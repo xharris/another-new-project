@@ -241,25 +241,12 @@ $(function(){
     $(".library .object-tree").on("dblclick", ".object .name", function(){
         var uuid = $(this).parent(".object").data('uuid');
         var type = $(this).parent(".object").data('type');
-
-        // dispatchEvent("library.on_close", {uuid: uuid});
         
-        // clear the workspace
-        //b_ide.clearWorkspace();
-        //$(".workspace").addClass(type);
-
-        // if the last open module is the same, do nothing
-        if (last_open == uuid) {
-            last_open = undefined; 
-        } 
-        // else: open the module
-        else {
-            last_open = uuid;
-            b_library.enableDrag();
-            if (nwMODULES[type].onDblClick) {
-                nwMODULES[type].onDblClick(uuid, b_library.getByUUID(type, uuid))
-            }  
-        }
+        last_open = uuid;
+        b_library.enableDrag();
+        if (nwMODULES[type].onDblClick) {
+            nwMODULES[type].onDblClick(uuid, b_library.getByUUID(type, uuid))
+        }  
 
         dispatchEvent("library.dbl_click", {type: type, uuid: uuid, properties: b_library.getByUUID(type, uuid)});
 

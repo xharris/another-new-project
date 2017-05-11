@@ -172,20 +172,23 @@ exports.settings = {
 }
 
 var codemirror;
+var love2d_uuid = guid();
 exports.library_const = [
 	{
 		"name": "main.lua",
 		dbl_click: function() {
-			b_ide.clearWorkspace();
-			$(".workspace").append(
-				"<div id='code'></div>"
-			);
-
-			codemirror = nwPLUGINS['code_editor'].init({
-				id: 'code',
-				file_path: nwPATH.join(b_project.curr_project, "assets", "main.lua")
+			b_ui.openCodeEditor({
+				uuid: love2d_uuid,
+				type: 'main',
+				properties: {
+					name: 'main.lua'
+				},
+				editor: {
+					file_path: nwPATH.join(b_project.curr_project, "assets", "main.lua")
+				}
 			});
 		}
+
 	}
 ]
 

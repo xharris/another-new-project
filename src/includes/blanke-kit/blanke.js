@@ -230,7 +230,7 @@ var blanke = {
         var uuid = ifndef(options.uuid, guid());
         var onClose = options.onClose;
 
-        if (this._windows[uuid] && $(this._windows[uuid])) {
+        if ($(this._windows[uuid]).length > 0) {
             $(this._windows[uuid]).trigger('mousedown');
             return this._windows[uuid];
         }

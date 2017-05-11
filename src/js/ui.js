@@ -174,8 +174,7 @@ var b_ui = {
 		        }
 			});
 
-
-			if (!_code_editors[uuid] && $(_code_editors[uuid] + " .CodeMirror").length == 0) {
+			if ($(_code_editors[uuid] + " .CodeMirror").length == 0) {
 				editor.id = code_sel;
 				editor_obj = nwPLUGINS['code_editor'].init(editor);
 			}

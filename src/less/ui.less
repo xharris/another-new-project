@@ -97,7 +97,7 @@
 
 .grid-ripple {
     position: fixed;
-    border: 10px solid white;
+    border: 10px solid var(--eng-color);
     border-radius: 100%;
     z-index: -101;
     transform: translate(-50%, -50%);  
@@ -105,16 +105,21 @@
     animation-name: anim_ripple;
     animation-iteration-count: 1;
     animation-duration: 1s;
-    animation-timing-function: ease-in-out;
+    animation-timing-function: linear;
 }
 
 @keyframes anim_ripple {
-    from {
+    0% {
         width: 0vw;
         height: 0vw;
         opacity: 1;
     }
-    to {
+    50% {
+        width: 50vw;
+        height: 50vw;
+        opacity: 1;
+    }
+    100% {
         width: 100vw;
         height: 100vw;
         opacity: 0;

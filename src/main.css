@@ -380,6 +380,7 @@
   border-radius: 2px;
   border-width: 2px;
   border-style: solid;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
 }
 .blanke-window > .title-bar {
   cursor: default;
@@ -459,7 +460,7 @@ body[project-open="0"] .titlebar {
   left: 0px;
 }
 body[project-open="1"] .titlebar {
-  left: 200px;
+  left: 205px;
 }
 .titlebar {
   -webkit-app-region: drag;
@@ -481,7 +482,7 @@ body[project-open="1"] .titlebar {
   right: 0px;
   height: auto;
   padding: 0px;
-  margin: 3px;
+  margin: 5px;
   z-index: 20;
   transition: all ease-in-out 0.2s;
 }
@@ -489,9 +490,18 @@ body[project-open="1"] .titlebar {
   width: 22px;
   height: 22px;
 }
+.titlebar button:hover .mdi-svg > path {
+  fill: black;
+}
+.titlebar .ui-btn-group {
+  background-color: transparent;
+}
 .titlebar .mdi-svg {
   width: 12px;
   height: 12px;
+}
+.titlebar .mdi-svg > path {
+  fill: white;
 }
 .titlebar .actionbuttons {
   -webkit-app-region: no-drag;
@@ -649,16 +659,18 @@ body[project-open="0"] .library .actions {
   display: none;
 }
 body[project-open="1"] .library {
-  width: 200px;
+  width: 190px;
 }
 .library {
   position: absolute;
   top: 0px;
   bottom: 0px;
   left: 0px;
-  background-color: rgba(255, 255, 255, 0.75);
+  background-color: rgba(250, 250, 250, 0.95);
   z-index: 20;
   overflow: auto;
+  padding: 5px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
   transition: all ease-in-out 0.2s;
 }
 .library > .ui-resizable-handle {
@@ -684,7 +696,7 @@ body[project-open="1"] .library {
   user-select: none;
   /* Non-prefixed version, currently
     not supported by any browser */
-  margin: 3px;
+  margin: 0px;
   white-space: nowrap;
   z-index: 10;
 }
@@ -790,9 +802,10 @@ body[project-open="1"] .library {
   margin-left: 0px !important;
 }
 .library .object-tree > .children {
-  width: 100%;
-  padding: 0px;
+  padding: 5px;
   position: absolute;
+  left: 0px;
+  right: 0px;
   box-sizing: border-box;
 }
 .library .object-tree > .name {
@@ -975,7 +988,7 @@ body[project-open="1"] .library {
   right: 0px;
   z-index: 20;
   white-space: nowrap;
-  background-color: rgba(255, 255, 255, 0.75);
+  background-color: rgba(250, 250, 250, 0.95);
   margin: 10px;
 }
 .ui-settings .categories {
@@ -1127,22 +1140,27 @@ body[project-open="1"] .library {
 }
 .grid-ripple {
   position: fixed;
-  border: 10px solid white;
+  border: 10px solid var(--eng-color);
   border-radius: 100%;
   z-index: -101;
   transform: translate(-50%, -50%);
   animation-name: anim_ripple;
   animation-iteration-count: 1;
   animation-duration: 1s;
-  animation-timing-function: ease-in-out;
+  animation-timing-function: linear;
 }
 @keyframes anim_ripple {
-  from {
+  0% {
     width: 0vw;
     height: 0vw;
     opacity: 1;
   }
-  to {
+  50% {
+    width: 50vw;
+    height: 50vw;
+    opacity: 1;
+  }
+  100% {
     width: 100vw;
     height: 100vw;
     opacity: 0;

@@ -275,7 +275,8 @@ $(function(){
 		handles: "e",
 		resize: function(event, ui){
 			//$(".workspace").css("left", ui.size.width);
-			$("body[project-open='1'] .titlebar").css("left", ui.size.width);
+			console.log()
+			$("body[project-open='1'] .titlebar").css("left", ui.size.width + (parseInt($(event.target).css("padding"), 10)*2));
 			$(".ui-dialog-container").css("margin-left", ui.size.width + 10);
 		},
 		start: function(event, ui){
