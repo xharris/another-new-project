@@ -82,7 +82,7 @@ exports.targets = {
 
 						// modify app/Contents/Info.plist			
 						plist_repl = [
-							['<COMPANY>', 'BlankEXHH'],
+							['<COMPANY>', 'Made with BlankE'],
 							['<TITLE>', b_project.getSetting("engine", "title")]
 						];
 						plist_path = nwPATH.join(build_path, 'Contents', 'Info.plist');

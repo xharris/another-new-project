@@ -7,8 +7,8 @@ function hex2rgb(hex)
     end
 end
 
-function lerp(a,b,d,t)
-	return a + (b-a) * d * t
+function lerp(a,b,amt)
+	return a + (b-a) * amt
 end
 
 function ifndef(var_check, default)

@@ -34,21 +34,20 @@ View = Class{
 		end)
 	end,
 
-	-- immediately go to entity position
-	goTo = function(self, entity) 
-		self.follow_x = entity.x
-		self.follow_y = entity.y
-
-		self:update()
-	end,	
-
 	follow = function(self, entity)
 		self.followEntity = entity
 
 		self:update()
 	end,
 
-	move_towards_point = function(self, x, y, fromUpdate)
+	moveTo = function(self, entity) 
+		self.follow_x = entity.x
+		self.follow_y = entity.y
+
+		self:update()
+	end,	
+
+	moveToPosition = function(self, x, y, fromUpdate)
 		self.follow_x = x
 		self.follow_y = y
 
@@ -56,6 +55,14 @@ View = Class{
 		if not fromUpdate then
 			self:update()
 		end
+	end,
+
+	snapTo = function(self, entity)
+		self:snapToPosition(entity.x, entity.y)
+	end,
+
+	snapToPosition = function(self, x, y)
+		self:camera:lookAt(x, y)
 	end,
 
 	rotateTo = function(self, angle)
@@ -71,7 +78,7 @@ View = Class{
 			local follow_x = self.followEntity.x
 			local follow_y = self.followEntity.y
 
-			self:move_towards_point(follow_x, follow_y, true)
+			self:goToPosition(follow_x, follow_y, true)
 		end
 
 		-- determine the smoother to use 

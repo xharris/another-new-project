@@ -1,4 +1,5 @@
 http = require("socket.http")
+require("assets.plugins.luasocket.json")
 local ltn12 = require("ltn12")
 
 function url_encode(str)
