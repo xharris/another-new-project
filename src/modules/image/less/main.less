@@ -1,14 +1,21 @@
 @import "imports";
 
 .library {
-	.img-hover {
-		position: fixed;
-		bottom: 6px;
-	    max-width: 100%;
-	    /*opacity: 0.2;*/
-	    z-index: @library-z-back;
-	    margin: 3px;
-	    border: 1px solid var(--eng-color);
+	.img-hover-container {
+		position: absolute;
+		left: 0px;
+		right: 0px;
+		bottom: 0px;
+		margin: 3px;
+		margin-bottom: 9px;
+		margin-right: 5px;
+		z-index: @library-z-back;	
+
+		.img-hover {
+			max-width: 100%;
+			max-height: 100%;
+		    border: 1px solid var(--eng-color);
+		}
 	}
 }
 
@@ -41,11 +48,12 @@
 			    outline: 2px dashed var(--eng-color);
   			}
 
-  			#zoom-controls {
-  				position: absolute;
-			    bottom: 20px;
-			    right: 20px;
-  			}
+  		}
+
+  		#zoom-controls {
+			position: absolute;
+		    left: 20px;
+		    bottom: 20px;
 		}
 
 		.img-settings {

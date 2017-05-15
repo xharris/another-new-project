@@ -52,14 +52,15 @@ exports.onDblClick = function(uuid, properties) {
         html: "<div class='preview-container'>"+
             "<div class='img-preview-container'>"+
                 "<img src='"+nwPATH.join(b_project.getResourceFolder('image'), properties.path)+"' class='preview'>"+
-                "<div id='zoom-controls' class='ui-btn-group'>"+
-                    "<button id='btn-zoom-in' class='ui-button-sphere'>"+
-                        "<i class='mdi mdi-plus'></i>"+
-                    "</button>"+
-                    "<button id='btn-zoom-out' class='ui-button-sphere'>"+
-                        "<i class='mdi mdi-minus'></i>"+
-                    "</button>"+
-                "</div>"+
+            "</div>"+
+            
+            "<div id='zoom-controls' class='ui-btn-group'>"+
+                "<button id='btn-zoom-in' class='ui-button-sphere'>"+
+                    "<i class='mdi mdi-plus'></i>"+
+                "</button>"+
+                "<button id='btn-zoom-out' class='ui-button-sphere'>"+
+                    "<i class='mdi mdi-minus'></i>"+
+                "</button>"+
             "</div>"+
             "<div class='img-settings'></div>"+
         "</div>"
@@ -106,9 +107,14 @@ function importImage(path) {
 }
 
 exports.onMouseEnter = function(uuid, properties) {
+    // add image preview container
+    if ($(".library .img-hover-container").length == 0) {
+        $(".library").append("<div class='img-hover-container'></div>");
+    }
+
     // show image preview in library
     if (properties.path.length > 0) {
-        $(".library").append(
+        $(".library .img-hover-container").append(
             "<img src='"+nwPATH.join(b_project.getResourceFolder('image'), properties.path)+"' class='img-hover img-hover-"+uuid+"'/>"
         );
         $(".img-hover .img-hover-"+uuid).offset({top: $('.library .object[data-uuid="'+uuid+'"]').position().top});
@@ -127,5 +133,5 @@ exports.onMouseEnter = function(uuid, properties) {
 }
 
 exports.onMouseLeave = function(uuid, properties) {
-    $('.library .img-hover').remove();
+    $('.library .img-hover-container .img-hover').remove();
 }

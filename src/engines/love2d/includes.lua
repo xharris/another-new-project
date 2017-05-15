@@ -1,4 +1,3 @@
-
 require 'plugins.blanke.Util'
 Signal = require 'plugins.hump.signal'
 Gamestate = require 'plugins.hump.gamestate'
@@ -46,7 +45,7 @@ _Entity = require 'plugins.blanke.Entity'
 Map = require 'plugins.blanke.Map'
 View = require 'plugins.blanke.View'
 Effect = require 'plugins.blanke.Effect'
-
+Globals = require 'plugins.blanke.Globals'
 
 Signal.register('love.load', function()
 	-- register gamestates

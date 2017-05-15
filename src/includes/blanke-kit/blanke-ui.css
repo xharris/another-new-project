@@ -26,6 +26,20 @@
   left: 50%;
   transform: translate(-50%, -50%);
 }
+*:not(.no-custom-scroll)::-webkit-scrollbar-track {
+  border: 1px solid #BDBDBD;
+  background-color: #E0E0E0;
+}
+*:not(.no-custom-scroll)::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+*:not(.no-custom-scroll)::-webkit-scrollbar * {
+  background: transparent;
+}
+*:not(.no-custom-scroll)::-webkit-scrollbar-thumb {
+  background: #212121 !important;
+}
 /*
     HEADER
 */
