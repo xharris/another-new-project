@@ -11,7 +11,7 @@
   "scripts": {
     "start": "grunt && electron . --dev",
     "release": "grunt && npm run clean_modules && npm run asar && npm install",
-    "asar": "asar pack \"../src\" \"../releases/BlankE-win32-ia32/resources/app.asar\" --unpack-dir \"**/engines/**\"",
+    "asar": "asar pack \"../src\" \"../releases/BlankE-win32-ia32/resources/app.asar\" --unpack-dir \"**/engines/**,.git\"",
     "clean_modules": "npm prune --production"
   },
   "webkit": {

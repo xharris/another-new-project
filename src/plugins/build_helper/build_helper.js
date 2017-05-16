@@ -45,3 +45,7 @@ exports.download = function(url, dest, callback) {
 		nwFILE.writeFile(dest, data, callback);
 	});
 }
+
+exports.nonASAR = function(path) {
+	return path.replace('app.asar','app.asar.unpacked');
+}

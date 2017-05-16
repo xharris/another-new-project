@@ -116,6 +116,7 @@ function downloadLove(os='win', callback) {
 				// download version for os
 				var zip_path = getLoveFolder(os)+".zip";
 				b_console.log('downloading ' + nwPATH.basename(zip_path));
+				console.log('to ' + zip_path);
 				nwHELPER.download(getLoveURL(os), zip_path, function(err){
 					// unzip it
 					nwDECOMP(zip_path, getLoveDownFolder(os)).then(function(files){
@@ -146,7 +147,7 @@ function getLoveDownFolder(os='', version=b_project.getSetting("engine", "versio
 		'win' : nwPATH.join(__dirname, "bin"),
 		'mac' : nwPATH.join(__dirname, "bin", "love-"+version+"-macosx-x64")
 	}
-	return paths[os];
+	return nwHELPER.nonASAR(paths[os]);
 }
 
 function getLoveFolder(os='', version=b_project.getSetting("engine", "version")) {
@@ -155,7 +156,7 @@ function getLoveFolder(os='', version=b_project.getSetting("engine", "version"))
 		'win' : nwPATH.join(__dirname, "bin", "love-"+version+"-win32"),
 		'mac' : nwPATH.join(__dirname, "bin", "love-"+version+"-macosx-x64", "love.app")
 	}
-	return paths[os];
+	return nwHELPER.nonASAR(paths[os]);
 }
 
 // only works for windows atm
