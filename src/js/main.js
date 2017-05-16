@@ -25,6 +25,7 @@ var nwFILEX = require("fs-extra");
 var nwOPEN = require("open");
 var nwREPLACE = require('replace-in-file');
 var nwCRYPT = require("cryptr");
+var nwDECOMP = require('decompress');
 //var nwUA = require("universal-analytics");
 
 var eIPC = require('electron').ipcRenderer;
@@ -553,7 +554,7 @@ function loadModules(engine, callback) {
     // import module files
     nwFILE.readdir(nwPATH.join(__dirname, "modules"), function(err, mods) {
         if (engine) {
-            mods = b_project.getEngine().modules;
+            mods = engine.modules;
             refreshModuleMenu();
         }
 
@@ -584,13 +585,17 @@ function loadModules(engine, callback) {
 }
 
 function loadEngines(callback) {
-    // import module files
-    nwFILE.readdir(nwPATH.join(__dirname, "engines"), function(err, mods) {
+    var nwHELPER = require(nwPATH.join(__dirname, "plugins", 'build_helper'));
 
-        mods.forEach(function(eng_name, m) {
+    // import module files
+    var path = nwHELPER.nonASAR(nwPATH.join(__dirname, "engines"));
+    nwFILE.readdir(path, function(err, engines) {
+        
+        for (var e = 0; e < engines.length; e++) {//engines.forEach(function(eng_name, e) {
+            var eng_name = engines[e];
+
             if (!engine_names.includes(eng_name)) {
-                
-                nwENGINES[eng_name] = require(nwPATH.join(__dirname, "engines", eng_name));
+                nwENGINES[eng_name] = require(nwPATH.join(path, eng_name));
 
                 // check if engine is disabled (not allowed to load at all)
                 if (!nwENGINES[eng_name].disabled) {
@@ -602,7 +607,7 @@ function loadEngines(callback) {
                     }
                 }
             }
-        });
+        }
 
     });
 

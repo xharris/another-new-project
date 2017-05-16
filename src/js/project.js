@@ -89,7 +89,7 @@ var b_project = {
 		nwMKDIRP(nwPATH.join(b_project.curr_project, 'assets'));
 
 		// load up engine modules
-	    loadModules(b_project.getData("engine"), function(){
+	    loadModules(b_project.getEngine(), function(){
 	        dispatchEvent("ide.ready",{});
 	    });
 
