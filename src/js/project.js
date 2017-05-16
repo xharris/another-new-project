@@ -30,6 +30,8 @@ var b_project = {
 		} else {
 			b_ide.setHTMLattr("project-open", 0);
 		}
+		
+		refreshModuleMenu();
 
 		b_console.log("created "+nwPATH.basename(b_project.bip_path));
 
@@ -75,6 +77,8 @@ var b_project = {
 		nwFILE.watch(b_project.getResourceFolder(''), {'persistent':true, 'recursive':true}, function(action, file){
 			dispatchEvent('assets.modified', {'action':action, 'file':file});
 		});
+
+        refreshModuleMenu();
 
 		dispatchEvent('project.open');
 	},

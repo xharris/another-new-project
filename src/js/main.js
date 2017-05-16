@@ -462,6 +462,10 @@ function lib_objectRename(e) {
     b_library.saveTree();
 }
 
+function refreshModuleMenu() {
+    game_items = ifndef(b_project.getEngine().modules, {});
+}
+
 function handleDropFile(in_path) {
     nwFILE.lstat(in_path, function(err, stats) {
         if (!err) {
@@ -550,6 +554,7 @@ function loadModules(engine, callback) {
     nwFILE.readdir(nwPATH.join(__dirname, "modules"), function(err, mods) {
         if (engine) {
             mods = b_project.getEngine().modules;
+            refreshModuleMenu();
         }
 
         if (mods && mods.length > 0) {
@@ -565,13 +570,9 @@ function loadModules(engine, callback) {
                     }
                 });
 
-                if (!game_items.includes(mod_name)) {
-                    game_items.push(mod_name);
-
-                    nwMODULES[mod_name] = require(nwPATH.join(__dirname, "modules", mod_name));
-                    if (nwMODULES[mod_name].loaded) {
-                        nwMODULES[mod_name].loaded();
-                    }
+                nwMODULES[mod_name] = require(nwPATH.join(__dirname, "modules", mod_name));
+                if (nwMODULES[mod_name].loaded) {
+                    nwMODULES[mod_name].loaded();
                 }
             });
         }
