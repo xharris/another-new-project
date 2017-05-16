@@ -1,4 +1,5 @@
 var nwZIP = require("archiver")
+var nwDOWN = require('download');
 
 exports.copyScript = function(src, dest, replacements, cb_done) {
 	nwFILE.readFile(src, 'utf8', function(err, data) {
@@ -35,5 +36,12 @@ exports.zip = function(src, dest, call_done, call_err) {
 		archive.pipe(output);
 		archive.directory(nwPATH.join(src,''), '');
 		archive.finalize();
+	});
+}
+
+// http://stackoverflow.com/questions/11944932/how-to-download-a-file-with-node-js-without-using-third-party-libraries
+exports.download = function(url, dest, callback) {
+	nwDOWN(url).then(function(data){
+		nwFILE.writeFile(dest, data, callback);
 	});
 }

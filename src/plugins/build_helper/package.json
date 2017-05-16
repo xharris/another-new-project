@@ -2,6 +2,7 @@
   "name": "build_helper",
   "main": "build_helper.js",
   "dependencies": {
-    "archiver": "^1.3.0"
+    "archiver": "^1.3.0",
+    "download": "^6.1.0"
   }
 }
