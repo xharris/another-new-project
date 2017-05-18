@@ -2,7 +2,7 @@ var nwHELPER = nwPLUGINS['build_helper'];
 
 var new_dirname = nwHELPER.nonASAR(__dirname);
 
-exports.modules = ['entity', 'image', 'state', 'spritesheet', 'audio', 'script'];
+exports.modules = ['image', 'spritesheet', 'entity', 'state', 'scene', 'audio', 'script'];
 exports.colors = [
 /*
 	'#ef9a9a', // red 200
@@ -304,8 +304,10 @@ function build(build_path, objects, callback) {
 	for (var e in objects['entity']) {
 		var ent = objects['entity'][e];
 
-		if (ent.code_path.length > 1)
+		if (ent.code_path.length > 1) {
+			ent.code_path = ent.name + '_' + e + '.lua';
 			script_includes += ent.name + " = require \"assets/scripts/"+ent.code_path.replace(/\\/g,"/").replace('.lua','')+"\"\n";
+		}
 	}
 
 	// STATES
@@ -318,8 +320,10 @@ function build(build_path, objects, callback) {
 			first_state = ent.name;
 		}
 
-		if (ent.code_path.length > 1)
+		if (ent.code_path.length > 1) {
+			ent.code_path = ent.name + '_' + e + '.lua';
 			script_includes += ent.name + " = require \"assets/scripts/"+ent.code_path.replace(/\\/g,"/").replace('.lua','')+"\"\n";
+		}
 	}
 
 	var assets = '';
@@ -327,11 +331,13 @@ function build(build_path, objects, callback) {
 	// SCRIPTS
 	for (var e in objects['script']) {
 		var script = objects['script'][e];
-		var path = script.code_path;
 
-		assets += "function assets:"+script.name+"()\n"+
-				  "\treturn 'assets/scripts/"+path.replace(/\\/g,"/").replace('.lua','')+"'\n"+
-				  "end\n\n";
+		if (script.code_path.length > 1) {
+			script.code_path = script.name + '_' + e + '.lua';
+			assets += "function assets:"+script.name+"()\n"+
+					  "\treturn 'assets/scripts/"+script.code_path.replace(/\\/g,"/").replace('.lua','')+"'\n"+
+					  "end\n\n";
+		}		
 	}
 
 	// IMAGES

@@ -84,7 +84,6 @@ var b_code = function(options) { // sel_id, code_path, fn_saveScript
 		nwFILE.readFile(path, 'utf8', function(err, data){
 			// make it
 			if (err) {
-				console.log('replace stuff')
 				var code = '';
 
 				// get template code
@@ -233,20 +232,31 @@ var b_code = function(options) { // sel_id, code_path, fn_saveScript
 
 
 document.addEventListener('library.rename', function(e) {
-	if (b_project.getPluginSetting("code_editor", "find/replace on rename")) {
-		var repl_path = nwPATH.join(b_project.curr_project, 'assets', 'scripts', '**','*');
+	var detail = e.detail;
 
-		// replace in scripts folder
-		nwREPLACE({
-			files: repl_path,
-			from: e.detail.old,
-			to: e.detail.new
-		}).then(changedFiles => {
-			b_console.log("Replaced "+e.detail.old+
-				"<i class='background-color:'>-></i>"+
-				e.detail.new+" in files: " + changedFiles.join(', '));
-		}).catch(error => {
-			console.log('code_editor: could not rename');//b_console.error("error!")
-		})
-	}
+	// rename file
+	var script_path = nwPATH.join(b_project.curr_project, 'assets', 'scripts', detail.type);
+	var file_ending = '_' + detail.uuid + '.' + nwENGINES[b_project.getData('engine')].file_ext;
+	var old_script = nwPATH.join(script_path, detail.old + file_ending);
+	var new_script = nwPATH.join(script_path, detail.new + file_ending);
+
+
+	nwFILE.rename(old_script, new_script, function(e){
+		if (b_project.getPluginSetting("code_editor", "find/replace on rename")) {
+			var repl_path = nwPATH.join(b_project.curr_project, 'assets', 'scripts', '**','*');
+
+			// replace in scripts folder
+			nwREPLACE({
+				files: repl_path,
+				from: detail.old,
+				to: detail.new
+			}).then(changedFiles => {
+				b_console.log("Replaced "+detail.old+
+					"<i class='background-color:'>-></i>"+
+					detail.new+" in files: " + changedFiles.join(', '));
+			}).catch(error => {
+				console.log('code_editor: could not rename');//b_console.error("error!")
+			})
+		}
+	});
 });	

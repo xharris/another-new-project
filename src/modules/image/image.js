@@ -9,6 +9,9 @@ var image_settings = {
     "WrapMode" : [
         {"type" : "select", "name" : "horizontal", "default" : "clampzero", "options" : ["clamp", "repeat", "clampzero", "mirroredrepeat"]},
         {"type" : "select", "name" : "vertical", "default" : "clampzero", "options" : ["clamp", "repeat", "clampzero", "mirroredrepeat"]}
+    ],
+    "Engine" : [
+        {"type": "bool", "name": "use as tileset", "default": false}
     ]
 }
 
@@ -46,7 +49,7 @@ exports.onDblClick = function(uuid, properties) {
         x: 210, 
         y: 50,
         width: 550,
-        height: 350,
+        height: 410,
         class: 'image',
         title: properties.name,
         html: "<div class='preview-container'>"+

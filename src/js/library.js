@@ -156,7 +156,7 @@ b_library = {
 		obj.name = new_name;
 
 		if (old_name != new_name)
-			dispatchEvent('library.rename', {uuid: uuid, old: old_name, new: new_name});
+			dispatchEvent('library.rename', {uuid: uuid, type: type, old: old_name, new: new_name});
 
 	    b_project.setData('library', b_library.objects);
 		b_project.autoSaveProject();
@@ -274,8 +274,6 @@ $(function(){
 	$(".library").resizable({
 		handles: "e",
 		resize: function(event, ui){
-			//$(".workspace").css("left", ui.size.width);
-			console.log()
 			$("body[project-open='1'] .titlebar").css("left", ui.size.width + (parseInt($(event.target).css("padding"), 10)*2));
 			$(".ui-dialog-container").css("margin-left", ui.size.width + 10);
 		},

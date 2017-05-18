@@ -35,8 +35,8 @@ exports.onDblClick = function(uuid, properties) {
 	win_sel = blanke.createWindow({
         x: 210, 
         y: 50,
-        width: 550,
-        height: 350,
+        width: 400,
+        height: 520,
         class: 'spritesheet',
         title: properties.name,
         html: "<div class='preview-container'>"+

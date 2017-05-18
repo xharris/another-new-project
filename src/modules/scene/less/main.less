@@ -1,75 +1,48 @@
 @import "imports";
 
-.tile-selector {
-	padding: 1px;
-	overflow: auto;
-	
-	img {
-		outline: 1px solid @ide-fave-color-400;
+.blanke-window.scene .content {
+	overflow: hidden;
+
+	> * {
+		height: 100%;
 	}
 
-	.frame-container {
-		position: absolute;
-		top: 29px;
-		left: 1px;
-		width: 100%;
-		height: 100%;
-        font-size: 0;
+	> .sidebar {
+		width: 150px;
+		float: left;
+		background-color: @overlay-color;
+		box-shadow: @card-shadow;
 
-		>.frame-box {
-			outline: 1px solid rgba(255, 0, 0, 0.5);
-			display: inline-block;
-			vertical-align: top;
+		> *:not(.ui-resizable-handle) {
+			width: 100%;
+			height: 50%;
+			padding: 5px;
+			box-sizing: border-box;
+			overflow: auto;
+		}
 
-			transition: all 0.05s ease-in-out;
+		> .object-container {
+			border-bottom: @container-border;
 
-			&:hover, &.selected {
-				outline-color: rgba(255, 0, 0, 1);
-				background-color: rgba(255, 0, 0, 0.2);
+			> select {
+				border: none;
+				outline: none;
+				background: none;
+				margin-bottom: 5px;
+				width: 100%;
+
+				&.in-category {
+					text-transform: uppercase;
+				}
+			}
+
+			> .obj-settings-container {
+				font-size: 14px;
 			}
 		}
 	}
-}
 
-.workspace.scene {
-	.data-bar {
-		position: absolute;
-	    bottom: 0px;
-	    height: 50px;
-	    padding: 10px;
-	    box-sizing: border-box;
-	    pointer-events: none;
-
-	    > .zoom {
-	    	text-align: center;
-	    	margin: 0px 5px;
-	    	display: inline-block;
-	    	vertical-align: middle;
-	    	height: 100%;
-
-	    	.amount {
-	    		display: inline-block;
-	    	}
-	    }
-
-	    > .mouse-coords {
-	    	min-width: 100px;
-	    }
-
-	    > .mouse-coords, .grid-size, .tooltip {
-	    	text-align: center;
-	    	margin: 0px 5px;
-	    	display: inline-block;
-
-	    	> *:not(.title) {
-	    		display: inline-block;
-	    		margin: 0px 5px;
-	    	}
-
-	    	> input {
-	    		width: 30px;
-	    		pointer-events: all;
-	    	}
-	    }
+	> .main-editor {
+		
 	}
 }
