@@ -229,6 +229,7 @@ var blanke = {
         var html = ifndef(options.html, '');
         var uuid = ifndef(options.uuid, guid());
         var onClose = options.onClose;
+        var onResizeStop = options.onResizeStop;
 
         if ($(this._windows[uuid]).length > 0) {
             $(this._windows[uuid]).trigger('mousedown');
@@ -261,7 +262,12 @@ var blanke = {
             "z-index": "1"
         });
 
-        $(el).resizable();
+        $(el).resizable({
+            stop: function( event, ui ) {
+                if (onResizeStop)
+                    onResizeStop(event, ui);
+            }
+        });
 
         // bring window to top
         $(el).on("mousedown focus", function(e){

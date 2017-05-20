@@ -8,10 +8,11 @@
 	}
 
 	> .sidebar {
-		width: 150px;
+		width: 160px;
 		float: left;
 		background-color: @overlay-color;
 		box-shadow: @card-shadow;
+		z-index: 10;
 
 		> *:not(.ui-resizable-handle) {
 			width: 100%;
@@ -36,13 +37,69 @@
 				}
 			}
 
+			> .obj-settings-container, .obj-preview {
+				display: inline-block;
+				vertical-align: top;
+			}
+
 			> .obj-settings-container {
-				font-size: 14px;
+				.subcategory {
+					> .title {
+						font-size: 14px;
+						font-weight: 600;
+						margin: 0px;
+					}
+
+					.ui-input-group {
+						margin-left: 10px;
+					}
+
+					label {
+						font-size: 12px;
+					}
+
+					input {
+						margin: 2px;
+						width: 35px;
+					}
+				}
+			}
+
+			> .obj-preview {
+    			.no-select();
+    			
+				overflow: auto;
+    			max-height: 150px;
+    			position: relative;
+    			margin-right: 5px;
+
+    			> * {
+    				margin-top: 1px;
+    				margin-left: 1px;
+    			}
+
+    			> .img-preview {
+    				pointer-events: none;
+    			}
+
+    			> .tile-selector {
+    				position: absolute;
+    				top: 0px;
+    				left: 0px;
+    				cursor: default;
+
+    				> .grid-tile {
+    					pointer-events: none;
+    					display: inline-block;
+    					vertical-align: top;
+                		outline: solid 1px var(--eng-color);
+                		opacity: 0.25;
+    				}
+    			}
 			}
 		}
 	}
 
-	> .main-editor {
-		
+	> #main-editor {
 	}
 }
