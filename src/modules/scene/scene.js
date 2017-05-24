@@ -103,7 +103,7 @@ exports.onDblClick = function(uuid, properties) {
 	});
 
 	// initialize map editor
-	var map = nwPLUGINS['map_editor'].init({
+	map = nwPLUGINS['map_editor'].init({
 		id: "main-editor"
 	});
 }
@@ -187,7 +187,8 @@ function objSelectChange(uuid) {
 
     	$(win_sel + " .sidebar .obj-preview").html(
     		"<img class='img-preview' src='"+nwPATH.join(b_project.getResourceFolder('image'), obj.path)+"'/>"+
-    		"<div class='tile-selector'></div>"
+    		"<div class='tile-selector'></div>"+
+    		"<div class='selection'></div>"
     	);
 
     	// set tile selector size to image size
@@ -202,34 +203,81 @@ function objSelectChange(uuid) {
         	
         	fillTileSelectorGrid(uuid);	
     	});
-    	
-
+    
     	// tile selection events
     	var tile_prop = scene_prop.placeables[uuid];
     	var dragging = false;
-    	$(win_sel + " .tile-selector").on('mousedown', function(){
+    	$(win_sel + " .tile-selector").on('mousedown', function(e){
     		dragging = true;
 
     		// reset selection
-    		//$(win_sel + " .tile-selector > .selection").
+    		$(win_sel + " .obj-preview > .selection").css({
+    			"left": "100%", "top": "100%",
+    			"width": "0px", "height": "0px"
+    		});
+
+    		map.clearPlacer('image');
     	});
+
     	$(win_sel + " .tile-selector").on('mouseup', function(){
     		dragging = false;
+
+    		// set placer in map editor
+    		var sel_selection = win_sel + " .obj-preview > .selection";
+    		if (parseInt($(sel_selection).css('width')) > 0 && parseInt($(sel_selection).css('height')) > 0) {
+		    	map.setPlacer('image', {
+		    		path: nwPATH.join(b_project.getResourceFolder('image'), obj.path),
+		    		crop: {
+		    			x: parseInt($(sel_selection).css('left')), y: parseInt($(sel_selection).css('top')),
+		    			width: parseInt($(sel_selection).css('width')), height: parseInt($(sel_selection).css('height'))
+		    		}
+		    	});
+		    }
     	});
 
     	$(win_sel + " .tile-selector").on('mousemove', function(e){
     		if (dragging) {
-    			var offset = $(this).offset(); 
-    			var mx = e.pageX - offset.left;
-   				var my = e.pageY - offset.top;
+    			var offset = $(this).offset();
+				var mx = e.pageX - offset.left;
+				var my = e.pageY - offset.top;
 
-   				var snapx = Math.floor((mx - tile_prop['[offset]x']) / (tile_prop['[tile]width'] + tile_prop['[spacing]x']));
-   				var snapy = Math.floor((my - tile_prop['[offset]y']) / (tile_prop['[tile]height'] + tile_prop['[spacing]y']));
+				var snapx = Math.floor((mx - tile_prop['[offset]x']) / (tile_prop['[tile]width'] + tile_prop['[spacing]x']));
+				var snapy = Math.floor((my - tile_prop['[offset]y']) / (tile_prop['[tile]height'] + tile_prop['[spacing]y']));
 
-   				if (snapx < 0) snapx = 0;
-   				if (snapy < 0) snapy = 0;
+				if (snapx < 0) snapx = 0;
+				if (snapy < 0) snapy = 0;
 
-   				console.log(snapx, snapy);
+				// check if selection can be expanded
+				var sel_selection = win_sel + " .obj-preview > .selection";
+				var box_x = parseInt($(sel_selection).css('left'));
+				var box_y = parseInt($(sel_selection).css('top'));
+				var box_width = parseInt($(sel_selection).css('width'));
+				var box_height = parseInt($(sel_selection).css('height'));
+
+				var new_x = snapx * tile_prop['[tile]width'];
+				var new_y = snapy * tile_prop['[tile]height'];
+				var new_width = (snapx * tile_prop['[tile]width']) + tile_prop['[tile]width'] - box_x;
+				var new_height = (snapy * tile_prop['[tile]height']) + tile_prop['[tile]height'] - box_y;
+
+				// x/y
+				if (new_x < box_x) 
+					$(sel_selection).css({
+						'left': new_x+'px'
+					});
+				if (new_y < box_y) 
+					$(sel_selection).css({
+						'top': new_y+'px'
+					});
+
+				// width/height
+				if (new_width > box_width) 
+					$(sel_selection).css({
+						'width': new_width+'px'
+					});
+				if (new_height > box_height) 
+					$(sel_selection).css({
+						'height': new_height+'px'
+					});
     		}
     	});
     }
