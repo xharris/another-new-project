@@ -12,6 +12,8 @@ var b_map = function(options) {
 	var _this = this;
 
 	this.sel_id = options.id;
+	this.onLayerChange = options.onLayerChange; // when a layer is added, moved up, moved down, deleted
+
 	this.konva = require('./konva.min.js');
 	this.width = window.screen.availWidth;
 	this.height = window.screen.availHeight;
@@ -22,6 +24,8 @@ var b_map = function(options) {
 	this.bold_line_count = 10;
 
 	this.camera = {'x':0, 'y':0};
+	this.curr_layer = 0;
+	this.arr_layers = [];
 
 	this.text_layer = new this.konva.Layer();
 	this.grid_layer = new this.konva.Layer();
@@ -90,6 +94,106 @@ var b_map = function(options) {
         this.grid_group.draw();
 	}
 
+	this._triggerLayerChange = function() {
+	    // set opacity of all layers
+	    this.obj_layer.getChildren().each(function(layer){
+	    	layer.opacity(0.2);
+	    });
+
+	   	// change opacity for current layer
+	   	this.obj_layer.find("#layer"+this.curr_layer.toString()).opacity(1);
+
+	    this.obj_layer.batchDraw();	
+		if (this.onLayerChange) this.onLayerChange(this.curr_layer, this.arr_layers);
+	}
+
+	this.setLayer = function(num) {
+		this.curr_layer = parseInt(num, 10);
+		if (this.obj_layer.find("#layer"+num.toString()).length == 0) {
+			var new_group = new this.konva.Group({id: 'layer'+num.toString()});
+			this.obj_layer.add(new_group);
+			new_group.moveToTop();
+			this.arr_layers.push(num);
+		}
+		this._triggerLayerChange();	
+	}
+
+	this.addLayer = function() {
+		var next_layer = this.curr_layer;
+		while (this.arr_layers.includes(next_layer)) {
+			next_layer++;
+		}
+		this.setLayer(next_layer);
+	}
+
+	this.getLayer = function(num) {
+		var layer = ifndef(num, this.curr_layer);
+		return this.obj_layer.find("#layer"+layer.toString())[0];
+	}
+
+	this.moveLayerUp = function(num) {
+		var layer_num = ifndef(num, this.curr_layer);
+		var layer = this.getLayer(num);
+		if (layer) {
+			// can layer be moved up further?
+			var i_curr_layer = this.arr_layers.indexOf(layer_num);
+
+			if (i_curr_layer > 0) {
+				// swap positions in array
+				var temp = this.arr_layers[i_curr_layer]
+				this.arr_layers[i_curr_layer] = this.arr_layers[i_curr_layer-1];
+				this.arr_layers[i_curr_layer-1] = temp;
+
+				// move the layer object
+				layer.moveUp();
+				this._triggerLayerChange();
+			}
+		}
+	}
+
+	this.moveLayerDown = function(num) {
+		var layer_num = ifndef(num, this.curr_layer);
+		var layer = this.getLayer(num);
+		if (layer) {
+			// can layer be moved down further?
+			var i_curr_layer = this.arr_layers.indexOf(layer_num);
+
+			if (i_curr_layer < this.arr_layers.length - 1) {
+				// swap positions in array
+				var temp = this.arr_layers[i_curr_layer]
+				this.arr_layers[i_curr_layer] = this.arr_layers[i_curr_layer+1];
+				this.arr_layers[i_curr_layer+1] = temp;
+
+				// move the layer object
+				layer.moveDown();
+				this._triggerLayerChange();
+			}
+		}
+	}
+
+	this.removeLayer = function(num) {
+		var layer_num = ifndef(num, this.curr_layer);
+		var layer = this.getLayer(layer_num);
+
+		if (layer && this.arr_layers.length > 1) {
+			layer.remove();
+			
+			// move to previous layer
+			var new_layer_index = this.arr_layers.indexOf(layer_num) - 1;
+			if (new_layer_index < 0)
+				new_layer_index = 0
+
+			// remove the layer
+			this.arr_layers.splice(this.arr_layers.indexOf(layer_num), 1);
+
+			this.setLayer(this.arr_layers[new_layer_index]);
+		}
+	}
+
+	this.getLayerList = function() {
+		return this.arr_layers;
+	}
+
 	this.setPlacer = function(type, options) {
 		this.curr_place_type = type;
 
@@ -114,6 +218,10 @@ var b_map = function(options) {
 				_this.placer_layer.add(_this.placer_img);
 			};
 			placer_img_obj.src = path;
+		}
+
+		if (type === "entity") {
+
 		}
 	}
 
@@ -265,7 +373,8 @@ var b_map = function(options) {
 	    			}
 	    		});
 
-    			_this.obj_layer.add(new_obj);
+	    		var obj_layer = _this.getLayer();
+    			obj_layer.add(new_obj);
 
 	    		// cool shrinking animation (a little misaligned)
 	    		var tween = new Konva.Tween({
@@ -315,6 +424,9 @@ var b_map = function(options) {
 	this.stage.add(this.grid_layer);
     this.stage.add(this.text_layer);
 	this.createGrid(32, 32);
+
+	// initial obj layer (0)
+	this.setLayer(this.curr_layer);
 
 	// zoom in/out
 	this.scaleBy = 1.03;

@@ -35,9 +35,9 @@ exports.loaded = function() {
 
 exports.libraryAdd = function(uuid, name) {
 	return {
-		layer_objs: {},		// elements placed on map
+		map_data: '',		// elements placed on map
+		map_settings: '',	// map_editor settings (snapx, snapy, etc)
 		placeables: {},		// sidebar settings
-		layer_settings: {}	// snapx, snapy, show_grid, etc...
 	}
 }
 
@@ -68,7 +68,19 @@ exports.onDblClick = function(uuid, properties) {
             		"<div class='obj-preview'></div>"+
             		"<div class='obj-settings-container'></div>"+
             	"</div>"+
-            	"<div class='layer-container'></div>"+
+            	"<div class='layer-container'>"+
+            		"<div class='group-layer-move'>"+
+	            		"<button class='ui-button btn-up' title='move layer up in list'><i class='mdi mdi-chevron-up'></i></button>"+
+	            		"<button class='ui-button btn-down' title='move layer down in list'><i class='mdi mdi-chevron-down'></i></button>"+
+            		"</div>"+
+            		"<div class='in-layer-container'>"+
+            			"<select class='in-layer' title='Order in which layers are drawn. First in list = drawn first.'></select>"+
+            		"</div>"+
+            		"<div class='group-layer-edit'>"+
+	            		"<button class='ui-button btn-add' title='add a layer'><i class='mdi mdi-plus'></i></button>"+
+	            		"<button class='ui-button btn-delete' title='remove current layer'><i class='mdi mdi-minus'></i></button>"+
+	            	"</div>"+
+            	"</div>"+
             "</div>"+
             "<div id='main-editor'>"+            
 	        "</div>"
@@ -83,7 +95,7 @@ exports.onDblClick = function(uuid, properties) {
 	fillSelect(win_sel + " .sidebar .in-category", placeables, placeables[0]);
 	catSelectChange('entity');
 
-	// attach event handlers
+	// event handlers - categories, objects
 	$(win_sel + " .sidebar .in-category").on('change', catSelectChange);
 	$(win_sel + " .sidebar .in-object").on('change', objSelectChange);
 
@@ -102,10 +114,39 @@ exports.onDblClick = function(uuid, properties) {
 		$(this).data("isopen", !open);
 	});
 
+	// add layers
+	$(win_sel + " .sidebar .layer-container .in-layer").on('change', function(e){
+		map.setLayer(this.value.toLowerCase().replace("layer ", ""));
+	});
+
+	$(win_sel + " .sidebar .layer-container .btn-add").on('click', function(){
+		map.addLayer();
+	});
+	$(win_sel + " .sidebar .layer-container .btn-delete").on('click', function(){
+		blanke.showModal("Are you sure you want to remove current layer? All objects on the layer will be removed too.",{
+	        "yes": function() {map.removeLayer();},
+	        "no": undefined
+	    }); 
+	});
+	$(win_sel + " .sidebar .layer-container .btn-up").on('click', function(){
+		map.moveLayerUp();
+	});
+	$(win_sel + " .sidebar .layer-container .btn-down").on('click', function(){
+		map.moveLayerDown();
+	});
+
 	// initialize map editor
 	map = nwPLUGINS['map_editor'].init({
-		id: "main-editor"
+		id: "main-editor",
+		onLayerChange: layerChange
 	});
+}
+
+function layerChange(current, layers) {
+	var layer_names = layers.map(function(l){
+		return "layer " + l.toString();
+	});
+	fillSelect(win_sel + " .sidebar .layer-container .in-layer", layer_names, layer_names[layers.indexOf(current)]);
 }
 
 function getSelectedCategory() {
