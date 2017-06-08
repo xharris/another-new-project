@@ -133,6 +133,11 @@ var b_project = {
 			}
 		}
 	},
+    
+    // get project name (not path)
+    getName : function() {
+        return nwPATH.basename(b_project.bip_path)
+    },
 
 	_populateSettings : function(type, input_info, plugin_name="") {
 		if (type === "plugins") {

@@ -27,7 +27,7 @@ function createWindow () {
     var initPath = path.join(app.getPath('userData'), "init.json");
     var data = {};
     try {
-        //data = JSON.parse(fs.readFileSync(initPath, 'utf8'));
+        data = JSON.parse(fs.readFileSync(initPath, 'utf8'));
     }
     catch(e) {
     }
@@ -37,8 +37,8 @@ function createWindow () {
         title: data.title ? data.title : "new project",
         center: data.x ? false : true,
         autoHideMenuBar: true,
-        width: data.width ? data.width : 800,
-        height: data.height ? data.height : 600,
+        width: data.width ? data.width : 1200,
+        height: data.height ? data.height : 730,
         frame: false
     });
 

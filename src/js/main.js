@@ -7,34 +7,34 @@ var PROJECT_SAVE_TIME = 500;
 require('hazardous');
 require('electron-cookies');
 
-var nwFILE = require('fs');
-var nwPATH = require('path');
-var nwPROC = require('process');
-var nwCHILD = require('child_process');
-var nwOS = require('os');
-var nwNET = require('net');
+
+var nwFILE;
+var nwPATH;
+var nwPROC;
+var nwCHILD;
+var nwOS;
+var nwNET;
 
 var nwENGINES = {};
 var nwMODULES = {};
 var nwPLUGINS = {};
 
-var nwMAC = require("getmac");
-var nwMKDIRP = require("mkdirp");
-var nwLESS = require("less");
-var nwFILEX = require("fs-extra");
-var nwOPEN = require("open");
-var nwREPLACE = require('replace-in-file');
-var nwCRYPT = require("cryptr");
-var nwDECOMP = require('decompress');
-//var nwUA = require("universal-analytics");
+var nwMAC;
+var nwMKDIRP;
+var nwLESS;
+var nwFILEX;
+var nwOPEN;
+var nwREPLACE;
+var nwCRYPT;
+var nwDECOMP;
 
-var eIPC = require('electron').ipcRenderer;
-var eREMOTE = require('electron').remote;
-var eAPP = eREMOTE.app;
-var eSHELL = eREMOTE.shell;
-var eMENU = eREMOTE.Menu;
-var eMENUITEM = eREMOTE.MenuItem;
-var eDIALOG = eREMOTE.dialog;
+var eIPC;
+var eREMOTE;
+var eAPP;
+var eSHELL;
+var eMENU;
+var eMENUITEM;
+var eDIALOG;
 
 var game_items = []; 
 var engine_names = []; 
@@ -42,6 +42,28 @@ var plugin_names = [];
 var last_open;   
 
 $(function(){
+nwFILE       = require('fs');
+nwPATH       = require('path');
+nwPROC       = require('process');
+nwCHILD      = require('child_process');
+nwOS         = require('os');
+nwNET        = require('net');
+nwMAC        = require("getmac");
+nwMKDIRP     = require("mkdirp");
+nwLESS       = require("less");
+nwFILEX      = require("fs-extra");
+nwOPEN       = require("open");
+nwREPLACE    = require('replace-in-file');
+nwCRYPT      = require("cryptr");
+nwDECOMP     = require('decompress');
+eIPC         = require('electron').ipcRenderer;
+eREMOTE      = require('electron').remote;
+eAPP         = eREMOTE.app;
+eSHELL       = eREMOTE.shell;
+eMENU        = eREMOTE.Menu;
+eMENUITEM    = eREMOTE.MenuItem;
+eDIALOG      = eREMOTE.dialog;
+
     /* disable eval
     window.eval = global.eval = function() {
       throw new Error("Sorry, BlankE does not support window.eval() for security reasons.");
@@ -712,4 +734,13 @@ String.prototype.replaceAll = function(search, replacement) {
 function shadeColor(color, percent) {   
     var f=parseInt(color.slice(1),16),t=percent<0?0:255,p=percent<0?percent*-1:percent,R=f>>16,G=f>>8&0x00FF,B=f&0x0000FF;
     return "#"+(0x1000000+(Math.round((t-R)*p)+R)*0x10000+(Math.round((t-G)*p)+G)*0x100+(Math.round((t-B)*p)+B)).toString(16).slice(1);
+}
+
+function hex2rgb(hex) {
+    hex = hex.replace('#','');
+    r = parseInt(hex.substring(0,2), 16);
+    g = parseInt(hex.substring(2,4), 16);
+    b = parseInt(hex.substring(4,6), 16);
+
+    return {r:r, g:g, b:b};
 }

@@ -381,6 +381,17 @@
   background-color: #f44336;
   color: white;
 }
+.ui-color {
+  border: none;
+  padding: 0px;
+  outline: 1px solid black;
+  outline-offset: -4px;
+  width: 25px;
+  height: 25px;
+  vertical-align: middle;
+  border-radius: 100%;
+  background: none;
+}
 /* Window CSS */
 .blanke-window {
   display: none;

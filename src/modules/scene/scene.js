@@ -2,15 +2,22 @@ var scene_uuid;
 var scene_prop;
 
 var placeables = ["entity", "tile", "collision"];
+var assoc_obj = {
+	"entity" : "entity",
+	"tile" : "image"
+}
+
 var place_settings = {
 	"entity": {
 		"" : [
-			{"type" : "select", "name" : "icon", "default" : "player", "options" : 
+			{"type" : "select", "name" : "icon", "default" : "person", "options" : 
 				[
 					"person",
-					"cat"
+					"cat",
+					"skull"
 				]
 			},
+			{"type" : "color", "name" : "color", "default" : b_library.getBackColor()}
 		]
 	},
 	"tile": {
@@ -30,7 +37,9 @@ var place_settings = {
 }
 
 exports.loaded = function() {
-
+	document.addEventListener('project.open', function(e) {
+		place_settings.entity[""][1].default = b_library.getBackColor();
+	});
 }
 
 exports.libraryAdd = function(uuid, name) {
@@ -86,6 +95,12 @@ exports.onDblClick = function(uuid, properties) {
 	        "</div>"
     });
 
+    // initialize map editor
+	map = nwPLUGINS['map_editor'].init({
+		id: "main-editor",
+		onLayerChange: layerChange
+	});
+
 	// make sidebar resizable
     $(win_sel + " .sidebar").resizable({
     	handles: "e"
@@ -116,7 +131,7 @@ exports.onDblClick = function(uuid, properties) {
 
 	// add layers
 	$(win_sel + " .sidebar .layer-container .in-layer").on('change', function(e){
-		map.setLayer(this.value.toLowerCase().replace("layer ", ""));
+		map.setLayer(map.layerNameToNum(this.value));
 	});
 
 	$(win_sel + " .sidebar .layer-container .btn-add").on('click', function(){
@@ -134,19 +149,13 @@ exports.onDblClick = function(uuid, properties) {
 	$(win_sel + " .sidebar .layer-container .btn-down").on('click', function(){
 		map.moveLayerDown();
 	});
-
-	// initialize map editor
-	map = nwPLUGINS['map_editor'].init({
-		id: "main-editor",
-		onLayerChange: layerChange
-	});
 }
 
-function layerChange(current, layers) {
-	var layer_names = layers.map(function(l){
-		return "layer " + l.toString();
+function layerChange(e) {
+	var layer_names = e.layers.map(function(l){
+		return e.map.layerNumToName(l);
 	});
-	fillSelect(win_sel + " .sidebar .layer-container .in-layer", layer_names, layer_names[layers.indexOf(current)]);
+	fillSelect(win_sel + " .sidebar .layer-container .in-layer", layer_names, layer_names[e.layers.indexOf(e.current)]);
 }
 
 function getSelectedCategory() {
@@ -159,11 +168,6 @@ function catSelectChange(value) {
 		return;
 
 	var new_cat = value.toLowerCase();
-
-	var assoc_obj = {
-		"entity" : "entity",
-		"tile" : "image"
-	}
 
 	if (Object.keys(assoc_obj).includes(new_cat)) {
 		var obj_type = assoc_obj[new_cat];
@@ -207,6 +211,7 @@ function objSelectChange(uuid) {
 		return;
 
 	var category = getSelectedCategory();
+	map.clearPlacer();
 
 	// load settings form
     if (!scene_prop.placeables[uuid])
@@ -215,6 +220,14 @@ function objSelectChange(uuid) {
         function (type, name, value, subcategory) {
         	scene_prop.placeables[uuid][name] = value;
 
+        	if (category === "entity") {
+		    	map.setPlacer('rect',{
+		    		icon: nwPATH.join(__dirname, "images", scene_prop.placeables[uuid]['icon'] + ".png"),
+		    		color: scene_prop.placeables[uuid]['color'],
+		    		resizable: true
+		    	});
+    		}
+
         	if (category === "tile") {
         		fillTileSelectorGrid(uuid);
         	}
@@ -222,6 +235,17 @@ function objSelectChange(uuid) {
         	b_project.autoSaveProject();
         }
     );
+
+    // load object editor html
+    $(win_sel + " .sidebar .obj-preview").html('');
+
+    if (category === "entity") {
+    	map.setPlacer('rect',{
+    		icon: nwPATH.join(__dirname, "images", scene_prop.placeables[uuid]['icon'] + ".png"),
+    		color: scene_prop.placeables[uuid]['color'],
+    		resizable: true
+    	});
+    }
 
     if (category === "tile") {
     	var obj = b_library.getByUUID('image', uuid);

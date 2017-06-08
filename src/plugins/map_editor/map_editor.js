@@ -5,7 +5,7 @@ exports.init = function(options) {
 
 exports.settings = [
 	{"type" : "number", "name" : "grid w", "default" : 14, "min" : 1, "max" : window.screen.availWidth},
-	{"type" : "number", "name" : "grid w", "default" : 14, "min" : 1, "max" : window.screen.availHeight}
+	{"type" : "number", "name" : "grid h", "default" : 14, "min" : 1, "max" : window.screen.availHeight}
 ]
 
 var b_map = function(options) {
@@ -42,7 +42,12 @@ var b_map = function(options) {
 	});
 	this.obj_layer.add(this.capture_rect);
 	this.obj_layer.draw();
+
+	// placer: image
 	this.placer_img = new this.konva.Image();
+
+	// placer: rect
+	this.placer_rect = new this.konva.Group();
 
 	this.createGrid = function(width, height) {
 		this.grid_width = width;
@@ -53,11 +58,10 @@ var b_map = function(options) {
 
 		// vertical lines
 		var grid_color = "#9E9E9E";
-		var grid_bold_color = "#757575";
 		for (var w = -(width*this.bold_line_count); w < this.width + ((width*this.bold_line_count)*2); w+=width) {
-			var opacity = 0.25;
+			var opacity = 0.15;
 			if ((w) % (width*this.bold_line_count) == 0)
-				opacity = 1;
+				opacity = 0.5;
 
 			var new_line = 
 				new Konva.Line({
@@ -104,13 +108,17 @@ var b_map = function(options) {
 	   	this.obj_layer.find("#layer"+this.curr_layer.toString()).opacity(1);
 
 	    this.obj_layer.batchDraw();	
-		if (this.onLayerChange) this.onLayerChange(this.curr_layer, this.arr_layers);
+		if (this.onLayerChange) this.onLayerChange({
+			map: this,
+			current: this.curr_layer, 
+			layers: this.arr_layers
+		});
 	}
 
 	this.setLayer = function(num) {
 		this.curr_layer = parseInt(num, 10);
-		if (this.obj_layer.find("#layer"+num.toString()).length == 0) {
-			var new_group = new this.konva.Group({id: 'layer'+num.toString()});
+		if (this.obj_layer.find("#"+this.layerNumToName(num)).length == 0) {
+			var new_group = new this.konva.Group({id: this.layerNumToName(num)});
 			this.obj_layer.add(new_group);
 			new_group.moveToTop();
 			this.arr_layers.push(num);
@@ -128,7 +136,15 @@ var b_map = function(options) {
 
 	this.getLayer = function(num) {
 		var layer = ifndef(num, this.curr_layer);
-		return this.obj_layer.find("#layer"+layer.toString())[0];
+		return this.obj_layer.find("#"+this.layerNumToName(layer))[0];
+	}
+
+	this.layerNameToNum = function(name) {
+		return parseInt(name.toLowerCase().replace("layer", "").trim(), 10);
+	}
+
+	this.layerNumToName = function(num) {
+		return 'layer'+num.toString();
 	}
 
 	this.moveLayerUp = function(num) {
@@ -220,12 +236,50 @@ var b_map = function(options) {
 			placer_img_obj.src = path;
 		}
 
-		if (type === "entity") {
+		// RECT ONLY
+		if (type === "rect") {
+			if (_this.placer_rect)
+				_this.placer_rect.destroy();
+			_this.placer_rect = new _this.konva.Group();
 
+			// icon
+			var placer_img_obj = new Image();
+			placer_img_obj.onload = function(){
+				if (_this.placer_rect_img)
+					_this.placer_rect_img.destroy();
+
+				// rect
+				var placer_rect = new _this.konva.Rect({
+					x: 0, y: 0,
+					width: _this.grid_width,
+					height: _this.grid_height,
+					stroke: options.color,
+					strokeWidth: 2
+				});
+
+				_this.placer_rect.add(placer_rect);
+
+				_this.placer_rect_img = new _this.konva.Image({
+					x: _this.grid_width/2,
+					y: _this.grid_height/2,
+					image: placer_img_obj,
+					offsetX: placer_img_obj.width/2,
+					offsetY: placer_img_obj.height/2
+				});
+
+				_this.placer_rect_img.cache();
+				_this.placer_rect_img.filters([_this.konva.Filters.RGBA]);
+				var rgb = hex2rgb(options.color);
+				_this.placer_rect.add(_this.placer_rect_img);
+			};
+			placer_img_obj.src = options.icon;
 		}
+
+		// polygon
+		if (type === "polygon");
 	}
 
-	this.clearPlacer = function(type) {
+	this.clearPlacer = function(type='') {
 		if (type === '' || type === this.curr_place_type) {
 			// image
 			this.placer_img.destroy();
@@ -344,9 +398,27 @@ var b_map = function(options) {
 	    	var mx = pos.x;
 	    	var my = pos.y;
 
-	    	var new_obj;
-	    	var init_scale = 1.5;
+	    	if (_this.curr_place_type === "rect") {
+	    		var new_obj = _this.placer_rect.clone({
+	    			x: mx,
+	    			y: my
+	    		});
+
+				_this.placer_rect_img.cache();
+				_this.placer_rect_img.filters([_this.konva.Filters.RGBA]);
+				new_obj.red(255);
+				new_obj.green(0);
+				new_obj.blue(0);
+				new_obj.alpha(1);
+
+	    		var obj_layer = _this.getLayer();
+	    		obj_layer.add(new_obj);
+	    	}
+
 	    	if (_this.curr_place_type === "image") {
+		    	var new_obj;
+		    	var init_scale = 1.5;
+
 	    		new_obj = _this.placer_img.clone({
 	    			x: mx + _this.placer_img.width()/init_scale,
 	    			y: my + _this.placer_img.height()/init_scale,
@@ -361,16 +433,23 @@ var b_map = function(options) {
 					if (e.type === 'mouseup' && e.evt.which == 3)
 						destroying = false;
 
-	    			if (_this.curr_place_type === "image") {
-	    				// actually, user is deleting this object
-	    				if (e.evt.which == 3 && (e.type === 'mouseup' || (e.type === 'mousemove' && destroying))) {
-	    					if (e.target.className === "Image") {
-	    						e.target.destroy();
-	    						_this.obj_layer.batchDraw();
-	    					}
-	    				} else
-	    					e.cancelBubble = true;
-	    			}
+					// placer is placing on a different layer
+					var group = e.target.findAncestors('Group');
+					if (_this.layerNameToNum(group[0].id()) === _this.curr_layer) { 
+
+		    			if (_this.curr_place_type === "image") {
+		    				// actually, user is deleting this object
+		    				if (e.evt.which == 3 && (e.type === 'mouseup' || (e.type === 'mousemove' && destroying))) {
+		    					if (e.target.className === "Image") {
+		    						e.target.destroy();
+		    						_this.obj_layer.batchDraw();
+		    					}
+		    				} else
+		    					e.cancelBubble = true;
+		    			}
+		    		}
+
+
 	    		});
 
 	    		var obj_layer = _this.getLayer();
@@ -390,9 +469,10 @@ var b_map = function(options) {
 			        opacity: 1
 			    });
 			    tween.play();
-
-	    		_this.obj_layer.batchDraw();
 	    	}
+
+	    	if (_this.curr_place_type != '')
+	    		_this.obj_layer.batchDraw();
 	    }
 
 

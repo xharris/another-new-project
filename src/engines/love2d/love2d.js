@@ -1,8 +1,9 @@
 var nwHELPER = nwPLUGINS['build_helper'];
 
-var new_dirname = nwHELPER.nonASAR(__dirname);
+var new_dirname = __dirname; // nwHELPER.nonASAR(__dirname)
 
 exports.modules = ['image', 'spritesheet', 'entity', 'state', 'scene', 'audio', 'script'];
+
 exports.colors = [
 /*
 	'#ef9a9a', // red 200
@@ -191,7 +192,7 @@ exports.settings = {
 		{"type" : "bool", "name" : "pause on lose focus", "default" : "true", "tooltip": "pause the game if the user minimizes the window or switches to a different window"}
 	],*/
 	"misc" : [
-		{"type" : "text", "name" : "identity", "default" : "nil", "tooltip": "The name of the save directory"},
+		{"type" : "text", "name" : "identity", "default" : "-", "tooltip": "The name of the save directory"},
 		{"type" : "text", "name" : "version", "default" : "0.10.2", "tooltip": "The LÖVE version this game was made for"},
 		{"type" : "bool", "name" : "console", "default" : "false", "tooltip": "Attach a console (Windows only)"},
 		{"type" : "bool", "name" : "accelerometer joystick", "default" : "true", "tooltip": "Enable the accelerometer on iOS and Android by exposing it as a Joystick"},
@@ -271,6 +272,10 @@ exports.loaded = function() {
 				);
 			}
 		});
+        
+        // change identity value (setting)
+        if (b_project.getSetting("engine", "identity") == "nil")
+            b_project.setSetting("engine",  "identity", nwPATH.basename(b_project.bip_path));
 	});
 
 	document.addEventListener("filedrop", function(e){
@@ -299,33 +304,42 @@ function build(build_path, objects, callback) {
 		else 
 			remove_plugins.push(plugin.name);
 	}
-
-	// ENTITIES
-	for (var e in objects['entity']) {
-		var ent = objects['entity'][e];
-
-		if (ent.code_path.length > 1) {
-			ent.code_path = ent.name + '_' + e + '.lua';
-			script_includes += ent.name + " = require \"assets/scripts/"+ent.code_path.replace(/\\/g,"/").replace('.lua','')+"\"\n";
-		}
-	}
-
-	// STATES
+    
+    var arr_types = ["entity", "state"];
+    
 	var state_init = '';
-	var first_state = '';
-	for (var e in objects['state']) {
-		var ent = objects['state'][e];
-
-		if (first_state === '') {
-			first_state = ent.name;
-		}
-
-		if (ent.code_path.length > 1) {
-			ent.code_path = ent.name + '_' + e + '.lua';
-			script_includes += ent.name + " = require \"assets/scripts/"+ent.code_path.replace(/\\/g,"/").replace('.lua','')+"\"\n";
-		}
-	}
-
+	var first_state = ''; 
+    // ALL OBJECT SCRIPT INCLUDES
+    for (var t = 0; t < arr_types.length; t++) {
+        var type = arr_types[t];
+        for (var o in objects[type]) {
+            var obj = objects[type][o];
+            
+            if (type === "state" && first_state === "") {
+                first_state = obj.name;
+            }
+            
+             if (obj.code_path.length > 1) {
+                obj.code_path = nwPATH.join(type, obj.name + '_' + o + '.lua');
+                script_includes += obj.name + " = require \"assets/scripts/"+obj.code_path.replace(/\\/g,"/").replace('.lua','')+"\"\n";
+            }
+            
+        }
+    }
+           
+    // ALL OBJECTS ARRAY
+    var obj_array = "";
+    for (var t = 0; t < arr_types.length; t++) {
+        var type = arr_types[t];
+        obj_array += "game." + type + " = {";
+        for (var o in objects[type]) {
+            var obj = objects[type][o];
+            obj_array += obj.name + ", ";
+        }
+        obj_array = obj_array.slice(0, -2);
+        obj_array += "}\n";
+    }
+    
 	var assets = '';
 
 	// SCRIPTS
@@ -333,7 +347,7 @@ function build(build_path, objects, callback) {
 		var script = objects['script'][e];
 
 		if (script.code_path.length > 1) {
-			script.code_path = script.name + '_' + e + '.lua';
+			script.code_path = nwPATH.join('script', script.name + '_' + e + '.lua');
 			assets += "function assets:"+script.name+"()\n"+
 					  "\treturn 'assets/scripts/"+script.code_path.replace(/\\/g,"/").replace('.lua','')+"'\n"+
 					  "end\n\n";
@@ -445,8 +459,10 @@ function build(build_path, objects, callback) {
 	];
 
 	includes_replacements = [
+        ['<OBJ_ARRAY>', obj_array],
 		['<INCLUDES>', script_includes],
-		['<FIRST_STATE>', first_state]
+		['<FIRST_STATE>', first_state],
+        ['<GAME_NAME>', b_project.getSetting("engine", "title")]
 	];
 
 	nwHELPER.copyScript(nwPATH.join(new_dirname, 'conf.lua'), nwPATH.join(build_path,'conf.lua'), conf_replacements);
