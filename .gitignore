@@ -11,9 +11,5 @@ this.sublime-project
 this.sublime-workspace
 npm-debug.log
 test_resources
-<<<<<<< HEAD
 BlankE-darwin-x64
-=======
 love2d
-
->>>>>>> 93031173a5ab6e6fabe150cf18ca195a07aa5eee
