@@ -612,7 +612,7 @@ function loadEngines(callback) {
     var nwHELPER = require(nwPATH.join(__dirname, "plugins", 'build_helper'));
 
     // import module files
-    var path = nwHELPER.nonASAR(nwPATH.join(__dirname, "engines"));
+    var path = nwPATH.join(__dirname, "engines");
     nwFILE.readdir(path, function(err, engines) {
         
         for (var e = 0; e < engines.length; e++) {

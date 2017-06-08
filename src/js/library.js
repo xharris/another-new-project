@@ -11,7 +11,7 @@ b_library = {
 	},
 
 	getBackColor: function() {
-		return $("html").css("--eng-color");
+		return document.documentElement.style.getPropertyValue("--eng-color");
 	},
 
 	randomizeBackColor: function() {
