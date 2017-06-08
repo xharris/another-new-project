@@ -1,3 +1,5 @@
+// requires jQuery Color Picker (http://www.laktek.com/2008/10/27/really-simple-color-picker-in-jquery/)
+
 function guid() {
   function s4() {
     return Math.floor((1 + Math.random()) * 0x10000)
@@ -91,12 +93,17 @@ var blanke = {
     createForm: function(selector_parent, input_info, user_val, fn_onChange, grouped=false) {
         // populate input section with inputs
         var html_inputs = '';
-        for (var subcat in input_info) {
+        var old_user_val = user_val;
+
+        var cats = Object.keys(input_info)
+        for (var s = 0; s < cats.length; s++) {
+            var subcat = cats[s];
+
             html_inputs += "<div class='subcategory'><p class='title'>"+subcat.replace("_"," ")+"</p>";
 
             // get smaller group (for plugins atm)
             if (grouped) {
-                user_val = user_val[subcat];
+                user_val = old_user_val[subcat];
             }
 
             for (var i = 0; i < input_info[subcat].length; i++) {
@@ -169,6 +176,15 @@ var blanke = {
                             '<button class="ui-button-rect" onclick="'+input.function+'">'+display_name+'</button>'+
                             '<br>';
                     }
+                }
+                if (input.type === "color") {
+                    if (input.colors) 
+                        $.fn.colorPicker.defaults.colors = input.colors;
+                    html_inputs += 
+                        '<div class="ui-input-group">'+
+                            '<label>'+display_name+'</label>'+
+                            '<input class="ui-color" type="color" '+common_attr+' type="color" value="'+ifndef(user_val[input.name], "#ffffff")+'"/></div>'+
+                        '</div>';
                 }
             } // for-loop
 
@@ -250,11 +266,12 @@ var blanke = {
                 "<div class='content'>"+html+"</div>"+
             "</div>"
         );
-        $(el).fadeIn("fast");
+        var j_el = $(el);
+        j_el.fadeIn("fast");
 
         // set initial position
         $(".blanke-window").css("z-index", "0");
-        $(el).css({
+        j_el.css({
             "left": x + "px",
             "top": y + "px",
             "width": width + "px",
@@ -262,7 +279,7 @@ var blanke = {
             "z-index": "1"
         });
 
-        $(el).resizable({
+        j_el.resizable({
             stop: function( event, ui ) {
                 if (onResizeStop)
                     onResizeStop(event, ui);
@@ -270,7 +287,7 @@ var blanke = {
         });
 
         // bring window to top
-        $(el).on("mousedown focus", function(e){
+        j_el.on("mousedown focus", function(e){
             $(".blanke-window").css("z-index", "0");
             $(this).css("z-index", "1");
         });

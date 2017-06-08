@@ -81,7 +81,6 @@ var b_ui = {
 						info[plugin_names[p]] = nwPLUGINS[plugin_names[p]].settings;
 					}
 				}
-
 				b_ui._populateInputs(type, info);
 			} else {
 				$(".ui-settings > .inputs-container").attr("data-type","");
@@ -108,7 +107,7 @@ var b_ui = {
 			input_info,
 			user_set,
 			b_ui._settingChange,
-			(type == "plugins")
+			(type === "plugins")
 		);
 	},
 
