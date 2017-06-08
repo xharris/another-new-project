@@ -7,6 +7,7 @@ packager({
 	asar : {
 		unpackDir : "engines" //"**/{engines}"
 	},
-	electronVersion : "1.7.2"
+	electronVersion : "1.7.2",
+	appCategoryType : "public.app-category.developer-tools"
 },
 function done(err, appPaths){});

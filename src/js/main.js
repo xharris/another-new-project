@@ -30,6 +30,7 @@ var nwDECOMP;
 
 var eIPC;
 var eREMOTE;
+//var eWIN;
 var eAPP;
 var eSHELL;
 var eMENU;
@@ -42,27 +43,29 @@ var plugin_names = [];
 var last_open;   
 
 $(function(){
-nwFILE       = require('fs');
-nwPATH       = require('path');
-nwPROC       = require('process');
-nwCHILD      = require('child_process');
-nwOS         = require('os');
-nwNET        = require('net');
-nwMAC        = require("getmac");
-nwMKDIRP     = require("mkdirp");
-nwLESS       = require("less");
-nwFILEX      = require("fs-extra");
-nwOPEN       = require("open");
-nwREPLACE    = require('replace-in-file');
-nwCRYPT      = require("cryptr");
-nwDECOMP     = require('decompress');
-eIPC         = require('electron').ipcRenderer;
-eREMOTE      = require('electron').remote;
-eAPP         = eREMOTE.app;
-eSHELL       = eREMOTE.shell;
-eMENU        = eREMOTE.Menu;
-eMENUITEM    = eREMOTE.MenuItem;
-eDIALOG      = eREMOTE.dialog;
+    nwFILE       = require('fs');
+    nwPATH       = require('path');
+    nwPROC       = require('process');
+    nwCHILD      = require('child_process');
+    nwOS         = require('os');
+    nwNET        = require('net');
+    nwMAC        = require("getmac");
+    nwMKDIRP     = require("mkdirp");
+    nwLESS       = require("less");
+    nwFILEX      = require("fs-extra");
+    nwOPEN       = require("open");
+    nwREPLACE    = require('replace-in-file');
+    nwCRYPT      = require("cryptr");
+    nwDECOMP     = require('decompress');
+
+    eIPC         = require('electron').ipcRenderer;
+    eREMOTE      = require('electron').remote;
+    //eWIN         = require('electron').BrowserWindow;
+    eAPP         = eREMOTE.app;
+    eSHELL       = eREMOTE.shell;
+    eMENU        = eREMOTE.Menu;
+    eMENUITEM    = eREMOTE.MenuItem;
+    eDIALOG      = eREMOTE.dialog;
 
     /* disable eval
     window.eval = global.eval = function() {
@@ -140,6 +143,14 @@ eDIALOG      = eREMOTE.dialog;
     loadEngines(function(){
         dispatchEvent("ide.engines.ready",{});
     });
+
+    // add new/opened projects to recent docs list (SAVE FOR POST-RELEASE POLISH)
+    ["project.new", "project.open"].forEach(function(e){
+        document.addEventListener(e, function(e){
+            //eAPP.addRecentDocument(e.detail.path); 
+            //eWIN.setRepresentedFilename(e.detail.path);
+        });
+    });
         
     // btn-add : menu for adding things to the library
     $(".library .actions .btn-add").on('click', function(){
@@ -206,6 +217,11 @@ eDIALOG      = eREMOTE.dialog;
     });
 
     //analytics.event('UI', 'initialize', 'main_window', '');
+
+    eIPC.on("open-file", function(event) {
+        handleDropFile(event)
+        //b_project.openProject(path);
+    });
 
     // set events for window close
     eIPC.on('window-close', function(event) {
@@ -490,6 +506,7 @@ function refreshModuleMenu() {
 }
 
 function handleDropFile(in_path) {
+    console.log('drop',in_path)
     nwFILE.lstat(in_path, function(err, stats) {
         if (!err) {
             dispatchEvent("filedrop", {path:in_path, stats:stats});
@@ -502,7 +519,7 @@ function handleDropFile(in_path) {
 
             }
             else if (stats.isFile()) {
-
+                var ext = nwPATH.extname(in_path):
             }
         }
     });

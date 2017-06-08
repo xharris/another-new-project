@@ -35,7 +35,7 @@ var b_project = {
 
 		b_console.log("created "+nwPATH.basename(b_project.bip_path));
 
-		dispatchEvent('project.new');
+		dispatchEvent('project.new', {path: b_project.bip_path});
 	},
 
 	// asks user for location of project file and opens it
@@ -80,7 +80,7 @@ var b_project = {
 
         refreshModuleMenu();
 
-		dispatchEvent('project.open');
+		dispatchEvent('project.open', {path: b_project.bip_path});
 	},
 
 	// fill in settings/values that may be undefined

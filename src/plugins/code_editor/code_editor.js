@@ -216,7 +216,7 @@ var b_code = function(options) { // sel_id, code_path, fn_saveScript
 		// set editor settings
 		this.setFontSize(b_project.getPluginSetting("code_editor", "font size"));
 
-		this.editor.setOption("theme", "blanke");
+		this.editor.setOption("theme", "monokai");
 		this.editor.setOption("lineNumbers", true);
 		this.editor.setOption("matchBrackets", true);
 

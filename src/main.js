@@ -112,6 +112,11 @@ function createWindow () {
 
 }
 
+app.on('open-file', function(event){
+  mainWindow.webContents.send("open-file");//, event);
+  console.log(process.argv)
+});
+
 // Emitted when the window is closed.
 app.on('closed', function () {
   // Dereference the window object, usually you would store windows
@@ -166,12 +171,10 @@ ipcMain.on('set-win-title', function(event, title) {
 });
 
 ipcMain.on('close', function(event) {
-    console.log('close');
     mainWindow.close();
 });
 
 ipcMain.on('maximize', function(event) {
-    console.log('max');
     if (mainWindow.isMaximized()) {
         mainWindow.unmaximize();
     } else {
@@ -180,7 +183,6 @@ ipcMain.on('maximize', function(event) {
 });
 
 ipcMain.on('minimize', function(event) {
-    console.log('min');
     if (mainWindow.isMinimized()) {
         mainWindow.restore();
     } else {
