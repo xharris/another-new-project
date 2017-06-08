@@ -522,7 +522,7 @@ function loadPlugins(callback) {
     nwFILE.readdir(nwPATH.join(__dirname, "plugins"), function(err, mods) {
 
         mods.forEach(function(plug_name, m) {
-            if (!plugin_names.includes(plug_name)) {
+            if (!plugin_names.includes(plug_name) && plug_name !== ".DS_Store") {
                 plugin_names.push(plug_name);
 
                 // import less files
@@ -560,20 +560,22 @@ function loadModules(engine, callback) {
 
         if (mods && mods.length > 0) {
             mods.forEach(function(mod_name, m) {
-                $(".library > .actions > .btn-add").removeAttr("disabled");
-                // import less files
-                nwFILE.readdir(nwPATH.join(__dirname, "modules", mod_name, "less"), function(err, files) {
-                    if (!err) {
-                        files.forEach(function(file, l) {
-                            importLess(mod_name, nwPATH.join(__dirname, "modules", mod_name, "less", file));
+                if (mod_name !== ".DS_Store") {
+                    $(".library > .actions > .btn-add").removeAttr("disabled");
+                    // import less files
+                    nwFILE.readdir(nwPATH.join(__dirname, "modules", mod_name, "less"), function(err, files) {
+                        if (!err) {
+                            files.forEach(function(file, l) {
+                                importLess(mod_name, nwPATH.join(__dirname, "modules", mod_name, "less", file));
 
-                        });
+                            });
+                        }
+                    });
+
+                    nwMODULES[mod_name] = require(nwPATH.join(__dirname, "modules", mod_name));
+                    if (nwMODULES[mod_name].loaded) {
+                        nwMODULES[mod_name].loaded();
                     }
-                });
-
-                nwMODULES[mod_name] = require(nwPATH.join(__dirname, "modules", mod_name));
-                if (nwMODULES[mod_name].loaded) {
-                    nwMODULES[mod_name].loaded();
                 }
             });
         }
@@ -591,8 +593,9 @@ function loadEngines(callback) {
     var path = nwHELPER.nonASAR(nwPATH.join(__dirname, "engines"));
     nwFILE.readdir(path, function(err, engines) {
         
-        for (var e = 0; e < engines.length; e++) {//engines.forEach(function(eng_name, e) {
+        for (var e = 0; e < engines.length; e++) {
             var eng_name = engines[e];
+            if (eng_name === ".DS_Store") continue;
 
             if (!engine_names.includes(eng_name)) {
                 nwENGINES[eng_name] = require(nwPATH.join(path, eng_name));

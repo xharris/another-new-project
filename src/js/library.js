@@ -1,7 +1,6 @@
 var SAVE_TREE_TIME = 1000;
 var save_tree_timeout = 0;
 
-
 b_library = {
 	objects: {},
 	tree: {}, // used for saveTree to get library tree structure
@@ -269,6 +268,10 @@ document.addEventListener('project.open', function(e) {
 
 	b_library.randomizeBackColor();
 });	
+
+document.addEventListener('project.new', function(e){
+	b_library.randomizeBackColor();
+});
 
 $(function(){
 	$(".library").resizable({

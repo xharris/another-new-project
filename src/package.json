@@ -12,7 +12,8 @@
     "start": "grunt && electron . --dev",
     "release": "grunt && npm run clean_modules && npm run asar && npm install",
     "asar": "asar pack \"../src\" \"../releases/BlankE-win32-ia32/resources/app.asar\" --unpack-dir \"**/{engines}\"",
-    "clean_modules": "npm prune --production"
+    "clean_modules": "npm prune --production",
+    "release-mac": "grunt && node release.js"
   },
   "webkit": {
     "plugin": true
@@ -35,6 +36,7 @@
   },
   "devDependencies": {
     "electron": "0.4.1",
+    "electron-package": "^0.1.0",
     "grunt": "^1.0.1",
     "grunt-contrib-less": "^1.3.0"
   },
@@ -44,5 +46,6 @@
     "win": {
       "iconURL": "https://raw.githubusercontent.com/xharris/texteditor/master/src/build/icon.ico"
     }
-  }
+  },
+  "false": {}
 }
