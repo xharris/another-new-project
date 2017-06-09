@@ -1,0 +1,3 @@
+[submodule "src/engines/love2d"]
+	path = src/engines/love2d
+	url = https://github.com/xharris/blanke4-love2d.git
