@@ -1,4 +1,4 @@
-const DEV_MODE = true; // show dev tools - deprecate?
+const DEV_MODE = false; // show dev tools - deprecate?
 
 /* electron start */
 const electron = require('electron');
@@ -100,7 +100,7 @@ function createWindow () {
         ]}, {
           label: "Project",
           submenu: [
-            { label: "Run", accelerator: "CmdOrCtrl+R", click: function(){
+            { label: "Run", accelerator: "CmdOrCtrl+B", click: function(){
               mainWindow.webContents.send("run-project");
             }}
           ]
