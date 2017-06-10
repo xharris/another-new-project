@@ -519,7 +519,7 @@ function handleDropFile(in_path) {
 
             }
             else if (stats.isFile()) {
-                var ext = nwPATH.extname(in_path):
+                var ext = nwPATH.extname(in_path);
             }
         }
     });
