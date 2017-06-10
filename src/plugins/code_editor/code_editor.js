@@ -202,6 +202,7 @@ var b_code = function(options) { // sel_id, code_path, fn_saveScript
 			"extraKeys" : {
 				"Ctrl-Space": "autocomplete",
 				"Ctrl-S" : function(){_this.saveFile();},
+				"Cmd-S"  : function(){_this.saveFile();},
 				"Ctrl-=" : function(){_this.setFontSize(_this.fontSize+1);},
 				"Ctrl--" : function(){_this.setFontSize(_this.fontSize-1);}
 			},

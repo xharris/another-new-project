@@ -100,7 +100,7 @@ function createWindow () {
         ]}, {
           label: "Project",
           submenu: [
-            { label: "Run", accelerator: "CmdOrCtrl+R", click: function(){
+            { label: "Run", accelerator: "CmdOrCtrl+B", click: function(){
               mainWindow.webContents.send("run-project");
             }}
           ]
