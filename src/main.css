@@ -904,6 +904,7 @@ body[project-open="1"] .library {
   padding: 1px;
   font-size: 14px;
   transition: all ease-in-out 0.1s;
+  border-radius: 4px;
 }
 .library .object-tree .folder .name:hover,
 .library .object-tree .object .name:hover {

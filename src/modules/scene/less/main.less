@@ -1,5 +1,7 @@
 @import "imports";
 
+@tile-preview-max-height: 200px;
+
 .blanke-window.scene .content {
 	overflow: hidden;
 
@@ -72,9 +74,9 @@
     			.no-select();
     			
 				overflow: auto;
-    			max-height: 150px;
+				width: 100%;
+    			max-height: @tile-preview-max-height;
     			position: relative;
-    			margin-right: 5px;
 
     			> * {
     				margin-top: 1px;

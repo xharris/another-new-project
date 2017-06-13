@@ -166,6 +166,7 @@ var b_project = {
 	// saves project file
 	saveProject: function() {
 		if (b_project.isProjectOpen()) {
+            b_ui.createGridRipple();
 			nwFILE.writeFileSync(b_project.bip_path, JSON.stringify(b_project.proj_data));
 
 			b_ide.saveSetting("last_project_open", b_project.bip_path);
@@ -176,7 +177,6 @@ var b_project = {
 
 	autoSaveProject: function() {
 		if (this.autosave_on) {
-            b_ui.createGridRipple();
 			save_timeout = setTimeout(b_project.saveProject, PROJECT_SAVE_TIME);
 		}
 	},

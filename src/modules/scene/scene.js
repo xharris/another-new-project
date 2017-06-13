@@ -44,8 +44,7 @@ exports.loaded = function() {
 
 exports.libraryAdd = function(uuid, name) {
 	return {
-		map_data: '',		// elements placed on map
-		map_settings: '',	// map_editor settings (snapx, snapy, etc)
+		map_data: '',		// elements placed on map and map settings
 		placeables: {},		// sidebar settings
 	}
 }
@@ -98,8 +97,18 @@ exports.onDblClick = function(uuid, properties) {
     // initialize map editor
 	map = nwPLUGINS['map_editor'].init({
 		id: "main-editor",
-		onLayerChange: layerChange
+		onLayerChange: layerChange,
+		onSave: function(data) {
+			scene_prop.map_data = b_util.compress(data);
+			b_project.autoSaveProject();
+		}
 	});
+
+	// load previous data
+	if (scene_prop.map_data.length > 3) {
+		var load_data = b_util.decompress(scene_prop.map_data);
+		map.import(load_data);
+	}
 
 	// make sidebar resizable
     $(win_sel + " .sidebar").resizable({
@@ -111,8 +120,12 @@ exports.onDblClick = function(uuid, properties) {
 	catSelectChange('entity');
 
 	// event handlers - categories, objects
-	$(win_sel + " .sidebar .in-category").on('change', catSelectChange);
-	$(win_sel + " .sidebar .in-object").on('change', objSelectChange);
+	$(win_sel + " .sidebar .in-category").on('change', function(e){
+		catSelectChange(this.value);
+	});
+	$(win_sel + " .sidebar .in-object").on('change', function(e){
+		objSelectChange(this.value);
+	});
 
 	$(win_sel + " .sidebar .in-category").on('mouseup', function(){
 		var open = $(this).data("isopen");
@@ -222,6 +235,10 @@ function objSelectChange(uuid) {
 
         	if (category === "entity") {
 		    	map.setPlacer('rect',{
+		    		saveInfo: {
+		    			type: "entity",
+		    			uuid: uuid
+		    		},
 		    		icon: nwPATH.join(__dirname, "images", scene_prop.placeables[uuid]['icon'] + ".png"),
 		    		color: scene_prop.placeables[uuid]['color'],
 		    		resizable: true
@@ -241,6 +258,10 @@ function objSelectChange(uuid) {
 
     if (category === "entity") {
     	map.setPlacer('rect',{
+    		saveInfo: {
+    			type: "entity",
+    			uuid: uuid
+    		},
     		icon: nwPATH.join(__dirname, "images", scene_prop.placeables[uuid]['icon'] + ".png"),
     		color: scene_prop.placeables[uuid]['color'],
     		resizable: true
@@ -274,10 +295,12 @@ function objSelectChange(uuid) {
     	var dragging = false;
     	$(win_sel + " .tile-selector").on('mousedown', function(e){
     		dragging = true;
+    		var img_width = $(win_sel + " .obj-preview > .img-preview").width();
+	    	var img_height = $(win_sel + " .obj-preview > .img-preview").height();
 
     		// reset selection
     		$(win_sel + " .obj-preview > .selection").css({
-    			"left": "100%", "top": "100%",
+    			"left": img_width+"px", "top": img_height+"px",
     			"width": "0px", "height": "0px"
     		});
 
@@ -290,12 +313,19 @@ function objSelectChange(uuid) {
     		// set placer in map editor
     		var sel_selection = win_sel + " .obj-preview > .selection";
     		if (parseInt($(sel_selection).css('width')) > 0 && parseInt($(sel_selection).css('height')) > 0) {
+		    	var crop = {
+	    			x: parseInt($(sel_selection).css('left')), y: parseInt($(sel_selection).css('top')),
+	    			width: parseInt($(sel_selection).css('width')), height: parseInt($(sel_selection).css('height'))
+	    		}
+
 		    	map.setPlacer('image', {
+		    		saveInfo: {
+		    			type: "image",
+		    			uuid: uuid,
+		    			crop: crop
+		    		},
 		    		path: nwPATH.join(b_project.getResourceFolder('image'), obj.path),
-		    		crop: {
-		    			x: parseInt($(sel_selection).css('left')), y: parseInt($(sel_selection).css('top')),
-		    			width: parseInt($(sel_selection).css('width')), height: parseInt($(sel_selection).css('height'))
-		    		}
+		    		crop: crop
 		    	});
 		    }
     	});

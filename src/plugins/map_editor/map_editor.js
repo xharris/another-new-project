@@ -13,6 +13,8 @@ var b_map = function(options) {
 
 	this.sel_id = options.id;
 	this.onLayerChange = options.onLayerChange; // when a layer is added, moved up, moved down, deleted
+	this.onSave = options.onSave;
+	this.saveData = ifndef(options.loadData, {});
 
 	this.konva = require('./konva.min.js');
 	this.width = window.screen.availWidth;
@@ -231,6 +233,15 @@ var b_map = function(options) {
 					crop: crop,
 					opacity: 0.5
 				});
+
+				var new_placeInfo = $.extend({}, options);
+				delete new_placeInfo.saveInfo;
+				console.log(type)
+				_this.placer_img.setAttr("_save",{
+					placeType: type,
+					saveInfo: options.saveInfo,
+					placeInfo: new_placeInfo
+				})
 				_this.placer_layer.add(_this.placer_img);
 			};
 			placer_img_obj.src = path;
@@ -269,8 +280,16 @@ var b_map = function(options) {
 
 				_this.placer_rect_img.cache();
 				_this.placer_rect_img.filters([_this.konva.Filters.RGBA]);
-				var rgb = hex2rgb(options.color);
 				_this.placer_rect.add(_this.placer_rect_img);
+
+				var new_placeInfo = $.extend({}, options);
+				delete new_placeInfo.saveInfo;
+				console.log(type)
+				_this.placer_rect.setAttr("_save",{
+					placeType: type,
+					saveInfo: options.saveInfo,
+					placeInfo: new_placeInfo
+				})
 			};
 			placer_img_obj.src = options.icon;
 		}
@@ -307,6 +326,70 @@ var b_map = function(options) {
     	return {x:mx, y:my};
 	}
 
+	this._autoSave = function() {
+		save_timeout = setTimeout(_this.save, PROJECT_SAVE_TIME);
+	}
+
+	this.save = function() {
+		_this.saveData = {"layers":{}}; // indexes are layers
+
+		// iterate through layers
+		var layer_num = 0;
+		_this.obj_layer.getChildren(function(layer){
+			layer_num = layer.id();
+
+			if (layer_num !== undefined) {
+				_this.saveData.layers[layer_num] = [];
+
+				// iterate through children of the layer
+				layer.getChildren(function(node){
+					var obj_save = node.getAttr("_save");
+					var obj_saveInfo = obj_save.saveInfo;
+					var obj_placeInfo = obj_save.placeInfo;
+
+					obj_placeInfo.x = node.x();
+					obj_placeInfo.y = node.y();
+
+					_this.saveData.layers[layer_num].push({
+						"placeType": obj_save.placeType,
+						"placeInfo": obj_placeInfo,
+						"saveInfo": obj_saveInfo
+					});
+				});	
+			}
+		});
+
+		console.log(_this.saveData);
+
+		if (_this.onSave)
+			_this.onSave(JSON.stringify(_this.saveData));
+	}
+
+	this.export = function() {
+		this.save();
+		return this.saveData;
+	}
+
+	this.import = function(data) {		
+		console.log(data)
+		var load_data = JSON.parse(data);
+
+		// iterate layers
+		var layers = Object.keys(load_data.layers);
+		for (var l = 0; l < layers.length; l++) {
+			var layer = layers[l];
+			map.setLayer(map.layerNameToNum(layer));
+
+			// iterate objects
+			var arr_layer = load_data[layer]
+			for (var o = 0; o < arr_layer.length; o++) {
+				var obj = load_data[layer][o];
+
+				map.setPlacer(obj.type);
+			}
+		}
+	}
+
 	this.stage = new this.konva.Stage({
 		container: _this.sel_id,
 		width: window.screen.availWidth,
@@ -336,6 +419,21 @@ var b_map = function(options) {
     });
     this.txt_label.add(this.txt_coords);
     this.text_layer.add(this.txt_label);
+
+    var in_drag = false;
+    $(window).on('keypress', function(e){
+    	if (e.keyCode == 32) { // SPACE
+    		in_drag = true;
+    		_this.stage.draggable(true);
+    	}
+    });
+
+    $(window).on('keyup', function(e){
+    	if (e.keyCode == 32) { // SPACE
+    		in_drag = false;
+    		_this.stage.draggable(false);
+    	}
+    });
 
 	this.stage.on('dragmove', function(e){
 		_this.camera.x = -_this.stage.getAttr('x');
@@ -368,7 +466,8 @@ var b_map = function(options) {
 	});
 
     this.stage.on('contentMousedown', function(e){
-    	_this.stage.draggable(e.evt.which == 2);
+    	if (e.evt.which == 2)
+	    	_this.stage.draggable(true);
     });
 
     this.stage.on('contentMouseup', function(e){
@@ -378,7 +477,7 @@ var b_map = function(options) {
     var placing = false;
     var destroying = false;
     this.obj_layer.on('mousedown', function(e) {
-    	placing = (e.evt.which == 1);
+    	placing = (e.evt.which == 1 && !in_drag);
 		destroying = (e.evt.which == 3)
     });
 
@@ -393,7 +492,7 @@ var b_map = function(options) {
     	}
 
 	   	// place object
-    	if ((e.evt.which == 1) && (e.type === 'mouseup' || (e.type === 'mousemove' && placing))) {
+    	if ((e.evt.which == 1) && !in_drag && (e.type === 'mouseup' || (e.type === 'mousemove' && placing))) {
 	    	var pos = _this.getMouseXY();
 	    	var mx = pos.x;
 	    	var my = pos.y;
@@ -411,8 +510,12 @@ var b_map = function(options) {
 				new_obj.blue(0);
 				new_obj.alpha(1);
 
+				// transfer serialization info
+				new_obj.setAttr("_save", _this.placer_rect.getAttr("_save"));
+
 	    		var obj_layer = _this.getLayer();
 	    		obj_layer.add(new_obj);
+				_this._autoSave();
 	    	}
 
 	    	if (_this.curr_place_type === "image") {
@@ -443,6 +546,7 @@ var b_map = function(options) {
 		    					if (e.target.className === "Image") {
 		    						e.target.destroy();
 		    						_this.obj_layer.batchDraw();
+									_this._autoSave();
 		    					}
 		    				} else
 		    					e.cancelBubble = true;
@@ -451,6 +555,9 @@ var b_map = function(options) {
 
 
 	    		});
+
+	    		// transfer serialization info
+	    		new_obj.setAttr("_save", _this.placer_img.getAttr("_save"));
 
 	    		var obj_layer = _this.getLayer();
     			obj_layer.add(new_obj);
@@ -466,7 +573,10 @@ var b_map = function(options) {
 			        scaleX: 1,
 			        offsetX: 0,
 			        offsetY: 0,
-			        opacity: 1
+			        opacity: 1,
+			        onFinish: function() {
+			        	_this._autoSave();
+			        }
 			    });
 			    tween.play();
 	    	}
@@ -504,6 +614,8 @@ var b_map = function(options) {
 	this.stage.add(this.grid_layer);
     this.stage.add(this.text_layer);
 	this.createGrid(32, 32);
+
+	this.stage.draggable(false);
 
 	// initial obj layer (0)
 	this.setLayer(this.curr_layer);
