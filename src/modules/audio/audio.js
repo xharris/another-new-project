@@ -49,6 +49,10 @@ exports.libraryAdd = function(uuid, name) {
     return 0;
 }
 
+document.addEventListener("filedrop", function(e) {
+	importAudio(e.detail.path);
+});
+
 function importAudio(path) {
     if (['.mp3', '.wav'].includes(nwPATH.extname(path))) {
     	b_project.importResource('audio', path, function(e) {
