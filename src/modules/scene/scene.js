@@ -97,18 +97,13 @@ exports.onDblClick = function(uuid, properties) {
     // initialize map editor
 	map = nwPLUGINS['map_editor'].init({
 		id: "main-editor",
+		loadData: b_util.decompress(scene_prop.map_data),
 		onLayerChange: layerChange,
 		onSave: function(data) {
 			scene_prop.map_data = b_util.compress(data);
 			b_project.autoSaveProject();
 		}
 	});
-
-	// load previous data
-	if (scene_prop.map_data.length > 3) {
-		var load_data = b_util.decompress(scene_prop.map_data);
-		map.import(load_data);
-	}
 
 	// make sidebar resizable
     $(win_sel + " .sidebar").resizable({
