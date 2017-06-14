@@ -115,6 +115,8 @@ var b_map = function(options) {
 			current: this.curr_layer, 
 			layers: this.arr_layers
 		});
+
+		_this._autoSave();
 	}
 
 	this.setLayer = function(num) {
@@ -138,11 +140,21 @@ var b_map = function(options) {
 
 	this.getLayer = function(num) {
 		var layer = ifndef(num, this.curr_layer);
-		return this.obj_layer.find("#"+this.layerNumToName(layer))[0];
+
+		if (typeof layer === "number")
+			layer = this.layerNumToName(layer)
+		if (typeof layer === "object")
+			return layer;
+
+		return this.obj_layer.find("#"+layer)[0];
 	}
 
 	this.layerNameToNum = function(name) {
-		return parseInt(name.toLowerCase().replace("layer", "").trim(), 10);
+		try {
+			return parseInt(name.toLowerCase().replace("layer", "").trim(), 10);
+		} catch (e) {
+			console.error("Cannot find layer '" + name + "'");
+		}
 	}
 
 	this.layerNumToName = function(num) {
@@ -212,13 +224,6 @@ var b_map = function(options) {
 		return this.arr_layers;
 	}
 
-	// callback is for when the placer is ready to place
-	this.setPlacer = function(type, options, callback) {
-		this.curr_place_type = type;
-
-		
-	}
-
 	this.clearPlacer = function(type='') {
 		if (type === '' || type === this.curr_place_type) {
 			// image
@@ -228,7 +233,15 @@ var b_map = function(options) {
 		}
 	}
 
+	// callback is called when the placer is ready to place
+	this.setPlacer = function(type, options, callback) {
+		this.curr_place_type = type;
+
+		this._getPlacerObj(type, options, callback);
+	}
+
 	this._getPlacerObj = function(type, options, callback) {
+		// organize saveData
 		var new_placeInfo = $.extend({}, options);
 		delete new_placeInfo.saveInfo;
 		var saveData = {
@@ -257,9 +270,11 @@ var b_map = function(options) {
 				});
 
 				_this.placer_img.setAttr("_save", saveData)
-				_this.placer_layer.add(_this.placer_img);
 
-				if (callback) callback(_this.placer_img.clone());
+				if (callback) callback(_this.placer_img.clone().setAttr("_save", saveData));
+				else {
+					_this.placer_layer.add(_this.placer_img);
+				}
 			};
 			placer_img_obj.src = path;
 		}
@@ -299,9 +314,6 @@ var b_map = function(options) {
 				_this.placer_rect_img.filters([_this.konva.Filters.RGBA]);
 				_this.placer_rect.add(_this.placer_rect_img);
 
-				var new_placeInfo = $.extend({}, options);
-				delete new_placeInfo.saveInfo;
-
 				_this.placer_rect.setAttr("_save", saveData);
 
 				if (callback) callback(_this.placer_rect.clone().setAttr("_save", saveData));
@@ -313,8 +325,20 @@ var b_map = function(options) {
 		if (type === "polygon");
 	}
 
-	this.placeObj = function(x, y, obj) {
-		console.log(type, x, y)
+	this.placeObj = function(type, x, y, options, layer) {
+		var layer_obj = ifndef(this.getLayer(layer), this.getLayer())
+		function callbackClosure(_x, _y, _type, _layer, callback) {
+			return function(obj) {
+				return callback(_x, _y, _type, obj, _layer);
+			}
+		}
+		this.setPlacer(type, options, callbackClosure(x, y, type, layer_obj, this._placeObj));
+	}
+
+	this._placeObj = function(x, y, type, obj, layer) {
+		layer = ifndef(layer, _this.curr_layer);
+		var obj_layer = _this.getLayer(layer);
+
 		if (type === "rect") {
 			obj.x(x);
 			obj.y(y);
@@ -325,24 +349,23 @@ var b_map = function(options) {
 			*/
 
 			// transfer serialization info
-			new_obj.setAttr("_save", obj.getAttr("_save"));
+			var new_obj = obj.clone().setAttr("_save", obj.getAttr("_save"));
 
-    		var obj_layer = this.getLayer();
     		obj_layer.add(new_obj);
-			this._autoSave();
+			_this._autoSave();
     	}
 
     	if (type === "image") {
 	    	var new_obj;
 	    	var init_scale = 1.5;
 
-    		new_obj = this.placer_img.clone({
-    			x: x + this.placer_img.width()/init_scale,
-    			y: y + this.placer_img.height()/init_scale,
+    		new_obj = obj.clone({
+    			x: x + obj.width()/init_scale,
+    			y: y + obj.height()/init_scale,
     			scaleX: init_scale,
     			scaleY: init_scale,
-    			offsetX: this.placer_img.width()/init_scale,
-    			offsetY: this.placer_img.height()/init_scale
+    			offsetX: obj.width()/init_scale,
+    			offsetY: obj.height()/init_scale
     		});
 
     		// prevent placing tiles right on top of each other
@@ -371,16 +394,14 @@ var b_map = function(options) {
     		});
 
     		// transfer serialization info
-    		new_obj.setAttr("_save", this.placer_img.getAttr("_save"));
-
-    		var obj_layer = this.getLayer();
+    		new_obj.setAttr("_save", _this.placer_img.getAttr("_save")); 
 			obj_layer.add(new_obj);
 
     		// cool shrinking animation (a little misaligned)
     		var tween = new Konva.Tween({
 		        node: new_obj,
 		        duration: 0.2,
-		        easing: this.konva.Easings.EaseOut,
+		        easing: _this.konva.Easings.EaseOut,
 		        x: x,
 		        y: y,
 		        scaleY: 1,
@@ -480,13 +501,7 @@ var b_map = function(options) {
 			for (var o = 0; o < arr_layer.length; o++) {
 				var obj = load_data.layers[layer][o];
 
-				function callbackClosure(x, y, obj_type, callback) {
-					return function() {
-						return callback(x, y, obj_type);
-					}
-				}
-
-				this.setPlacer(obj.placeType, obj.placeInfo, callbackClosure(obj.place3Info.x, obj.place3Info.y, obj.placeType, _this.placeObj));
+				this.placeObj(obj.placeType, obj.placeInfo.x, obj.placeInfo.y, obj.placeInfo, this.layerNameToNum(layer));
 			}
 		}
 		this.clearPlacer();
@@ -599,7 +614,12 @@ var b_map = function(options) {
 	    	var mx = pos.x;
 	    	var my = pos.y;
 
-	    	_this.placeObj(mx, my);
+	    	var obj;
+	    	switch(_this.curr_place_type) {
+	    		case "image": 	obj = _this.placer_img; break;
+	    		case "rect": 	obj = _this.placer_rect; break;
+	    	}
+	    	_this._placeObj(mx, my, _this.curr_place_type, obj);
 	    }
 
     });
