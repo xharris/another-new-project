@@ -115,7 +115,6 @@ var b_map = function(options) {
 			current: this.curr_layer, 
 			layers: this.arr_layers
 		});
-		console.log("layer is " + this.curr_layer);
 	}
 
 	this.setLayer = function(num) {
@@ -217,6 +216,27 @@ var b_map = function(options) {
 	this.setPlacer = function(type, options, callback) {
 		this.curr_place_type = type;
 
+		
+	}
+
+	this.clearPlacer = function(type='') {
+		if (type === '' || type === this.curr_place_type) {
+			// image
+			this.placer_img.destroy();
+			// rect
+			this.placer_rect.destroy();
+		}
+	}
+
+	this._getPlacerObj = function(type, options, callback) {
+		var new_placeInfo = $.extend({}, options);
+		delete new_placeInfo.saveInfo;
+		var saveData = {
+			placeType: type,
+			saveInfo: options.saveInfo,
+			placeInfo: new_placeInfo
+		};
+
 		if (type === "image") {
 			var path = options.path;
 			var crop = options.crop;
@@ -236,17 +256,10 @@ var b_map = function(options) {
 					opacity: 0.5
 				});
 
-				var new_placeInfo = $.extend({}, options);
-				delete new_placeInfo.saveInfo;
-
-				_this.placer_img.setAttr("_save",{
-					placeType: type,
-					saveInfo: options.saveInfo,
-					placeInfo: new_placeInfo
-				})
+				_this.placer_img.setAttr("_save", saveData)
 				_this.placer_layer.add(_this.placer_img);
 
-				if (callback) callback();
+				if (callback) callback(_this.placer_img.clone());
 			};
 			placer_img_obj.src = path;
 		}
@@ -289,13 +302,9 @@ var b_map = function(options) {
 				var new_placeInfo = $.extend({}, options);
 				delete new_placeInfo.saveInfo;
 
-				_this.placer_rect.setAttr("_save",{
-					placeType: type,
-					saveInfo: options.saveInfo,
-					placeInfo: new_placeInfo
-				});
+				_this.placer_rect.setAttr("_save", saveData);
 
-				if (callback) callback();
+				if (callback) callback(_this.placer_rect.clone().setAttr("_save", saveData));
 			};
 			placer_img_obj.src = options.icon;
 		}
@@ -304,36 +313,26 @@ var b_map = function(options) {
 		if (type === "polygon");
 	}
 
-	this.clearPlacer = function(type='') {
-		if (type === '' || type === this.curr_place_type) {
-			// image
-			this.placer_img.destroy();
-		}
-	}
+	this.placeObj = function(x, y, obj) {
+		console.log(type, x, y)
+		if (type === "rect") {
+			obj.x(x);
+			obj.y(y);
 
-	this.placeObj = function(x, y) {
-		if (this.curr_place_type === "rect") {
-    		var new_obj = this.placer_rect.clone({
-    			x: x,
-    			y: y
-    		});
-
+			/*
 			this.placer_rect_img.cache();
 			this.placer_rect_img.filters([this.konva.Filters.RGBA]);
-			new_obj.red(255);
-			new_obj.green(0);
-			new_obj.blue(0);
-			new_obj.alpha(1);
+			*/
 
 			// transfer serialization info
-			new_obj.setAttr("_save", this.placer_rect.getAttr("_save"));
+			new_obj.setAttr("_save", obj.getAttr("_save"));
 
     		var obj_layer = this.getLayer();
     		obj_layer.add(new_obj);
 			this._autoSave();
     	}
 
-    	if (this.curr_place_type === "image") {
+    	if (type === "image") {
 	    	var new_obj;
 	    	var init_scale = 1.5;
 
@@ -355,7 +354,7 @@ var b_map = function(options) {
 				var group = e.target.findAncestors('Group');
 				if (_this.layerNameToNum(group[0].id()) === _this.curr_layer) { 
 
-	    			if (_this.curr_place_type === "image") {
+	    			if (type === "image") {
 	    				// actually, user is deleting this object
 	    				if (e.evt.which == 3 && (e.type === 'mouseup' || (e.type === 'mousemove' && destroying))) {
 	    					if (e.target.className === "Image") {
@@ -396,7 +395,7 @@ var b_map = function(options) {
 		    tween.play();
     	}
 
-	   	if (_this.curr_place_type != '')
+	   	if (type != '')
 			_this.obj_layer.batchDraw();
 	}
 
@@ -422,7 +421,7 @@ var b_map = function(options) {
 	}
 
 	this._autoSave = function() {
-		save_timeout = setTimeout(_this.save, PROJECT_SAVE_TIME);
+		save_timeout = setTimeout(this.save, PROJECT_SAVE_TIME);
 	}
 
 	this.save = function() {
@@ -469,7 +468,6 @@ var b_map = function(options) {
 			return;
 
 		var load_data = JSON.parse(data);
-		console.log(load_data);
 
 		// iterate layers
 		var layers = Object.keys(load_data.layers);
@@ -482,10 +480,13 @@ var b_map = function(options) {
 			for (var o = 0; o < arr_layer.length; o++) {
 				var obj = load_data.layers[layer][o];
 
-				console.log("placing ", obj.placeType, obj.placeInfo);
-				this.setPlacer(obj.placeType, obj.placeInfo, function(){
-					_this.placeObj(obj.saveInfo.x, obj.saveInfo.y);
-				});
+				function callbackClosure(x, y, obj_type, callback) {
+					return function() {
+						return callback(x, y, obj_type);
+					}
+				}
+
+				this.setPlacer(obj.placeType, obj.placeInfo, callbackClosure(obj.place3Info.x, obj.place3Info.y, obj.placeType, _this.placeObj));
 			}
 		}
 		this.clearPlacer();
