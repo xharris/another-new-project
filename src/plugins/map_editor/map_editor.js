@@ -1,3 +1,5 @@
+var MAP_SAVE_TIME = 250 ;
+
 exports.init = function(options) {
 	var new_map = new b_map(options);
 	return new_map;
@@ -115,8 +117,6 @@ var b_map = function(options) {
 			current: this.curr_layer, 
 			layers: this.arr_layers
 		});
-
-		_this._autoSave();
 	}
 
 	this.setLayer = function(num) {
@@ -352,7 +352,6 @@ var b_map = function(options) {
 			var new_obj = obj.clone().setAttr("_save", obj.getAttr("_save"));
 
     		obj_layer.add(new_obj);
-			_this._autoSave();
     	}
 
     	if (type === "image") {
@@ -383,7 +382,6 @@ var b_map = function(options) {
 	    					if (e.target.className === "Image") {
 	    						e.target.destroy();
 	    						_this.obj_layer.batchDraw();
-								_this._autoSave();
 	    					}
 	    				} else
 	    					e.cancelBubble = true;
@@ -408,10 +406,7 @@ var b_map = function(options) {
 		        scaleX: 1,
 		        offsetX: 0,
 		        offsetY: 0,
-		        opacity: 1,
-		        onFinish: function() {
-		        	_this._autoSave();
-		        }
+		        opacity: 1
 		    });
 		    tween.play();
     	}
@@ -441,11 +436,7 @@ var b_map = function(options) {
     	return {x:mx, y:my};
 	}
 
-	this._autoSave = function() {
-		save_timeout = setTimeout(this.save, PROJECT_SAVE_TIME);
-	}
-
-	this.save = function() {
+	this._save = function() {
 		_this.saveData = {"layers":{}}; // indexes are layers
 
 		// iterate through layers
@@ -473,13 +464,11 @@ var b_map = function(options) {
 				});	
 			}
 		});
-
-		if (_this.onSave)
-			_this.onSave(JSON.stringify(_this.saveData));
 	}
 
 	this.export = function() {
-		this.save();
+		this._save();
+		console.log(this.saveData);
 		return this.saveData;
 	}
 

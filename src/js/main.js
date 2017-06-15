@@ -185,7 +185,7 @@ $(function(){
         menu.popup(eREMOTE.getCurrentWindow());
     });
     $(".titlebar .gamebuttons .btn-run").on('click', function(){
-        b_project.getEngine().run(b_library.objects)
+        b_project.runProject();
     });
     $(".titlebar .gamebuttons .btn-settings").on('click', function(){
         b_ui.toggleSettings();
@@ -225,13 +225,14 @@ $(function(){
 
     // set events for window close
     eIPC.on('window-close', function(event) {
-        // b_ide.saveData();
+        dispatchEvent('ide.close');
+        b_project.autoSaveProject();
         eIPC.send('confirm-window-close');
     });
 
     // run project shortcut
     eIPC.on('run-project', function(event){
-        b_project.getEngine().run(b_library.objects);
+        b_project.runProject();
     })
 
     eIPC.on('finish-load', function(event){
@@ -285,7 +286,7 @@ $(function(){
         b_library.enableDrag();
         if (nwMODULES[type].onDblClick) {
             nwMODULES[type].onDblClick(uuid, b_library.getByUUID(type, uuid))
-        }  
+        }
 
         dispatchEvent("library.dbl_click", {type: type, uuid: uuid, properties: b_library.getByUUID(type, uuid)});
 

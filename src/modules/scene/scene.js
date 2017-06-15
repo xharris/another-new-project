@@ -40,7 +40,15 @@ exports.loaded = function() {
 	document.addEventListener('project.open', function(e) {
 		place_settings.entity[""][1].default = b_library.getBackColor();
 	});
-}
+
+	document.addEventListener('ide.close', function(e){
+		mapSave();
+	});
+
+	document.addEventListener('project.run', function(e){
+		mapSave();
+	});
+};
 
 exports.libraryAdd = function(uuid, name) {
 	return {
@@ -50,7 +58,13 @@ exports.libraryAdd = function(uuid, name) {
 }
 
 exports.onClose = function(uuid, properties) {
+}
 
+function mapSave(){
+	if (map) {
+		console.log('saving');
+		scene_prop.map_data = b_util.compress(map.export());
+	}
 }
 
 var win_sel;
@@ -91,18 +105,17 @@ exports.onDblClick = function(uuid, properties) {
             	"</div>"+
             "</div>"+
             "<div id='main-editor'>"+            
-	        "</div>"
+	        "</div>",
+	    onClose: function(){
+	    	mapSave();
+	    }
     });
 
     // initialize map editor
 	map = nwPLUGINS['map_editor'].init({
 		id: "main-editor",
 		loadData: b_util.decompress(scene_prop.map_data),
-		onLayerChange: layerChange,
-		onSave: function(data) {
-			scene_prop.map_data = b_util.compress(data);
-			b_project.autoSaveProject();
-		}
+		onLayerChange: layerChange
 	});
 
 	// make sidebar resizable

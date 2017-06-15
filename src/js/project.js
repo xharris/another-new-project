@@ -181,6 +181,11 @@ var b_project = {
 		}
 	},
 
+	runProject: function() {
+		dispatchEvent('project.run');
+        b_project.getEngine().run(b_library.objects);
+	},
+
 	getEngine: function() {
 		return nwENGINES[b_project.getData('engine')]
 	},
