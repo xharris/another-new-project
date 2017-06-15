@@ -338,6 +338,7 @@ var b_map = function(options) {
 	this._placeObj = function(x, y, type, obj, layer) {
 		layer = ifndef(layer, _this.curr_layer);
 		var obj_layer = _this.getLayer(layer);
+	    var new_obj;	
 
 		if (type === "rect") {
 			obj.x(x);
@@ -349,13 +350,12 @@ var b_map = function(options) {
 			*/
 
 			// transfer serialization info
-			var new_obj = obj.clone().setAttr("_save", obj.getAttr("_save"));
+			new_obj = obj.clone().setAttr("_save", obj.getAttr("_save"));
 
     		obj_layer.add(new_obj);
     	}
 
     	if (type === "image") {
-	    	var new_obj;
 	    	var init_scale = 1.5;
 
     		new_obj = obj.clone({
@@ -365,30 +365,6 @@ var b_map = function(options) {
     			scaleY: init_scale,
     			offsetX: obj.width()/init_scale,
     			offsetY: obj.height()/init_scale
-    		});
-
-    		// prevent placing tiles right on top of each other
-    		new_obj.on('mouseup mousemove', function(e){
-				if (e.type === 'mouseup' && e.evt.which == 3)
-					destroying = false;
-
-				// placer is placing on a different layer
-				var group = e.target.findAncestors('Group');
-				if (_this.layerNameToNum(group[0].id()) === _this.curr_layer) { 
-
-	    			if (type === "image") {
-	    				// actually, user is deleting this object
-	    				if (e.evt.which == 3 && (e.type === 'mouseup' || (e.type === 'mousemove' && destroying))) {
-	    					if (e.target.className === "Image") {
-	    						e.target.destroy();
-	    						_this.obj_layer.batchDraw();
-	    					}
-	    				} else
-	    					e.cancelBubble = true;
-	    			}
-	    		}
-
-
     		});
 
     		// transfer serialization info
@@ -410,6 +386,29 @@ var b_map = function(options) {
 		    });
 		    tween.play();
     	}
+
+    	// prevent placing tiles right on top of each other
+		new_obj.on('mouseup mousemove', function(e){
+			if (e.type === 'mouseup' && e.evt.which == 3)
+				destroying = false;
+
+			// placer is placing on a different layer
+			var group = e.target.findAncestors('Group');
+			var layer_name = group[0].id();
+			if (layer_name !== undefined && _this.layerNameToNum(layer_name) === _this.curr_layer) { 
+
+    			//if (type === "image") {
+    				// actually, user is deleting this object
+    				if (e.evt.which == 3 && (e.type === 'mouseup' || (e.type === 'mousemove' && destroying))) {
+    					if (e.target.className === "Image") {
+    						e.target.destroy();
+    						_this.obj_layer.batchDraw();
+    					}
+    				} else
+    					e.cancelBubble = true;
+    			//}
+    		}
+		});
 
 	   	if (type != '')
 			_this.obj_layer.batchDraw();
@@ -468,8 +467,7 @@ var b_map = function(options) {
 
 	this.export = function() {
 		this._save();
-		console.log(this.saveData);
-		return this.saveData;
+		return JSON.stringify(this.saveData);
 	}
 
 	this.import = function(data) {	
