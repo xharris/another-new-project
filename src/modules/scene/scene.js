@@ -62,7 +62,6 @@ exports.onClose = function(uuid, properties) {
 
 function mapSave(){
 	if (map) {
-		console.log('saving');
 		scene_prop.map_data = b_util.compress(map.export());
 	}
 }

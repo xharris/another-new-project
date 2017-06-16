@@ -400,10 +400,10 @@ var b_map = function(options) {
     			//if (type === "image") {
     				// actually, user is deleting this object
     				if (e.evt.which == 3 && (e.type === 'mouseup' || (e.type === 'mousemove' && destroying))) {
-    					if (e.target.className === "Image") {
+    					//if (e.target.className === "Image") {
     						e.target.destroy();
     						_this.obj_layer.batchDraw();
-    					}
+    					//}
     				} else
     					e.cancelBubble = true;
     			//}
