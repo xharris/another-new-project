@@ -5,5 +5,5 @@ WIKI: https://github.com/xharris/blanke4/wiki
 
 
 No official release/download available yet.
-Here's an outdated screenshot for curious people who somehow found this page:
+Here's an **outdated** screenshot for curious people who somehow found this page:
 ![screenshot](https://github.com/xharris/blanke4/blob/master/wiki/blanke4-1.png)
