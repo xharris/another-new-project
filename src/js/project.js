@@ -177,6 +177,7 @@ var b_project = {
 
 	autoSaveProject: function() {
 		if (this.autosave_on) {
+			clearTimeout(save_timeout);
 			save_timeout = setTimeout(b_project.saveProject, PROJECT_SAVE_TIME);
 		}
 	},

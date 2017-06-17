@@ -15,7 +15,7 @@ var b_map = function(options) {
 
 	this.sel_id = options.id;
 	this.onLayerChange = options.onLayerChange; // when a layer is added, moved up, moved down, deleted
-	this.onSave = options.onSave;
+	this.onMapChange = options.onMapChange;
 	this.saveData = ifndef(options.loadData, {});
 
 	this.konva = require('./konva.min.js');
@@ -117,6 +117,9 @@ var b_map = function(options) {
 			current: this.curr_layer, 
 			layers: this.arr_layers
 		});
+
+		if (this.onMapChange)
+			this.onMapChange();
 	}
 
 	this.setLayer = function(num) {
@@ -242,14 +245,20 @@ var b_map = function(options) {
 
 	this._getPlacerObj = function(type, options, callback) {
 		// organize saveData
-		var new_placeInfo = $.extend({}, options);
-		delete new_placeInfo.saveInfo;
+		var saveInfo = $.extend({}, options.saveInfo);
+
+		delete options.saveInfo;
+		options = ifndef(options.placeInfo, options);
+
 		var saveData = {
 			placeType: type,
-			saveInfo: options.saveInfo,
-			placeInfo: new_placeInfo
+			saveInfo: saveInfo,
+			placeInfo: options
 		};
 
+		console.log(options)
+
+		// TILE
 		if (type === "image") {
 			var path = options.path;
 			var crop = options.crop;
@@ -335,7 +344,19 @@ var b_map = function(options) {
 		this.setPlacer(type, options, callbackClosure(x, y, type, layer_obj, this._placeObj));
 	}
 
+	var last_place = {x:undefined, y:undefined, layer:undefined};
+	this._clearLastPlace = function(){
+		last_place = {x:undefined, y:undefined, layer:undefined};
+	}
+
 	this._placeObj = function(x, y, type, obj, layer) {
+		// prevent layering object on top of each other
+		if (last_place.layer === layer && (last_place.x == x && last_place.y == y))
+			return;
+		last_place.x = x;
+		last_place.y = y;
+		last_place.layer = layer;
+
 		layer = ifndef(layer, _this.curr_layer);
 		var obj_layer = _this.getLayer(layer);
 	    var new_obj;	
@@ -406,12 +427,93 @@ var b_map = function(options) {
     					//}
     				} else
     					e.cancelBubble = true;
+
+    				if (_this.onMapChange)
+						_this.onMapChange();
     			//}
     		}
 		});
 
 	   	if (type != '')
 			_this.obj_layer.batchDraw();
+
+		if (_this.onMapChange)
+			_this.onMapChange();
+	}
+
+	var updateObjectTimeout;
+	this.updateObject = function() {
+		clearTimeout(updateObjectTimeout);
+		updateObjectTimeout = setTimeout(this._updateObject, MAP_SAVE_TIME, arguments);
+	}
+
+	this._updateObject = function() {
+		var args = arguments[0];
+
+		var save_info_key = args[0];
+		var save_info_value = args[1];
+		var new_options = args[2];
+
+		function changeIcon(obj, icon) {
+			var new_img = new Image();
+			new_img.onload = function(){
+				obj.setImage(new_img);
+			};
+			new_img.src = icon;
+		}
+
+		// iterate through layers
+		var layer_num = 0;
+		var layers = _this.obj_layer.getChildren().toArray();
+		for (var l = 0; l < layers.length; l++) {
+			var layer = layers[l];
+			layer_num = layer.id();
+
+			if (layer_num !== undefined) {
+				// iterate through children of the layer
+				var children = layer.getChildren().toArray();
+				for (var c = 0; c < children.length; c++) {
+					var node = children[c];
+
+					var obj_save = node.getAttr("_save");
+
+					if (obj_save.saveInfo[save_info_key] === save_info_value) {
+						obj_save.placeInfo = new_options;
+
+						// RECT
+						if (obj_save.placeType === "rect") {
+							var rect, icon;
+							var rect_children = node.getChildren().toArray();
+							console.log(rect_children);
+							for (var c = 0; c < rect_children.length; c++) {
+								if (rect_children[c].getClassName() === "Rect") rect = node.children[0];
+								if (rect_children[c].getClassName() === "Image") icon = node.children[1];
+							} 
+
+							// change outline color
+							var tween = new Konva.Tween({
+						        node: rect,
+						        duration: 0.2,
+						        easing: _this.konva.Easings.EaseOut,
+						        stroke: new_options.color
+						    });
+						    tween.play();
+
+						    // change icon image
+						    changeIcon(icon, new_options.icon);
+						}
+
+						// TILE
+						if (obj_save.placeType === "image") {
+
+						}
+					}
+
+					// save new options
+					node.setAttr("_save", obj_save);
+				}
+			}
+		}
 	}
 
 	this.getMouseXY = function(x, y) {
@@ -436,38 +538,48 @@ var b_map = function(options) {
 	}
 
 	this._save = function() {
-		_this.saveData = {"layers":{}}; // indexes are layers
+		var saveData = {"layers":{}};
 
 		// iterate through layers
 		var layer_num = 0;
-		_this.obj_layer.getChildren(function(layer){
+		var layers = _this.obj_layer.getChildren().toArray();
+		for (var l = 0; l < layers.length; l++) {
+			var layer = layers[l];
 			layer_num = layer.id();
 
 			if (layer_num !== undefined) {
-				_this.saveData.layers[layer_num] = [];
+				saveData.layers[layer_num] = [];
 
 				// iterate through children of the layer
-				layer.getChildren(function(node){
-					var obj_save = node.getAttr("_save");
-					var obj_saveInfo = obj_save.saveInfo;
-					var obj_placeInfo = obj_save.placeInfo;
+				var children = layer.getChildren().each(function(node, n){
+					(function(node, layer, n){
 
-					obj_placeInfo.x = node.x();
-					obj_placeInfo.y = node.y();
+						var node_data = node.getAttr("_save");
 
-					_this.saveData.layers[layer_num].push({
-						"placeType": obj_save.placeType,
-						"placeInfo": obj_placeInfo,
-						"saveInfo": obj_saveInfo
-					});
-				});	
+						var obj_saveInfo = node_data.saveInfo;
+						var obj_placeInfo = node_data.placeInfo;
+
+						obj_placeInfo.x = node.x();
+						obj_placeInfo.y = node.y();
+
+						var obj_save = {
+							"placeType": node_data.placeType,
+							"placeInfo": $.extend({}, obj_placeInfo),
+							"saveInfo": obj_saveInfo
+						}
+
+						saveData.layers[layer].push($.extend({}, obj_save));
+
+					})(node, layer_num, n);
+				});
 			}
-		});
+		}
+		_this.saveData = saveData;
+		return saveData;
 	}
 
 	this.export = function() {
-		this._save();
-		return JSON.stringify(this.saveData);
+		return JSON.stringify(this._save());
 	}
 
 	this.import = function(data) {	
@@ -476,6 +588,10 @@ var b_map = function(options) {
 			return;
 
 		var load_data = JSON.parse(data);
+
+		// temporarily disable onMapChange;
+		var old_onMapChange = this.onMapChange;
+		this.onMapChange = undefined;
 
 		// iterate layers
 		var layers = Object.keys(load_data.layers);
@@ -488,10 +604,22 @@ var b_map = function(options) {
 			for (var o = 0; o < arr_layer.length; o++) {
 				var obj = load_data.layers[layer][o];
 
-				this.placeObj(obj.placeType, obj.placeInfo.x, obj.placeInfo.y, obj.placeInfo, this.layerNameToNum(layer));
+				/*
+				(function(_obj, _layer){
+					_this._getPlacerObj(_obj.placeType, _obj, function(new_obj){
+						_this._clearLastPlace();
+						_this._placeObj(_obj.placeInfo.x, _obj.placeInfo.y, obj.placeType, new_obj, _this.layerNameToNum(_layer));
+					});
+				})(obj, layer);
+				*/
+
+				this.placeObj(obj.placeType, obj.placeInfo.x, obj.placeInfo.y, obj, this.layerNameToNum(layer));
 			}
 		}
 		this.clearPlacer();
+
+		// re-enable onMapChange
+		this.onMapChange = old_onMapChange;
 	}
 
 	this.stage = new this.konva.Stage({

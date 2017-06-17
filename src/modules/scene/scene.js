@@ -1,3 +1,5 @@
+const MAP_SAVE_TIME = 500;
+
 var scene_uuid;
 var scene_prop;
 
@@ -57,9 +59,6 @@ exports.libraryAdd = function(uuid, name) {
 	}
 }
 
-exports.onClose = function(uuid, properties) {
-}
-
 function mapSave(){
 	if (map) {
 		scene_prop.map_data = b_util.compress(map.export());
@@ -68,6 +67,7 @@ function mapSave(){
 
 var win_sel;
 var map;
+var mapSaveTimeout;
 
 exports.onDblClick = function(uuid, properties) {
 	scene_uuid = uuid;
@@ -114,7 +114,11 @@ exports.onDblClick = function(uuid, properties) {
 	map = nwPLUGINS['map_editor'].init({
 		id: "main-editor",
 		loadData: b_util.decompress(scene_prop.map_data),
-		onLayerChange: layerChange
+		onLayerChange: layerChange,
+		onMapChange: function() {
+			clearTimeout(mapSaveTimeout);
+			mapSaveTimeout = setTimeout(mapSave, MAP_SAVE_TIME)
+		}
 	});
 
 	// make sidebar resizable
@@ -225,6 +229,14 @@ function catSelectChange(value) {
 
 }
 
+function updateObj(uuid, new_options){
+	map.updateObject("uuid", uuid, new_options);
+}
+
+function cleanIconOption(icon) {
+	return nwPATH.basename(icon, nwPATH.extname(icon));
+}
+
 function objSelectChange(uuid) {
 	// check if uuid is valid
 	if (!(typeof uuid === 'string' || uuid instanceof String))
@@ -239,6 +251,7 @@ function objSelectChange(uuid) {
     blanke.createForm(win_sel + " .sidebar .obj-settings-container", place_settings[category], scene_prop.placeables[uuid],
         function (type, name, value, subcategory) {
         	scene_prop.placeables[uuid][name] = value;
+        	var icon_path = nwPATH.join(__dirname, "images", cleanIconOption(scene_prop.placeables[uuid].icon) + ".png");
 
         	if (category === "entity") {
 		    	map.setPlacer('rect',{
@@ -246,14 +259,26 @@ function objSelectChange(uuid) {
 		    			type: "entity",
 		    			uuid: uuid
 		    		},
-		    		icon: nwPATH.join(__dirname, "images", scene_prop.placeables[uuid]['icon'] + ".png"),
+		    		icon: icon_path,
 		    		color: scene_prop.placeables[uuid]['color'],
 		    		resizable: true
 		    	});
+
+		    	var new_options = scene_prop.placeables[uuid];
+		    	new_options.icon = icon_path;
+
+        		updateObj(uuid, new_options);
     		}
 
         	if (category === "tile") {
         		fillTileSelectorGrid(uuid);
+
+        		/* // UNTESTED
+    			var obj = b_library.getByUUID('image', uuid);
+				var img_path = nwPATH.join(b_project.getResourceFolder('image'), obj.path)
+
+        		updateObj(uuid, {path: img_path});
+        		*/
         	}
 
         	b_project.autoSaveProject();
