@@ -256,8 +256,6 @@ var b_map = function(options) {
 			placeInfo: options
 		};
 
-		console.log(options)
-
 		// TILE
 		if (type === "image") {
 			var path = options.path;
@@ -275,10 +273,11 @@ var b_map = function(options) {
 					width: crop.width,
 					height: crop.height,
 					crop: crop,
-					opacity: 0.5
+					opacity: 0.5,
+					name: "image"
 				});
 
-				_this.placer_img.setAttr("_save", saveData)
+				_this.placer_img.setAttr("_save", saveData);
 
 				if (callback) callback(_this.placer_img.clone().setAttr("_save", saveData));
 				else {
@@ -292,7 +291,9 @@ var b_map = function(options) {
 		if (type === "rect") {
 			if (_this.placer_rect)
 				_this.placer_rect.destroy();
-			_this.placer_rect = new _this.konva.Group();
+			_this.placer_rect = new _this.konva.Group({
+				name: "rect"
+			});
 
 			// icon
 			var placer_img_obj = new Image();
@@ -410,27 +411,41 @@ var b_map = function(options) {
 
     	// prevent placing tiles right on top of each other
 		new_obj.on('mouseup mousemove', function(e){
+			var evt_obj = e.target;
+			var potential_parents = evt_obj.findAncestors("."+_this.curr_place_type, true);
+			if (potential_parents.length > 0)
+				evt_obj = potential_parents[0];
+
+			// can destroy if:
+			// 		correct mouse button
+			//		on MouseUp
+			// 		currenlty editing the same type of object
+
 			if (e.type === 'mouseup' && e.evt.which == 3)
 				destroying = false;
 
 			// placer is placing on a different layer
-			var group = e.target.findAncestors('Group');
-			var layer_name = group[0].id();
+			var group = evt_obj.findAncestors('Group');
+
+			// find the Group that's a layer
+			var id, layer_name;
+			for (var g = 0; g < group.length; g++) {
+				id = group[g].id();
+				if (id !== undefined && id.includes("layer"))
+					layer_name = id;
+			}
 			if (layer_name !== undefined && _this.layerNameToNum(layer_name) === _this.curr_layer) { 
 
-    			//if (type === "image") {
-    				// actually, user is deleting this object
-    				if (e.evt.which == 3 && (e.type === 'mouseup' || (e.type === 'mousemove' && destroying))) {
-    					//if (e.target.className === "Image") {
-    						e.target.destroy();
-    						_this.obj_layer.batchDraw();
-    					//}
-    				} else
-    					e.cancelBubble = true;
+				// actually, user is deleting this object
+				if (e.evt.which == 3 && (e.type === 'mouseup' || (e.type === 'mousemove' && destroying)) && _this.curr_place_type === evt_obj.name()) {
+					evt_obj.destroy();
+					_this.obj_layer.batchDraw();
+				} else
+					e.cancelBubble = true;
 
-    				if (_this.onMapChange)
-						_this.onMapChange();
-    			//}
+				if (_this.onMapChange)
+					_this.onMapChange();
+    			
     		}
 		});
 
