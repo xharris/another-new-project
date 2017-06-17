@@ -19,7 +19,7 @@ var place_settings = {
 					"skull"
 				]
 			},
-			{"type" : "color", "name" : "color", "default" : b_library.getBackColor()}
+			{"type" : "color", "name" : "color", "default" : "#ffffff"}
 		]
 	},
 	"tile": {
@@ -234,7 +234,9 @@ function updateObj(uuid, new_options){
 }
 
 function cleanIconOption(icon) {
-	return nwPATH.basename(icon, nwPATH.extname(icon));
+	var ret = nwPATH.basename(icon, nwPATH.extname(icon));
+	console.log(ret)
+	return ret;
 }
 
 function objSelectChange(uuid) {
@@ -248,42 +250,43 @@ function objSelectChange(uuid) {
 	// load settings form
     if (!scene_prop.placeables[uuid])
         scene_prop.placeables[uuid] = blanke.extractDefaults(place_settings[category]);
-    blanke.createForm(win_sel + " .sidebar .obj-settings-container", place_settings[category], scene_prop.placeables[uuid],
-        function (type, name, value, subcategory) {
-        	scene_prop.placeables[uuid][name] = value;
-        	var icon_path = nwPATH.join(__dirname, "images", cleanIconOption(scene_prop.placeables[uuid].icon) + ".png");
+	    blanke.createForm(win_sel + " .sidebar .obj-settings-container", place_settings[category], scene_prop.placeables[uuid],
+	        function (type, name, value, subcategory) {
+	        	scene_prop.placeables[uuid][name] = value;
+	        	
+	        	if (category === "entity") {
+	        		var icon_path = nwPATH.join(__dirname, "images", cleanIconOption(scene_prop.placeables[uuid].icon) + ".png");
 
-        	if (category === "entity") {
-		    	map.setPlacer('rect',{
-		    		saveInfo: {
-		    			type: "entity",
-		    			uuid: uuid
-		    		},
-		    		icon: icon_path,
-		    		color: scene_prop.placeables[uuid]['color'],
-		    		resizable: true
-		    	});
+			    	map.setPlacer('rect',{
+			    		saveInfo: {
+			    			type: "entity",
+			    			uuid: uuid
+			    		},
+			    		icon: icon_path,
+			    		color: scene_prop.placeables[uuid]['color'],
+			    		resizable: true
+			    	});
 
-		    	var new_options = scene_prop.placeables[uuid];
-		    	new_options.icon = icon_path;
+			    	var new_options = $.extend({}, scene_prop.placeables[uuid]);
+			    	new_options.icon = icon_path;
 
-        		updateObj(uuid, new_options);
-    		}
+	        		updateObj(uuid, new_options);
+	    		}
 
-        	if (category === "tile") {
-        		fillTileSelectorGrid(uuid);
+	        	if (category === "tile") {
+	        		fillTileSelectorGrid(uuid);
 
-        		/* // UNTESTED
-    			var obj = b_library.getByUUID('image', uuid);
-				var img_path = nwPATH.join(b_project.getResourceFolder('image'), obj.path)
+	        		/* // UNTESTED
+	    			var obj = b_library.getByUUID('image', uuid);
+					var img_path = nwPATH.join(b_project.getResourceFolder('image'), obj.path)
 
-        		updateObj(uuid, {path: img_path});
-        		*/
-        	}
+	        		updateObj(uuid, {path: img_path});
+	        		*/
+	        	}
 
-        	b_project.autoSaveProject();
-        }
-    );
+	        	b_project.autoSaveProject();
+	        }
+	    );
 
     // load object editor html
     $(win_sel + " .sidebar .obj-preview").html('');

@@ -482,25 +482,23 @@ var b_map = function(options) {
 
 						// RECT
 						if (obj_save.placeType === "rect") {
-							var rect, icon;
-							var rect_children = node.getChildren().toArray();
-							console.log(rect_children);
-							for (var c = 0; c < rect_children.length; c++) {
-								if (rect_children[c].getClassName() === "Rect") rect = node.children[0];
-								if (rect_children[c].getClassName() === "Image") icon = node.children[1];
-							} 
+							node.getChildren().each(function(sub_node){
+								if (sub_node.getClassName() === "Rect")  {								
+									// change outline color
+									var tween = new Konva.Tween({
+								        node: sub_node,
+								        duration: 0.2,
+								        easing: _this.konva.Easings.EaseOut,
+								        stroke: new_options.color
+								    });
+								    tween.play();
+								}
 
-							// change outline color
-							var tween = new Konva.Tween({
-						        node: rect,
-						        duration: 0.2,
-						        easing: _this.konva.Easings.EaseOut,
-						        stroke: new_options.color
-						    });
-						    tween.play();
-
-						    // change icon image
-						    changeIcon(icon, new_options.icon);
+								if (sub_node.getClassName() === "Image") {
+								    // change icon image
+								    changeIcon(sub_node, new_options.icon);
+								}
+							});
 						}
 
 						// TILE
