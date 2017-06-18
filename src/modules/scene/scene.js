@@ -62,6 +62,7 @@ exports.libraryAdd = function(uuid, name) {
 function mapSave(){
 	if (map) {
 		scene_prop.map_data = b_util.compress(map.export());
+    	b_project.autoSaveProject();
 	}
 }
 

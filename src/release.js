@@ -11,7 +11,7 @@ packager({
 	dir : ".",
 	out : "../releases/",
 	icon : icon,
-	overwrite : true,
+	overwrite : false,
 	asar : {
 		unpackDir : "engines" //"**/{engines}"
 	},

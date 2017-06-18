@@ -95,6 +95,9 @@
   vertical-align: top;
   text-align: center;
 }
+.ui-button .mdi-svg* {
+  transition: all ease-in-out 0.2s;
+}
 .ui-button-sphere {
   -webkit-touch-callout: none;
   /* iOS Safari */
@@ -131,6 +134,9 @@
 .ui-button-sphere .mdi-svg {
   vertical-align: top;
   text-align: center;
+}
+.ui-button-sphere .mdi-svg* {
+  transition: all ease-in-out 0.2s;
 }
 .ui-button-sphere:hover {
   border-radius: 100%;
@@ -172,6 +178,9 @@
 .ui-button-rect .mdi-svg {
   vertical-align: top;
   text-align: center;
+}
+.ui-button-rect .mdi-svg* {
+  transition: all ease-in-out 0.2s;
 }
 .ui-button-rect:hover {
   border-radius: 4px;
@@ -256,6 +265,10 @@
   box-sizing: border-box;
   transition: all ease-in-out 0.2s;
 }
+.ui-checkbox .mdi*,
+.ui-checkbox .mdi-svg* {
+  transition: all ease-in-out 0.2s;
+}
 .ui-checkbox .mdi-svg {
   vertical-align: top;
   text-align: center;
@@ -321,6 +334,10 @@
   padding: 2px;
   background-color: transparent;
   box-sizing: border-box;
+  transition: all ease-in-out 0.2s;
+}
+.ui-checkbox-label .mdi*,
+.ui-checkbox-label .mdi-svg* {
   transition: all ease-in-out 0.2s;
 }
 .ui-checkbox-label .mdi-svg {
@@ -572,6 +589,9 @@ body[project-open="1"] .titlebar {
   vertical-align: top;
   text-align: center;
 }
+.titlebar .actionbuttons button .mdi-svg* {
+  transition: all ease-in-out 0.2s;
+}
 .titlebar .actionbuttons button:hover {
   border-radius: 100%;
 }
@@ -615,6 +635,9 @@ body[project-open="1"] .titlebar {
 .titlebar .gamebuttons button .mdi-svg {
   vertical-align: top;
   text-align: center;
+}
+.titlebar .gamebuttons button .mdi-svg* {
+  transition: all ease-in-out 0.2s;
 }
 .titlebar .gamebuttons button:hover {
   border-radius: 100%;
@@ -662,6 +685,9 @@ body[project-open="1"] .titlebar {
 .titlebar .titlebuttons button .mdi-svg {
   vertical-align: top;
   text-align: center;
+}
+.titlebar .titlebuttons button .mdi-svg* {
+  transition: all ease-in-out 0.2s;
 }
 .titlebar .titlebuttons button:hover {
   border-radius: 100%;
@@ -765,6 +791,9 @@ body[project-open="1"] .library {
 .library .actions button .mdi-svg {
   vertical-align: top;
   text-align: center;
+}
+.library .actions button .mdi-svg* {
+  transition: all ease-in-out 0.2s;
 }
 .library .actions button:hover {
   border-radius: 100%;
@@ -962,6 +991,10 @@ body[project-open="1"] .library {
   vertical-align: top;
   text-align: center;
 }
+.library .object-tree .folder .btn-delete-obj .mdi-svg*,
+.library .object-tree .object .btn-delete-obj .mdi-svg* {
+  transition: all ease-in-out 0.2s;
+}
 .library .object-tree .folder .btn-delete-obj:hover,
 .library .object-tree .object .btn-delete-obj:hover {
   border-radius: 100%;
@@ -1072,6 +1105,9 @@ body[project-open="1"] .library {
   vertical-align: top;
   text-align: center;
 }
+.ui-settings .categories .category .mdi-svg* {
+  transition: all ease-in-out 0.2s;
+}
 .ui-settings .categories .category:hover {
   border-radius: 4px;
   background-color: #e0e0e0;
@@ -1120,6 +1156,9 @@ body[project-open="1"] .library {
 .ui-settings .categories .btn-close .mdi-svg {
   vertical-align: top;
   text-align: center;
+}
+.ui-settings .categories .btn-close .mdi-svg* {
+  transition: all ease-in-out 0.2s;
 }
 .ui-settings .categories .btn-close:hover {
   border-radius: 4px;
@@ -1263,6 +1302,9 @@ body[project-open="1"] .library {
 .console > div > .btn-close .mdi-svg {
   vertical-align: top;
   text-align: center;
+}
+.console > div > .btn-close .mdi-svg* {
+  transition: all ease-in-out 0.2s;
 }
 .console > div > .btn-close:hover {
   border-radius: 100%;

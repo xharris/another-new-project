@@ -31,7 +31,7 @@ function npm_install_recursive(folder)
         npm_install(folder)
     }
 
-    for (let subfolder of subfolders(folder))
+    for (var subfolder of subfolders(folder))
     {
         npm_install_recursive(subfolder)
     }

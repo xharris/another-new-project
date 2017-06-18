@@ -1,3 +1,5 @@
+var save_timeout;
+
 var b_project = {
 	bip_path: '',
 	curr_project: '', // path to current project folder
