@@ -10,7 +10,7 @@
   "license": "CC-BY-NC-SA-4.0",
   "scripts": {
     "start": "grunt && electron . --dev",
-    "asar": "asar pack \"../src\" \"../releases/BlankE-win32-x64/resources/app.asar\" --unpack-dir \"**/{engines}\"",
+    "asar": "asar pack \"../src\" \"../releases/BlankE-win32-x64/resources/app.asar\" --unpack-dir \"**/{engines}/**\"",
     "clean_modules": "npm prune --production",
     "setup": "node setup.js",
     "release": "grunt && node release.js",
@@ -18,7 +18,7 @@
   },
   "webkit": {
     "plugin": true
-  },
+  }, 
   "dependencies": {
     "codemirror": "^5.25.0",
     "cryptr": "^2.0.0",

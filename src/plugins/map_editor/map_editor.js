@@ -438,14 +438,14 @@ var b_map = function(options) {
 
 				// actually, user is deleting this object
 				if (e.evt.which == 3 && (e.type === 'mouseup' || (e.type === 'mousemove' && destroying)) && _this.curr_place_type === evt_obj.name()) {
+					_this._clearLastPlace();
 					evt_obj.destroy();
 					_this.obj_layer.batchDraw();
+
+					if (_this.onMapChange)
+						_this.onMapChange();
 				} else
 					e.cancelBubble = true;
-
-				if (_this.onMapChange)
-					_this.onMapChange();
-    			
     		}
 		});
 

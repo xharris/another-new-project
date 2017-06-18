@@ -49,14 +49,15 @@ $(function(){
     nwCHILD      = require('child_process');
     nwOS         = require('os');
     nwNET        = require('net');
-    nwMAC        = require("getmac");
     nwMKDIRP     = require("mkdirp");
     nwLESS       = require("less");
     nwFILEX      = require("fs-extra");
     nwOPEN       = require("open");
     nwREPLACE    = require('replace-in-file');
-    nwCRYPT      = require("cryptr");
     nwDECOMP     = require('decompress');
+
+    nwMAC        = require("getmac");
+    nwCRYPT      = require("cryptr");
 
     eIPC         = require('electron').ipcRenderer;
     eREMOTE      = require('electron').remote;

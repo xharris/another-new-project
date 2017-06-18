@@ -91,7 +91,7 @@
   vertical-align: top;
   text-align: center;
 }
-.ui-button .mdi-svg* {
+.ui-button .mdi-svg * {
   transition: all ease-in-out 0.2s;
 }
 .ui-button-sphere {
@@ -131,7 +131,7 @@
   vertical-align: top;
   text-align: center;
 }
-.ui-button-sphere .mdi-svg* {
+.ui-button-sphere .mdi-svg * {
   transition: all ease-in-out 0.2s;
 }
 .ui-button-sphere:hover {
@@ -175,7 +175,7 @@
   vertical-align: top;
   text-align: center;
 }
-.ui-button-rect .mdi-svg* {
+.ui-button-rect .mdi-svg * {
   transition: all ease-in-out 0.2s;
 }
 .ui-button-rect:hover {

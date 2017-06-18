@@ -11,9 +11,9 @@ packager({
 	dir : ".",
 	out : "../releases/",
 	icon : icon,
-	overwrite : false,
+	overwrite : true, //false,
 	asar : {
-		unpackDir : "engines" //"**/{engines}"
+		unpackDir : "engines"//"**/{engines}/**/*"
 	},
 	electronVersion : "1.7.2",
 	appCategoryType : "public.app-category.developer-tools"

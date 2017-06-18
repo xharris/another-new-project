@@ -95,7 +95,7 @@
   vertical-align: top;
   text-align: center;
 }
-.ui-button .mdi-svg* {
+.ui-button .mdi-svg * {
   transition: all ease-in-out 0.2s;
 }
 .ui-button-sphere {
@@ -135,7 +135,7 @@
   vertical-align: top;
   text-align: center;
 }
-.ui-button-sphere .mdi-svg* {
+.ui-button-sphere .mdi-svg * {
   transition: all ease-in-out 0.2s;
 }
 .ui-button-sphere:hover {
@@ -179,7 +179,7 @@
   vertical-align: top;
   text-align: center;
 }
-.ui-button-rect .mdi-svg* {
+.ui-button-rect .mdi-svg * {
   transition: all ease-in-out 0.2s;
 }
 .ui-button-rect:hover {
@@ -589,7 +589,7 @@ body[project-open="1"] .titlebar {
   vertical-align: top;
   text-align: center;
 }
-.titlebar .actionbuttons button .mdi-svg* {
+.titlebar .actionbuttons button .mdi-svg * {
   transition: all ease-in-out 0.2s;
 }
 .titlebar .actionbuttons button:hover {
@@ -636,7 +636,7 @@ body[project-open="1"] .titlebar {
   vertical-align: top;
   text-align: center;
 }
-.titlebar .gamebuttons button .mdi-svg* {
+.titlebar .gamebuttons button .mdi-svg * {
   transition: all ease-in-out 0.2s;
 }
 .titlebar .gamebuttons button:hover {
@@ -686,7 +686,7 @@ body[project-open="1"] .titlebar {
   vertical-align: top;
   text-align: center;
 }
-.titlebar .titlebuttons button .mdi-svg* {
+.titlebar .titlebuttons button .mdi-svg * {
   transition: all ease-in-out 0.2s;
 }
 .titlebar .titlebuttons button:hover {
@@ -792,7 +792,7 @@ body[project-open="1"] .library {
   vertical-align: top;
   text-align: center;
 }
-.library .actions button .mdi-svg* {
+.library .actions button .mdi-svg * {
   transition: all ease-in-out 0.2s;
 }
 .library .actions button:hover {
@@ -991,8 +991,8 @@ body[project-open="1"] .library {
   vertical-align: top;
   text-align: center;
 }
-.library .object-tree .folder .btn-delete-obj .mdi-svg*,
-.library .object-tree .object .btn-delete-obj .mdi-svg* {
+.library .object-tree .folder .btn-delete-obj .mdi-svg *,
+.library .object-tree .object .btn-delete-obj .mdi-svg * {
   transition: all ease-in-out 0.2s;
 }
 .library .object-tree .folder .btn-delete-obj:hover,
@@ -1105,7 +1105,7 @@ body[project-open="1"] .library {
   vertical-align: top;
   text-align: center;
 }
-.ui-settings .categories .category .mdi-svg* {
+.ui-settings .categories .category .mdi-svg * {
   transition: all ease-in-out 0.2s;
 }
 .ui-settings .categories .category:hover {
@@ -1157,7 +1157,7 @@ body[project-open="1"] .library {
   vertical-align: top;
   text-align: center;
 }
-.ui-settings .categories .btn-close .mdi-svg* {
+.ui-settings .categories .btn-close .mdi-svg * {
   transition: all ease-in-out 0.2s;
 }
 .ui-settings .categories .btn-close:hover {
@@ -1303,7 +1303,7 @@ body[project-open="1"] .library {
   vertical-align: top;
   text-align: center;
 }
-.console > div > .btn-close .mdi-svg* {
+.console > div > .btn-close .mdi-svg * {
   transition: all ease-in-out 0.2s;
 }
 .console > div > .btn-close:hover {
