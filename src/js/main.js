@@ -88,24 +88,19 @@ $(function(){
     // title bar buttons
     $(".titlebar .actionbuttons .btn-newproject").on("click", function() {
         const menu = new eMENU();
-        for (var m = 0; m < engine_names.length; m++) {
-            menu.append(new eMENUITEM({label: engine_names[m], click(item, focusedWindow) {
-                eDIALOG.showSaveDialog(
-                    {
-                        title: "save new project",
-                        defaultPath: "new_project.bip",
-                        filters: [{name: 'BlankE IDE project', extensions: ['bip']}]
-                    },
-                    function (path) {
-                        if (path) {
-                            b_project.newProject(path, item.label);
-                        }
-                    }
-                );
 
-            }}))
+        if (engine_names.length > 1) {    
+            for (var m = 0; m < engine_names.length; m++) {
+                menu.append(new eMENUITEM({label: engine_names[m], click(item, focusedWindow) {
+                    newProjectDialog(item.label);
+                }}))
+            }
+            menu.popup(eREMOTE.getCurrentWindow());
         }
-        menu.popup(eREMOTE.getCurrentWindow());
+        // only one engine available
+        else {
+            newProjectDialog(engine_names[0]);
+        }
     });
 
     $(".titlebar .actionbuttons .btn-saveproject").on("click", function() {
@@ -501,6 +496,21 @@ function lib_objectRename(e) {
 
 
     b_library.saveTree();
+}
+
+function newProjectDialog(engine) {
+    eDIALOG.showSaveDialog(
+        {
+            title: "save new project",
+            defaultPath: "new_project.bip",
+            filters: [{name: 'BlankE IDE project', extensions: ['bip']}]
+        },
+        function (path) {
+            if (path) {
+                b_project.newProject(path, item.label);
+            }
+        }
+    );
 }
 
 function refreshModuleMenu() {
