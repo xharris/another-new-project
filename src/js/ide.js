@@ -32,9 +32,15 @@ var b_ide = {
 		$("body").attr(key, value);
 	},
 
+	setWorkspace: function(type, html) {
+		$("#workspace").addClass(type)
+		$("#workspace").html(html);
+		return "#workspace." + type;
+	},
+
 	clearWorkspace: function() {
-        //$(".workspace").empty();
-        //$(".workspace")[0].className = "workspace";
+        $("#workspace").empty();
+        $("#workspace")[0].className = "";
 	},
 
 	setTitle: function(title) {

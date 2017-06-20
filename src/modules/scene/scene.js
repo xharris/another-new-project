@@ -40,7 +40,7 @@ var place_settings = {
 
 exports.loaded = function() {
 	document.addEventListener('project.open', function(e) {
-		place_settings.entity[""][1].default = b_library.getBackColor();
+		place_settings.entity[""][1].default = b_library.getRandomBackColor();
 	});
 
 	document.addEventListener('ide.close', function(e){
@@ -66,6 +66,23 @@ function mapSave(){
 	}
 }
 
+var curr_category = 'entity';
+var curr_object = {};
+function updateSidebar() {
+	place_settings.entity[""][1].default = b_library.getRandomBackColor();
+
+	// fill in categories
+	fillSelect(win_sel + " .sidebar .in-category", placeables, curr_category);
+	catSelectChange(curr_category);
+
+	if (curr_object[curr_category] !== undefined) {
+		$(win_sel + " .sidebar .in-object option").filter(function() {
+		    return $(this).val() == curr_object[curr_category]; 
+		}).prop('selected', true);
+		objSelectChange(curr_object[curr_category]);
+	}
+}
+
 var win_sel;
 var map;
 var mapSaveTimeout;
@@ -74,19 +91,12 @@ exports.onDblClick = function(uuid, properties) {
 	scene_uuid = uuid;
 	scene_prop = properties;
 
-	win_sel = blanke.createWindow({
-        x: 210, 
-        y: 50,
-        width: 750,
-        height: 475,
-        class: 'scene',
-        title: properties.name,
-        html: ""+
+	var scene_html = ""+
+            "<div id='main-editor'></div>"+ 
             "<div class='sidebar'>"+
             	"<div class='object-container'>"+
             		"<select class='in-category'></select>"+
             		"<select class='in-object'></select>"+
-
             		"<div class='obj-preview'></div>"+
             		"<div class='obj-settings-container'></div>"+
             	"</div>"+
@@ -103,13 +113,23 @@ exports.onDblClick = function(uuid, properties) {
 	            		"<button class='ui-button btn-delete' title='remove current layer'><i class='mdi mdi-minus'></i></button>"+
 	            	"</div>"+
             	"</div>"+
-            "</div>"+
-            "<div id='main-editor'>"+            
-	        "</div>",
+            "</div>"
+    win_sel = b_ide.setWorkspace("scene", scene_html);
+
+	/*
+	win_sel = blanke.createWindow({
+        x: 210, 
+        y: 50,
+        width: 750,
+        height: 475,
+        class: 'scene',
+        title: properties.name,
+        html: scene_html,
 	    onClose: function(){
 	    	mapSave();
 	    }
     });
+    */
 
     // initialize map editor
 	map = nwPLUGINS['map_editor'].init({
@@ -122,14 +142,16 @@ exports.onDblClick = function(uuid, properties) {
 		}
 	});
 
+	document.addEventListener("something.saved", updateSidebar);
+	document.addEventListener("library.add", updateSidebar);
+	document.addEventListener("library.delete", updateSidebar);
+
+	updateSidebar();
+
 	// make sidebar resizable
     $(win_sel + " .sidebar").resizable({
-    	handles: "e"
+    	handles: "w"
 	});
-
-	// fill in categories
-	fillSelect(win_sel + " .sidebar .in-category", placeables, placeables[0]);
-	catSelectChange('entity');
 
 	// event handlers - categories, objects
 	$(win_sel + " .sidebar .in-category").on('change', function(e){
@@ -174,6 +196,10 @@ exports.onDblClick = function(uuid, properties) {
 	$(win_sel + " .sidebar .layer-container .btn-down").on('click', function(){
 		map.moveLayerDown();
 	});
+
+	$(win_sel + " #main-editor").on('mouseenter', function(){
+		map.enableFocusClick();
+	})
 }
 
 function layerChange(e) {
@@ -192,6 +218,7 @@ function catSelectChange(value) {
 	if (!placeables.includes(value))
 		return;
 
+	curr_category = value;
 	var new_cat = value.toLowerCase();
 
 	if (Object.keys(assoc_obj).includes(new_cat)) {
@@ -219,8 +246,9 @@ function catSelectChange(value) {
 		uuids = new_uuids;
 
 		// populate obj select
-		fillSelect(win_sel + " .sidebar .in-object", uuids, uuids[0]);
-		objSelectChange(uuids[0])
+		var curr_obj = ifndef(curr_object[curr_category], uuids[0]);
+		fillSelect(win_sel + " .sidebar .in-object", uuids, curr_obj);
+		objSelectChange(curr_obj);
 
 		// change text values
 		$(win_sel + " .sidebar .in-object").children('option').each(function(i) { 
@@ -245,7 +273,9 @@ function objSelectChange(uuid) {
 	if (!(typeof uuid === 'string' || uuid instanceof String))
 		return;
 
+	curr_object[curr_category] = uuid;	
 	var category = getSelectedCategory();
+
 	map.clearPlacer();
 
 	// load settings form

@@ -2,12 +2,28 @@
 
 @tile-preview-max-height: 200px;
 
-.blanke-window.scene .content {
-	overflow: hidden;
-
+.blanke-window.scene {
 	> * {
 		height: 100%;
 	}
+}
+
+#workspace.scene {
+	> .sidebar {
+		position: absolute;
+		top: 5px;
+		right: 5px;
+		bottom: 5px;
+
+		> .object-container {
+			margin-top: @titlebar-height;
+		}
+	}
+}
+
+.blanke-window.scene .content, #workspace.scene {
+	.no-select();
+	overflow: hidden;
 
 	select:not(.ui-select) {
 		border: none;
@@ -19,10 +35,13 @@
 
 	> .sidebar {
 		width: 160px;
-		float: left;
-		background-color: @overlay-color;
-		box-shadow: @card-shadow;
+		float: right;
 		z-index: 10;
+		pointer-events: none;
+
+		> *{
+			pointer-events: all;
+		}
 
 		> *:not(.ui-resizable-handle) {
 			position: absolute;
@@ -31,12 +50,19 @@
 			padding: 5px;
 			box-sizing: border-box;
 			overflow: auto;
+			background-color: @overlay-color;
+			border-radius: 5px;
+		}
+
+		> .ui-resizable-handle {
+			&:hover {
+				box-shadow: -3px 0px 3px rgba(0, 0, 0, 0.19);
+			}
 		}
 
 		> .object-container {
 			border-bottom: @container-border;
 			top: 0px;
-			bottom: 30px;
 
 			> .in-category {
 				text-transform: uppercase;

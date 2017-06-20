@@ -53,6 +53,8 @@ var b_map = function(options) {
 	// placer: rect
 	this.placer_rect = new this.konva.Group();
 
+	this.focusClick = false;
+
 	this.createGrid = function(width, height) {
 		this.grid_width = width;
 		this.grid_height = height;
@@ -635,6 +637,10 @@ var b_map = function(options) {
 		this.onMapChange = old_onMapChange;
 	}
 
+	this.enableFocusClick = function() {
+		this.focusClick = true;
+	}
+
 	this.stage = new this.konva.Stage({
 		container: _this.sel_id,
 		width: window.screen.availWidth,
@@ -738,16 +744,20 @@ var b_map = function(options) {
 
 	   	// place object
     	if ((e.evt.which == 1) && !in_drag && (e.type === 'mouseup' || (e.type === 'mousemove' && placing))) {
-	    	var pos = _this.getMouseXY();
-	    	var mx = pos.x;
-	    	var my = pos.y;
+    		if (_this.focusClick) {
+    			_this.focusClick = false;
+    		} else {
+		    	var pos = _this.getMouseXY();
+		    	var mx = pos.x;
+		    	var my = pos.y;
 
-	    	var obj;
-	    	switch(_this.curr_place_type) {
-	    		case "image": 	obj = _this.placer_img; break;
-	    		case "rect": 	obj = _this.placer_rect; break;
-	    	}
-	    	_this._placeObj(mx, my, _this.curr_place_type, obj);
+		    	var obj;
+		    	switch(_this.curr_place_type) {
+		    		case "image": 	obj = _this.placer_img; break;
+		    		case "rect": 	obj = _this.placer_rect; break;
+		    	}
+		    	_this._placeObj(mx, my, _this.curr_place_type, obj);
+    		}
 	    }
 
     });

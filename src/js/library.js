@@ -15,6 +15,10 @@ b_library = {
 	},
 
 	randomizeBackColor: function() {
+		b_library.setBackColor(b_library.getRandomBackColor());
+	},
+
+	getRandomBackColor: function() {
 		// (300)       red,      deep purple, indigo,   blue,     cyan,     green,    yellow,   orange,   brown,    grey,      blue grey
 		var colors = ['#e57373','#9575cd',    '#7986cb','#64b5f6','#4dd0e1','#81c784','#fff176','#ffb74d','#a1887f','#bdbdbd','#90a4ae'];
 		
@@ -25,7 +29,8 @@ b_library = {
 		}
 
 		var new_color = colors[Math.floor(Math.random()*colors.length)];
-		b_library.setBackColor(new_color);
+
+		return new_color;
 	},
 
 	reset: function() {
@@ -83,6 +88,8 @@ b_library = {
 	    		"<div class='name'>"+this.objects[type][uuid].name+"</div>"+
 	    	"</div>"
 	    );
+
+	    dispatchEvent('library.add', {uuid: uuid});
 
 	    b_project.setData('library', b_library.objects);
 	    b_library.saveTree();

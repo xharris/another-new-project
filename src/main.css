@@ -1196,6 +1196,13 @@ body[project-open="1"] .library {
 .ui-settings .inputs-container > div {
   margin: 4px 25px;
 }
+#workspace {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+}
 .grid {
   z-index: -100;
   position: absolute;

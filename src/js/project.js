@@ -34,6 +34,7 @@ var b_project = {
 		}
 		
 		refreshModuleMenu();
+		b_ide.clearWorkspace();
 
 		b_console.log("created "+nwPATH.basename(b_project.bip_path));
 
@@ -81,6 +82,7 @@ var b_project = {
 		});
 
         refreshModuleMenu();
+		b_ide.clearWorkspace();
 
 		dispatchEvent('project.open', {path: b_project.bip_path});
 	},
