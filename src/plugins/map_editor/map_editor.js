@@ -79,6 +79,7 @@ var b_map = function(options) {
 			new_line._orientation = "_vertical";
 			new_line._w = (width*this.bold_line_count);
 			new_line._h = (height*this.bold_line_count);
+			new_line.listening(false);
 		   	this.grid_group.add(new_line);
 		}
 		
@@ -98,6 +99,7 @@ var b_map = function(options) {
 			new_line._orientation = "_horizontal";
 			new_line._w = (width*this.bold_line_count);
 			new_line._h = (height*this.bold_line_count);
+			new_line.listening(false);
 		    this.grid_group.add(new_line);
 		}
 		this.grid_layer.add(this.grid_group);
@@ -211,7 +213,7 @@ var b_map = function(options) {
 		var layer = this.getLayer(layer_num);
 
 		if (layer && this.arr_layers.length > 1) {
-			layer.remove();
+			layer.destroy();
 			
 			// move to previous layer
 			var new_layer_index = this.arr_layers.indexOf(layer_num) - 1;
@@ -309,7 +311,8 @@ var b_map = function(options) {
 					width: _this.grid_width,
 					height: _this.grid_height,
 					stroke: options.color,
-					strokeWidth: 2
+					strokeWidth: 2,
+					perfectDrawEnabled: false
 				});
 
 				_this.placer_rect.add(placer_rect);
@@ -818,4 +821,8 @@ var b_map = function(options) {
 	        _this.stage.batchDraw();
 	    }
     });
+
+    $(this.sel_id).on("mousewheel", function(e) {
+    	console.log(e)
+	});
 }
