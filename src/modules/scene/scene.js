@@ -19,7 +19,9 @@ var place_settings = {
 					"skull"
 				]
 			},
-			{"type" : "color", "name" : "color", "default" : "#ffffff"}
+			{"type" : "color", "name" : "color", "default" : "#ffffff"},
+			{"type" : "number", "name" : "width", "default" : 32, "min" : 0, "max" : 1000000},
+			{"type" : "number", "name" : "height", "default" : 32, "min" : 0, "max" : 1000000},
 		]
 	},
 	"tile": {
@@ -287,6 +289,7 @@ function objSelectChange(uuid) {
 	        	
 	        	if (category === "entity") {
 	        		var icon_path = nwPATH.join(__dirname, "images", cleanIconOption(scene_prop.placeables[uuid].icon) + ".png");
+	        		var props = scene_prop.placeables[uuid]
 
 			    	map.setPlacer('rect',{
 			    		saveInfo: {
@@ -294,7 +297,9 @@ function objSelectChange(uuid) {
 			    			uuid: uuid
 			    		},
 			    		icon: icon_path,
-			    		color: scene_prop.placeables[uuid]['color'],
+			    		color: props['color'],
+			    		width: props['width'],
+			    		height: props['height'],
 			    		resizable: true
 			    	});
 

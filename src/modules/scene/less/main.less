@@ -50,8 +50,25 @@
 			padding: 5px;
 			box-sizing: border-box;
 			overflow: auto;
-			background-color: @overlay-color;
 			border-radius: 5px;
+
+			* {
+				color: @overlay-color;
+				background-color: transparent;
+			}
+
+			border: @container-border;
+			background-color: transparent;
+			transition: ease-in-out 0.1s all;
+
+			&:hover {
+				background-color: @overlay-color;
+				box-shadow: @card-shadow;
+
+				* {
+					color: black;
+				}
+			}
 		}
 
 		> .ui-resizable-handle {
@@ -61,7 +78,6 @@
 		}
 
 		> .object-container {
-			border-bottom: @container-border;
 			top: 0px;
 
 			> .in-category {

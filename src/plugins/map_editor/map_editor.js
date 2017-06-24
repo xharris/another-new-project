@@ -6,8 +6,8 @@ exports.init = function(options) {
 }
 
 exports.settings = [
-	{"type" : "number", "name" : "grid w", "default" : 14, "min" : 1, "max" : window.screen.availWidth},
-	{"type" : "number", "name" : "grid h", "default" : 14, "min" : 1, "max" : window.screen.availHeight}
+	{"type" : "number", "name" : "grid w", "default" : 32, "min" : 1, "max" : window.screen.availWidth},
+	{"type" : "number", "name" : "grid h", "default" : 32, "min" : 1, "max" : window.screen.availHeight}
 ]
 
 var b_map = function(options) {
@@ -23,9 +23,12 @@ var b_map = function(options) {
 	this.height = window.screen.availHeight;
 
 	// grid
-	this.grid_width = 32;
-	this.grid_height = 32;
+	this.grid_width = ifndef(b_project.getPluginSetting("map_editor", "grid w"), 32);
+	this.grid_height = ifndef(b_project.getPluginSetting("map_editor", "grid h"), 32);
 	this.bold_line_count = 10;
+
+	this.scaleBy = 1.03;// how much to change scale on wheel
+	this.newScale = 1;	// current scale of stage
 
 	this.camera = {'x':0, 'y':0};
 	this.curr_layer = 0;
@@ -60,18 +63,20 @@ var b_map = function(options) {
 		this.grid_height = height;
 
 		this.grid_group.destroy();
+        this.grid_layer.draw();
 		this.grid_group = new this.konva.Group();
 
 		// vertical lines
 		var grid_color = "#9E9E9E";
-		for (var w = -(width*this.bold_line_count); w < this.width + ((width*this.bold_line_count)*2); w+=width) {
+		for (var grid_w = -this.width; grid_w < this.width*2; grid_w+=width){//for (var w = -(width*this.bold_line_count); w < this.width + ((width*this.bold_line_count)*2); w+=width) {
 			var opacity = 0.15;
-			if ((w) % (width*this.bold_line_count) == 0)
+			var w = grid_w*this.newScale;
+			if ((grid_w) % (width*this.bold_line_count) == 0)
 				opacity = 0.5;
 
 			var new_line = 
 				new Konva.Line({
-					points: [w, 0, w, this.height],
+					points: [w, -this.height, w, this.height],
 					stroke: grid_color,
 					strokeWidth: 1,
 					opacity: opacity
@@ -84,14 +89,15 @@ var b_map = function(options) {
 		}
 		
 		// horizontal lines
-		for (var h = -(width*this.bold_line_count); h < this.height + ((height*this.bold_line_count)*2); h+=height) {
+		for (var grid_h = -this.height; grid_h < this.height*2; grid_h+=height){//for (var h = -(width*this.bold_line_count); h < this.height + ((height*this.bold_line_count)*2); h+=height) {
 			var opacity = 0.25;
-			if ((h) % (height*this.bold_line_count) == 0)
+			var h = grid_h*this.newScale;
+			if ((grid_h) % (height*this.bold_line_count) == 0)
 				opacity = 1;
 
 			var new_line = 
 				new Konva.Line({
-					points: [0, h, this.width, h],
+					points: [-this.width, h, this.width, h],
 					stroke: grid_color,
 					strokeWidth: 1,
 					opacity: opacity
@@ -103,7 +109,7 @@ var b_map = function(options) {
 		    this.grid_group.add(new_line);
 		}
 		this.grid_layer.add(this.grid_group);
-        this.grid_group.draw();
+        this.grid_layer.draw();
 	}
 
 	this._triggerLayerChange = function() {
@@ -308,8 +314,8 @@ var b_map = function(options) {
 				// rect
 				var placer_rect = new _this.konva.Rect({
 					x: 0, y: 0,
-					width: _this.grid_width,
-					height: _this.grid_height,
+					width: options.width,
+					height: options.height,
 					stroke: options.color,
 					strokeWidth: 2,
 					perfectDrawEnabled: false
@@ -321,8 +327,10 @@ var b_map = function(options) {
 					x: _this.grid_width/2,
 					y: _this.grid_height/2,
 					image: placer_img_obj,
-					offsetX: placer_img_obj.width/2,
-					offsetY: placer_img_obj.height/2
+					offsetX: Math.floor(options.width/2),
+					offsetY: options.height/2,
+					width: options.width,
+					height:  options.height
 				});
 
 				_this.placer_rect_img.cache();
@@ -449,8 +457,11 @@ var b_map = function(options) {
 
 					if (_this.onMapChange)
 						_this.onMapChange();
-				} else
-					e.cancelBubble = true;
+				} else {
+					var mouse = _this.getMouseXY();
+					if (last_place.x === mouse.x && last_place.y === mouse.y)
+						e.cancelBubble = true;
+				}
     		}
 		});
 
@@ -509,12 +520,23 @@ var b_map = function(options) {
 								        node: sub_node,
 								        duration: 0.2,
 								        easing: _this.konva.Easings.EaseOut,
-								        stroke: new_options.color
+								        stroke: new_options.color,
+								        width: new_options.width,
+								        height: new_options.height
 								    });
 								    tween.play();
 								}
 
 								if (sub_node.getClassName() === "Image") {
+									// changle icon size
+									var tween = new Konva.Tween({
+								        node: sub_node,
+								        duration: 0.2,
+								        easing: _this.konva.Easings.EaseOut,
+								        width: new_options.width,
+								        height: new_options.height
+								    });
+								    tween.play();
 								    // change icon image
 								    changeIcon(sub_node, new_options.icon);
 								}
@@ -532,8 +554,9 @@ var b_map = function(options) {
 				}
 			}
 		}
+		_this.obj_layer.batchDraw();
 	}
-
+	
 	this.getMouseXY = function(x, y) {
     	var pos = this.stage.getPointerPosition();
     	
@@ -542,15 +565,18 @@ var b_map = function(options) {
     	var signx = Math.sign(mx);
     	var signy = Math.sign(my);
 
-    	mx = Math.abs(mx);
-    	my = Math.abs(my);
+    	//mx = Math.abs(mx);
+    	//my = Math.abs(my);
 
     	// snap to grid
-    	mx -= mx % this.grid_width;
-    	my -= my % this.grid_height;
+    	mx -= (mx % this.grid_width);
+    	my -= (my % this.grid_height);
 
-    	mx *= signx;
-    	my *= signy;
+    	if (mx < 0) mx += this.grid_width;
+    	if (my < 0) my += this.grid_height;
+
+    	//mx *= signx;
+    	//my *= signy;
 
     	return {x:mx, y:my};
 	}
@@ -635,6 +661,7 @@ var b_map = function(options) {
 			}
 		}
 		this.clearPlacer();
+		this.obj_layer.batchDraw();
 
 		// re-enable onMapChange
 		this.onMapChange = old_onMapChange;
@@ -642,6 +669,13 @@ var b_map = function(options) {
 
 	this.enableFocusClick = function() {
 		this.focusClick = true;
+		this.stage.container().style.cursor = 'pointer';
+	}
+
+	this.disableFocusClick = function() {
+    	document.activeElement.blur();
+		this.focusClick = false;
+		this.stage.container().style.cursor = 'default';
 	}
 
 	this.stage = new this.konva.Stage({
@@ -689,10 +723,9 @@ var b_map = function(options) {
     	}
     });
 
-	this.stage.on('dragmove', function(e){
+	this.stage.on('dragmove', function(){
 		_this.camera.x = -_this.stage.getAttr('x');
 		_this.camera.y = -_this.stage.getAttr('y');
-
 		_this.grid_group.getChildren().each(function(line){
 			var pos = line.getAbsolutePosition();
 			var size = [_this.stage.getWidth(), _this.stage.getHeight()];
@@ -748,7 +781,7 @@ var b_map = function(options) {
 	   	// place object
     	if ((e.evt.which == 1) && !in_drag && (e.type === 'mouseup' || (e.type === 'mousemove' && placing))) {
     		if (_this.focusClick) {
-    			_this.focusClick = false;
+    			_this.disableFocusClick();
     		} else {
 		    	var pos = _this.getMouseXY();
 		    	var mx = pos.x;
@@ -790,7 +823,7 @@ var b_map = function(options) {
     this.stage.add(this.obj_layer);
 	this.stage.add(this.grid_layer);
     this.stage.add(this.text_layer);
-	this.createGrid(32, 32);
+	this.createGrid(this.grid_width, this.grid_height);
 
 	this.stage.draggable(false);
 
@@ -800,11 +833,15 @@ var b_map = function(options) {
 	// load any saved data
 	this.import(options.loadData);
 
+	this.refreshScene = function() {
+		this.width = window.screen.availWidth/this.newScale;
+		this.height = window.screen.availHeight/this.newScale;
+		_this.createGrid(this.grid_width, this.grid_height);
+	}
+
 	// zoom in/out
-	this.scaleBy = 1.03;
-	this.newScale = 1;
 	window.addEventListener('wheel', (e) => {
-		if (false) {
+		if (true) {
 	        e.preventDefault();
 	        var oldScale = _this.stage.scaleX();
 	        var mousePointTo = {
@@ -818,11 +855,21 @@ var b_map = function(options) {
 	            y: -(mousePointTo.y - _this.stage.getPointerPosition().y / this.newScale) * this.newScale
 	        };
 	        _this.stage.position(newPos);
+	        _this.refreshScene();
 	        _this.stage.batchDraw();
 	    }
     });
 
     $(this.sel_id).on("mousewheel", function(e) {
     	console.log(e)
+	});
+
+	document.addEventListener('blanke.form.change', function(e) {
+		if (e.detail.name === "grid w" || e.detail.name === "grid h") {
+			if (e.detail.name === "grid w") _this.grid_width = e.detail.value;
+			if (e.detail.name === "grid h") _this.grid_height = e.detail.value;
+
+			_this.createGrid(_this.grid_width, _this.grid_height);
+		}
 	});
 }

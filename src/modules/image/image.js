@@ -48,8 +48,8 @@ exports.onDblClick = function(uuid, properties) {
     var win_sel = blanke.createWindow({
         x: 210, 
         y: 50,
-        width: 550,
-        height: 410,
+        width: 480,
+        height: 310,
         class: 'image',
         title: properties.name,
         html: "<div class='preview-container'>"+

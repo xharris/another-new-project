@@ -1202,6 +1202,7 @@ body[project-open="1"] .library {
   left: 0px;
   right: 0px;
   bottom: 0px;
+  z-index: 0;
 }
 .grid {
   z-index: -100;

@@ -166,9 +166,11 @@ var b_code = function(options) { // sel_id, code_path, fn_saveScript
 
 	document.addEventListener('library.rename', function(e) {
 		if (b_project.getPluginSetting("code_editor", "find/replace on rename")) {
-			// replace in currently open editor if one is open
-			var code = _this.editor.getValue();
-			_this.editor.setValue(code.replaceAll(e.detail.old, e.detail.new));
+			if (_this.editor) {
+				// replace in currently open editor if one is open
+				var code = _this.editor.getValue();
+				_this.editor.setValue(code.replaceAll(e.detail.old, e.detail.new));
+			}
 		}
 	});	
 
