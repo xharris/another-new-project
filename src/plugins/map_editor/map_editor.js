@@ -68,17 +68,21 @@ var b_map = function(options) {
 
 		// vertical lines
 		var grid_color = "#9E9E9E";
-		for (var grid_w = -this.width; grid_w < this.width*2; grid_w+=width){//for (var w = -(width*this.bold_line_count); w < this.width + ((width*this.bold_line_count)*2); w+=width) {
+		for (var grid_w = -(this.width - (this.width & width)); grid_w < this.width*2; grid_w+=width) {//for (var w = -(width*this.bold_line_count); w < this.width + ((width*this.bold_line_count)*2); w+=width) {
 			var opacity = 0.15;
-			var w = grid_w*this.newScale;
+			var strokeWidth = 1;
+			var w = (grid_w)*this.newScale;
 			if ((grid_w) % (width*this.bold_line_count) == 0)
 				opacity = 0.5;
+			if (grid_w == 0) {
+				strokeWidth = 4;
+			}
 
 			var new_line = 
 				new Konva.Line({
 					points: [w, -this.height, w, this.height],
 					stroke: grid_color,
-					strokeWidth: 1,
+					strokeWidth: strokeWidth,
 					opacity: opacity
 			    });
 			new_line._orientation = "_vertical";
@@ -89,17 +93,21 @@ var b_map = function(options) {
 		}
 		
 		// horizontal lines
-		for (var grid_h = -this.height; grid_h < this.height*2; grid_h+=height){//for (var h = -(width*this.bold_line_count); h < this.height + ((height*this.bold_line_count)*2); h+=height) {
-			var opacity = 0.25;
-			var h = grid_h*this.newScale;
+		for (var grid_h = -(this.height - (this.height % height)); grid_h < this.height*2; grid_h+=height) {//for (var h = -(width*this.bold_line_count); h < this.height + ((height*this.bold_line_count)*2); h+=height) {
+			var opacity = 0.15;
+			var strokeWidth = 1;
+			var h = (grid_h)*this.newScale;
 			if ((grid_h) % (height*this.bold_line_count) == 0)
-				opacity = 1;
+				opacity = 0.5;
+			if (grid_h == 0) {
+				strokeWidth = 4;
+			}
 
 			var new_line = 
 				new Konva.Line({
 					points: [-this.width, h, this.width, h],
 					stroke: grid_color,
-					strokeWidth: 1,
+					strokeWidth: strokeWidth,
 					opacity: opacity
 			    });
 			new_line._orientation = "_horizontal";
@@ -422,6 +430,8 @@ var b_map = function(options) {
 		    tween.play();
     	}
 
+    	if (!new_obj) return; // no object placed
+
     	// prevent placing tiles right on top of each other
 		new_obj.on('mouseup mousemove', function(e){
 			var evt_obj = e.target;
@@ -560,8 +570,8 @@ var b_map = function(options) {
 	this.getMouseXY = function(x, y) {
     	var pos = this.stage.getPointerPosition();
     	
-    	var mx = pos.x + _this.camera.x;
-    	var my = pos.y + _this.camera.y;
+    	var mx = pos.x + _this.camera.x *this.newScale;
+    	var my = pos.y + _this.camera.y *this.newScale;
     	var signx = Math.sign(mx);
     	var signy = Math.sign(my);
 
@@ -569,8 +579,8 @@ var b_map = function(options) {
     	//my = Math.abs(my);
 
     	// snap to grid
-    	mx -= (mx % this.grid_width);
-    	my -= (my % this.grid_height);
+    	mx -= (mx % this.grid_width); // * signx;
+    	my -= (my % this.grid_height); // * signy;
 
     	if (mx < 0) mx += this.grid_width;
     	if (my < 0) my += this.grid_height;
@@ -800,15 +810,15 @@ var b_map = function(options) {
 
     this.stage.on('contentMousemove', function(e){
     	var pos = _this.getMouseXY();
-    	var mx = pos.x;
-    	var my = pos.y;
+    	var mx = pos.x/_this.newScale;
+    	var my = pos.y/_this.newScale;
 
     	// move mouse x/y label
     	_this.txt_label.position({
     		x: parseInt(mx - _this.txt_coords.getClientRect().width - 4),
     		y: parseInt(my + 32)
     	});
-    	_this.txt_coords.text(mx + ', ' + my);
+    	_this.txt_coords.text(parseInt(mx) + ', ' + parseInt(my));
     	_this.text_layer.draw();
 
     	// move placer image
@@ -836,12 +846,12 @@ var b_map = function(options) {
 	this.refreshScene = function() {
 		this.width = window.screen.availWidth/this.newScale;
 		this.height = window.screen.availHeight/this.newScale;
-		_this.createGrid(this.grid_width, this.grid_height);
+		//_this.createGrid(this.grid_width, this.grid_height);
 	}
 
 	// zoom in/out
 	window.addEventListener('wheel', (e) => {
-		if (true) {
+		if (false) {
 	        e.preventDefault();
 	        var oldScale = _this.stage.scaleX();
 	        var mousePointTo = {
@@ -855,6 +865,7 @@ var b_map = function(options) {
 	            y: -(mousePointTo.y - _this.stage.getPointerPosition().y / this.newScale) * this.newScale
 	        };
 	        _this.stage.position(newPos);
+    		_this.txt_label.scale({x: 1/this.newScale, y: 1/this.newScale});
 	        _this.refreshScene();
 	        _this.stage.batchDraw();
 	    }

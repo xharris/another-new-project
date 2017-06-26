@@ -228,6 +228,8 @@ function catSelectChange(value) {
 
 		// get objects from this category
 		var objects = {};
+		if (!b_library.objects[obj_type])
+			return;
 		var uuids = Object.keys(b_library.objects[obj_type]);
 		var new_uuids = [];
 
