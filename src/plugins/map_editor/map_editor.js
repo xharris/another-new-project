@@ -56,6 +56,10 @@ var b_map = function(options) {
 	// placer: rect
 	this.placer_rect = new this.konva.Group();
 
+	// placer: polygon
+	this.placer_poly = new this.konva.Line();
+	this.placing_poly = false;
+
 	this.focusClick = false;
 
 	this.createGrid = function(width, height) {
@@ -251,7 +255,7 @@ var b_map = function(options) {
 	// callback is called when the placer is ready to place
 	this.setPlacer = function(type, options, callback) {
 		this.curr_place_type = type;
-
+		
 		this._getPlacerObj(type, options, callback);
 	}
 
@@ -267,6 +271,16 @@ var b_map = function(options) {
 			saveInfo: saveInfo,
 			placeInfo: options
 		};
+
+		function retObj(obj, add_to_layer=false) {
+			obj.setAttr("_save", saveData);
+
+			if (callback) callback(obj.clone().setAttr("_save", saveData));
+			else if(add_to_layer) {
+				_this.placer_layer.add(obj);
+				_this.placer_layer.draw();
+			}
+		}
 
 		// TILE
 		if (type === "image") {
@@ -289,12 +303,7 @@ var b_map = function(options) {
 					name: "image"
 				});
 
-				_this.placer_img.setAttr("_save", saveData);
-
-				if (callback) callback(_this.placer_img.clone().setAttr("_save", saveData));
-				else {
-					_this.placer_layer.add(_this.placer_img);
-				}
+				retObj(_this.placer_img, true);
 			};
 			placer_img_obj.src = path;
 		}
@@ -335,20 +344,26 @@ var b_map = function(options) {
 					height:  options.height
 				});
 
-				_this.placer_rect_img.cache();
-				_this.placer_rect_img.filters([_this.konva.Filters.RGBA]);
+				//_this.placer_rect_img.cache();
+				//_this.placer_rect_img.filters([_this.konva.Filters.RGBA]);
 				_this.placer_rect.add(_this.placer_rect_img);
 
-				_this.placer_rect.setAttr("_save", saveData);
-
-				if (callback) callback(_this.placer_rect.clone().setAttr("_save", saveData));
+				retObj(_this.placer_rect);
 			};
 			placer_img_obj.src = options.icon;
 		}
 
 		// polygon
 		if (type === "polygon") {
-			console.log('hi')
+			_this.placer_poly = new _this.konva.Line({
+				points: [0, 0, 300, 0, 300, 300, 0, 300],
+				fill: options.color,
+				stroke: options.color,
+				strokeWidth: 3,
+				closed: true
+			});
+
+			retObj(_this.placer_poly);
 		}
 	}
 
@@ -426,6 +441,15 @@ var b_map = function(options) {
 		        opacity: 1
 		    });
 		    tween.play();
+    	}
+
+    	if (type === "polygon") {
+    		new_obj = obj.clone({
+    			x: x,
+    			y: y
+    		})
+
+    		transferSettings();
     	}
 
     	// prevent placing tiles right on top of each other
@@ -785,7 +809,10 @@ var b_map = function(options) {
     	}
 
 	   	// place object
-    	if ((e.evt.which == 1) && !in_drag && (e.type === 'mouseup' || (e.type === 'mousemove' && placing))) {
+	   	if (_this.placing_poly && e.type == 'mouseup') {
+
+
+	   	} else if ((e.evt.which == 1) && !in_drag && (e.type === 'mouseup' || (e.type === 'mousemove' && placing))) {
     		if (_this.focusClick) {
     			_this.disableFocusClick();
     		} else {
@@ -797,6 +824,7 @@ var b_map = function(options) {
 		    	switch(_this.curr_place_type) {
 		    		case "image": 	obj = _this.placer_img; break;
 		    		case "rect": 	obj = _this.placer_rect; break;
+		    		case "polygon": 	obj = _this.placer_poly; _this.placing_poly=true; break;
 		    	}
 		    	_this._placeObj(mx, my, _this.curr_place_type, obj);
     		}

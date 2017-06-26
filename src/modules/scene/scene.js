@@ -381,6 +381,8 @@ function objSelectChange(uuid) {
     		},
     		icon: nwPATH.join(__dirname, "images", scene_prop.placeables[uuid]['icon'] + ".png"),
     		color: scene_prop.placeables[uuid]['color'],
+    		width: scene_prop.placeables[uuid]['width'],
+    		height: scene_prop.placeables[uuid]['height'],
     		resizable: true
     	});
     }
