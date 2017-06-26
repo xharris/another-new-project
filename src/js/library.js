@@ -56,16 +56,22 @@ b_library = {
 		$(".library > .constant-items > .item[data-uuid='"+uuid+"']").remove();
 	},
 
-	add: function(type, fromMenu=false, sel=".library .object-tree > .children") {
-	    if (!(type in this.objects)) {
-	    	this.objects[type] = {};
-	    }
+	addNonModule: function(type, data={}) {
+		var new_obj = b_library.add(type, false, '', false);
+		var name = new_obj.name;
+		new_obj = data;
+		new_obj.name = name;
+		return new_obj;
+	},
+
+	add: function(type, fromMenu=false, sel=".library .object-tree > .children", add_to_tree=true) {
+	    this.objects[type] = ifndef(this.objects[type], {});
 
 	    var uuid = guid();
 	    var name = type+Object.keys(this.objects[type]).length;
 
 	    // call module method
-        if (nwMODULES[type].libraryAdd && fromMenu) {
+        if (nwMODULES[type] && nwMODULES[type].libraryAdd && fromMenu) {
 	        this.objects[type][uuid] = nwMODULES[type].libraryAdd(uuid, name);
 	    }
 	    if (this.objects[type][uuid] == 0 && fromMenu) {
@@ -83,16 +89,19 @@ b_library = {
 	    }
 	    this.objects[type][uuid].uuid = uuid;
 
-	    $(sel).append(
-	    	"<div class='object' data-type='" + type + "' data-uuid='" + uuid + "' draggable='true'>"+
-	    		"<div class='name'>"+this.objects[type][uuid].name+"</div>"+
-	    	"</div>"
-	    );
+	    if (add_to_tree) {
+		    $(sel).append(
+		    	"<div class='object' data-type='" + type + "' data-uuid='" + uuid + "' draggable='true'>"+
+		    		"<div class='name'>"+this.objects[type][uuid].name+"</div>"+
+		    	"</div>"
+		    );
+		}
 
 	    dispatchEvent('library.add', {uuid: uuid});
 
 	    b_project.setData('library', b_library.objects);
-	    b_library.saveTree();
+	    if (add_to_tree)
+	    	b_library.saveTree();
 
 	    return this.getByUUID(type, uuid);
 	},
@@ -140,10 +149,11 @@ b_library = {
 		);
 	},
 
-	rename: function(uuid, new_name) {
+	rename: function(uuid, new_name, type) {
 		var sel = ".library .object-tree .object[data-uuid='"+uuid+"']";
 
-		var type = $(sel).data('type');
+		if (!type)
+			var type = $(sel).data('type');
 		var obj = b_library.getByUUID(type, uuid);
 
 		var old_name = obj.name;

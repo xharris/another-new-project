@@ -3,10 +3,11 @@ const MAP_SAVE_TIME = 500;
 var scene_uuid;
 var scene_prop;
 
-var placeables = ["entity", "tile", "collision"];
+var placeables = ["entity", "tile", "hitbox"];
 var assoc_obj = {
 	"entity" : "entity",
-	"tile" : "image"
+	"tile" : "image",
+	"hitbox" : "hitbox"
 }
 
 var place_settings = {
@@ -36,6 +37,12 @@ var place_settings = {
 		"spacing" : [
 			{"type" : "number", "name" : "[spacing]x", "default" : 0, "min" : 0, "max" : 1000000},
 			{"type" : "number", "name" : "[spacing]y", "default" : 0, "min" : 0, "max" : 1000000},
+		]
+	},
+	"hitbox": {
+		"" : [
+			{"type": "text", "name":"name", "default": "hitbox"},
+			{"type":"color", "name":"color", "default":"#ffffff"}
 		]
 	}
 }
@@ -211,6 +218,16 @@ function layerChange(e) {
 	fillSelect(win_sel + " .sidebar .layer-container .in-layer", layer_names, layer_names[e.layers.indexOf(e.current)]);
 }
 
+function addHitboxButton() {
+	$(win_sel + " .sidebar .obj-preview").html("<button id='btn-add' class='ui-button-rect'>add hitbox</button>");
+	
+	$(win_sel + " .sidebar .obj-preview #btn-add").on('click', function(e){
+		var new_hitbox = b_library.addNonModule('hitbox', blanke.extractDefaults(place_settings["hitbox"]));
+		console.log(new_hitbox)
+		updateSidebar();
+	});
+}
+
 function getSelectedCategory() {
 	return $(win_sel + " .sidebar .in-category").val().toLowerCase();
 }
@@ -220,21 +237,24 @@ function catSelectChange(value) {
 	if (!placeables.includes(value))
 		return;
 
+	$(win_sel + " .sidebar .obj-settings-container").html("");
+
 	curr_category = value;
 	var new_cat = value.toLowerCase();
 
 	if (Object.keys(assoc_obj).includes(new_cat)) {
 		var obj_type = assoc_obj[new_cat];
-
-		// get objects from this category
+		var src_objects = ifndef(b_library.objects[obj_type], {});
 		var objects = {};
-		if (!b_library.objects[obj_type])
+
+		if (!src_objects)
 			return;
-		var uuids = Object.keys(b_library.objects[obj_type]);
+
+		var uuids = Object.keys(src_objects);
 		var new_uuids = [];
 
 		for (var l = 0; l < uuids.length; l++) {
-			var obj = b_library.objects[obj_type][uuids[l]]
+			var obj = src_objects[uuids[l]]
 			var can_add = true;
 
 			if (obj_type === "image" && !obj.parameters["use as tileset"]) {
@@ -252,6 +272,11 @@ function catSelectChange(value) {
 		// populate obj select
 		var curr_obj = ifndef(curr_object[curr_category], uuids[0]);
 		fillSelect(win_sel + " .sidebar .in-object", uuids, curr_obj);
+
+		if (curr_category === "hitbox") {
+	    	addHitboxButton();
+	    }
+
 		objSelectChange(curr_obj);
 
 		// change text values
@@ -259,11 +284,10 @@ function catSelectChange(value) {
 		    $(this).html(objects[$(this).val()]);
 		});
 	}
-
 }
 
 function updateObj(uuid, new_options){
-	map.updateObject("uuid", uuid, new_options);
+	map.updateObject("uuid", uuid, $.extend({}, new_options));
 }
 
 function cleanIconOption(icon) {
@@ -283,48 +307,68 @@ function objSelectChange(uuid) {
 	map.clearPlacer();
 
 	// load settings form
-    if (!scene_prop.placeables[uuid])
-        scene_prop.placeables[uuid] = blanke.extractDefaults(place_settings[category]);
-	    blanke.createForm(win_sel + " .sidebar .obj-settings-container", place_settings[category], scene_prop.placeables[uuid],
-	        function (type, name, value, subcategory) {
-	        	scene_prop.placeables[uuid][name] = value;
-	        	
-	        	if (category === "entity") {
-	        		var icon_path = nwPATH.join(__dirname, "images", cleanIconOption(scene_prop.placeables[uuid].icon) + ".png");
-	        		var props = scene_prop.placeables[uuid]
+    scene_prop.placeables[uuid] = ifndef(scene_prop.placeables[uuid], blanke.extractDefaults(place_settings[category]));
+    scene_prop.placeables[uuid].name = ifndef(b_library.getByUUID(assoc_obj[curr_category], uuid).name, scene_prop.placeables[uuid].name); // omg what a mess
 
-			    	map.setPlacer('rect',{
-			    		saveInfo: {
-			    			type: "entity",
-			    			uuid: uuid
-			    		},
-			    		icon: icon_path,
-			    		color: props['color'],
-			    		width: props['width'],
-			    		height: props['height'],
-			    		resizable: true
-			    	});
+    blanke.createForm(win_sel + " .sidebar .obj-settings-container", place_settings[category], scene_prop.placeables[uuid],
+        function (type, name, value, subcategory) {
+        	scene_prop.placeables[uuid][name] = value;
+        	
+        	if (category === "entity") {
+        		var icon_path = nwPATH.join(__dirname, "images", cleanIconOption(scene_prop.placeables[uuid].icon) + ".png");
+        		var props = scene_prop.placeables[uuid]
 
-			    	var new_options = $.extend({}, scene_prop.placeables[uuid]);
-			    	new_options.icon = icon_path;
+		    	map.setPlacer('rect',{
+		    		saveInfo: {
+		    			type: "entity",
+		    			uuid: uuid
+		    		},
+		    		icon: icon_path,
+		    		color: props['color'],
+		    		width: props['width'],
+		    		height: props['height'],
+		    		resizable: true
+		    	});
 
-	        		updateObj(uuid, new_options);
-	    		}
+		    	var new_options = $.extend({}, scene_prop.placeables[uuid]);
+		    	new_options.icon = icon_path;
 
-	        	if (category === "tile") {
-	        		fillTileSelectorGrid(uuid);
+        		updateObj(uuid, new_options);
+    		}
 
-	        		/* // UNTESTED
-	    			var obj = b_library.getByUUID('image', uuid);
-					var img_path = nwPATH.join(b_project.getResourceFolder('image'), obj.path)
+        	if (category === "tile") {
+        		fillTileSelectorGrid(uuid);
 
-	        		updateObj(uuid, {path: img_path});
-	        		*/
-	        	}
+        		/* // UNTESTED
+    			var obj = b_library.getByUUID('image', uuid);
+				var img_path = nwPATH.join(b_project.getResourceFolder('image'), obj.path)
 
-	        	b_project.autoSaveProject();
-	        }
-	    );
+        		updateObj(uuid, {path: img_path});
+        		*/
+        	}
+
+        	if (category === "hitbox") {
+        		var props = scene_prop.placeables[uuid];
+
+        		if (name === "name") {
+        			b_library.rename(uuid, value, "hitbox");
+        		}
+
+        		map.setPlacer('polygon',{
+        			saveInfo: {
+        				type: "hitbox",
+        				uuid: uuid,
+        			},
+        			color: props['color']
+        		});
+
+        		updateSidebar();
+        		updateObj(uuid, props);
+        	}
+
+        	b_project.autoSaveProject();
+        }
+    );
 
     // load object editor html
     $(win_sel + " .sidebar .obj-preview").html('');
@@ -448,6 +492,18 @@ function objSelectChange(uuid) {
 					});
     		}
     	});
+    }
+
+    if (category === "hitbox") {
+    	addHitboxButton();
+
+    	map.setPlacer('polygon',{
+			saveInfo: {
+				type: "hitbox",
+				uuid: uuid,
+			},
+			color: scene_prop.placeables[uuid]['color']
+		});
     }
 }
 

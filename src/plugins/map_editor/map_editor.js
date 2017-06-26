@@ -68,15 +68,12 @@ var b_map = function(options) {
 
 		// vertical lines
 		var grid_color = "#9E9E9E";
-		for (var grid_w = -(this.width - (this.width & width)); grid_w < this.width*2; grid_w+=width) {//for (var w = -(width*this.bold_line_count); w < this.width + ((width*this.bold_line_count)*2); w+=width) {
+		for (var grid_w = -(this.width - (this.width % width)); grid_w < this.width*2; grid_w+=width){
 			var opacity = 0.15;
-			var strokeWidth = 1;
-			var w = (grid_w)*this.newScale;
+			var w = grid_w*this.newScale;
+			var strokeWidth = grid_w == 0 ? 4 : 1;
 			if ((grid_w) % (width*this.bold_line_count) == 0)
-				opacity = 0.5;
-			if (grid_w == 0) {
-				strokeWidth = 4;
-			}
+				opacity = .5;
 
 			var new_line = 
 				new Konva.Line({
@@ -93,15 +90,12 @@ var b_map = function(options) {
 		}
 		
 		// horizontal lines
-		for (var grid_h = -(this.height - (this.height % height)); grid_h < this.height*2; grid_h+=height) {//for (var h = -(width*this.bold_line_count); h < this.height + ((height*this.bold_line_count)*2); h+=height) {
+		for (var grid_h = -(this.height - (this.height % height)); grid_h < this.height*2; grid_h+=height){
 			var opacity = 0.15;
-			var strokeWidth = 1;
-			var h = (grid_h)*this.newScale;
+			var h = grid_h*this.newScale;
+			var strokeWidth = grid_h == 0 ? 4 : 1;
 			if ((grid_h) % (height*this.bold_line_count) == 0)
-				opacity = 0.5;
-			if (grid_h == 0) {
-				strokeWidth = 4;
-			}
+				opacity = .5;
 
 			var new_line = 
 				new Konva.Line({
@@ -353,7 +347,9 @@ var b_map = function(options) {
 		}
 
 		// polygon
-		if (type === "polygon");
+		if (type === "polygon") {
+			console.log('hi')
+		}
 	}
 
 	this.placeObj = function(type, x, y, options, layer) {
@@ -383,6 +379,11 @@ var b_map = function(options) {
 		var obj_layer = _this.getLayer(layer);
 	    var new_obj;	
 
+	    function transferSettings() {
+			new_obj = obj.clone().setAttr("_save", obj.getAttr("_save"));
+			obj_layer.add(new_obj);
+	    }
+
 		if (type === "rect") {
 			obj.x(x);
 			obj.y(y);
@@ -393,9 +394,7 @@ var b_map = function(options) {
 			*/
 
 			// transfer serialization info
-			new_obj = obj.clone().setAttr("_save", obj.getAttr("_save"));
-
-    		obj_layer.add(new_obj);
+			transferSettings()
     	}
 
     	if (type === "image") {
@@ -411,8 +410,7 @@ var b_map = function(options) {
     		});
 
     		// transfer serialization info
-    		new_obj.setAttr("_save", _this.placer_img.getAttr("_save")); 
-			obj_layer.add(new_obj);
+    		transferSettings()
 
     		// cool shrinking animation (a little misaligned)
     		var tween = new Konva.Tween({
@@ -429,8 +427,6 @@ var b_map = function(options) {
 		    });
 		    tween.play();
     	}
-
-    	if (!new_obj) return; // no object placed
 
     	// prevent placing tiles right on top of each other
 		new_obj.on('mouseup mousemove', function(e){
@@ -570,8 +566,8 @@ var b_map = function(options) {
 	this.getMouseXY = function(x, y) {
     	var pos = this.stage.getPointerPosition();
     	
-    	var mx = pos.x + _this.camera.x *this.newScale;
-    	var my = pos.y + _this.camera.y *this.newScale;
+    	var mx = pos.x + _this.camera.x;
+    	var my = pos.y + _this.camera.y;
     	var signx = Math.sign(mx);
     	var signy = Math.sign(my);
 
@@ -579,8 +575,8 @@ var b_map = function(options) {
     	//my = Math.abs(my);
 
     	// snap to grid
-    	mx -= (mx % this.grid_width); // * signx;
-    	my -= (my % this.grid_height); // * signy;
+    	mx -= (mx % this.grid_width);
+    	my -= (my % this.grid_height);
 
     	if (mx < 0) mx += this.grid_width;
     	if (my < 0) my += this.grid_height;
@@ -810,15 +806,15 @@ var b_map = function(options) {
 
     this.stage.on('contentMousemove', function(e){
     	var pos = _this.getMouseXY();
-    	var mx = pos.x/_this.newScale;
-    	var my = pos.y/_this.newScale;
+    	var mx = pos.x;
+    	var my = pos.y;
 
     	// move mouse x/y label
     	_this.txt_label.position({
     		x: parseInt(mx - _this.txt_coords.getClientRect().width - 4),
     		y: parseInt(my + 32)
     	});
-    	_this.txt_coords.text(parseInt(mx) + ', ' + parseInt(my));
+    	_this.txt_coords.text(mx + ', ' + my);
     	_this.text_layer.draw();
 
     	// move placer image
@@ -846,7 +842,7 @@ var b_map = function(options) {
 	this.refreshScene = function() {
 		this.width = window.screen.availWidth/this.newScale;
 		this.height = window.screen.availHeight/this.newScale;
-		//_this.createGrid(this.grid_width, this.grid_height);
+		_this.createGrid(this.grid_width, this.grid_height);
 	}
 
 	// zoom in/out
@@ -865,7 +861,6 @@ var b_map = function(options) {
 	            y: -(mousePointTo.y - _this.stage.getPointerPosition().y / this.newScale) * this.newScale
 	        };
 	        _this.stage.position(newPos);
-    		_this.txt_label.scale({x: 1/this.newScale, y: 1/this.newScale});
 	        _this.refreshScene();
 	        _this.stage.batchDraw();
 	    }
