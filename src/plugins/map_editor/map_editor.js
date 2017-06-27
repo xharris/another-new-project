@@ -59,6 +59,7 @@ var b_map = function(options) {
 	// placer: polygon
 	this.placer_poly = new this.konva.Line();
 	this.placing_poly = false;
+	this.placing_poly_arr = [];
 
 	this.focusClick = false;
 
@@ -255,7 +256,7 @@ var b_map = function(options) {
 	// callback is called when the placer is ready to place
 	this.setPlacer = function(type, options, callback) {
 		this.curr_place_type = type;
-		
+
 		this._getPlacerObj(type, options, callback);
 	}
 
@@ -356,10 +357,11 @@ var b_map = function(options) {
 		// polygon
 		if (type === "polygon") {
 			_this.placer_poly = new _this.konva.Line({
-				points: [0, 0, 300, 0, 300, 300, 0, 300],
+				points: [],
 				fill: options.color,
 				stroke: options.color,
-				strokeWidth: 3,
+				strokeWidth: 1,
+				opacity: 0.5,
 				closed: true
 			});
 
@@ -414,6 +416,7 @@ var b_map = function(options) {
 
     	if (type === "image") {
 	    	var init_scale = 1.5;
+	    	console.log(x, y)
 
     		new_obj = obj.clone({
     			x: x + obj.width()/init_scale,
@@ -445,14 +448,14 @@ var b_map = function(options) {
 
     	if (type === "polygon") {
     		new_obj = obj.clone({
-    			x: x,
-    			y: y
-    		})
-
-    		transferSettings();
+    			points: [x, y]
+    		});
+			transferSettings();
+			_this.placing_poly=new_obj;
     	}
 
     	// prevent placing tiles right on top of each other
+		if (new_obj)
 		new_obj.on('mouseup mousemove', function(e){
 			var evt_obj = e.target;
 			var potential_parents = evt_obj.findAncestors("."+_this.curr_place_type, true);
@@ -809,10 +812,55 @@ var b_map = function(options) {
     	}
 
 	   	// place object
-	   	if (_this.placing_poly && e.type == 'mouseup') {
+	   	if (_this.placing_poly && e.type === "mouseup") {
+	   		if (_this.focusClick) {
+    			_this.disableFocusClick();
+    		} else {
+		   		var pos = _this.getMouseXY();
 
+		   		if (e.evt.which == 1) {
+		   			// prevent layering object on top of each other
+					if (last_place.layer === _this.curr_layer && (last_place.x == pos.x && last_place.y == pos.y))
+						return;
+					last_place.x = pos.x;
+					last_place.y = pos.y;
+					last_place.layer = _this.getLayer(_this.curr_layer);
 
-	   	} else if ((e.evt.which == 1) && !in_drag && (e.type === 'mouseup' || (e.type === 'mousemove' && placing))) {
+					// append point to polygon
+	    			var cur_points = _this.placing_poly.points();
+	    			cur_points.push(pos.x, pos.y);
+	    			_this.placing_poly.points(cur_points);
+	    			var saveData = _this.placing_poly.getAttr("_save")
+
+	    			// add new circle handle
+	    			var new_circ = new _this.konva.Circle({
+	    				x: pos.x,
+	    				y: pos.y,
+	    				radius: 4,
+	    				stroke: saveData.placeInfo.color,
+	    				strokeWidth: 2
+	    			});
+	    			_this.placing_poly_arr.push(new_circ);
+	    			_this.obj_layer.add(new_circ);
+
+	    			_this.obj_layer.draw();
+		   		}
+
+		   		if (e.evt.which == 3 && _this.placing_poly_arr.length >= 2) {
+		   			// remove last set of coordinates
+	    			var cur_points = _this.placing_poly.points();
+	    			cur_points.pop();
+	    			cur_points.pop();
+	    			_this.placing_poly.points(cur_points);
+
+	    			console.log(_this.placing_poly_arr.length)
+	    			_this.placing_poly_arr[_this.placing_poly_arr.length-1].destroy();
+
+	    			_this.obj_layer.draw();
+		   		}
+		   	}
+	   	}
+	   	else if ((e.evt.which == 1) && !in_drag && (e.type === 'mouseup' || (e.type === 'mousemove' && placing))) {
     		if (_this.focusClick) {
     			_this.disableFocusClick();
     		} else {
@@ -824,7 +872,7 @@ var b_map = function(options) {
 		    	switch(_this.curr_place_type) {
 		    		case "image": 	obj = _this.placer_img; break;
 		    		case "rect": 	obj = _this.placer_rect; break;
-		    		case "polygon": 	obj = _this.placer_poly; _this.placing_poly=true; break;
+		    		case "polygon": 	obj = _this.placer_poly; break;
 		    	}
 		    	_this._placeObj(mx, my, _this.curr_place_type, obj);
     		}
