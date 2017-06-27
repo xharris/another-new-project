@@ -366,12 +366,13 @@ var b_map = function(options) {
 		if (type === "polygon") {
 			_this.finishPlacingPoly();
 			_this.placer_poly = new _this.konva.Line({
-				points: [],
+				points: ifndef(options.points, []),
 				fill: options.color,
 				stroke: options.color,
 				strokeWidth: 1,
 				opacity: 0.5,
-				closed: true
+				closed: true,
+				name: "polygon"
 			});
 
 			retObj(_this.placer_poly, true);
@@ -415,7 +416,8 @@ var b_map = function(options) {
 			*/
 
 			// transfer serialization info
-			obj_layer.add(_this.cloneObj(obj));
+			new_obj = _this.cloneObj(obj)
+			obj_layer.add(new_obj);
     	}
 
     	if (type === "image") {
@@ -446,10 +448,9 @@ var b_map = function(options) {
 		    });
     	}
 
+
     	if (type === "polygon" && !_this.placing_poly) {
-    		new_obj = _this.cloneObj(obj, {
-				points: []
-			})
+    		new_obj = _this.cloneObj(obj)
 			obj_layer.add(new_obj);
 			_this.placing_poly=new_obj;
     	}
@@ -480,17 +481,32 @@ var b_map = function(options) {
 				if (id !== undefined && id.includes("layer"))
 					layer_name = id;
 			}
-			//console.log
+
 			if (layer_name !== undefined && _this.layerNameToNum(layer_name) === _this.curr_layer) { 
-
-				// actually, user is deleting this object
+				// actually, user is deleting this object (rework this shit omg)
 				if (e.evt.which == 3 && (e.type === 'mouseup' || (e.type === 'mousemove' && destroying)) && _this.curr_place_type === evt_obj.name()) {
-					_this._clearLastPlace();
-					evt_obj.destroy();
-					_this.obj_layer.batchDraw();
+					if (_this.focusClick) {
+		    			_this.disableFocusClick();
+		    		} else {
+		    			// only delete polygon that is finished being built
+		    			if (_this.curr_place_type !== "polygon" ||
+		    				(_this.curr_place_type === "polygon" && evt_obj._verts)) {
 
-					if (_this.onMapChange)
-						_this.onMapChange();
+		    				if (_this.curr_place_type === "polygon") {
+		    					// delete verts
+		    					for (var v = 0; v < evt_obj._verts.length; v++) {
+		    						evt_obj._verts[v].destroy();
+		    					}
+		    				}
+
+							_this._clearLastPlace();
+							evt_obj.destroy();
+							_this.obj_layer.batchDraw();
+
+							if (_this.onMapChange)
+								_this.onMapChange();
+		    			}
+					}
 				} else {
 					var mouse = _this.getMouseXY();
 					if (last_place.x === mouse.x && last_place.y === mouse.y)
@@ -608,6 +624,29 @@ var b_map = function(options) {
 
 	this.finishPlacingPoly = function(destroy=false) {
 		if (_this.placing_poly) {
+			// check if a valid poly (not a line or single point)
+			var valid = false;
+			var slope;
+
+			function calcSlope(p1, p2) {
+				return (p2.y() - p1.y()) / (p2.x() - p1.x());
+			}
+
+			if (_this.placing_poly_arr.length > 2) {
+				var point1 = _this.placing_poly_arr[0];
+				var point2 = _this.placing_poly_arr[1];
+				slope = calcSlope(point1, point2);
+
+				for (v = 2; v < _this.placing_poly_arr.length; v++) {
+					point2 = _this.placing_poly_arr[v];
+					var new_slope = calcSlope(point1, point2);
+					if (new_slope != slope)
+						valid = true;
+				}
+			}
+			if (!valid)
+				return;
+
 			// add disappearing transition to vertices
 			for (var p = 0; p < _this.placing_poly_arr.length; p++) {
 				var point = _this.placing_poly_arr[p];
@@ -688,6 +727,10 @@ var b_map = function(options) {
 						obj_placeInfo.x = node.x();
 						obj_placeInfo.y = node.y();
 
+						if (node_data.placeType === "polygon") {
+							obj_placeInfo.points = node.points();
+						}
+
 						var obj_save = {
 							"placeType": node_data.placeType,
 							"placeInfo": $.extend({}, obj_placeInfo),
@@ -729,15 +772,6 @@ var b_map = function(options) {
 			var arr_layer = load_data.layers[layer]
 			for (var o = 0; o < arr_layer.length; o++) {
 				var obj = load_data.layers[layer][o];
-
-				/*
-				(function(_obj, _layer){
-					_this._getPlacerObj(_obj.placeType, _obj, function(new_obj){
-						_this._clearLastPlace();
-						_this._placeObj(_obj.placeInfo.x, _obj.placeInfo.y, obj.placeType, new_obj, _this.layerNameToNum(_layer));
-					});
-				})(obj, layer);
-				*/
 
 				this.placeObj(obj.placeType, obj.placeInfo.x, obj.placeInfo.y, obj, this.layerNameToNum(layer));
 			}
