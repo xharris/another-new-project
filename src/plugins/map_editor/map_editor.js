@@ -254,13 +254,17 @@ var b_map = function(options) {
 			this.placer_img.destroy();
 			// rect
 			this.placer_rect.destroy();
+			// polygon
+			this.finishPlacingPoly(true);
+
+			this.curr_place_type = '';
 		}
 	}
 
 	// callback is called when the placer is ready to place
 	this.setPlacer = function(type, options, callback) {
+		this.clearPlacer()
 		this.curr_place_type = type;
-
 		this._getPlacerObj(type, options, callback);
 	}
 
@@ -282,8 +286,8 @@ var b_map = function(options) {
 
 			if (callback) callback(obj.clone().setAttr("_save", saveData));
 			else if(add_to_layer) {
-				_this.placer_layer.add(obj);
-				_this.placer_layer.draw();
+				_this.obj_layer.add(obj);
+				_this.obj_layer.draw();
 			}
 		}
 
@@ -360,6 +364,7 @@ var b_map = function(options) {
 
 		// polygon
 		if (type === "polygon") {
+			_this.finishPlacingPoly();
 			_this.placer_poly = new _this.konva.Line({
 				points: [],
 				fill: options.color,
@@ -369,7 +374,7 @@ var b_map = function(options) {
 				closed: true
 			});
 
-			retObj(_this.placer_poly);
+			retObj(_this.placer_poly, true);
 		}
 	}
 
@@ -428,8 +433,7 @@ var b_map = function(options) {
 			obj_layer.add(new_obj);
 
     		// cool shrinking animation (a little misaligned)
-    		var tween = new Konva.Tween({
-		        node: new_obj,
+    		new_obj.to({
 		        duration: 0.2,
 		        easing: _this.konva.Easings.EaseOut,
 		        x: x,
@@ -440,10 +444,9 @@ var b_map = function(options) {
 		        offsetY: 0,
 		        opacity: 1
 		    });
-		    tween.play();
     	}
 
-    	if (type === "polygon") {
+    	if (type === "polygon" && !_this.placing_poly) {
     		new_obj = _this.cloneObj(obj, {
 				points: []
 			})
@@ -477,6 +480,7 @@ var b_map = function(options) {
 				if (id !== undefined && id.includes("layer"))
 					layer_name = id;
 			}
+			//console.log
 			if (layer_name !== undefined && _this.layerNameToNum(layer_name) === _this.curr_layer) { 
 
 				// actually, user is deleting this object
@@ -546,27 +550,23 @@ var b_map = function(options) {
 							node.getChildren().each(function(sub_node){
 								if (sub_node.getClassName() === "Rect")  {								
 									// change outline color
-									var tween = new Konva.Tween({
-								        node: sub_node,
+									sub_node.to({
 								        duration: 0.2,
 								        easing: _this.konva.Easings.EaseOut,
 								        stroke: new_options.color,
 								        width: new_options.width,
 								        height: new_options.height
 								    });
-								    tween.play();
 								}
 
 								if (sub_node.getClassName() === "Image") {
 									// changle icon size
-									var tween = new Konva.Tween({
-								        node: sub_node,
+									sub_node.to({
 								        duration: 0.2,
 								        easing: _this.konva.Easings.EaseOut,
 								        width: new_options.width,
 								        height: new_options.height
 								    });
-								    tween.play();
 								    // change icon image
 								    changeIcon(sub_node, new_options.icon);
 								}
@@ -575,7 +575,25 @@ var b_map = function(options) {
 
 						// TILE
 						if (obj_save.placeType === "image") {
+							console.log('got one')
+						}
 
+						// POLYGON
+						if (obj_save.placeType === "polygon") {
+							node.to({
+						        duration: 0.2,
+						        easing: _this.konva.Easings.EaseOut,
+						        fill: new_options.color,
+						        stroke: new_options.color
+							});
+							// change vertex color
+							for (var v = 0; v < node._verts.length; v++) {
+								node._verts[v].to({
+							        duration: 0.2,
+							        easing: _this.konva.Easings.EaseOut,
+							        stroke: new_options.color
+								})
+							}
 						}
 					}
 
@@ -584,10 +602,11 @@ var b_map = function(options) {
 				}
 			}
 		}
+
 		_this.obj_layer.batchDraw();
 	}
 
-	this.finishPlacingPoly = function() {
+	this.finishPlacingPoly = function(destroy=false) {
 		if (_this.placing_poly) {
 			// add disappearing transition to vertices
 			for (var p = 0; p < _this.placing_poly_arr.length; p++) {
@@ -599,13 +618,23 @@ var b_map = function(options) {
 					radius: 1.5
 				});
 			}
-			// abandon vertices
+			// transfer vertices
+			var new_poly = _this.cloneObj(_this.placing_poly);
+			new_poly._verts = _this.placing_poly_arr;
+
 			_this.placing_poly_arr = [];
-			
-			// polygon transition
-			_this.getLayer().add(_this.cloneObj(_this.placing_poly));
-    		_this.placing_poly.destroy();
-    		_this.placing_poly = undefined;
+			// polygon clone and tween
+			_this.getLayer().add(new_poly);
+			new_poly.to({
+				opacity: 0.3
+			})
+			// reset placer polygon
+			if (destroy) {
+				_this.placing_poly.destroy();
+				_this.placing_poly = undefined;
+			}
+    		else
+    			_this.placing_poly.points([]);
     		_this.obj_layer.draw();
 		}
 	}
@@ -871,6 +900,7 @@ var b_map = function(options) {
 		   		}
 
 		   		if (e.evt.which == 3 && _this.placing_poly_arr.length > 0) {
+		   			_this._clearLastPlace();
 		   			// remove last set of coordinates
 	    			var cur_points = _this.placing_poly.points();
 	    			cur_points.pop();
