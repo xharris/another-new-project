@@ -244,6 +244,10 @@ var b_map = function(options) {
 		return this.arr_layers;
 	}
 
+	this.cloneObj = function(from_obj, opts={}) {
+		return from_obj.clone(opts).setAttr("_save", from_obj.getAttr("_save"));
+    }
+
 	this.clearPlacer = function(type='') {
 		if (type === '' || type === this.curr_place_type) {
 			// image
@@ -396,11 +400,6 @@ var b_map = function(options) {
 		var obj_layer = _this.getLayer(layer);
 	    var new_obj;	
 
-	    function transferSettings() {
-			new_obj = obj.clone().setAttr("_save", obj.getAttr("_save"));
-			obj_layer.add(new_obj);
-	    }
-
 		if (type === "rect") {
 			obj.x(x);
 			obj.y(y);
@@ -411,24 +410,22 @@ var b_map = function(options) {
 			*/
 
 			// transfer serialization info
-			transferSettings()
+			obj_layer.add(_this.cloneObj(obj));
     	}
 
     	if (type === "image") {
 	    	var init_scale = 1.5;
-	    	console.log(x, y)
 
-    		new_obj = obj.clone({
+    		// transfer serialization info
+    		new_obj = _this.cloneObj(obj, {
     			x: x + obj.width()/init_scale,
     			y: y + obj.height()/init_scale,
     			scaleX: init_scale,
     			scaleY: init_scale,
     			offsetX: obj.width()/init_scale,
     			offsetY: obj.height()/init_scale
-    		});
-
-    		// transfer serialization info
-    		transferSettings()
+    		})
+			obj_layer.add(new_obj);
 
     		// cool shrinking animation (a little misaligned)
     		var tween = new Konva.Tween({
@@ -447,10 +444,10 @@ var b_map = function(options) {
     	}
 
     	if (type === "polygon") {
-    		new_obj = obj.clone({
-    			points: [x, y]
-    		});
-			transferSettings();
+    		new_obj = _this.cloneObj(obj, {
+				points: []
+			})
+			obj_layer.add(new_obj);
 			_this.placing_poly=new_obj;
     	}
 
@@ -588,6 +585,29 @@ var b_map = function(options) {
 			}
 		}
 		_this.obj_layer.batchDraw();
+	}
+
+	this.finishPlacingPoly = function() {
+		if (_this.placing_poly) {
+			// add disappearing transition to vertices
+			for (var p = 0; p < _this.placing_poly_arr.length; p++) {
+				var point = _this.placing_poly_arr[p];
+				point.to({
+					easing: _this.konva.Easings.EaseOut,
+					duration: 0.2,
+					opacity: 0.5,
+					radius: 1.5
+				});
+			}
+			// abandon vertices
+			_this.placing_poly_arr = [];
+			
+			// polygon transition
+			_this.getLayer().add(_this.cloneObj(_this.placing_poly));
+    		_this.placing_poly.destroy();
+    		_this.placing_poly = undefined;
+    		_this.obj_layer.draw();
+		}
 	}
 	
 	this.getMouseXY = function(x, y) {
@@ -754,6 +774,10 @@ var b_map = function(options) {
     		in_drag = false;
     		_this.stage.draggable(false);
     	}
+
+    	if (e.keyCode == 13 || e.keyCode == 27) { // ENTER, ESC
+    		_this.finishPlacingPoly();
+    	}
     });
 
 	this.stage.on('dragmove', function(){
@@ -846,16 +870,15 @@ var b_map = function(options) {
 	    			_this.obj_layer.draw();
 		   		}
 
-		   		if (e.evt.which == 3 && _this.placing_poly_arr.length >= 2) {
+		   		if (e.evt.which == 3 && _this.placing_poly_arr.length > 0) {
 		   			// remove last set of coordinates
 	    			var cur_points = _this.placing_poly.points();
 	    			cur_points.pop();
 	    			cur_points.pop();
 	    			_this.placing_poly.points(cur_points);
 
-	    			console.log(_this.placing_poly_arr.length)
-	    			_this.placing_poly_arr[_this.placing_poly_arr.length-1].destroy();
-
+	    			// remove vertex circle
+	    			_this.placing_poly_arr.pop().destroy();
 	    			_this.obj_layer.draw();
 		   		}
 		   	}

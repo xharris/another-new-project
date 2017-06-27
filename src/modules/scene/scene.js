@@ -159,7 +159,12 @@ exports.onDblClick = function(uuid, properties) {
 
 	// make sidebar resizable
     $(win_sel + " .sidebar").resizable({
-    	handles: "w"
+    	handles: "w",
+    	stop: function(event, ui){
+			$(win_sel + " .sidebar").css({
+				'width': ''
+			})
+		}
 	});
 
 	// event handlers - categories, objects
