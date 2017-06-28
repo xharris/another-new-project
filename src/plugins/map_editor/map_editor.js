@@ -119,6 +119,11 @@ var b_map = function(options) {
         this.grid_layer.draw();
 	}
 
+	this._triggerMapChange = function() {
+		if (this.onMapChange)
+			this.onMapChange();
+	}
+
 	this._triggerLayerChange = function() {
 	    // set opacity of all layers
 	    this.obj_layer.getChildren().each(function(layer){
@@ -135,8 +140,7 @@ var b_map = function(options) {
 			layers: this.arr_layers
 		});
 
-		if (this.onMapChange)
-			this.onMapChange();
+
 	}
 
 	this.setLayer = function(num) {
@@ -375,7 +379,7 @@ var b_map = function(options) {
 				name: "polygon"
 			});
 
-			retObj(_this.placer_poly, true);
+			retObj(_this.placer_poly, false);
 		}
 	}
 
@@ -448,78 +452,88 @@ var b_map = function(options) {
 		    });
     	}
 
-
-    	if (type === "polygon" && !_this.placing_poly) {
+    	if (type === "polygon") {
     		new_obj = _this.cloneObj(obj)
 			obj_layer.add(new_obj);
-			_this.placing_poly=new_obj;
+
+			console.log('lets do this',new_obj.points().length)
+    		if (!_this.placing_poly) {
+    			_this.placing_poly = new_obj;
+
+	    		var points = new_obj.points();
+
+				if (points.length > 2) {
+					for (var p = 0; p < points.length; p+=2) {
+						_this._addPolyCircle(points[p], points[p+1], new_obj.getAttr("_save").placeInfo.color)
+					}
+				}
+				_this.finishPlacingPoly(true);	
+			}
     	}
 
     	// prevent placing tiles right on top of each other
 		if (new_obj)
-		new_obj.on('mouseup mousemove', function(e){
-			var evt_obj = e.target;
-			var potential_parents = evt_obj.findAncestors("."+_this.curr_place_type, true);
-			if (potential_parents.length > 0)
-				evt_obj = potential_parents[0];
+			new_obj.on('mouseup mousemove', function(e){
+				var evt_obj = e.target;
+				var potential_parents = evt_obj.findAncestors("."+_this.curr_place_type, true);
+				if (potential_parents.length > 0)
+					evt_obj = potential_parents[0];
 
-			// can destroy if:
-			// 		correct mouse button
-			//		on MouseUp
-			// 		currenlty editing the same type of object
+				// can destroy if:
+				// 		correct mouse button
+				//		on MouseUp
+				// 		currenlty editing the same type of object
 
-			if (e.type === 'mouseup' && e.evt.which == 3)
-				destroying = false;
+				if (e.type === 'mouseup' && e.evt.which == 3)
+					destroying = false;
 
-			// placer is placing on a different layer
-			var group = evt_obj.findAncestors('Group');
+				// placer is placing on a different layer
+				var group = evt_obj.findAncestors('Group');
 
-			// find the Group that's a layer
-			var id, layer_name;
-			for (var g = 0; g < group.length; g++) {
-				id = group[g].id();
-				if (id !== undefined && id.includes("layer"))
-					layer_name = id;
-			}
-
-			if (layer_name !== undefined && _this.layerNameToNum(layer_name) === _this.curr_layer) { 
-				// actually, user is deleting this object (rework this shit omg)
-				if (e.evt.which == 3 && (e.type === 'mouseup' || (e.type === 'mousemove' && destroying)) && _this.curr_place_type === evt_obj.name()) {
-					if (_this.focusClick) {
-		    			_this.disableFocusClick();
-		    		} else {
-		    			// only delete polygon that is finished being built
-		    			if (_this.curr_place_type !== "polygon" ||
-		    				(_this.curr_place_type === "polygon" && evt_obj._verts)) {
-
-		    				if (_this.curr_place_type === "polygon") {
-		    					// delete verts
-		    					for (var v = 0; v < evt_obj._verts.length; v++) {
-		    						evt_obj._verts[v].destroy();
-		    					}
-		    				}
-
-							_this._clearLastPlace();
-							evt_obj.destroy();
-							_this.obj_layer.batchDraw();
-
-							if (_this.onMapChange)
-								_this.onMapChange();
-		    			}
-					}
-				} else {
-					var mouse = _this.getMouseXY();
-					if (last_place.x === mouse.x && last_place.y === mouse.y)
-						e.cancelBubble = true;
+				// find the Group that's a layer
+				var id, layer_name;
+				for (var g = 0; g < group.length; g++) {
+					id = group[g].id();
+					if (id !== undefined && id.includes("layer"))
+						layer_name = id;
 				}
-    		}
-		});
+
+				if (layer_name !== undefined && _this.layerNameToNum(layer_name) === _this.curr_layer) { 
+					// actually, user is deleting this object (rework this shit omg)
+					if (e.evt.which == 3 && (e.type === 'mouseup' || (e.type === 'mousemove' && destroying)) && _this.curr_place_type === evt_obj.name()) {
+						if (_this.focusClick) {
+			    			_this.disableFocusClick();
+			    		} else {
+			    			// only delete polygon that is finished being built
+			    			if (_this.curr_place_type !== "polygon" ||
+			    				(_this.curr_place_type === "polygon" && evt_obj._verts)) {
+
+			    				if (_this.curr_place_type === "polygon") {
+			    					// delete verts
+			    					for (var v = 0; v < evt_obj._verts.length; v++) {
+			    						evt_obj._verts[v].destroy();
+			    					}
+			    				}
+
+								_this._clearLastPlace();
+								evt_obj.destroy();
+								_this.obj_layer.batchDraw();
+
+								_this._triggerMapChange();
+			    			}
+						}
+					} else {
+						var mouse = _this.getMouseXY();
+						if (last_place.x === mouse.x && last_place.y === mouse.y)
+							e.cancelBubble = true;
+					}
+	    		}
+			});
 
 	   	if (type != '')
 			_this.obj_layer.batchDraw();
 
-		if (_this.onMapChange)
-			_this.onMapChange();
+		_this._triggerMapChange();
 	}
 
 	var updateObjectTimeout;
@@ -647,9 +661,37 @@ var b_map = function(options) {
 			if (!valid)
 				return;
 
+			// flush array
+			var circles = [];
+			var circle_count = _this.placing_poly_arr.length;
+			for (var c = 0; c < circle_count; c++) {
+				circles.push(_this.placing_poly_arr.pop());
+			}
+			// transfer vertices
+			var new_poly = _this.cloneObj(_this.placing_poly);
+			new_poly._verts = circles;
+			// polygon clone and tween
+			_this.getLayer().add(new_poly);
+			new_poly.to({
+				opacity: 0.3
+			})
+
+			// reset placer polygon
+			_this.placing_poly_arr = [];
+			if (destroy) {
+				console.log('decimated')
+				_this.placing_poly.destroy();
+				_this.placing_poly = undefined;
+			}
+			else {
+				console.log('preserved')
+    			_this.placing_poly.points([]);
+			}
+
 			// add disappearing transition to vertices
-			for (var p = 0; p < _this.placing_poly_arr.length; p++) {
-				var point = _this.placing_poly_arr[p];
+			for (var p = 0; p < circles.length; p++) {
+				var point = circles[p];
+				//console.log(point.x(), point.y());
 				point.to({
 					easing: _this.konva.Easings.EaseOut,
 					duration: 0.2,
@@ -657,24 +699,10 @@ var b_map = function(options) {
 					radius: 1.5
 				});
 			}
-			// transfer vertices
-			var new_poly = _this.cloneObj(_this.placing_poly);
-			new_poly._verts = _this.placing_poly_arr;
-
-			_this.placing_poly_arr = [];
-			// polygon clone and tween
-			_this.getLayer().add(new_poly);
-			new_poly.to({
-				opacity: 0.3
-			})
-			// reset placer polygon
-			if (destroy) {
-				_this.placing_poly.destroy();
-				_this.placing_poly = undefined;
-			}
-    		else
-    			_this.placing_poly.points([]);
+			console.log('finalize it')
     		_this.obj_layer.draw();
+
+    		_this._triggerMapChange();
 		}
 	}
 	
@@ -728,7 +756,7 @@ var b_map = function(options) {
 						obj_placeInfo.y = node.y();
 
 						if (node_data.placeType === "polygon") {
-							obj_placeInfo.points = node.points();
+							obj_placeInfo.points = node.points().join(',');
 						}
 
 						var obj_save = {
@@ -772,8 +800,22 @@ var b_map = function(options) {
 			var arr_layer = load_data.layers[layer]
 			for (var o = 0; o < arr_layer.length; o++) {
 				var obj = load_data.layers[layer][o];
+				var valid = true;
 
-				this.placeObj(obj.placeType, obj.placeInfo.x, obj.placeInfo.y, obj, this.layerNameToNum(layer));
+				if (obj.placeType === "polygon") {
+					var points = obj.placeInfo.points.split(',').map(parseFloat);
+					if (points.length > 2){
+						console.log('loaded',points)
+						obj.placeInfo.points = points;
+					}
+					else 
+						valid = false;
+				}
+
+				if (valid) {
+					this._clearLastPlace()
+					this.placeObj(obj.placeType, obj.placeInfo.x, obj.placeInfo.y, obj, this.layerNameToNum(layer));
+				}
 			}
 		}
 		this.clearPlacer();
@@ -888,6 +930,19 @@ var b_map = function(options) {
 		destroying = (e.evt.which == 3)
     });
 
+    this._addPolyCircle = function(x, y, color) {
+    	var new_circ = new this.konva.Circle({
+			x: x,
+			y: y,
+			radius: 4,
+			stroke: color,
+			strokeWidth: 2
+		});
+		this.placing_poly_arr.push(new_circ);
+		this.obj_layer.add(new_circ);
+	    this.obj_layer.draw();
+    }
+
     this.obj_layer.on('mouseup mousemove', function(e){
     	if (e.type === 'mouseup') {
     		if (e.evt.which == 1) {
@@ -920,17 +975,7 @@ var b_map = function(options) {
 	    			var saveData = _this.placing_poly.getAttr("_save")
 
 	    			// add new circle handle
-	    			var new_circ = new _this.konva.Circle({
-	    				x: pos.x,
-	    				y: pos.y,
-	    				radius: 4,
-	    				stroke: saveData.placeInfo.color,
-	    				strokeWidth: 2
-	    			});
-	    			_this.placing_poly_arr.push(new_circ);
-	    			_this.obj_layer.add(new_circ);
-
-	    			_this.obj_layer.draw();
+	    			_this._addPolyCircle(pos.x, pos.y, saveData.placeInfo.color);
 		   		}
 
 		   		if (e.evt.which == 3 && _this.placing_poly_arr.length > 0) {
