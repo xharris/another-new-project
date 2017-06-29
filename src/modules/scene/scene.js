@@ -224,13 +224,31 @@ function layerChange(e) {
 }
 
 function addHitboxButton() {
-	$(win_sel + " .sidebar .obj-preview").html("<button id='btn-add' class='ui-button-rect'>add hitbox</button>");
+	$(win_sel + " .sidebar .obj-preview").html(
+		"<button id='btn-add' class='ui-button-rect'>add</button>"+
+		"<button id='btn-remove' class='ui-button-rect'>remove</button>"
+	);
 	
 	$(win_sel + " .sidebar .obj-preview #btn-add").on('click', function(e){
 		var new_hitbox = b_library.addNonModule('hitbox', blanke.extractDefaults(place_settings["hitbox"]));
-		console.log(new_hitbox)
 		updateSidebar();
 	});
+
+	$(win_sel + " .sidebar .obj-preview #btn-remove").on('click', function(e){
+		var uuid = $(win_sel + " .sidebar .in-object").val();
+		deleteObj('hitbox', uuid)
+	});
+}
+
+function deleteObj(type, uuid) {
+	if (uuid) {
+		curr_object[type] = undefined;
+		scene_prop.placeables[uuid] = undefined;
+		delete scene_prop.placeables[uuid];
+		map.removeObject('uuid', uuid);
+		b_library.delete(uuid, true);
+		catSelectChange(getSelectedCategory());
+	}
 }
 
 function getSelectedCategory() {
@@ -297,7 +315,6 @@ function updateObj(uuid, new_options){
 
 function cleanIconOption(icon) {
 	var ret = nwPATH.basename(icon, nwPATH.extname(icon));
-	console.log(ret)
 	return ret;
 }
 

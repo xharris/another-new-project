@@ -106,7 +106,7 @@ b_library = {
 	    return this.getByUUID(type, uuid);
 	},
 
-	delete: function(uuid) {
+	delete: function(uuid, skip_evt_dispatch=false) {
 		try {
 			delete this.objects[b_library.getTypeByUUID(uuid)][uuid];
 		} catch (e) {}
@@ -116,7 +116,8 @@ b_library = {
 
 	    b_library.saveTree();
 
-		dispatchEvent('library.delete', {uuid: uuid});
+	    if(!skip_evt_dispatch)
+			dispatchEvent('library.delete', {uuid: uuid});
 	},
 
 	getByUUID: function(type, uuid) {

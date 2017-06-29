@@ -368,7 +368,7 @@ var b_map = function(options) {
 
 		// polygon
 		if (type === "polygon") {
-			_this.finishPlacingPoly();
+			_this.finishPlacingPoly(true);
 			_this.placer_poly = new _this.konva.Line({
 				points: ifndef(options.points, []),
 				fill: options.color,
@@ -380,6 +380,11 @@ var b_map = function(options) {
 			});
 
 			retObj(_this.placer_poly, false);
+			if (_this.placing_poly) {
+				_this.placing_poly = _this.cloneObj(_this.placer_poly);
+				_this.obj_layer.add(_this.placing_poly);
+				_this.obj_layer.draw();
+			}
 		}
 	}
 
@@ -456,7 +461,6 @@ var b_map = function(options) {
     		new_obj = _this.cloneObj(obj)
 			obj_layer.add(new_obj);
 
-			console.log('lets do this',new_obj.points().length)
     		if (!_this.placing_poly) {
     			_this.placing_poly = new_obj;
 
@@ -468,67 +472,13 @@ var b_map = function(options) {
 					}
 				}
 				_this.finishPlacingPoly(true);	
-			}
+			} 
     	}
 
     	// prevent placing tiles right on top of each other
-		if (new_obj)
-			new_obj.on('mouseup mousemove', function(e){
-				var evt_obj = e.target;
-				var potential_parents = evt_obj.findAncestors("."+_this.curr_place_type, true);
-				if (potential_parents.length > 0)
-					evt_obj = potential_parents[0];
-
-				// can destroy if:
-				// 		correct mouse button
-				//		on MouseUp
-				// 		currenlty editing the same type of object
-
-				if (e.type === 'mouseup' && e.evt.which == 3)
-					destroying = false;
-
-				// placer is placing on a different layer
-				var group = evt_obj.findAncestors('Group');
-
-				// find the Group that's a layer
-				var id, layer_name;
-				for (var g = 0; g < group.length; g++) {
-					id = group[g].id();
-					if (id !== undefined && id.includes("layer"))
-						layer_name = id;
-				}
-
-				if (layer_name !== undefined && _this.layerNameToNum(layer_name) === _this.curr_layer) { 
-					// actually, user is deleting this object (rework this shit omg)
-					if (e.evt.which == 3 && (e.type === 'mouseup' || (e.type === 'mousemove' && destroying)) && _this.curr_place_type === evt_obj.name()) {
-						if (_this.focusClick) {
-			    			_this.disableFocusClick();
-			    		} else {
-			    			// only delete polygon that is finished being built
-			    			if (_this.curr_place_type !== "polygon" ||
-			    				(_this.curr_place_type === "polygon" && evt_obj._verts)) {
-
-			    				if (_this.curr_place_type === "polygon") {
-			    					// delete verts
-			    					for (var v = 0; v < evt_obj._verts.length; v++) {
-			    						evt_obj._verts[v].destroy();
-			    					}
-			    				}
-
-								_this._clearLastPlace();
-								evt_obj.destroy();
-								_this.obj_layer.batchDraw();
-
-								_this._triggerMapChange();
-			    			}
-						}
-					} else {
-						var mouse = _this.getMouseXY();
-						if (last_place.x === mouse.x && last_place.y === mouse.y)
-							e.cancelBubble = true;
-					}
-	    		}
-			});
+		if (new_obj) {
+			_this.registerObjEvents(new_obj);
+		}
 
 	   	if (type != '')
 			_this.obj_layer.batchDraw();
@@ -556,6 +506,9 @@ var b_map = function(options) {
 			};
 			new_img.src = icon;
 		}
+
+		// change polgyon placer
+		//_this.finishPlacingPoly(true);
 
 		// iterate through layers
 		var layer_num = 0;
@@ -617,13 +570,14 @@ var b_map = function(options) {
 						        stroke: new_options.color
 							});
 							// change vertex color
-							for (var v = 0; v < node._verts.length; v++) {
-								node._verts[v].to({
-							        duration: 0.2,
-							        easing: _this.konva.Easings.EaseOut,
-							        stroke: new_options.color
-								})
-							}
+							if (node._verts)
+								for (var v = 0; v < node._verts.length; v++) {
+									node._verts[v].to({
+								        duration: 0.2,
+								        easing: _this.konva.Easings.EaseOut,
+								        stroke: new_options.color
+									})
+								}
 						}
 					}
 
@@ -634,6 +588,45 @@ var b_map = function(options) {
 		}
 
 		_this.obj_layer.batchDraw();
+	}
+
+	// key/value is from node.saveInfo
+	this.removeObject = function(key, value) {
+		// iterate through layers
+		var layer_num = 0;
+		var layers = _this.obj_layer.getChildren().toArray();
+		for (var l = 0; l < layers.length; l++) {
+			var layer = layers[l];
+			layer_num = layer.id();
+
+			if (layer_num !== undefined) {
+				// iterate through children of the layer
+				var children = layer.getChildren().toArray();
+				var child_len = children.length;
+				for (var c = 0; c < child_len; c++) {
+					var node = children[c];
+					var obj_save = node.getAttr("_save");
+
+					(function(obj, save_data){
+						if (save_data.saveInfo[key] === value) {
+							if (save_data.placeType === "polygon") {
+								var verts = obj._verts.length;
+								for (var c = 0; c < verts; c++) {
+									obj._verts.pop().destroy();
+								}
+							}
+
+							obj.destroy();
+						}
+					})(node, obj_save);
+
+					
+				}
+			}
+		}
+
+		_this.obj_layer.batchDraw();
+		this._triggerMapChange();
 	}
 
 	this.finishPlacingPoly = function(destroy=false) {
@@ -670,8 +663,11 @@ var b_map = function(options) {
 			// transfer vertices
 			var new_poly = _this.cloneObj(_this.placing_poly);
 			new_poly._verts = circles;
+			_this.registerObjEvents(new_poly);
+
 			// polygon clone and tween
 			_this.getLayer().add(new_poly);
+
 			new_poly.to({
 				opacity: 0.3
 			})
@@ -679,19 +675,16 @@ var b_map = function(options) {
 			// reset placer polygon
 			_this.placing_poly_arr = [];
 			if (destroy) {
-				console.log('decimated')
 				_this.placing_poly.destroy();
 				_this.placing_poly = undefined;
 			}
 			else {
-				console.log('preserved')
     			_this.placing_poly.points([]);
 			}
 
 			// add disappearing transition to vertices
 			for (var p = 0; p < circles.length; p++) {
 				var point = circles[p];
-				//console.log(point.x(), point.y());
 				point.to({
 					easing: _this.konva.Easings.EaseOut,
 					duration: 0.2,
@@ -699,11 +692,69 @@ var b_map = function(options) {
 					radius: 1.5
 				});
 			}
-			console.log('finalize it')
     		_this.obj_layer.draw();
 
     		_this._triggerMapChange();
 		}
+	}
+
+	this.registerObjEvents = function(new_obj) {
+			new_obj.on('mouseup mousemove', function(e){
+				var evt_obj = e.target;
+				var potential_parents = evt_obj.findAncestors("."+_this.curr_place_type, true);
+				if (potential_parents.length > 0)
+					evt_obj = potential_parents[0];
+
+				// can destroy if:
+				// 		correct mouse button
+				//		on MouseUp
+				// 		currenlty editing the same type of object
+
+				if (e.type === 'mouseup' && e.evt.which == 3)
+					destroying = false;
+
+				// placer is placing on a different layer
+				var group = evt_obj.findAncestors('Group');
+
+				// find the Group that's a layer
+				var id, layer_name;
+				for (var g = 0; g < group.length; g++) {
+					id = group[g].id();
+					if (id !== undefined && id.includes("layer"))
+						layer_name = id;
+				}
+
+				if (layer_name !== undefined && _this.layerNameToNum(layer_name) === _this.curr_layer) { 
+					// actually, user is deleting this object (rework this shit omg)
+					if (e.evt.which == 3 && (e.type === 'mouseup' || (e.type === 'mousemove' && destroying)) && _this.curr_place_type === evt_obj.name()) {
+						if (_this.focusClick) {
+			    			_this.disableFocusClick();
+			    		} else {
+			    			// only delete polygon that is finished being built
+			    			if (_this.curr_place_type !== "polygon" ||
+			    				(_this.curr_place_type === "polygon" && evt_obj._verts)) {
+
+			    				if (_this.curr_place_type === "polygon") {
+			    					// delete verts
+			    					for (var v = 0; v < evt_obj._verts.length; v++) {
+			    						evt_obj._verts[v].destroy();
+			    					}
+			    				}
+
+								_this._clearLastPlace();
+								evt_obj.destroy();
+								_this.obj_layer.batchDraw();
+
+								_this._triggerMapChange();
+			    			}
+						}
+					} else {
+						var mouse = _this.getMouseXY();
+						if (last_place.x === mouse.x && last_place.y === mouse.y)
+							e.cancelBubble = true;
+					}
+	    		}
+			});
 	}
 	
 	this.getMouseXY = function(x, y) {
@@ -805,7 +856,6 @@ var b_map = function(options) {
 				if (obj.placeType === "polygon") {
 					var points = obj.placeInfo.points.split(',').map(parseFloat);
 					if (points.length > 2){
-						console.log('loaded',points)
 						obj.placeInfo.points = points;
 					}
 					else 
