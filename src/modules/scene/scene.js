@@ -9,6 +9,11 @@ var assoc_obj = {
 	"tile" : "image",
 	"hitbox" : "hitbox"
 }
+var export_assoc = {
+	"rect": "entity",
+	"polygon": "hitbox",
+	"image": "image"
+}
 
 var place_settings = {
 	"entity": {
@@ -26,6 +31,9 @@ var place_settings = {
 		]
 	},
 	"tile": {
+		"" : [
+			{"type": "button", "name": "select all", "shape": "rectangle", "function": "blanke.dispatchEvent('scene.tile_selectAll')"}
+		],
 		"tile size" : [
 			{"type" : "number", "name" : "[tile]width", "default" : 16, "min" : 0, "max" : 1000000},
 			{"type" : "number", "name" : "[tile]height", "default" : 16, "min" : 0, "max" : 1000000}
@@ -59,18 +67,25 @@ exports.loaded = function() {
 	document.addEventListener('project.run', function(e){
 		mapSave();
 	});
+
+	document.addEventListener('scene.tile_selectAll', function(e){
+		tile_selectAll();
+	});
 };
 
 exports.libraryAdd = function(uuid, name) {
 	return {
 		map_data: '',		// elements placed on map and map settings
+		scene_data: '',		// used in building project
 		placeables: {},		// sidebar settings
 	}
 }
 
 function mapSave(){
 	if (map) {
-		scene_prop.map_data = b_util.compress(map.export());
+		var export_data = map.export();
+		scene_prop.map_data = b_util.compress(export_data);
+
     	b_project.autoSaveProject();
 	}
 }
@@ -90,6 +105,39 @@ function updateSidebar() {
 		}).prop('selected', true);
 		objSelectChange(curr_object[curr_category]);
 	}
+}
+
+exports.convertMapToScene = function(uuid) {
+	var scene = b_library.getByUUID('scene',uuid);
+	var map_data = JSON.parse(b_util.decompress(scene.map_data));
+
+	var scene_data = {'layer':{}, 'object':scene.placeables};
+
+	// iterate layers
+	var layers = Object.keys(map_data.layers);
+	for (var l = 0; l < layers.length; l++) {
+		var layer_name = layers[l];
+		var layer = map_data.layers[layer_name];
+
+		scene_data.layer[layer_name] = {}
+		var scene_layer = scene_data.layer[layer_name];
+
+		// iterate elements
+		for (var e = 0; e < layer.length; e++) {
+			var obj = layer[e];
+
+			// save placeInfo
+			if (!scene_layer[obj.placeType])
+				scene_layer[obj.placeType] = [];
+			obj.placeInfo.name = ifndef(obj.placeInfo.name, b_library.getByUUID(export_assoc[obj.placeType], obj.saveInfo.uuid).name);
+			
+			scene_data.object[obj.saveInfo.uuid].name = obj.placeInfo.name;
+
+			scene_layer[obj.placeType].push($.extend({'uuid': obj.saveInfo.uuid},obj.placeInfo));
+		}
+	}
+	
+	return scene_data;
 }
 
 var win_sel;
@@ -139,6 +187,8 @@ exports.onDblClick = function(uuid, properties) {
 	    }
     });
     */
+
+    console.log(JSON.parse(b_util.decompress(scene_prop.map_data)))
 
     // initialize map editor
 	map = nwPLUGINS['map_editor'].init({
@@ -316,6 +366,19 @@ function updateObj(uuid, new_options){
 function cleanIconOption(icon) {
 	var ret = nwPATH.basename(icon, nwPATH.extname(icon));
 	return ret;
+}
+
+
+function tile_selectAll() {
+	if (getSelectedCategory() === "tile") {
+		var img_width = $(win_sel + " .obj-preview > .img-preview").width();
+		var img_height = $(win_sel + " .obj-preview > .img-preview").height();
+		$(win_sel + " .obj-preview > .selection").css({
+			"left": "0px", "top": "0px",
+			"width": img_width+"px", "height": img_height+"px"
+		});
+		$(win_sel + " .tile-selector").trigger('mouseup');
+	}
 }
 
 function objSelectChange(uuid) {
@@ -535,11 +598,17 @@ function fillTileSelectorGrid(uuid) {
 	var props = scene_prop.placeables[uuid];
 
 	// set up tiles html
-	var grid_html = "";
-	var size = ($(win_sel + " .obj-preview > .img-preview").width() * $(win_sel + " .obj-preview > .img-preview").height()) / (props['[tile]width'] * props['[tile]height']);
-	for (var i = 0; i < size; i++) {
-		grid_html += "<div class='grid-tile'></div>";
+	var grid_html = "<table>";
+	var img_width = $(win_sel + " .obj-preview > .img-preview").width();
+	var img_height = $(win_sel + " .obj-preview > .img-preview").height();
+	//var size = (img_width / props['[tile]width']) * (img_height / props['[tile]height']);
+
+	for (var y = -props['[offset]y']; y < img_height; y += props['[tile]height'] + props['[spacing]x']) {
+		for (var x = -props['[offset]x']; x < img_width; x += props['[tile]width'] + props['[spacing]y']) {
+			grid_html += "<td class='grid-tile'></td>";
+		}
 	}
+	grid_html += "</table>";
 
 	// add tiles to container
 	$(win_sel + " .tile-selector").html(grid_html);
@@ -549,9 +618,9 @@ function fillTileSelectorGrid(uuid) {
 		"padding-left": props['[offset]x'] + 'px',
 		"padding-top": props['[offset]y'] + 'px'
 	});
-	$(win_sel + " .tile-selector > .grid-tile").css({
-		"width": props['[tile]width'] + 'px',
-		"height": props['[tile]height'] + 'px',
+	$(win_sel + " .tile-selector .grid-tile").css({
+		"width": props['[tile]width']-2 + 'px',
+		"height": props['[tile]height']-2 + 'px',
 		"margin-right": props['[spacing]x'] + 'px',
 		"margin-top": props['[spacing]y'] + 'px',
 	});

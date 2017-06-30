@@ -260,7 +260,11 @@ var b_map = function(options) {
 			this.placer_rect.destroy();
 			// polygon
 			this.finishPlacingPoly(true);
-
+			if (this.placing_poly) this.placing_poly.destroy();
+			if (this.placer_poly)  this.placer_poly.destroy();
+			this.placing_poly = undefined;
+			this.placer_poly = undefined;
+  
 			this.curr_place_type = '';
 		}
 	}
@@ -270,6 +274,7 @@ var b_map = function(options) {
 		this.clearPlacer()
 		this.curr_place_type = type;
 		this._getPlacerObj(type, options, callback);
+		this.refreshOrdering();
 	}
 
 	this._getPlacerObj = function(type, options, callback) {
@@ -316,7 +321,8 @@ var b_map = function(options) {
 					name: "image"
 				});
 
-				retObj(_this.placer_img, true);
+				retObj(_this.placer_img, false);
+				_this.placer_layer.add(_this.placer_img)
 			};
 			placer_img_obj.src = path;
 		}
@@ -484,6 +490,28 @@ var b_map = function(options) {
 			_this.obj_layer.batchDraw();
 
 		_this._triggerMapChange();
+	}
+
+	this.refreshOrdering = function() {
+		var layer_num = 0;
+		var layers = _this.obj_layer.getChildren().toArray();
+		for (var l = 0; l < layers.length; l++) {
+			var layer = layers[l];
+			layer_num = layer.id();
+
+			if (layer_num !== undefined) {
+				// iterate through children of the layer
+				var children = layer.getChildren().toArray();
+				for (var c = 0; c < children.length; c++) {
+					var node = children[c];
+
+					if (node.name() === _this.curr_place_type) {
+						node.moveToTop();
+					}
+				}
+			}
+		}
+		this.obj_layer.draw();
 	}
 
 	var updateObjectTimeout;
@@ -727,6 +755,7 @@ var b_map = function(options) {
 				if (layer_name !== undefined && _this.layerNameToNum(layer_name) === _this.curr_layer) { 
 					// actually, user is deleting this object (rework this shit omg)
 					if (e.evt.which == 3 && (e.type === 'mouseup' || (e.type === 'mousemove' && destroying)) && _this.curr_place_type === evt_obj.name()) {
+						
 						if (_this.focusClick) {
 			    			_this.disableFocusClick();
 			    		} else {
@@ -870,9 +899,11 @@ var b_map = function(options) {
 		}
 		this.clearPlacer();
 		this.obj_layer.batchDraw();
+		this.placer_layer.draw();
 
 		// re-enable onMapChange
 		this.onMapChange = old_onMapChange;
+		this.refreshOrdering();
 	}
 
 	this.enableFocusClick = function() {
@@ -1001,6 +1032,10 @@ var b_map = function(options) {
     		if (e.evt.which == 3) {
     			destroying = false;
     		}
+    	}
+
+    	if (e.type === 'mousemove' && _this.placer_img && _this.curr_place_type !== "image") {
+    		_this.placer_img.destroy();
     	}
 
 	   	// place object

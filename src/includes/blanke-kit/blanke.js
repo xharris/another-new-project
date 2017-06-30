@@ -44,6 +44,7 @@ function dispatchEvent(ev_name, ev_properties) {
 
 var blanke = {
     _windows: {},
+    dispatchEvent: dispatchEvent,
 
     // possible choices: yes, no (MORE TO COME LATER)
     showModal: function(html_body, choices) {

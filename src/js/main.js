@@ -562,9 +562,9 @@ function importLess(name, file, type='modules') {
     });
 }
 
-function callModuleFn(type, fn_name) {
+function getModuleFn(type, fn_name) {
     if (nwMODULES[type][fn_name]) {
-        nwMODULES[type][fn_name]();
+        return nwMODULES[type][fn_name];
     }
 }
 
