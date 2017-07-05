@@ -188,8 +188,6 @@ exports.onDblClick = function(uuid, properties) {
     });
     */
 
-    console.log(JSON.parse(b_util.decompress(scene_prop.map_data)))
-
     // initialize map editor
 	map = nwPLUGINS['map_editor'].init({
 		id: "main-editor",
