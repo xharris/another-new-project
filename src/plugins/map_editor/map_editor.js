@@ -1,4 +1,5 @@
-var MAP_SAVE_TIME = 250 ;
+var MAP_SAVE_TIME = 250;
+var CACHE_TIME = 10000;
 
 exports.init = function(options) {
 	var new_map = new b_map(options);
@@ -76,7 +77,7 @@ var b_map = function(options) {
 		for (var grid_w = -(this.width - (this.width % width)); grid_w < this.width*2; grid_w+=width){
 			var opacity = 0.15;
 			var w = grid_w*this.newScale;
-			var strokeWidth = grid_w == 0 ? 4 : 1;
+			var strokeWidth = grid_w + this.camera.x == 0 ? 4 : 1;
 			if ((grid_w) % (width*this.bold_line_count) == 0)
 				opacity = .5;
 
@@ -98,7 +99,7 @@ var b_map = function(options) {
 		for (var grid_h = -(this.height - (this.height % height)); grid_h < this.height*2; grid_h+=height){
 			var opacity = 0.15;
 			var h = grid_h*this.newScale;
-			var strokeWidth = grid_h == 0 ? 4 : 1;
+			var strokeWidth = grid_h + this.camera.y == 0 ? 4 : 1;
 			if ((grid_h) % (height*this.bold_line_count) == 0)
 				opacity = .5;
 
@@ -486,8 +487,10 @@ var b_map = function(options) {
 			_this.registerObjEvents(new_obj);
 		}
 
-	   	if (type != '')
+	   	if (type != '') {
 			_this.obj_layer.batchDraw();
+			_this._cache(_this.obj_layer)
+	   	}
 
 		_this._triggerMapChange();
 	}
@@ -891,8 +894,9 @@ var b_map = function(options) {
 						valid = false;
 				}
 
+				clearTimeout(cacheTimeout);
 				if (valid) {
-					this._clearLastPlace()
+					this._clearLastPlace();
 					this.placeObj(obj.placeType, obj.placeInfo.x, obj.placeInfo.y, obj, this.layerNameToNum(layer));
 				}
 			}
@@ -904,6 +908,12 @@ var b_map = function(options) {
 		// re-enable onMapChange
 		this.onMapChange = old_onMapChange;
 		this.refreshOrdering();
+	}
+
+	var cacheTimeout;
+	this._cache = function(layer) {
+		clearTimeout(cacheTimeout);
+		cacheTimeout = setTimeout(function(){layer.children.cache();layer.batchDraw();}, CACHE_TIME);
 	}
 
 	this.enableFocusClick = function() {
