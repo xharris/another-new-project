@@ -919,17 +919,17 @@ var b_map = function(options) {
 
 	this.enableFocusClick = function() {
 		this.focusClick = true;
-		this.stage.container().style.cursor = 'pointer';
+		//this.stage.container().style.cursor = 'pointer';
 	}
 
 	this.disableFocusClick = function() {
     	document.activeElement.blur();
 		this.focusClick = false;
-		this.stage.container().style.cursor = 'default';
+		//this.stage.container().style.cursor = 'default';
 	}
 
 	this.stage = new this.konva.Stage({
-		container: _this.sel_id,
+		container : _this.sel_id,
 		width: window.screen.availWidth,
 		height: window.screen.availHeight,
 		draggable: true

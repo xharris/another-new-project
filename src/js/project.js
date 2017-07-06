@@ -187,6 +187,8 @@ var b_project = {
 	},
 
 	runProject: function() {
+		$(".titlebar .btn-run").blur();
+		b_project.autoSaveProject();
 		dispatchEvent('project.run');
         b_project.getEngine().run(b_library.objects);
 	},
