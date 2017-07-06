@@ -117,6 +117,7 @@ var b_map = function(options) {
 		    this.grid_group.add(new_line);
 		}
 		this.grid_layer.add(this.grid_group);
+		this.grid_layer.children.cache();
         this.grid_layer.draw();
 	}
 
@@ -589,7 +590,7 @@ var b_map = function(options) {
 
 						// TILE
 						if (obj_save.placeType === "image") {
-							console.log('got one')
+							
 						}
 
 						// POLYGON
