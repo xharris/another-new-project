@@ -142,7 +142,7 @@ var b_map = function(options) {
 			layers: this.arr_layers
 		});
 
-
+		this._cache(this.obj_layer)
 	}
 
 	this.setLayer = function(num) {
@@ -264,8 +264,9 @@ var b_map = function(options) {
 			this.finishPlacingPoly(true);
 			if (this.placing_poly) this.placing_poly.destroy();
 			if (this.placer_poly)  this.placer_poly.destroy();
-			this.placing_poly = undefined;
-			this.placer_poly = undefined;
+			this.placer_poly = new this.konva.Line();
+			this.placing_poly = false;
+			this.placing_poly_arr = [];
   
 			this.curr_place_type = '';
 		}
@@ -365,7 +366,6 @@ var b_map = function(options) {
 					height:  options.height
 				});
 
-				//_this.placer_rect_img.cache();
 				//_this.placer_rect_img.filters([_this.konva.Filters.RGBA]);
 				_this.placer_rect.add(_this.placer_rect_img);
 
@@ -428,7 +428,6 @@ var b_map = function(options) {
 			obj.y(y);
 
 			/*
-			this.placer_rect_img.cache();
 			this.placer_rect_img.filters([this.konva.Filters.RGBA]);
 			*/
 
@@ -489,8 +488,7 @@ var b_map = function(options) {
 		}
 
 	   	if (type != '') {
-			_this.obj_layer.batchDraw();
-			_this._cache(_this.obj_layer)
+			_this.obj_layer.draw();
 	   	}
 
 		_this._triggerMapChange();
@@ -888,7 +886,8 @@ var b_map = function(options) {
 
 				if (obj.placeType === "polygon") {
 					var points = obj.placeInfo.points.split(',').map(parseFloat);
-					if (points.length > 2){
+					console.log(points.length)
+					if (points.length >= 6){ // remember points come in pairs
 						obj.placeInfo.points = points;
 					}
 					else 
