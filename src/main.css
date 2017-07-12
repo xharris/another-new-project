@@ -720,12 +720,26 @@ body[project-open="1"] .library {
   bottom: 0px;
   left: 0px;
   height: 100%;
-  background-color: rgba(250, 250, 250, 0.95);
+  background-color: transparent;
+  box-shadow: none;
   z-index: 20;
   overflow: auto;
   padding: 5px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  border-right: rgba(250, 250, 250, 0.95) 1px solid;
   transition: all ease-in-out 0.2s;
+}
+.library * {
+  color: rgba(250, 250, 250, 0.95);
+  fill: rgba(250, 250, 250, 0.95);
+}
+.library:hover {
+  background-color: rgba(250, 250, 250, 0.95);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  border-right: none;
+}
+.library:hover * {
+  color: black;
+  fill: black;
 }
 .library > .ui-resizable-handle {
   right: 0px;
