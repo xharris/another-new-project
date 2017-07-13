@@ -1,7 +1,0 @@
-{
-  "name": "ftp",
-  "main": "ftp.js",
-  "dependencies": {
-    "ssh2": "^0.5.4"
-  }
-}

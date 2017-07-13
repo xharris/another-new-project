@@ -1,7 +1,0 @@
-{
-  "name": "audio",
-  "main": "audio.js",
-  "dependencies": {
-    "howler": "^2.0.3"
-  }
-}
