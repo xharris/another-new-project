@@ -1,10 +1,12 @@
---package.cpath = package.cpath .. ";/usr/local/lib/lua/5.2/?.so"
-require "lfs"
-
+package.cpath = package.cpath .. ";/usr/local/lib/lua/5.2/?.so;/usr/local/lib/lua/5.2/?.dll;./?.dll;./?.so"
 require "settings"
 require "imgui"
 require "includes"
-require "IDE"
+
+require "ide.ui"
+require "ide.helper"
+require "ide.ide"
+require "ide.console"
 
 function love.load()
     BlankE.init(_FIRST_STATE)

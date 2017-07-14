@@ -1,0 +1,5 @@
+CONSOLE = {
+	draw = function()
+
+	end
+}
