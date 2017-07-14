@@ -4,7 +4,7 @@ _GAME_NAME = "blanke"
 
 game_name = _GAME_NAME
 
-
+require "plugins.printr"
 require "plugins.json.json"
 uuid = require("plugins.uuid")
 

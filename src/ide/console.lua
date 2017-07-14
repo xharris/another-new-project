@@ -1,5 +1,5 @@
 CONSOLE = {
 	draw = function()
-
+		
 	end
 }

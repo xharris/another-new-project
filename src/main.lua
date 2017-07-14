@@ -1,5 +1,5 @@
 package.cpath = package.cpath .. ";/usr/local/lib/lua/5.2/?.so;/usr/local/lib/lua/5.2/?.dll;./?.dll;./?.so"
-require "settings"
+
 require "imgui"
 require "includes"
 
@@ -28,9 +28,10 @@ function love.draw()
         imgui.EndMainMenuBar()
     end
 
-    if UI.titlebar.new_project then
-        UI.titlebar.new_project = IDE.newProject()
-    end
+    --checkUI("titlebar.new_project", IDE.newProject)
+    if UI.titlebar.new_project then UI.titlebar.new_project = IDE.newProject() end
+    
+    CONSOLE.draw()
 
     love.graphics.clear(unpack(UI.color.background))
     imgui.Render();
