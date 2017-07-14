@@ -1,3 +1,6 @@
+--package.cpath = package.cpath .. ";/usr/local/lib/lua/5.2/?.so"
+require "lfs"
+
 require "settings"
 require "imgui"
 require "includes"
