@@ -26,7 +26,7 @@ IDE = {
 			_watcher(IDE.current_project..'/', function(file_name)
 				if string.match(file_name, "state") then
 					print('updating '..file_name:gsub('.lua',''))
-					require(file_name:gsub('.lua','')) --IDE.reload()
+					IDE._reload(file_name)--require(file_name:gsub('.lua','')) --IDE.reload()
 					if string.match(file_name, Gamestate.current().classname) then
 						Gamestate.switch(_G[Gamestate.current().classname])
 					end
