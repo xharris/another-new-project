@@ -2,6 +2,7 @@ package.cpath = package.cpath .. ";/usr/local/lib/lua/5.2/?.so;/usr/local/lib/lu
 
 require "imgui"
 require "template.plugins.printr"
+_watcher = require 'watcher'
 
 _FIRST_STATE = nil
 _GAME_NAME = "blanke"
@@ -19,63 +20,13 @@ end
 
 function love.update(dt)
     imgui.NewFrame()
+    IDE.update(dt)
 end
 
 function love.draw()
-    -- Menu
-    if imgui.BeginMainMenuBar() then
-        -- FILE
-        if imgui.BeginMenu("File") then
-            -- project directory
-            status, new_folder = imgui.InputText("",IDE.project_folder,300)
-            if status and new_folder ~= IDE.project_folder then
-                IDE.setProjectFolder(new_folder)
-            end
-            -- available projects in dir
-            if #IDE.project_list > 0 then
-                imgui.BeginChild("project list", 0, 60, true)
-                for p, project in ipairs(IDE.project_list) do
-                    -- chose a project to open?
-                    if imgui.MenuItem(project) then
-                        IDE.openProject(IDE.project_folder..'/'..project)
-                    end
-                end
-                imgui.EndChild()
-            end
-            if IDE.current_project ~= '' then
-                imgui.MenuItem("Save")
-            end
-            imgui.EndMenu()
-        end
-
-        -- ADD OBJECT
-        if IDE.current_project ~= '' and imgui.BeginMenu("Add") then
-            for m, mod in pairs(IDE.modules) do
-                local clicked = imgui.MenuItem(m)
-                if clicked and mod.new then
-                    mod.new()
-                    IDE.refreshAssets()
-                end
-            end
-            imgui.EndMenu()
-        end
-
-        -- DEV
-        if imgui.BeginMenu("Dev") then
-            UI.titlebar.show_dev_tools = imgui.MenuItem("Show dev tools")
-            imgui.EndMenu()
-        end
-        imgui.EndMainMenuBar()
+    if not BlankE or (BlankE and not BlankE._ide_mode) then
+        IDE.draw()
     end
-    
-    --checkUI("titlebar.new_project", IDE.newProject)
-    if UI.titlebar.new_project then UI.titlebar.new_project = IDE.newProject() end
-    if UI.titlebar.show_dev_tools then UI.titlebar.show_dev_tools = imgui.ShowTestWindow(true) end
-
-    CONSOLE.draw()
-
-    love.graphics.clear(unpack(UI.color.background))
-    imgui.Render();
 end
 
 function love.quit()

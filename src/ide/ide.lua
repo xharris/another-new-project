@@ -1,16 +1,101 @@
 local opening_project = false
 
-local lastModified
+function updateTimeout(dt, var)
+	if IDE[var] > 0 then
+		IDE[var] = IDE[var] - dt
+	else
+		IDE[var] = 0
+	end
+end
 
 IDE = {
+	update_timeout = 0,
+	watch_timeout = 0,
+
 	project_folder = 'projects',
 	project_list = {},
 	current_project = '',
 	modules = {},
 
-	load = function()
-		lastModified = os.time()
+	update = function(dt)
+		updateTimeout(dt, 'update_timeout')
+		updateTimeout(dt, 'watch_timeout')
 
+    	if IDE.current_project ~= '' and IDE.watch_timeout == 0 then
+    		IDE.watch_timeout = 3
+			_watcher(IDE.current_project..'/', function(file_name)
+				if string.match(file_name, "state") then
+					print('updating '..file_name:gsub('.lua',''))
+					require(file_name:gsub('.lua','')) --IDE.reload()
+					if string.match(file_name, Gamestate.current().classname) then
+						Gamestate.switch(_G[Gamestate.current().classname])
+					end
+				end
+			end)
+		end
+	end,
+
+	draw = function()
+		love.graphics.setColor(255,255,255)
+	    -- Menu
+	    if imgui.BeginMainMenuBar() then
+	        -- FILE
+	        if imgui.BeginMenu("File") then
+	            -- project directory
+	            status, new_folder = imgui.InputText("",IDE.project_folder,300)
+	            if status and new_folder ~= IDE.project_folder then
+	                IDE.setProjectFolder(new_folder)
+	            end
+	            -- available projects in dir
+	            if #IDE.project_list > 0 then
+	                imgui.BeginChild("project list", 0, 60, true)
+	                for p, project in ipairs(IDE.project_list) do
+	                    -- chose a project to open?
+	                    if imgui.MenuItem(project) then
+	                        IDE.openProject(IDE.project_folder..'/'..project)
+	                    end
+	                end
+	                imgui.EndChild()
+	            end
+	            if IDE.current_project ~= '' then
+	                imgui.MenuItem("Save")
+	            end
+	            imgui.EndMenu()
+	        end
+
+	        -- ADD OBJECT
+	        if IDE.current_project ~= '' and imgui.BeginMenu("Add") then
+	            for m, mod in pairs(IDE.modules) do
+	                local clicked = imgui.MenuItem(m)
+	                if clicked and mod.new then
+	                    mod.new()
+	                    IDE.refreshAssets()
+	                end
+	            end
+	            imgui.EndMenu()
+	        end
+
+	        -- DEV
+	        if imgui.BeginMenu("Dev") then
+	            UI.titlebar.show_dev_tools = imgui.MenuItem("Show dev tools")
+	            imgui.EndMenu()
+	        end
+	        imgui.EndMainMenuBar()
+	    end
+	    
+	    --checkUI("titlebar.new_project", IDE.newProject)
+	    if UI.titlebar.new_project then UI.titlebar.new_project = IDE.newProject() end
+	    if UI.titlebar.show_dev_tools then UI.titlebar.show_dev_tools = imgui.ShowTestWindow(true) end
+
+	    CONSOLE.draw()
+
+    	if not BlankE or (BlankE and not BlankE._ide_mode) then
+        	love.graphics.clear(unpack(UI.color.background))
+        end
+        imgui.Render()
+	end,
+
+	load = function()
 		-- get modules
 		for f, file in ipairs(love.filesystem.getDirectoryItems('modules')) do
 			file = file:gsub('.lua','')
@@ -58,18 +143,22 @@ IDE = {
 	end,
 
 	_reload = function(path)	
-		print('reloading project')
+		if IDE.update_timeout == 0 then
+			IDE.update_timeout = 2
+			print('reloading project')
 
-		local result, chunk
-		result, chunk = pcall(love.filesystem.load, path)
-		if not result then print("chunk error: " .. chunk) return false end
-		result, chunk = pcall(chunk)
-		if not result then print("exec. error: " .. chunk) return false end
-		lastModified = os.time()
+			local result, chunk
+			result, chunk = pcall(love.filesystem.load, path)
+			if not result then print("chunk error: " .. chunk) return false end
+			result, chunk = pcall(chunk)
+			if not result then print("exec. error: " .. chunk) return false end
 
-		BlankE.init(state0)
+			BlankE._ide_mode = true
+			BlankE.init(state0)
 
-		return true
+			return true
+		end
+		return false
 	end,
 
 	reload = function()
