@@ -6,6 +6,7 @@ HELPER = {
 
 		str_args = table.concat(args,' ')
 		cmd = 'python src/helper.py '..name..' '..str_args
+		print(name)
 		os.execute(cmd)
 	end
 }

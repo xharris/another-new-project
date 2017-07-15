@@ -1,7 +1,3 @@
-_FIRST_STATE = nil
-_GAME_NAME = "blanke"
-
-
 game_name = _GAME_NAME
 
 require "plugins.printr"

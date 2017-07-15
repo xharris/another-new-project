@@ -1,5 +1,5 @@
 function <NAME>:init()
-	Entity.init(self)
+	Entity.init(self, '<NAME>')
 	
 	-- self.variable = value
 	-- Signal.register('love.update', function(dt) self:update(dt) end)
