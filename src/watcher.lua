@@ -31,16 +31,14 @@ local function watcher(directory, callback)
         last_modified = {}
         last_dir = directory
     end
-    --callback('')
 
-    --while true do
-        _check_modification(directory, function(file_name)
-            last = last_modified[file_name]
-            if file_name ~= '' then
-                callback(file_name)
-            end
-        end)
-    --end
+    _check_modification(directory, function(file_name)
+        last = last_modified[file_name]
+        if file_name ~= '' then
+            callback(file_name)
+        end
+    end)
+        
 end
 
 return watcher

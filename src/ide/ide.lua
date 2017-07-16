@@ -24,12 +24,10 @@ IDE = {
     	if IDE.current_project ~= '' and IDE.watch_timeout == 0 then
     		IDE.watch_timeout = 3
 			_watcher(IDE.current_project..'/', function(file_name)
-				if string.match(file_name, "state") then
-					print('updating '..file_name:gsub('.lua',''))
-					IDE._reload(file_name)--require(file_name:gsub('.lua','')) --IDE.reload()
-					if string.match(file_name, Gamestate.current().classname) then
-						Gamestate.switch(_G[Gamestate.current().classname])
-					end
+	            for m, mod in pairs(IDE.modules) do
+	            	if mod.fileChange then
+	            		mod.fileChange(file_name)
+	            	end
 				end
 			end)
 		end
@@ -75,12 +73,37 @@ IDE = {
 	            imgui.EndMenu()
 	        end
 
+	        -- EDIT OBJECT
+	        if IDE.current_project ~= '' and imgui.BeginMenu("Edit") then
+	        	for m, mod in pairs(IDE.modules) do
+	        		if mod.getObjectList then
+	        			if imgui.BeginMenu(m) then
+		        			for o, obj in ipairs(mod.getObjectList()) do
+		        				local clicked = imgui.MenuItem(obj)
+		        				if clicked and mod.edit then
+		        					mod.edit(obj)
+		        				end
+		        			end
+		        			imgui.EndMenu()
+		        		end
+	        		end
+	        	end	
+	        	imgui.EndMenu()
+	        end
+
 	        -- DEV
 	        if imgui.BeginMenu("Dev") then
 	            UI.titlebar.show_dev_tools = imgui.MenuItem("Show dev tools")
 	            imgui.EndMenu()
 	        end
 	        imgui.EndMainMenuBar()
+	    end
+
+	    -- draw modules
+	    for m, mod in pairs(IDE.modules) do
+	    	if mod.draw then
+	    		mod.draw()
+	    	end
 	    end
 	    
 	    --checkUI("titlebar.new_project", IDE.newProject)
@@ -101,6 +124,12 @@ IDE = {
 			file = file:gsub('.lua','')
 			IDE.modules[file] = require('modules.'..file)
 		end
+
+		-- change imgui styling
+		imgui.PushStyleVar('WindowRounding', 2)
+		imgui.PushStyleVar('ScrollbarSize', 2)
+		imgui.PushStyleColor('Text', 245,245,245,255) --hex2rgb('#F5F5F5'))
+		imgui.PushStyleColor('TextDisabled', 158,158,158,255) --hex2rgb('#9E9E9E'))
 	end,
 
 	newProject = function()

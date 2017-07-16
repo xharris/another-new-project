@@ -1,4 +1,4 @@
-import sys,os
+import sys,os,subprocess
 
 def copyTemplate(src, dest, replacements):
 	src = os.path.normpath(src)
@@ -34,10 +34,14 @@ def newScript(obj_type, project_path, obj_name):
 def writeAssets(project_path, content):
 	open(os.path.join(os.path.normpath(project_path),'assets.lua'),'w').write(content.replace('\\n','\n'))
 
+def editFile(path):
+	subprocess.Popen([path], shell=True,stdin=None, stdout=None, stderr=None, close_fds=True)
+
 functions = {
 	'newProject':newProject,
 	'newScript':newScript,
-	'writeAssets':writeAssets
+	'writeAssets':writeAssets,
+	'editFile':editFile
 }
 
 other_args = sys.argv[2:]
