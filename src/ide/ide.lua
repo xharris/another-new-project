@@ -91,9 +91,22 @@ IDE = {
 	        	imgui.EndMenu()
 	        end
 
+	        -- IDE
+	        if imgui.BeginMenu("IDE") then
+	        	if imgui.MenuItem("randomize IDE color") then
+	        		UI.randomizeIDEColor()
+	        	end
+	        	imgui.EndMenu()
+	        end
+
 	        -- DEV
 	        if imgui.BeginMenu("Dev") then
-	            UI.titlebar.show_dev_tools = imgui.MenuItem("Show dev tools")
+	            if imgui.MenuItem("dev tools") then
+	            	UI.titlebar.show_dev_tools = true
+	            end
+	            if imgui.MenuItem("style editor") then
+	            	UI.titlebar.show_style_editor = true
+	            end
 	            imgui.EndMenu()
 	        end
 	        imgui.EndMainMenuBar()
@@ -109,7 +122,13 @@ IDE = {
 	    --checkUI("titlebar.new_project", IDE.newProject)
 	    if UI.titlebar.new_project then UI.titlebar.new_project = IDE.newProject() end
 	    if UI.titlebar.show_dev_tools then UI.titlebar.show_dev_tools = imgui.ShowTestWindow(true) end
-
+	    
+	    if UI.titlebar.show_style_editor then 
+	    	state, UI.titlebar.show_style_editor = imgui.Begin("Style Editor", UI.titlebar.show_style_editor)
+	    	imgui.ShowStyleEditor()
+	    	imgui.End()
+	    end
+	    
 	    CONSOLE.draw()
 
     	if not BlankE or (BlankE and not BlankE._ide_mode) then
@@ -126,10 +145,7 @@ IDE = {
 		end
 
 		-- change imgui styling
-		imgui.PushStyleVar('WindowRounding', 2)
-		imgui.PushStyleVar('ScrollbarSize', 2)
-		imgui.PushStyleColor('Text', 245,245,245,255) --hex2rgb('#F5F5F5'))
-		imgui.PushStyleColor('TextDisabled', 158,158,158,255) --hex2rgb('#9E9E9E'))
+		UI.setStyling()
 	end,
 
 	newProject = function()

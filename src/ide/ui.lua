@@ -1,13 +1,99 @@
+local default = {0,0,0,222}
+
 UI = {
 	color = {
-		background = {33,33,33,255}
+		background = {33,33,33,255},
+		_love2d = {
+			{244,143,177, 222}, -- pink 200
+			{240,98,146, 222}, -- pink 300
+			{236,64,122, 222}, -- pink 400
+			{144,202,249, 222}, -- blue 200
+			{100,181,246, 222}, -- blue 300
+			{66,165,245, 222} -- blue 400
+		},
+		love2d = default,
+		love2d_transparent = default,
+		love2d_darker = default,
+
+		WindowBg = {0, 0, 0, 230},
+		TitleBg = {0, 0, 0, 100},
+		MenuBarBg = {0, 0, 0, 100},
+
+		Text = {245,245,245,255},
+		TextDisabled = {158,158,158,255},
+
+		CloseButton = default,
+		CloseButtonHovered = default,
+		CloseButtonActive = default,
+
+		ScrollbarBg = {0,0,0,0},
+		ScrollbarGrab = {117,117,117,255},
+		ScrollbarGrabHovered = {66,66,66,255},
+		ScrollbarGrabActive = {66,66,66,255}
 	},
 
-	titlebar = { -- short for 'element'
+	titlebar = {
+		-- FILE
 		new_project = false,
-		show_dev_tools = false
-	}
+
+		-- DEV
+		show_dev_tools = false,
+		show_style_editor = false,
+	},
+
+	setStyling = function()
+		imgui.PushStyleVar('WindowRounding', 2)
+		imgui.PushStyleVar('ScrollbarSize', 2)
+		imgui.PushStyleVar('GlobalAlpha',1)
+		imgui.PushStyleColor('TitleBgActive', UI.getColor('love2d'))
+		imgui.PushStyleColor('TitleBgCollapsed', UI.getColor('love2d_transparent'))
+
+		local elements = {
+			'Text', 'TextDisabled',
+			'TitleBg',
+			'WindowBg', 'MenuBarBg',
+			'CloseButton','CloseButtonHovered','CloseButtonActive',
+			'ScrollbarBg','ScrollbarGrab','ScrollbarGrabHovered','ScrollbarGrabActive'
+		}
+		for e, el in ipairs(elements) do
+			imgui.PushStyleColor(el, UI.getColor(el))
+		end
+	end,
+
+	resetStyling = function()
+        imgui.PopStyleVar()
+        imgui.PopStyleColor()
+	end,
+
+	randomizeIDEColor = function()
+		local new_color = UI.color._love2d[math.random(1,#UI.color._love2d)]
+		print('randomized',unpack(new_color))
+
+		UI.color.love2d = new_color
+		UI.color.love2d_transparent = table.copy(new_color)
+		UI.color.love2d_transparent[4] = 50
+		UI.color.CloseButton = table.copy(new_color)
+		UI.color.CloseButton[4] = 0
+		UI.color.CloseButtonHovered = UI.color.CloseButton
+		UI.color.CloseButtonActive = UI.color.CloseButton
+
+		UI.setStyling()
+
+		return new_color
+	end,
+
+	getColor = function(index)
+		local ret_color = {}
+
+		for c, color in ipairs(UI.color[index]) do
+			ret_color[c] = color/255
+		end
+
+		return unpack(ret_color)
+	end,
 }
+
+UI.randomizeIDEColor()
 
 -- not working atm
 checkUI = function(index, func)

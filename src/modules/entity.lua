@@ -35,7 +35,8 @@ local ideEntity = {
 	end,
 
 	edit = function(name)
-	
+		open_states[name] = true
+		HELPER.run('editFile',{IDE.getFullProjectFolder()..'/scripts/entity/'..name..'.lua'})
 	end,
 
 	draw = function()

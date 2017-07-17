@@ -10,3 +10,7 @@ HELPER = {
 		os.execute(cmd)
 	end
 }
+
+table.copy = function(t)
+	return {unpack(t)}
+end

@@ -48,7 +48,6 @@ local ideState = {
 	edit = function(name)
 		open_states[name] = true
 		HELPER.run('editFile',{IDE.getFullProjectFolder()..'/scripts/state/'..name..'.lua'})
-		--assert(io.popen())
 	end,
 
 	draw = function()

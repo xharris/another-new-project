@@ -8,8 +8,8 @@ _FIRST_STATE = nil
 _GAME_NAME = "blanke"
 --require "includes"
 
-require "ide.ui"
 require "ide.helper"
+require "ide.ui"
 require "ide.ide"
 require "ide.console"
 
