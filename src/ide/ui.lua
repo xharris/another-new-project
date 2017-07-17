@@ -13,23 +13,22 @@ UI = {
 		},
 		love2d = default,
 		love2d_transparent = default,
+
+		love2d_lighter = default,
+
 		love2d_darker = default,
+		love2d_darker_transparent = default,
 
 		WindowBg = {0, 0, 0, 230},
-		TitleBg = {0, 0, 0, 100},
 		MenuBarBg = {0, 0, 0, 100},
 
 		Text = {245,245,245,255},
 		TextDisabled = {158,158,158,255},
 
-		CloseButton = default,
-		CloseButtonHovered = default,
-		CloseButtonActive = default,
-
 		ScrollbarBg = {0,0,0,0},
 		ScrollbarGrab = {117,117,117,255},
 		ScrollbarGrabHovered = {66,66,66,255},
-		ScrollbarGrabActive = {66,66,66,255}
+		ScrollbarGrabActive = {66,66,66,255},
 	},
 
 	titlebar = {
@@ -42,15 +41,35 @@ UI = {
 	},
 
 	setStyling = function()
-		imgui.PushStyleVar('WindowRounding', 2)
+		imgui.PushStyleVar('WindowRounding', 3)
 		imgui.PushStyleVar('ScrollbarSize', 2)
+		imgui.PushStyleVar('ScrollbarRounding', 3)
 		imgui.PushStyleVar('GlobalAlpha',1)
+		imgui.PushStyleVar('FrameRounding', 3)
+		imgui.PushStyleVar('GrabRounding', 2)
+		imgui.PushStyleVar('GrabMinSize', 16)
+
+		imgui.PushStyleColor('TitleBg', UI.getColor('love2d_darker'))
 		imgui.PushStyleColor('TitleBgActive', UI.getColor('love2d'))
 		imgui.PushStyleColor('TitleBgCollapsed', UI.getColor('love2d_transparent'))
 
+		imgui.PushStyleColor('Button', UI.getColor('love2d'))
+		imgui.PushStyleColor('ButtonHovered', UI.getColor('love2d_lighter'))
+		imgui.PushStyleColor('ButtonActive', UI.getColor('love2d_darker'))
+
+		imgui.PushStyleColor('Header', UI.getColor('love2d_darker'))
+		imgui.PushStyleColor('HeaderHovered', UI.getColor('love2d_darker'))
+		imgui.PushStyleColor('HeaderActive', UI.getColor('love2d'))
+
+		imgui.PushStyleColor('SliderGrabActive', UI.getColor('love2d_darker'))
+
+		imgui.PushStyleColor('TextSelectedBg', UI.getColor('love2d_darker'))
+
+		imgui.PushStyleColor('FrameBgHovered', UI.getColor('love2d_darker_transparent'))
+		imgui.PushStyleColor('FrameBgActive', UI.getColor('love2d_darker'))
+
 		local elements = {
 			'Text', 'TextDisabled',
-			'TitleBg',
 			'WindowBg', 'MenuBarBg',
 			'CloseButton','CloseButtonHovered','CloseButtonActive',
 			'ScrollbarBg','ScrollbarGrab','ScrollbarGrabHovered','ScrollbarGrabActive'
@@ -71,7 +90,17 @@ UI = {
 
 		UI.color.love2d = new_color
 		UI.color.love2d_transparent = table.copy(new_color)
+		UI.color.love2d_lighter = table.copy(new_color)
+		UI.color.love2d_darker = table.copy(new_color)
+		UI.color.love2d_darker_transparent = table.copy(new_color)
+
 		UI.color.love2d_transparent[4] = 50
+		UI.color.love2d_darker_transparent[4] = 100
+		for c = 1,3 do
+			UI.color.love2d_lighter[c] = UI.color.love2d_lighter[c] + 20
+			UI.color.love2d_darker[c] = UI.color.love2d_darker[c] - 80
+		end
+
 		UI.color.CloseButton = table.copy(new_color)
 		UI.color.CloseButton[4] = 0
 		UI.color.CloseButtonHovered = UI.color.CloseButton

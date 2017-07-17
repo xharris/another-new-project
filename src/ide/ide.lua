@@ -12,7 +12,8 @@ IDE = {
 	update_timeout = 0,
 	watch_timeout = 0,
 
-	project_folder = 'projects',
+	project_folder = '/projects',
+	_project_folder_changed = false,
 	project_list = {},
 	current_project = '',
 	modules = {},
@@ -39,6 +40,9 @@ IDE = {
 	    if imgui.BeginMainMenuBar() then
 	        -- FILE
 	        if imgui.BeginMenu("File") then
+	        	if imgui.MenuItem("New") then
+	        		IDE.newProject()
+	        	end
 	            -- project directory
 	            status, new_folder = imgui.InputText("",IDE.project_folder,300)
 	            if status and new_folder ~= IDE.project_folder then
@@ -145,11 +149,11 @@ IDE = {
 		end
 
 		-- change imgui styling
-		UI.setStyling()
+		UI.randomizeIDEColor()
 	end,
 
 	newProject = function()
-		IDE.checkProjectFolder()
+		HELPER.run('newProject',{'"'..IDE.getFullProjectFolder()..'"'})
 	end,
 
 	setProjectFolder = function(new_folder)
@@ -167,12 +171,7 @@ IDE = {
 	end,
 
 	getFullProjectFolder = function()
-		return love.filesystem.getRealDirectory(IDE.current_project)..'/'..IDE.current_project
-	end,	
-
-	-- make sure folder exists, create it if it doesn't
-	checkProjectFolder = function()
-		HELPER.run('newProject',{IDE.project_folder})
+		return love.filesystem.getRealDirectory(IDE.project_folder)..IDE.project_folder
 	end,	
 
 	openProject = function(folder_path)
