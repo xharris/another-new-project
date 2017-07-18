@@ -1,4 +1,4 @@
-local default = {33,33,33,255}
+local default = {66,66,66,0}
 
 UI = {
 	color = {
@@ -21,13 +21,13 @@ UI = {
 		love2d_dark_transparent = default,
 	},
 	elements = {
-		WindowBg = {0, 0, 0, 110},
+		WindowBg = {33, 33, 33, 110},
 		MenuBarBg = default,
 
 		Text = {245,245,245,255},
 
 		ScrollbarBg = {0,0,0,0},
-		ScrollbarGrab = {117,117,117,255},
+		ScrollbarGrab = {66,66,66,255},
 		ScrollbarGrabHovered = {66,66,66,255},
 		ScrollbarGrabActive = {66,66,66,255},
 
