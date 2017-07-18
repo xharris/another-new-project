@@ -8,6 +8,8 @@ _empty_state = {classname='_empty_state'}
 require ('empty_state')
 _FIRST_STATE = _empty_state
 _GAME_NAME = "blanke"
+_REPLACE_REQUIRE = 'projects.project4.'
+
 --require "includes"
 
 require "ide.helper"
@@ -26,9 +28,11 @@ function love.update(dt)
 end
 
 function love.draw()
-    if not BlankE or (BlankE and not BlankE._ide_mode) then
-        IDE.draw()
+    if BlankE then
+        BlankE.draw()
+        Gamestate.draw()
     end
+    IDE.draw()
 end
 
 function love.quit()

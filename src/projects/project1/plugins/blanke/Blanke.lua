@@ -47,7 +47,7 @@ BlankE = {
 			old_love = {}
 			for fn_name, func in pairs(BlankE) do
 				if type(func) == 'function' and fn_name ~= 'init' then
-					old_love[fn_name] = love[fn_name] or __NULL__
+					old_love[fn_name] = love[fn_name] or function() end
 					love[fn_name] = function(...)
 						old_love[fn_name](...)
 						return BlankE[fn_name](...)
@@ -63,7 +63,6 @@ BlankE = {
 	    updateGlobals(0)
 		if first_state then
 			Gamestate.switch(first_state)
-			print('switch to state ' .. first_state.classname)
 		end
 	end,
 

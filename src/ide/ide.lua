@@ -29,7 +29,7 @@ IDE = {
 			_watcher(IDE.current_project..'/', function(file_name)
 	            for m, mod in pairs(IDE.modules) do
 	            	if mod.fileChange then
-	            		mod.fileChange(file_name)
+	            		--mod.fileChange(file_name)
 	            	end
 				end
 			end)
@@ -221,7 +221,7 @@ IDE = {
 			if not result then print("exec. error: " .. chunk) return false end
 
 			BlankE._ide_mode = true
-			BlankE.init(state0)
+			BlankE.init(_FIRST_STATE)
 
 			return true
 		end

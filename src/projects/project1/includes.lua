@@ -1,7 +1,10 @@
 game_name = _GAME_NAME
 
 local oldreq = require
-local require = function(s) return oldreq('projects.project1.' .. s) end
+local require = oldreq
+if _REPLACE_REQUIRE then
+	require = function(s) return oldreq(_REPLACE_REQUIRE .. s) end
+end
 
 require "plugins.printr"
 require "plugins.json.json"
