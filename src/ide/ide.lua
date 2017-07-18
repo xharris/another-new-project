@@ -11,6 +11,7 @@ end
 IDE = {
 	update_timeout = 0,
 	watch_timeout = 0,
+	refresh_pjlist_timeout = 0,
 
 	project_folder = '/projects',
 	_project_folder_changed = false,
@@ -21,6 +22,7 @@ IDE = {
 	update = function(dt)
 		updateTimeout(dt, 'update_timeout')
 		updateTimeout(dt, 'watch_timeout')
+		updateTimeout(dt, 'refresh_pjlist_timeout')
 
     	if IDE.current_project ~= '' and IDE.watch_timeout == 0 then
     		IDE.watch_timeout = 3
@@ -32,6 +34,11 @@ IDE = {
 				end
 			end)
 		end
+
+		if IDE.refresh_pjlist_timeout == 0 then
+			IDE.refresh_pjlist_timeout = 5
+			IDE.refreshProjectList()	
+		end	
 	end,
 
 	draw = function()
@@ -139,6 +146,7 @@ IDE = {
 	    
 		CONSOLE.draw()
 
+		imgui.PushStyleVar('GlobalAlpha',1)
     	if not BlankE or (BlankE and not BlankE._ide_mode) then
         	love.graphics.clear(unpack(UI.color.background))
         end
@@ -158,20 +166,25 @@ IDE = {
 
 	newProject = function()
 		HELPER.run('newProject',{'"'..IDE.getFullProjectFolder()..'"'})
+		IDE.refreshProjectList()
 	end,
 
 	setProjectFolder = function(new_folder)
 		if love.filesystem.isDirectory(new_folder) then
 			IDE.project_folder = new_folder
-			IDE.project_list = love.filesystem.getDirectoryItems(IDE.project_folder)
-			local new_list = {}
-			for f, file in ipairs(IDE.project_list) do
-				if love.filesystem.isDirectory(IDE.project_folder..'/'..file) then
-					table.insert(new_list,file)
-				end
-			end	
-			IDE.project_list = new_list
+			IDE.refreshProjectList()
 		end		
+	end,
+
+	refreshProjectList = function()
+		IDE.project_list = love.filesystem.getDirectoryItems(IDE.project_folder)
+		local new_list = {}
+		for f, file in ipairs(IDE.project_list) do
+			if love.filesystem.isDirectory(IDE.project_folder..'/'..file) then
+				table.insert(new_list,file)
+			end
+		end	
+		IDE.project_list = new_list
 	end,
 
 	getFullProjectFolder = function()
@@ -194,6 +207,12 @@ IDE = {
 		if IDE.update_timeout == 0 then
 			IDE.update_timeout = 2
 			print('reloading project')
+
+			local proj = 'projects/project1/'
+			local paths = {"?/?.lua","?.lua","?/init.lua"}
+			for p, path in ipairs(paths) do
+				package.path = package.path .. ";"..proj..path
+			end
 
 			local result, chunk
 			result, chunk = pcall(love.filesystem.load, path)

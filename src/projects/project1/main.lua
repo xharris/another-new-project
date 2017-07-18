@@ -1,5 +1,5 @@
-_FIRST_STATE = <FIRST_STATE>
-_GAME_NAME = <GAME_NAME>
+_FIRST_STATE = ''
+_GAME_NAME = "blanke"
 
 require 'includes'
 

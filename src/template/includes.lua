@@ -1,5 +1,8 @@
 game_name = _GAME_NAME
 
+local oldreq = require
+local require = function(s) return oldreq('projects.myproject.' .. s) end
+
 require "plugins.printr"
 require "plugins.json.json"
 uuid = require("plugins.uuid")
@@ -20,6 +23,8 @@ Camera = require 'plugins.hump.camera'
 anim8 = require 'plugins.anim8'
 HC = require 'plugins.HC'
 
+require 'assets'
+
 require 'plugins.blanke.Blanke'
 
---assets = require 'assets'
+require = oldreq

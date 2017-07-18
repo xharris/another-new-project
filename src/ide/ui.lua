@@ -1,13 +1,13 @@
-local default = {66,66,66,0}
+local default = {66,66,66,110}
 
 UI = {
 	color = {
-		background = default,
+		background = {33,33,33,255},
 		_love2d = {
-			{244,143,177, 222}, -- pink 200
+			--{244,143,177, 222}, -- pink 200
 			{240,98,146, 222}, -- pink 300
 			{236,64,122, 222}, -- pink 400
-			{144,202,249, 222}, -- blue 200
+			--{144,202,249, 222}, -- blue 200
 			{100,181,246, 222}, -- blue 300
 			{66,165,245, 222} -- blue 400
 		},
@@ -21,8 +21,8 @@ UI = {
 		love2d_dark_transparent = default,
 	},
 	elements = {
-		WindowBg = {33, 33, 33, 110},
-		MenuBarBg = default,
+		WindowBg = {66,66,66,110},
+		MenuBarBg = {66,66,66,110},
 
 		Text = {245,245,245,255},
 

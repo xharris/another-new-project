@@ -1,5 +1,6 @@
 Entity = Class{
-    init = function(self)    
+    init = function(self, classname)    
+    	self.classname = ifndef(classname, 'Entity')
 	    self._images = {}		
 		self._sprites = {} 			-- is actually the animations
 		self.sprite = nil			-- currently active animation
@@ -51,6 +52,10 @@ Entity = Class{
 
 		self.onCollision = {["*"] = function() end}
     	_addGameObject('entity', self)
+    end,
+
+    register = function(name)
+
     end,
     
     update = function(self, dt)

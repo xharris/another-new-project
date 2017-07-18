@@ -54,7 +54,8 @@ BlankE = {
 					end
 				end
 			end
-	    Gamestate.registerEvents()
+			
+	    	Gamestate.registerEvents()
 		end
 	    uuid.randomseed(love.timer.getTime()*10000)
 	    
