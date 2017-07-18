@@ -105,6 +105,10 @@ IDE = {
 
 	        -- DEV
 	        if imgui.BeginMenu("Dev") then
+	            if imgui.MenuItem("show console", nil, UI.titlebar.show_console) then
+	            	UI.titlebar.show_console = not UI.titlebar.show_console
+	            end
+
 	            if imgui.MenuItem("dev tools") then
 	            	UI.titlebar.show_dev_tools = true
 	            end
@@ -128,12 +132,12 @@ IDE = {
 	    if UI.titlebar.show_dev_tools then UI.titlebar.show_dev_tools = imgui.ShowTestWindow(true) end
 	    
 	    if UI.titlebar.show_style_editor then 
-	    	state, UI.titlebar.show_style_editor = imgui.Begin("Style Editor", UI.titlebar.show_style_editor)
+	    	state, UI.titlebar.show_style_editor = imgui.Begin("Style Editor", UI.titlebar.show_style_editor, UI.flags)
 	    	imgui.ShowStyleEditor()
 	    	imgui.End()
 	    end
 	    
-	    CONSOLE.draw()
+		CONSOLE.draw()
 
     	if not BlankE or (BlankE and not BlankE._ide_mode) then
         	love.graphics.clear(unpack(UI.color.background))

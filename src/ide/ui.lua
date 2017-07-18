@@ -1,8 +1,8 @@
-local default = {0,0,0,222}
+local default = {33,33,33,255}
 
 UI = {
 	color = {
-		background = {33,33,33,255},
+		background = default,
 		_love2d = {
 			{244,143,177, 222}, -- pink 200
 			{240,98,146, 222}, -- pink 300
@@ -14,21 +14,50 @@ UI = {
 		love2d = default,
 		love2d_transparent = default,
 
-		love2d_lighter = default,
+		love2d_very_light = default,
+		love2d_light = default,
 
-		love2d_darker = default,
-		love2d_darker_transparent = default,
-
-		WindowBg = {0, 0, 0, 230},
-		MenuBarBg = {0, 0, 0, 100},
+		love2d_dark = default,
+		love2d_dark_transparent = default,
+	},
+	elements = {
+		WindowBg = {0, 0, 0, 110},
+		MenuBarBg = default,
 
 		Text = {245,245,245,255},
-		TextDisabled = {158,158,158,255},
 
 		ScrollbarBg = {0,0,0,0},
 		ScrollbarGrab = {117,117,117,255},
 		ScrollbarGrabHovered = {66,66,66,255},
 		ScrollbarGrabActive = {66,66,66,255},
+
+		ResizeGrip = {66,66,66,100},
+		ResizeGripHovered = {66,66,66,100},
+		ResizeGripActive = {66,66,66,100},
+
+		TitleBg = 'love2d_dark',
+		TitleBgActive = 'love2d',
+		TitleBgCollapsed = 'love2d_transparent',
+
+		Button = 'love2d',
+		ButtonHovered = 'love2d_light',
+		ButtonActive = 'love2d_dark',
+
+		Header = 'love2d_dark',
+		HeaderHovered = 'love2d_dark',
+		HeaderActive = 'love2d',
+
+		SliderGrabActive = 'love2d_dark',
+
+		TextDisabled = 'love2d_very_light',
+		TextSelectedBg = 'love2d_dark',
+
+		FrameBgHovered = 'love2d_dark_transparent',
+		FrameBgActive = 'love2d_dark'
+	},
+
+	flags = {
+		--"ShowBorders"
 	},
 
 	titlebar = {
@@ -36,6 +65,7 @@ UI = {
 		new_project = false,
 
 		-- DEV
+		show_console = true,
 		show_dev_tools = false,
 		show_style_editor = false,
 	},
@@ -49,33 +79,8 @@ UI = {
 		imgui.PushStyleVar('GrabRounding', 2)
 		imgui.PushStyleVar('GrabMinSize', 16)
 
-		imgui.PushStyleColor('TitleBg', UI.getColor('love2d_darker'))
-		imgui.PushStyleColor('TitleBgActive', UI.getColor('love2d'))
-		imgui.PushStyleColor('TitleBgCollapsed', UI.getColor('love2d_transparent'))
-
-		imgui.PushStyleColor('Button', UI.getColor('love2d'))
-		imgui.PushStyleColor('ButtonHovered', UI.getColor('love2d_lighter'))
-		imgui.PushStyleColor('ButtonActive', UI.getColor('love2d_darker'))
-
-		imgui.PushStyleColor('Header', UI.getColor('love2d_darker'))
-		imgui.PushStyleColor('HeaderHovered', UI.getColor('love2d_darker'))
-		imgui.PushStyleColor('HeaderActive', UI.getColor('love2d'))
-
-		imgui.PushStyleColor('SliderGrabActive', UI.getColor('love2d_darker'))
-
-		imgui.PushStyleColor('TextSelectedBg', UI.getColor('love2d_darker'))
-
-		imgui.PushStyleColor('FrameBgHovered', UI.getColor('love2d_darker_transparent'))
-		imgui.PushStyleColor('FrameBgActive', UI.getColor('love2d_darker'))
-
-		local elements = {
-			'Text', 'TextDisabled',
-			'WindowBg', 'MenuBarBg',
-			'CloseButton','CloseButtonHovered','CloseButtonActive',
-			'ScrollbarBg','ScrollbarGrab','ScrollbarGrabHovered','ScrollbarGrabActive'
-		}
-		for e, el in ipairs(elements) do
-			imgui.PushStyleColor(el, UI.getColor(el))
+		for e, el in pairs(UI.elements) do
+			imgui.PushStyleColor(e, UI.getColor(el))
 		end
 	end,
 
@@ -85,26 +90,28 @@ UI = {
 	end,
 
 	randomizeIDEColor = function()
+		math.randomseed(os.time())
 		local new_color = UI.color._love2d[math.random(1,#UI.color._love2d)]
 		print('randomized',unpack(new_color))
 
 		UI.color.love2d = new_color
-		UI.color.love2d_transparent = table.copy(new_color)
-		UI.color.love2d_lighter = table.copy(new_color)
-		UI.color.love2d_darker = table.copy(new_color)
-		UI.color.love2d_darker_transparent = table.copy(new_color)
-
-		UI.color.love2d_transparent[4] = 50
-		UI.color.love2d_darker_transparent[4] = 100
-		for c = 1,3 do
-			UI.color.love2d_lighter[c] = UI.color.love2d_lighter[c] + 20
-			UI.color.love2d_darker[c] = UI.color.love2d_darker[c] - 80
+		love2d_colors = {'transparent', 'very_light', 'light', 'dark', 'dark_transparent'}
+		for c, color in ipairs(love2d_colors) do
+			UI.color['love2d_'..color] = table.copy(new_color)
 		end
 
-		UI.color.CloseButton = table.copy(new_color)
-		UI.color.CloseButton[4] = 0
-		UI.color.CloseButtonHovered = UI.color.CloseButton
-		UI.color.CloseButtonActive = UI.color.CloseButton
+		UI.color.love2d_transparent[4] = 50
+		UI.color.love2d_dark_transparent[4] = 100
+		for c = 1,3 do
+			UI.color.love2d_very_light[c] = UI.color.love2d_very_light[c] + 40
+			UI.color.love2d_light[c] = UI.color.love2d_light[c] + 20
+			UI.color.love2d_dark[c] = UI.color.love2d_dark[c] - 80
+		end
+
+		UI.elements.CloseButton = table.copy(new_color)
+		UI.elements.CloseButton[4] = 0
+		UI.elements.CloseButtonHovered = UI.elements.CloseButton
+		UI.elements.CloseButtonActive = UI.elements.CloseButton
 
 		UI.setStyling()
 
@@ -114,15 +121,17 @@ UI = {
 	getColor = function(index)
 		local ret_color = {}
 
-		for c, color in ipairs(UI.color[index]) do
+		if type(index) == "string" then
+			index = UI.color[index]
+		end
+
+		for c, color in ipairs(index) do
 			ret_color[c] = color/255
 		end
 
 		return unpack(ret_color)
 	end,
 }
-
-UI.randomizeIDEColor()
 
 -- not working atm
 checkUI = function(index, func)

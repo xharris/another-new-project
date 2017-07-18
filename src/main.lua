@@ -104,14 +104,14 @@ function love.errhand(msg)
         end
     end
  
-    -- Reset state.
+    -- Reset state
     if love.mouse then
         love.mouse.setVisible(true)
         love.mouse.setGrabbed(false)
         love.mouse.setRelativeMode(false)
     end
     if love.joystick then
-        -- Stop all joystick vibrations.
+        -- Stop all joystick vibrations
         for i,v in ipairs(love.joystick.getJoysticks()) do
             v:setVibration()
         end
