@@ -2,6 +2,7 @@ package.cpath = package.cpath .. ";/usr/local/lib/lua/5.2/?.so;/usr/local/lib/lu
 
 require "imgui"
 require "template.plugins.printr"
+require "template.plugins.blanke.Util"
 _watcher = require 'watcher'
 
 _empty_state = {classname='_empty_state'}

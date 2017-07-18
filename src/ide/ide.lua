@@ -29,7 +29,7 @@ IDE = {
 			_watcher(IDE.current_project..'/', function(file_name)
 	            for m, mod in pairs(IDE.modules) do
 	            	if mod.fileChange then
-	            		--mod.fileChange(file_name)
+	            		mod.fileChange(file_name)
 	            	end
 				end
 			end)
@@ -207,12 +207,16 @@ IDE = {
 		if IDE.update_timeout == 0 then
 			IDE.update_timeout = 2
 			print('reloading project')
-
+--[[
 			local proj = 'projects/project1/'
 			local paths = {"?/?.lua","?.lua","?/init.lua"}
 			for p, path in ipairs(paths) do
 				package.path = package.path .. ";"..proj..path
 			end
+]]
+
+			_REPLACE_REQUIRE = dirname(path):gsub('/','.')
+			if _REPLACE_REQUIRE:starts('.') then _REPLACE_REQUIRE:replaceAt(1,'') end
 
 			local result, chunk
 			result, chunk = pcall(love.filesystem.load, path)

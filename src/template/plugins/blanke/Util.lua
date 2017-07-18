@@ -38,6 +38,25 @@ love.graphics.resetColor = function()
 	love.graphics.setColor(255, 255, 255, 255)
 end
 
+-- https://github.com/Donearm/scripts
+function basename(str)
+	local name = string.gsub(str, "(.*/)(.*)", "%2")
+	return name
+end
+function dirname(str)
+	if str:match(".-/.-") then
+		local name = string.gsub(str, "(.*/)(.*)", "%1")
+		return name
+	else
+		return ''
+	end
+end
+
+function string:replaceAt(pos, r) 
+	print(self)
+	return table.concat{self:sub(1,pos-1),r,self:sub(pos+1)}
+end
+
 function string:starts(Start)
     return string.sub(self,1,string.len(Start))==Start
 end

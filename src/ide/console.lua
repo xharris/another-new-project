@@ -1,8 +1,3 @@
-function basename(str)
-	local name = string.gsub(str, "(.*/)(.*)", "%2")
-	return name
-end
-
 CONSOLE = {
 	log = {},
 	print = function(...) 

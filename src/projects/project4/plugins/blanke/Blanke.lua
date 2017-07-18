@@ -49,13 +49,16 @@ BlankE = {
 				if type(func) == 'function' and fn_name ~= 'init' then
 					old_love[fn_name] = love[fn_name]
 					love[fn_name] = function(...)
-						old_love[fn_name](...)
+						if old_love[fn_name] then old_love[fn_name](...) end
 						return func(...)
 					end
 				end
 			end
-			
-	    	Gamestate.registerEvents({'errhand', 'update' })
+			if BlankE._ide_mode then
+	    		Gamestate.registerEvents({'errhand', 'update' })
+	    	else
+	    		Gamestate.registerEvents()
+	    	end
 		end
 	    uuid.randomseed(love.timer.getTime()*10000)
 	    
