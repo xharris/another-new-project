@@ -53,7 +53,6 @@ function dirname(str)
 end
 
 function string:replaceAt(pos, r) 
-	print(self)
 	return table.concat{self:sub(1,pos-1),r,self:sub(pos+1)}
 end
 

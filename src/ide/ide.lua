@@ -26,13 +26,21 @@ IDE = {
 
     	if IDE.current_project ~= '' and IDE.watch_timeout == 0 then
     		IDE.watch_timeout = 3
+    		_watcher('/', function(file_name)
+				if string.match(file_name, "empty_state") then
+					IDE._reload(file_name)
+					Gamestate.switch(_empty_state)
+				end
+			end)
+			--[[
 			_watcher(IDE.current_project..'/', function(file_name)
 	            for m, mod in pairs(IDE.modules) do
 	            	if mod.fileChange then
 	            		mod.fileChange(file_name)
 	            	end
 				end
-			end)
+			end)]]
+
 		end
 
 		if IDE.refresh_pjlist_timeout == 0 then
@@ -206,7 +214,6 @@ IDE = {
 	_reload = function(path)	
 		if IDE.update_timeout == 0 then
 			IDE.update_timeout = 2
-			print('reloading project')
 --[[
 			local proj = 'projects/project1/'
 			local paths = {"?/?.lua","?.lua","?/init.lua"}

@@ -39,10 +39,8 @@ BlankE = {
 	_ide_mode = false,
 	_callbacks_replaced = false,
 	init = function(first_state)
-		print('initializing blanke')
 		if not BlankE._callbacks_replaced then
 			BlankE._callbacks_replaced = true
-			print('replacing callbacks')
 
 			old_love = {}
 			for fn_name, func in pairs(BlankE) do
