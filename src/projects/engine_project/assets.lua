@@ -1,8 +1,10 @@
 local script_path = (...):match('(.-)[^%.]+$')
 local asset_path = script_path:gsub('%.','/')..'/'
+
 local oldreq = require
 local require = function(s) return oldreq(script_path .. s) end
 assets = Class{}
+
 
 function assets:penguin()
 	local new_img = love.graphics.newImage(asset_path..'assets/image/penguin.png')
@@ -15,7 +17,6 @@ function assets:second_beat()
 end
 state0 = Class{classname='state0'}
 require 'scripts.state.state0'
-_FIRST_STATE = state0
 
 
 require = oldreq

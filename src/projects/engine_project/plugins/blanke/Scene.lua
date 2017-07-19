@@ -19,6 +19,7 @@ Scene = Class{
 			object=self.load_objects,
 			layer=self.layers
 		}
+		print(encode(template))
 	end,
 
 	load = function(self, path, compressed)

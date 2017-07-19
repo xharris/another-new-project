@@ -25,16 +25,18 @@ local ideState = {
 
 	getAssets = function()
 		local ret_str = ''
-		local first_state = true
+		local first_state = UI.getSetting('initial_state')
 		for s, state_name in ipairs(state_list) do
 			ret_str = ret_str..
 				state_name.." = Class{classname=\'"..state_name.."\'}\n"..
 				"require \'scripts.state."..state_name.."\'\n"
 
-			if first_state then
+			if first_state == '' then
 				first_state = state_name
+				UI.setSetting('initial_state', first_state)
 				ret_str = ret_str .. '_FIRST_STATE = '..first_state..'\n'
 			end
+		
 		end
 		state_list = {}
 		return ret_str:gsub('\n','\\n')..'\n'

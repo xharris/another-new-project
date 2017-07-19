@@ -66,14 +66,21 @@ end
 function string:ends(End)
 	return string.sub(self,-string.len(End))==End
 end
-
 function string:split(sep)
    local sep, fields = sep or ":", {}
    local pattern = string.format("([^%s]+)", sep)
    self:gsub(pattern, function(c) fields[#fields+1] = c end)
    return fields
 end
-
 function string:trim()
 	return self:gsub("^%s+", ""):gsub("%s+$", "")
 end
+
+function table.find(t, value)
+	for v, val in pairs(t) do
+		if val == value then
+			return v
+		end
+	end
+	return 0
+end	

@@ -90,12 +90,19 @@ IDE = {
 	        		if mod.getObjectList then
 	        			if imgui.BeginMenu(m) then
 	        				-- new object button
-	        				if  mod.new and imgui.MenuItem("add "..m) then
+	        				if mod.new and imgui.MenuItem("add "..m) then
 	        					mod.new()
 	        					IDE.refreshAssets()
 	        				end
 
 	        				local obj_list = mod.getObjectList()
+
+	        				if m == 'state' and #obj_list > 0 then
+    							status, initial_state = imgui.Combo("initial state", table.find(obj_list, UI.getSetting('initial_state')), obj_list, #obj_list);
+    							if status then
+    								UI.setSetting('initial_state',obj_list[initial_state])
+    							end
+	        				end
 
 	        				if #obj_list > 0 and mod.new then
 		        				imgui.Separator()
@@ -281,10 +288,10 @@ IDE = {
 
 	refreshAssets = function()
 		local asset_str = "local script_path = (...):match(\'(.-)[^%.]+$\')\n"..
-		"local asset_path = script_path:gsub('%.','/')..\'/\'\n"..
+		"local asset_path = script_path:gsub('%.','/')..\'/\'\n\n"..
 		"local oldreq = require\n"..
 		"local require = function(s) return oldreq(script_path .. s) end\n"..
-		"assets = Class{}\n"
+		"assets = Class{}\n\n"
 		for m, mod in pairs(IDE.modules) do
 			if mod.getAssets then
 				if mod.getObjectList then mod.getObjectList() end

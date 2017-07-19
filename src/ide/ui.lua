@@ -71,6 +71,7 @@ UI = {
 	},
 
 	setting = {
+		initial_state = '',
 		project_reload_timer = {type='number',value=3,min=0.5,max=60*5}
 	},
 
@@ -142,8 +143,10 @@ UI = {
 			if setting.type == 'number' then
 				return setting
 			end
+			return UI.setting[index].value
+		else
+			return setting
 		end
-		return UI.setting[index].value
 	end,
 
 	setSetting = function(index, value)
@@ -153,6 +156,8 @@ UI = {
 			if value >= ifndef(setting.min, value) and value <= ifndef(setting.max, value) then
 				UI.setting[index].value = value
 			end
+		else
+			UI.setting[index] = value
 		end
 	end,
 }
