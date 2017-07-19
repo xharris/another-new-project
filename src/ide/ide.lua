@@ -31,7 +31,7 @@ IDE = {
 		updateTimeout(dt, 'refresh_pjlist_timeout')
 
     	if IDE.current_project ~= '' and IDE.watch_timeout == 0 then
-    		IDE.watch_timeout = UI.getSetting('project_reload_timer')
+    		IDE.watch_timeout = UI.getSetting('project_reload_timer').value
     		_watcher('/', function(file_name)
 
     			IDE.iterateModules(function(m, mod)
