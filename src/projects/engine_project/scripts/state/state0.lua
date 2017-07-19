@@ -13,5 +13,5 @@ end
 
 function state0:draw()
 	love.graphics.setColor(255,0,0,255)
-	love.graphics.print("hey there", 100,100)
+	love.graphics.print("how goes it", 100,100)
 end	

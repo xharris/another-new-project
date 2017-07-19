@@ -34,7 +34,7 @@ local function watcher(directory, callback)
 
     _check_modification(directory, function(file_name)
         last = last_modified[file_name]
-        if file_name ~= '' then
+        if file_name ~= '' and file_name ~= nil then
             callback(file_name)
         end
     end)

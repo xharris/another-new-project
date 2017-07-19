@@ -37,6 +37,10 @@ function love.quit()
     imgui.ShutDown();
 end
 
+function love.filedropped(file)
+    IDE.addResource(file)
+end
+
 --
 -- User inputs
 --

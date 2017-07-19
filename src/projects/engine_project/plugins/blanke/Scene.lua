@@ -3,14 +3,22 @@ Scene = Class{
 		self.load_objects = {}
 		self.layers = {}
 		self.images = {}
+		self.name = name
 
-		if name then
-			assert(assets[name] ~= nil, "No scene named '"..name.."'")
+		if name and assets[name] then
 			self:load(assets[name]())
 		end
 
 		self.draw_hitboxes = false
 		_addGameObject('scene',self)
+	end,
+
+	-- returns json
+	export = function(self)
+		local template = {
+			object=self.load_objects,
+			layer=self.layers
+		}
 	end,
 
 	load = function(self, path, compressed)

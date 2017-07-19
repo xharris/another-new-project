@@ -51,6 +51,9 @@ function dirname(str)
 		return ''
 	end
 end
+function extname(str)
+	return str:match("^.+(%..+)$")
+end
 
 function string:replaceAt(pos, r) 
 	return table.concat{self:sub(1,pos-1),r,self:sub(pos+1)}
@@ -69,4 +72,8 @@ function string:split(sep)
    local pattern = string.format("([^%s]+)", sep)
    self:gsub(pattern, function(c) fields[#fields+1] = c end)
    return fields
+end
+
+function string:trim()
+	return self:gsub("^%s+", ""):gsub("%s+$", "")
 end

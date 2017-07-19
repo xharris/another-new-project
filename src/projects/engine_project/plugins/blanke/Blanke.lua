@@ -67,6 +67,17 @@ BlankE = {
 		end
 	end,
 
+	getCurrentState = function()
+		local state = Gamestate.current()
+		if type(state) == "string" then
+			return state
+		end
+		if type(state) == "table" then
+			return state.classname
+		end
+		return state
+	end,
+
 	update = function(dt)
 	    dt = math.min(dt, min_dt)
 	    next_time = next_time + min_dt

@@ -38,6 +38,22 @@ love.graphics.resetColor = function()
 	love.graphics.setColor(255, 255, 255, 255)
 end
 
+function basename(str)
+	local name = string.gsub(str, "(.*/)(.*)", "%2")
+	return name
+end
+function dirname(str)
+	if str:match(".-/.-") then
+		local name = string.gsub(str, "(.*/)(.*)", "%1")
+		return name
+	else
+		return ''
+	end
+end
+function extname(str)
+	return str:match("^.+(%..+)$")
+end
+
 function string:starts(Start)
     return string.sub(self,1,string.len(Start))==Start
 end
@@ -51,4 +67,8 @@ function string:split(sep)
    local pattern = string.format("([^%s]+)", sep)
    self:gsub(pattern, function(c) fields[#fields+1] = c end)
    return fields
+end
+
+function string:trim()
+	return self:gsub("^%s+", ""):gsub("%s+$", "")
 end

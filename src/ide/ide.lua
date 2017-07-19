@@ -50,6 +50,10 @@ IDE = {
 			IDE.refresh_pjlist_timeout = 5
 			IDE.refreshProjectList()	
 		end	
+
+		if IDE._want_reload then
+			IDE.reload()
+		end
 	end,
 
 	draw = function()
@@ -77,30 +81,28 @@ IDE = {
 	                end
 	                imgui.EndChild()
 	            end
-	            if IDE.current_project ~= '' then
-	                imgui.MenuItem("Save")
-	            end
 	            imgui.EndMenu()
 	        end
 
-	        -- ADD OBJECT
-	        if IDE.current_project ~= '' and imgui.BeginMenu("Add") then
-	        	IDE.iterateModules(function(m, mod)
-					local clicked = imgui.MenuItem(m)
-	                if clicked and mod.new then
-	                    mod.new()
-	                    IDE.refreshAssets()
-	                end
-	        	end)
-	            imgui.EndMenu()
-	        end
-
-	        -- EDIT OBJECT
-	        if IDE.current_project ~= '' and imgui.BeginMenu("Edit") then
+	        -- ADD/EDIT OBJECT
+	        if IDE.current_project ~= '' and imgui.BeginMenu("Library") then
 	        	IDE.iterateModules(function(m, mod)
 	        		if mod.getObjectList then
 	        			if imgui.BeginMenu(m) then
-		        			for o, obj in ipairs(mod.getObjectList()) do
+	        				-- new object button
+	        				if  mod.new and imgui.MenuItem("add "..m) then
+	        					mod.new()
+	        					IDE.refreshAssets()
+	        				end
+
+	        				local obj_list = mod.getObjectList()
+
+	        				if #obj_list > 0 and mod.new then
+		        				imgui.Separator()
+		        			end
+
+	        				-- list current objects
+		        			for o, obj in ipairs(obj_list) do
 		        				local clicked = imgui.MenuItem(obj)
 		        				if clicked and mod.edit then
 		        					mod.edit(obj)
@@ -115,29 +117,28 @@ IDE = {
 
 	        -- IDE
 	        if imgui.BeginMenu("IDE") then
+	        	-- console
+	            if imgui.MenuItem("show console", nil, UI.titlebar.show_console) then
+	            	UI.titlebar.show_console = not UI.titlebar.show_console
+	            end
+
+	            -- color randomization
 	        	if imgui.MenuItem("randomize IDE color") then
 	        		UI.randomizeIDEColor()
 	        	end
-	        	imgui.EndMenu()
-	        end
 
-	        -- SETTINGS
-	        if imgui.BeginMenu("Settings") then
+	        	-- project reload timer
+	        	imgui.PushItemWidth(80)
 	        	local reload_timer = UI.getSetting("project_reload_timer")
-	            status, new_time = imgui.DragFloat("project reload",reload_timer.value,0.5,reload_timer.min,reload_timer.max,"%.2fs")
+	            status, new_time = imgui.DragFloat("project reload",reload_timer.value,0.5,reload_timer.min,reload_timer.max,"%.1fs")
 	            if status then
 	                UI.setSetting("project_reload_timer", new_time)
 	            end
-
 	        	imgui.EndMenu()
 	        end
 
 	        -- DEV
 	        if imgui.BeginMenu("Dev") then
-	            if imgui.MenuItem("show console", nil, UI.titlebar.show_console) then
-	            	UI.titlebar.show_console = not UI.titlebar.show_console
-	            end
-
 	            if imgui.MenuItem("dev tools") then
 	            	UI.titlebar.show_dev_tools = true
 	            end
@@ -180,6 +181,11 @@ IDE = {
 		for f, file in ipairs(love.filesystem.getDirectoryItems('modules')) do
 			file = file:gsub('.lua','')
 			IDE.modules[file] = require('modules.'..file)
+
+			if IDE.modules[file].disabled then
+				package.loaded[file] = nil
+				_G[file] = nil
+			end
 		end
 
 		-- change imgui styling
@@ -241,6 +247,7 @@ IDE = {
 				package.path = package.path .. ";"..proj..path
 			end
 ]]
+			IDE.refreshAssets()
 			IDE.iterateModules(function(m, mod)
 				if mod.onReload then
 					mod.onReload()
@@ -259,12 +266,14 @@ IDE = {
 			BlankE._ide_mode = true
 			BlankE.init(_FIRST_STATE)
 
+			IDE._want_reload = false
 			return true
 		end
 		return false
 	end,
 
 	reload = function()
+		IDE._want_reload = true
 		if IDE.current_project ~= '' then
 			IDE._reload(IDE.current_project..'/includes.lua')
 		end
@@ -273,7 +282,8 @@ IDE = {
 	refreshAssets = function()
 		local asset_str = "local asset_path = (...):match(\'(.-)[^%.]+$\')\n"..
 		"local oldreq = require\n"..
-		"local require = function(s) return oldreq(asset_path .. s) end\n"
+		"local require = function(s) return oldreq(asset_path .. s) end\n"..
+		"assets = Class{}\n"
 		for m, mod in pairs(IDE.modules) do
 			if mod.getAssets then
 				if mod.getObjectList then mod.getObjectList() end
@@ -285,23 +295,52 @@ IDE = {
 		IDE.reload()
 	end,
 
-	-- gets the name for the new game object
-	addGameType = function(obj_type)
-		local obj_name = obj_type..#ifndef(game[obj_type],{})
+	validateName = function(new_name, collection)
+		new_name = new_name:trim()
+
 		-- returns false if failed to make new name
 		function nameObj() 
-			for e, obj in ipairs(ifndef(game[obj_type],{})) do
-				if obj.classname == obj_name or _G[obj_name] then
-					obj_name = obj_name..'2'
+			for e, obj in ipairs(ifndef(collection,{})) do
+				if (type(obj) == 'table' and obj.classname == new_name) or (type(obj) == 'string' and obj == new_name) or _G[new_name] then
+					new_name = new_name..'2'
 					return false
 				end
 			end	
-			if _G[obj_name] then return false end
+			if _G[new_name] then return false end
 			return true
 		end
 
 		while not nameObj() do end
 
-		return obj_name
-	end
+		return new_name
+	end,
+
+	-- gets the name for the new game object
+	addGameType = function(obj_type)
+		local obj_name = obj_type..#ifndef(game[obj_type],{})
+
+		return IDE.validateName(obj_name, game[obj_type])
+	end,
+
+	addResource = function(file)
+		if IDE.getCurrentProject() then
+			local path = file:getFilename()
+			local ext = extname(path)
+
+			local img_ext = {'tif','tiff','gif','jpeg','jpg','jif','jiff','jp2','jpx','j2k','j2c','fpx','png','pcd','pdf'}
+			local audio_ext = {'pcm','wav','aiff','mp3','aac','ogg','wma','flac','alac','wma'}
+
+			for i, img in ipairs(img_ext) do
+				if ext == '.'..img then
+					IDE.modules.image.addImage(file)
+				end
+			end
+
+			for a, audio in ipairs(audio_ext) do
+				if ext == '.'..audio then
+					IDE.modules.audio.addAudio(file)
+				end
+			end
+		end
+	end,
 }

@@ -61,11 +61,21 @@ def editFile(path):
 		cmd = "open "+path
 	subprocess.Popen([cmd], shell=True,stdin=None, stdout=None, stderr=None, close_fds=True)
 
+def copyResource(res_type, src, project_path):
+	filename = os.path.basename(src)
+	dest = os.path.join(project_path,'assets',res_type,filename)
+
+	if not os.path.exists(os.path.dirname(dest)):
+		os.makedirs(os.path.dirname(dest))
+
+	shutil.copyfile(src, dest)
+
 functions = {
 	'newProject':newProject,
 	'newScript':newScript,
 	'writeAssets':writeAssets,
-	'editFile':editFile
+	'editFile':editFile,
+	'copyResource':copyResource
 }
 
 other_args = sys.argv[2:]
