@@ -19,6 +19,12 @@ IDE = {
 	current_project = '',
 	modules = {},
 
+	iterateModules = function(func)
+		for m, mod in pairs(IDE.modules) do
+			func(m, mod)
+		end
+	end,
+
 	update = function(dt)
 		updateTimeout(dt, 'update_timeout')
 		updateTimeout(dt, 'watch_timeout')
@@ -27,14 +33,15 @@ IDE = {
     	if IDE.current_project ~= '' and IDE.watch_timeout == 0 then
     		IDE.watch_timeout = 3
     		_watcher('/', function(file_name)
-    			for m, mod in pairs(IDE.modules) do
-	            	if mod.fileChange then
-	            		mod.fileChange(file_name)
-	            	end
-				end
+
+    			IDE.iterateModules(function(m, mod)
+    				if mod.fileChange then
+    					mod.fileChange(file_name)
+    				end
+    			end)
+
 				if string.match(file_name, "empty_state") then
 					IDE._reload(file_name)
-					Gamestate.switch(_empty_state)
 				end
 			end)
 			--[[
@@ -83,19 +90,19 @@ IDE = {
 
 	        -- ADD OBJECT
 	        if IDE.current_project ~= '' and imgui.BeginMenu("Add") then
-	            for m, mod in pairs(IDE.modules) do
-	                local clicked = imgui.MenuItem(m)
+	        	IDE.iterateModules(function(m, mod)
+					local clicked = imgui.MenuItem(m)
 	                if clicked and mod.new then
 	                    mod.new()
 	                    IDE.refreshAssets()
 	                end
-	            end
+	        	end)
 	            imgui.EndMenu()
 	        end
 
 	        -- EDIT OBJECT
 	        if IDE.current_project ~= '' and imgui.BeginMenu("Edit") then
-	        	for m, mod in pairs(IDE.modules) do
+	        	IDE.iterateModules(function(m, mod)
 	        		if mod.getObjectList then
 	        			if imgui.BeginMenu(m) then
 		        			for o, obj in ipairs(mod.getObjectList()) do
@@ -107,7 +114,7 @@ IDE = {
 		        			imgui.EndMenu()
 		        		end
 	        		end
-	        	end	
+	        	end)	
 	        	imgui.EndMenu()
 	        end
 
@@ -210,12 +217,11 @@ IDE = {
 
 			local old_path = IDE.current_project
 			IDE.current_project = folder_path
-			if not IDE._reload(folder_path..'/includes.lua') then
+			if not IDE._reload(IDE.current_project..'/includes.lua') then
 				IDE.current_project = old_path
 			end
 
 			opening_project = false
-			IDE.getCurrentProject()
 		end
 	end,
 
@@ -229,6 +235,11 @@ IDE = {
 				package.path = package.path .. ";"..proj..path
 			end
 ]]
+			IDE.iterateModules(function(m, mod)
+				if mod.onReload then
+					mod.onReload()
+				end
+			end)
 
 			_REPLACE_REQUIRE = dirname(path):gsub('/','.')
 			if _REPLACE_REQUIRE:starts('.') then _REPLACE_REQUIRE:replaceAt(1,'') end

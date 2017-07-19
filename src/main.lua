@@ -5,9 +5,6 @@ require "template.plugins.printr"
 require "template.plugins.blanke.Util"
 _watcher = require 'watcher'
 
-_empty_state = {classname='_empty_state'}
-require ('empty_state')
-_FIRST_STATE = _empty_state
 _GAME_NAME = "blanke"
 _REPLACE_REQUIRE = 'projects.project4.'
 

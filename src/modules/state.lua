@@ -2,6 +2,10 @@ local new_states = {}
 local state_list = {}
 local open_states = {} -- probably don't need this anymore
 
+_empty_state = {classname='_empty_state'}
+require ('empty_state')
+_FIRST_STATE = _empty_state
+
 local ideState = {
 	new = function()
 		local state_name = IDE.addGameType('state')
@@ -34,6 +38,12 @@ local ideState = {
 		end
 		state_list = {}
 		return ret_str:gsub('\n','\\n')..'\n'
+	end,
+
+	onReload = function()
+		if #state_list > 0 then
+			_FIRST_STATE = state_list[1] -- change later
+		end
 	end,
 
 	fileChange = function(file_name)

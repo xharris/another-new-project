@@ -92,7 +92,6 @@ UI = {
 	randomizeIDEColor = function()
 		math.randomseed(os.time())
 		local new_color = UI.color._love2d[math.random(1,#UI.color._love2d)]
-		print('randomized',unpack(new_color))
 
 		UI.color.love2d = new_color
 		love2d_colors = {'transparent', 'very_light', 'light', 'dark', 'dark_transparent'}
