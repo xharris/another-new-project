@@ -1,10 +1,10 @@
-local new_entities = {}
+local entity_list = {}
 
 local ideEntity = {
 	new = function()
 		local ent_name = IDE.addGameType('entity')
-		HELPER.run('newScript', {'entity', IDE.getFullProjectFolder(), ent_name})
-		table.insert(new_entities, ent_name)
+		HELPER.run('newScript', {'entity', IDE.getCurrentProject(), ent_name})
+		table.insert(entity_list, ent_name)
 	end,
 
 	getObjectList = function()
@@ -18,13 +18,13 @@ local ideEntity = {
 	end,
 
 	getAssets = function()
-		local ret_str = 'local asset_path = (...):match("(.-)[^%.]+$")\n\n'
-		for s, state_name in ipairs(new_entities) do
+		local ret_str = ''
+		for s, entity in ipairs(entity_list) do
 			ret_str = ret_str..
-				state_name.." = Class{__includes=Entity,classname=\'"..state_name.."\'}\n"..
-				"require \'scripts.entity."..state_name.."\'\n"
+				entity.." = Class{__includes=Entity,classname=\'"..entity.."\'}\n"..
+				"require \'scripts.entity."..entity.."\'\n"
 		end
-		new_entities = {}
+		entity_list = {}
 		return ret_str:gsub('\n','\\n')..'\n'
 	end,
 
@@ -36,7 +36,7 @@ local ideEntity = {
 
 	edit = function(name)
 		open_states[name] = true
-		HELPER.run('editFile',{IDE.getFullProjectFolder()..'/scripts/entity/'..name..'.lua'})
+		HELPER.run('editFile',{IDE.getCurrentProject()..'/scripts/entity/'..name..'.lua'})
 	end,
 
 	draw = function()

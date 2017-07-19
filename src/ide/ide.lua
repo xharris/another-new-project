@@ -13,7 +13,7 @@ IDE = {
 	watch_timeout = 0,
 	refresh_pjlist_timeout = 0,
 
-	project_folder = '/projects',
+	project_folder = 'projects',
 	_project_folder_changed = false,
 	project_list = {},
 	current_project = '',
@@ -27,6 +27,11 @@ IDE = {
     	if IDE.current_project ~= '' and IDE.watch_timeout == 0 then
     		IDE.watch_timeout = 3
     		_watcher('/', function(file_name)
+    			for m, mod in pairs(IDE.modules) do
+	            	if mod.fileChange then
+	            		mod.fileChange(file_name)
+	            	end
+				end
 				if string.match(file_name, "empty_state") then
 					IDE._reload(file_name)
 					Gamestate.switch(_empty_state)
@@ -34,11 +39,7 @@ IDE = {
 			end)
 			--[[
 			_watcher(IDE.current_project..'/', function(file_name)
-	            for m, mod in pairs(IDE.modules) do
-	            	if mod.fileChange then
-	            		mod.fileChange(file_name)
-	            	end
-				end
+	            
 			end)]]
 
 		end
@@ -173,7 +174,7 @@ IDE = {
 	end,
 
 	newProject = function()
-		HELPER.run('newProject',{'"'..IDE.getFullProjectFolder()..'"'})
+		HELPER.run('newProject',{'"'..IDE.getProjectFolder()..'"'})
 		IDE.refreshProjectList()
 	end,
 
@@ -195,19 +196,26 @@ IDE = {
 		IDE.project_list = new_list
 	end,
 
-	getFullProjectFolder = function()
+	getProjectFolder = function()
 		return love.filesystem.getRealDirectory(IDE.project_folder)..IDE.project_folder
-	end,	
+	end,
+
+	getCurrentProject = function()
+		return love.filesystem.getRealDirectory(IDE.current_project)..'/'..IDE.project_folder..'/'..basename(IDE.current_project)-- IDE.current_project
+	end,
 
 	openProject = function(folder_path)
 		if not opening_project then
 			opening_project = true
 
-			if IDE._reload(folder_path..'/includes.lua') then
-			    IDE.current_project = folder_path
+			local old_path = IDE.current_project
+			IDE.current_project = folder_path
+			if not IDE._reload(folder_path..'/includes.lua') then
+				IDE.current_project = old_path
 			end
 
 			opening_project = false
+			IDE.getCurrentProject()
 		end
 	end,
 
@@ -246,16 +254,21 @@ IDE = {
 	end,
 
 	refreshAssets = function()
-		local asset_str = ''
+		local asset_str = "local asset_path = (...):match(\'(.-)[^%.]+$\')\n"..
+		"local oldreq = require\n"..
+		"local require = function(s) return oldreq(asset_path .. s) end\n"
 		for m, mod in pairs(IDE.modules) do
 			if mod.getAssets then
+				if mod.getObjectList then mod.getObjectList() end
 				asset_str = asset_str .. mod.getAssets()
 			end
 		end
-		HELPER.run('writeAssets', {IDE.getFullProjectFolder(), '"'..asset_str..'"'})
+		asset_str = asset_str.."require = oldreq\n"
+		HELPER.run('writeAssets', {IDE.getCurrentProject(), '\"'..asset_str..'\"'})
 		IDE.reload()
 	end,
 
+	-- gets the name for the new game object
 	addGameType = function(obj_type)
 		local obj_name = obj_type..#ifndef(game[obj_type],{})
 		-- returns false if failed to make new name

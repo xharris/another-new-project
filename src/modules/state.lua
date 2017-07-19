@@ -1,11 +1,11 @@
 local new_states = {}
 local state_list = {}
-local open_states = {}
+local open_states = {} -- probably don't need this anymore
 
 local ideState = {
 	new = function()
 		local state_name = IDE.addGameType('state')
-		HELPER.run('newScript', {'state', IDE.getFullProjectFolder(), state_name})
+		HELPER.run('newScript', {'state', IDE.getCurrentProject(), state_name})
 		table.insert(new_states, state_name)
 	end,
 
@@ -20,9 +20,9 @@ local ideState = {
 	end,
 
 	getAssets = function()
-		local ret_str = 'local asset_path = (...):match("(.-)[^%.]+$")\n\n'
+		local ret_str = ''
 		local first_state = true
-		for s, state_name in ipairs(new_states) do
+		for s, state_name in ipairs(state_list) do
 			ret_str = ret_str..
 				state_name.." = Class{classname=\'"..state_name.."\'}\n"..
 				"require \'scripts.state."..state_name.."\'\n"
@@ -32,7 +32,7 @@ local ideState = {
 				ret_str = ret_str .. '_FIRST_STATE = '..first_state..'\n'
 			end
 		end
-		new_states = {}
+		state_list = {}
 		return ret_str:gsub('\n','\\n')..'\n'
 	end,
 
@@ -46,8 +46,8 @@ local ideState = {
 	end,
 
 	edit = function(name)
-		open_states[name] = true
-		HELPER.run('editFile',{IDE.getFullProjectFolder()..'/scripts/state/'..name..'.lua'})
+		open_states[name] = true 
+		HELPER.run('editFile',{IDE.getCurrentProject()..'/scripts/state/'..name..'.lua'})
 	end,
 
 	draw = function()

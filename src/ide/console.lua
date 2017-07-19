@@ -1,12 +1,21 @@
 CONSOLE = {
+	_last_print = nil,
+	_repeat_print_count = 1,
 	log = {},
 	print = function(...) 
 		local print_str = ''
 		for a, argument in ipairs({...}) do
 			print_str = print_str..tostring(argument)..' '
 		end
+
 		local info = debug.getinfo(3)
-		table.insert(CONSOLE.log, 1, print_str..' ('..basename(info.short_src)..':'..info.currentline..')')	
+		if print_str == CONSOLE._last_print and #CONSOLE.log > 0 then
+			CONSOLE._repeat_print_count = CONSOLE._repeat_print_count + 1
+			CONSOLE.log[1] = print_str..' ('..basename(info.short_src)..':'..info.currentline..') ('..CONSOLE._repeat_print_count..')'
+		else
+			CONSOLE._last_print = print_str
+			table.insert(CONSOLE.log, 1, print_str..' ('..basename(info.short_src)..':'..info.currentline..')')	
+		end
 	end,
 
 	draw = function()

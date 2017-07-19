@@ -56,7 +56,10 @@ def writeAssets(project_path, content):
 	open(os.path.join(os.path.normpath(project_path),'assets.lua'),'w').write(content.replace('\\n','\n'))
 
 def editFile(path):
-	subprocess.Popen([path], shell=True,stdin=None, stdout=None, stderr=None, close_fds=True)
+	cmd = path
+	if sys.platform == "darwin":
+		cmd = "open "+path
+	subprocess.Popen([cmd], shell=True,stdin=None, stdout=None, stderr=None, close_fds=True)
 
 functions = {
 	'newProject':newProject,
