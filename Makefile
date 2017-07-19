@@ -1,5 +1,5 @@
 run:
-	make mac
+	make win
 
 mac:
 	clear

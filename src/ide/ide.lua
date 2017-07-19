@@ -31,7 +31,7 @@ IDE = {
 		updateTimeout(dt, 'refresh_pjlist_timeout')
 
     	if IDE.current_project ~= '' and IDE.watch_timeout == 0 then
-    		IDE.watch_timeout = 3
+    		IDE.watch_timeout = UI.getSetting('project_reload_timer')
     		_watcher('/', function(file_name)
 
     			IDE.iterateModules(function(m, mod)
@@ -44,11 +44,6 @@ IDE = {
 					IDE._reload(file_name)
 				end
 			end)
-			--[[
-			_watcher(IDE.current_project..'/', function(file_name)
-	            
-			end)]]
-
 		end
 
 		if IDE.refresh_pjlist_timeout == 0 then
@@ -123,6 +118,17 @@ IDE = {
 	        	if imgui.MenuItem("randomize IDE color") then
 	        		UI.randomizeIDEColor()
 	        	end
+	        	imgui.EndMenu()
+	        end
+
+	        -- SETTINGS
+	        if imgui.BeginMenu("Settings") then
+	        	local reload_timer = UI.getSetting("project_reload_timer")
+	            status, new_time = imgui.DragFloat("project reload",reload_timer.value,0.5,reload_timer.min,reload_timer.max,"%.2fs")
+	            if status then
+	                UI.setSetting("project_reload_timer", new_time)
+	            end
+
 	        	imgui.EndMenu()
 	        end
 

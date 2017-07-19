@@ -70,6 +70,10 @@ UI = {
 		show_style_editor = false,
 	},
 
+	setting = {
+		project_reload_timer = {type='number',value=3,min=0.5,max=60*5}
+	},
+
 	setStyling = function()
 		imgui.PushStyleVar('WindowRounding', 3)
 		imgui.PushStyleVar('ScrollbarSize', 2)
@@ -129,6 +133,27 @@ UI = {
 		end
 
 		return unpack(ret_color)
+	end,
+
+	getSetting = function(index)
+		local setting = UI.setting[index]
+
+		if type(setting) == 'table' then
+			if setting.type == 'number' then
+				return setting
+			end
+		end
+		return UI.setting[index].value
+	end,
+
+	setSetting = function(index, value)
+		local setting = UI.setting[index]
+
+		if setting.type == 'number' then
+			if value >= ifndef(setting.min, value) and value <= ifndef(setting.max, value) then
+				UI.setting[index].value = value
+			end
+		end
 	end,
 }
 
