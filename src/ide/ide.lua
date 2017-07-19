@@ -280,9 +280,10 @@ IDE = {
 	end,
 
 	refreshAssets = function()
-		local asset_str = "local asset_path = (...):match(\'(.-)[^%.]+$\')\n"..
+		local asset_str = "local script_path = (...):match(\'(.-)[^%.]+$\')\n"..
+		"local asset_path = script_path:gsub('%.','/')..\'/\'\n"..
 		"local oldreq = require\n"..
-		"local require = function(s) return oldreq(asset_path .. s) end\n"..
+		"local require = function(s) return oldreq(script_path .. s) end\n"..
 		"assets = Class{}\n"
 		for m, mod in pairs(IDE.modules) do
 			if mod.getAssets then

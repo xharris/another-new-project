@@ -1,15 +1,16 @@
-local asset_path = (...):match('(.-)[^%.]+$')
+local script_path = (...):match('(.-)[^%.]+$')
+local asset_path = script_path:gsub('%.','/')..'/'
 local oldreq = require
-local require = function(s) return oldreq(asset_path .. s) end
+local require = function(s) return oldreq(script_path .. s) end
 assets = Class{}
 
 function assets:penguin()
-	local new_img = love.graphics.newImage('assets/image/penguin.png')
+	local new_img = love.graphics.newImage(asset_path..'assets/image/penguin.png')
 	return new_img
 end
 
 function assets:second_beat()
-	local new_aud = love.audio.newSource(asset_path:gsub('%.','/')..'/assets/audio/second_beat.wav','stream')
+	local new_aud = love.audio.newSource(asset_path..'assets/audio/second_beat.wav','stream')
 	return new_aud
 end
 state0 = Class{classname='state0'}

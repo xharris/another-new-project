@@ -41,7 +41,7 @@ ideImage = {
 
 			ret_str = ret_str..""
 			.."\nfunction assets:"..img_info.name.."()\n"
-			.."\tlocal new_img = love.graphics.newImage(\'assets/image/"..img.."\')\n"
+			.."\tlocal new_img = love.graphics.newImage(asset_path..\'assets/image/"..img.."\')\n"
 			--.."\tnew_img:setFilter('"+params.min+"', '"+params.mag+"', "+params.anisotropy+")\n"
 			--.."\t"+comment_wrap+"new_img:setWrap('"+params["[wrap]horizontal"]+"', '"+params["[wrap]vertical"]+"')\n"
 			.."\treturn new_img\n"

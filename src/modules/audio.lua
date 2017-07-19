@@ -42,7 +42,7 @@ ideAudio = {
 
 			ret_str = ret_str..""
 			.."\nfunction assets:"..aud_info.name.."()\n"
-			.."\tlocal new_aud = love.audio.newSource(asset_path:gsub('%.','/')..\'/assets/audio/"..aud.."\',\'"..aud_info.type.."\')\n"
+			.."\tlocal new_aud = love.audio.newSource(asset_path..\'assets/audio/"..aud.."\',\'"..aud_info.type.."\')\n"
 			--.."\tnew_img:setFilter('"+params.min+"', '"+params.mag+"', "+params.anisotropy+")\n"
 			--.."\t"+comment_wrap+"new_img:setWrap('"+params["[wrap]horizontal"]+"', '"+params["[wrap]vertical"]+"')\n"
 			.."\treturn new_aud\n"
