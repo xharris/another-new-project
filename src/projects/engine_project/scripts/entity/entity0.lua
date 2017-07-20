@@ -12,6 +12,6 @@ end
 
 function entity0:postDraw()
 	love.graphics.setColor(0,0,255,255)
-	love.graphics.rectangle('fill',self.x,self.y,32,32)
+	love.graphics.rectangle('line',self.x,self.y,32,32)
 	love.graphics.resetColor()
 end

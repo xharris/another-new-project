@@ -58,7 +58,7 @@ ideImage = {
 		for img, info in pairs(image_info) do
 			if info.open then
 				imgui.SetNextWindowSize(300,300,"FirstUseEver")
-				status, info.open = imgui.Begin(img, true)
+				status, info.open = imgui.Begin(info.name..'###'..img, true)
 
 				status, new_name = imgui.InputText("name",info.name,300)
 				if status then

@@ -24,7 +24,7 @@ local ideScene = {
 			-- only show editor if at least one scene is ACTIVE
 			if #scene_names > 0 then
 				imgui.SetNextWindowSize(300,300,"FirstUseEver")
-				imgui.Begin("scene editor", true)
+				imgui.Begin(string.format("scene editor (%d,%d)###scene editor", BlankE._mouse_x, BlankE._mouse_y), true)
 
 				-- scene selection
 				status, new_scene_index = imgui.Combo("scene", curr_scene_index, scene_names, #scene_names);

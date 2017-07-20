@@ -12,6 +12,7 @@ IDE = {
 	update_timeout = 0,
 	watch_timeout = 0,
 	refresh_pjlist_timeout = 0,
+	_initial_watch = true,
 
 	project_folder = 'projects',
 	_project_folder_changed = false,
@@ -33,7 +34,6 @@ IDE = {
     	if IDE.current_project ~= '' and IDE.watch_timeout == 0 then
     		IDE.watch_timeout = UI.getSetting('project_reload_timer').value
     		_watcher('/', function(file_name)
-
     			IDE.iterateModules(function(m, mod)
     				if mod.fileChange then
     					mod.fileChange(file_name)
@@ -41,7 +41,9 @@ IDE = {
     			end)
 
 				if string.match(file_name, "empty_state") then
-					IDE._reload(file_name)
+					if Gamestate.current() == _empty_state then
+						IDE._reload(file_name)
+					end
 				end
 			end)
 		end
@@ -274,6 +276,7 @@ IDE = {
 
 	_reload = function(path, dont_init_blanke)	
 		if IDE.update_timeout == 0 then
+			print('meep',path,dont_init_blanke)
 			IDE.update_timeout = 2
 --[[
 			local proj = 'projects/project1/'

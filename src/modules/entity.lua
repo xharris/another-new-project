@@ -29,7 +29,7 @@ local ideEntity = {
 	end,
 
 	fileChange = function(file_name)
-		if string.match(file_name, "entity") then
+		if string.match(file_name, "entity/") then
 			IDE._reload(file_name, true)
 		end
 	end,

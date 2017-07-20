@@ -126,15 +126,17 @@ UI = {
 		return new_color
 	end,
 
-	getColor = function(index)
+	getColor = function(index, dont_divide)
 		local ret_color = {}
 
 		if type(index) == "string" then
 			index = UI.color[index]
 		end
 
-		for c, color in ipairs(index) do
-			ret_color[c] = color/255
+		if not dont_divide then
+			for c, color in ipairs(index) do
+				table.insert(ret_color, color/255)
+			end
 		end
 
 		return unpack(ret_color)

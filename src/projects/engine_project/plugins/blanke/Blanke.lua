@@ -37,6 +37,8 @@ local next_time = love.timer.getTime()
 
 BlankE = {
 	_ide_mode = false,
+	_mouse_x = 0,
+	_mouse_y = 0,
 	_callbacks_replaced = false,
 	init = function(first_state)
 		if not BlankE._callbacks_replaced then

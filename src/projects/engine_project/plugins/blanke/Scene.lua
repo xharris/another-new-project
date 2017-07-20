@@ -14,6 +14,7 @@ Scene = Class{
 		if BlankE._ide_mode then
 			_btn_place = Input('mouse.1')
 			self._fake_view = View()
+			self._fake_view:moveToPosition(game_width/2, game_height/2)
 		end
 
 		if name and assets[name] then
@@ -202,23 +203,28 @@ Scene = Class{
 	draw = function(self) 
 	    if BlankE._ide_mode then
 			function _getMouseXY()
-				local mx, my = self._fake_view:mousePosition()
+				local mx, my = mouse_x, mouse_y
 				return {mx-(mx%_snap[1]), my-(my%_snap[2])}
 			end
 
+			if CONF then
+				print('doin it')
+	    		love.graphics.push('all')
+	    		love.graphics.setColor(UI.getColor('love2d'))
+	    		print(CONF.window.width, CONF.window.height)
+	    		love.graphics.rectangle('line',1,1,CONF.window.width,CONF.window.height)--self.port_x+1,self.port_y+2,self.port_width-2,self.port_height-2)
+	    		love.graphics.pop()
+	    	end
+
+	    	self._fake_view:attach()
 	    	love.graphics.push('all')
 	    	love.graphics.setLineWidth(1)
 	    	love.graphics.setLineStyle("rough")
 	    	love.graphics.setColor(255,255,255,40)
-	    			if BlankE._is_init then
-    		--love.graphics.push('all')
-    		love.graphics.setColor(UI.getColor('loved2d'))
-    		love.graphics.rectangle('line',1,1,self._fake_view.port_width-2,self._fake_view.port_height-2)--self.port_x+1,self.port_y+2,self.port_width-2,self.port_height-2)
-    		--love.graphics.pop()
-    	end
+
 	    	-- vertical lines
-	    	local g_x = self._fake_view.port_x
-	    	local g_y = self._fake_view.port_y
+	    	local g_x = 0--self._fake_view.port_x
+	    	local g_y = 0--self._fake_view.port_y
 	    	local g_width = self._fake_view.port_width
 	    	local g_height = self._fake_view.port_height
 	    	for x = g_x,g_width,_snap[1] do
@@ -229,8 +235,9 @@ Scene = Class{
 	    	end
 	    	love.graphics.pop()
 
+	    	local _placeXY = _getMouseXY()
+	    	BlankE._mouse_x, BlankE._mouse_y = unpack(_placeXY)
 	    	if _btn_place() then
-	    		local _placeXY = _getMouseXY()
 	    		if _placeXY[1] ~= _last_place[1] or _placeXY[2] ~= _last_place[2] then
 	    			_last_place = _placeXY
 
@@ -240,7 +247,6 @@ Scene = Class{
 	    		end
 	    	end
 
-	    	self._fake_view:attach()
 	    	self:_real_draw()
 	    	self._fake_view:detach()
 	    else

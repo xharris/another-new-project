@@ -49,7 +49,7 @@ local ideState = {
 	end,
 
 	fileChange = function(file_name)
-		if string.match(file_name, "state") then
+		if string.match(file_name, "state/") then
 			IDE._reload(file_name, not string.match(file_name, ifndef(_FIRST_STATE.classname, _FIRST_STATE)))
 
 			local curr_state = BlankE.getCurrentState()

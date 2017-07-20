@@ -14,8 +14,11 @@ local function _check_modification(dir, callback)
                 if last_modified[file] == nil then
                     last_modified[file] = 0
                 elseif love.filesystem.getLastModified(file) > last_modified[file] then
+                    local old_modified = last_modified[file]
                     last_modified[file] = love.filesystem.getLastModified(file)
-                    callback(file)
+                    if old_modified ~= nil and old_modified ~= 0 then
+                        callback(file)
+                    end
                 end
             elseif love.filesystem.isDirectory(file) then
                 _check_modification(file .. '/', callback)
@@ -28,17 +31,17 @@ end
 local last_dir = '$'
 local function watcher(directory, callback)
     if last_dir ~= directory then
+        last_dir = directory  
         last_modified = {}
-        last_dir = directory
     end
 
     _check_modification(directory, function(file_name)
         last = last_modified[file_name]
+        
         if file_name ~= '' and file_name ~= nil then
             callback(file_name)
         end
-    end)
-        
+    end)  
 end
 
 return watcher
