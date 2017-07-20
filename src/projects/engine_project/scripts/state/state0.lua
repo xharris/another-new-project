@@ -17,7 +17,7 @@ end
 
 function state0:draw()
 	love.graphics.setColor(255,0,0,255)
-	love.graphics.print("how goes it", 100,100)
+	love.graphics.print("hey how goes it", 100,100)
 	love.graphics.setColor(255,255,255,255)
 	new_img:draw()
 	main_scene:draw()

@@ -272,7 +272,7 @@ IDE = {
 		end
 	end,
 
-	_reload = function(path)	
+	_reload = function(path, dont_init_blanke)	
 		if IDE.update_timeout == 0 then
 			IDE.update_timeout = 2
 --[[
@@ -299,7 +299,9 @@ IDE = {
 			if not result then print("exec. error: " .. chunk) return false end
 
 			BlankE._ide_mode = true
-			BlankE.init(_FIRST_STATE)
+			if not dont_init_blanke then
+				BlankE.init(_FIRST_STATE)
+			end
 
 			IDE._want_reload = false
 			return true
@@ -307,10 +309,10 @@ IDE = {
 		return false
 	end,
 
-	reload = function()
+	reload = function(dont_init_blanke)
 		IDE._want_reload = true
 		if IDE.current_project ~= '' then
-			IDE._reload(IDE.current_project..'/includes.lua')
+			IDE._reload(IDE.current_project..'/includes.lua', dont_init_blanke)
 		end
 	end,
 
