@@ -147,6 +147,14 @@ IDE = {
 	                UI.setSetting("project_reload_timer", new_time)
 	            end
 
+	            -- console height
+	        	imgui.PushItemWidth(80)
+	        	local console_height = UI.getSetting("console_height")
+	            status, new_height = imgui.DragInt("console height",console_height.value,1,console_height.min,console_height.max)
+	            if status then
+	                UI.setSetting("console_height", new_height)
+	            end
+
 	            -- manual reload button
 	            if IDE.isProjectOpen() and imgui.MenuItem("reload project") then
 	            	IDE.reload()
@@ -314,8 +322,15 @@ IDE = {
 		"local require = function(s) return oldreq(script_path .. s) end\n"..
 		"assets = Class{}\n\n"
 
+		local high_priority = {'image','audio','entity','state'}
+
+		for m, mod in ipairs(high_priority) do
+			IDE.modules[mod].getObjectList()
+			asset_str = asset_str .. IDE.modules[mod].getAssets()
+		end
+
 		for m, mod in pairs(IDE.modules) do
-			if mod.getAssets then
+			if mod.getAssets and not table.find(high_priority,m) then
 				if mod.getObjectList then mod.getObjectList() end
 				asset_str = asset_str .. mod.getAssets()
 			end

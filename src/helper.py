@@ -53,7 +53,6 @@ def newScript(obj_type, project_path, obj_name):
 	)
 
 def writeAssets(project_path, content):
-	print(content)
 	open(os.path.join(os.path.normpath(project_path),'assets.lua'),'w').write(content.replace('\\n','\n'))
 
 def editFile(path):

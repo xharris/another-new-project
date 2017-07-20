@@ -26,8 +26,9 @@ Camera = require 'plugins.hump.camera'
 anim8 = require 'plugins.anim8'
 HC = require 'plugins.HC'
 
+require 'plugins.blanke.Blanke'
+
 require 'assets'
 
-require 'plugins.blanke.Blanke'
 
 require = oldreq

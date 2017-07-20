@@ -21,7 +21,7 @@ CONSOLE = {
 	draw = function()
 	    if UI.titlebar.show_console then
 	    	local margin = 10
-	    	local height = 100
+	    	local height = UI.getSetting("console_height").value
 
 	    	imgui.SetNextWindowPos(margin, love.graphics.getHeight()-height-margin, "Always")
 	    	imgui.SetNextWindowSize(love.graphics.getWidth()-(margin*2), height)

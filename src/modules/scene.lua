@@ -54,6 +54,8 @@ local ideScene = {
 					end
 
 				end
+				imgui.Text(" > ")
+				imgui.SameLine()
 				status, new_placer_index = imgui.Combo("category", curr_placer_index, category_names, #category_names);
 				if status then
 					curr_placer_index = new_placer_index
@@ -63,6 +65,8 @@ local ideScene = {
 				-- object selection
 				local object_list = objects[curr_category]
 				if #object_list > 0 then
+					imgui.Text("  >  ")
+					imgui.SameLine()
 					status, new_object_index = imgui.Combo("object", curr_object_index, object_list, #object_list);
 					if status then
 						curr_object_index = new_object_index
@@ -72,7 +76,7 @@ local ideScene = {
 
 				-- ENTITY
 				if curr_category == 'entity' then
-					curr_scene:setPlacer('entity', _G[curr_object])
+					curr_scene:setPlacer('entity', curr_object)
 				end
 
 				-- IMAGE

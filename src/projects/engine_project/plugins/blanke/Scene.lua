@@ -1,3 +1,13 @@
+local _btn_place
+local _last_place = {0,0}
+local _snap = {32,32}
+local _place_type
+local _place_obj
+
+function _getMouseXY()
+	return {mouse_x-(mouse_x%_snap[1]), mouse_y-(mouse_y%_snap[2])}
+end
+
 Scene = Class{
 	init = function(self, name)
 		self.load_objects = {}
@@ -6,7 +16,7 @@ Scene = Class{
 		self.name = name
 
 		if BlankE._ide_mode then
-			self.btn_place = Input('mouse1')
+			_btn_place = Input('mouse.1')
 			self._fake_view = View()
 		end
 
@@ -79,6 +89,7 @@ Scene = Class{
 		end
 		if type(layer) == "number" then
 			layer = "layer"..tostring(layer)
+			self.layers[layer] = ifndef(self.layers[layer],{})
 		end
 		return layer
 	end,
@@ -100,10 +111,9 @@ Scene = Class{
 	end,
 
 	_addEntityStr = function(self, ent_name, x, y, layer, width, height)
-
 		Entity.x = x
 		Entity.y = y
-		local new_entity = _G[ent_name](x, y, width, height)
+		local new_entity = _G[ent_name](x, y)--, width, height)
 		Entity.x = 0
 		Entity.y = 0
 		--new_entity.x = x
@@ -200,13 +210,24 @@ Scene = Class{
 	    	love.graphics.setLineStyle("rough")
 	    	love.graphics.setColor(255,255,255,40)
 	    	-- vertical lines
-	    	for x = 0,game_width,32 do
+	    	for x = 0,game_width,_snap[1] do
 	    		love.graphics.line(x, 0, x, game_height)
 	    	end
-	    	for y = 0,game_height,32 do
+	    	for y = 0,game_height,_snap[2] do
 	    		love.graphics.line(0, y,game_width, y)
 	    	end
 	    	love.graphics.pop()
+
+	    	if _btn_place() then
+	    		local _placeXY = _getMouseXY()
+	    		if _placeXY[1] ~= _last_place[1] or _placeXY[2] ~= _last_place[2] then
+	    			_last_place = _placeXY
+
+	    			if _place_type == 'entity' then
+	    				self:addEntity(_place_obj, _placeXY[1], _placeXY[2],0,0,0)
+	    			end
+	    		end
+	    	end
 
 	    	self._fake_view:attach()
 	    	self:_real_draw()
@@ -217,7 +238,8 @@ Scene = Class{
 	end,
 
 	setPlacer = function(self, type, obj)
-		
+		_place_type = type
+		_place_obj = obj
 	end,
 }
 

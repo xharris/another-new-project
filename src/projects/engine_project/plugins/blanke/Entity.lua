@@ -207,14 +207,19 @@ Entity = Class{
 	end,
 
 	setSpriteIndex = function(self, index)
-		assert(self._sprites[index], "Animation not found: \'"..index.."\'")
+		if index == '' then
+			self.sprite_index = ''
+			self.sprite = nil
+		else
+			assert(self._sprites[index], "Animation not found: \'"..index.."\'")
 
-		self.sprite_index = index
-		self.sprite = self._sprites[self.sprite_index]
+			self.sprite_index = index
+			self.sprite = self._sprites[self.sprite_index]
 
-		if self._sprite_prev ~= self.sprite_index then
-			self:_refreshSpriteDims()
-			self._sprite_prev = self.sprite_index
+			if self._sprite_prev ~= self.sprite_index then
+				self:_refreshSpriteDims()
+				self._sprite_prev = self.sprite_index
+			end
 		end
 	end,
 

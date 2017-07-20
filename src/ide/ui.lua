@@ -21,7 +21,7 @@ UI = {
 		love2d_dark_transparent = default,
 	},
 	elements = {
-		WindowBg = {66,66,66,110},
+		WindowBg = {66,66,66,200},
 		MenuBarBg = {66,66,66,110},
 
 		Text = {245,245,245,255},
@@ -75,7 +75,8 @@ UI = {
 
 	setting = {
 		initial_state = '',
-		project_reload_timer = {type='number',value=3,min=0.5,max=60*5}
+		project_reload_timer = {type='number',value=3,min=0.5,max=60*5},
+		console_height = {type='number',value=100,min=0,max=love.graphics.getHeight()/2}
 	},
 
 	setStyling = function()
