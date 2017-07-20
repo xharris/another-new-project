@@ -27,11 +27,11 @@ Scene = Class{
 
 	-- returns json
 	export = function(self)
-		local template = {
+		local output = {
 			object=self.load_objects,
 			layer=self.layers
 		}
-		print(encode(template))
+		print(encode(output))
 	end,
 
 	load = function(self, path, compressed)
@@ -89,6 +89,14 @@ Scene = Class{
 			self.layers[layer] = ifndef(self.layers[layer],{})
 		end
 		return layer
+	end,
+
+	getList = function(self, obj_type) 
+		local obj_list = {}
+		for layer, data in pairs(self.layers) do
+			obj_list[layer] = data[obj_type]
+		end
+		return obj_list
 	end,
 
 	addEntity = function(self, ...)
@@ -203,15 +211,14 @@ Scene = Class{
 	draw = function(self) 
 	    if BlankE._ide_mode then
 			function _getMouseXY()
-				local mx, my = mouse_x, mouse_y
+				local cam_x, cam_y = self._fake_view:mousePosition()
+				local mx, my = cam_x, cam_y
 				return {mx-(mx%_snap[1]), my-(my%_snap[2])}
 			end
 
 			if CONF then
-				print('doin it')
 	    		love.graphics.push('all')
 	    		love.graphics.setColor(UI.getColor('love2d'))
-	    		print(CONF.window.width, CONF.window.height)
 	    		love.graphics.rectangle('line',1,1,CONF.window.width,CONF.window.height)--self.port_x+1,self.port_y+2,self.port_width-2,self.port_height-2)
 	    		love.graphics.pop()
 	    	end
@@ -252,6 +259,12 @@ Scene = Class{
 	    else
 	    	self:_real_draw()
 	    end
+	end,
+
+	focusEntity = function(self, ent)
+		if self._fake_view then
+			self._fake_view:follow(ent)
+		end
 	end,
 
 	setPlacer = function(self, type, obj)

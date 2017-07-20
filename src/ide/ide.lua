@@ -276,7 +276,6 @@ IDE = {
 
 	_reload = function(path, dont_init_blanke)	
 		if IDE.update_timeout == 0 then
-			print('meep',path,dont_init_blanke)
 			IDE.update_timeout = 2
 --[[
 			local proj = 'projects/project1/'

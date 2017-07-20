@@ -42,7 +42,7 @@ View = Class{
 	end,
 
 	follow = function(self, entity)
-		self.followEntity = entity
+		self.follow_entity = entity
 
 		self:update()
 	end,
@@ -104,9 +104,9 @@ View = Class{
     end,
 
 	update = function(self, dt)
-		if self.followEntity then
-			local follow_x = self.followEntity.x
-			local follow_y = self.followEntity.y
+		if self.follow_entity then
+			local follow_x = self.follow_entity.x
+			local follow_y = self.follow_entity.y
 
 			self:moveToPosition(follow_x, follow_y, true)
 		end
