@@ -39,7 +39,7 @@ local ideState = {
 		
 		end
 		state_list = {}
-		return ret_str:gsub('\n','\\n')..'\n'
+		return ret_str..'\n'
 	end,
 
 	onReload = function()

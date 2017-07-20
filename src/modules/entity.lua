@@ -25,7 +25,7 @@ local ideEntity = {
 				"require \'scripts.entity."..entity.."\'\n"
 		end
 		entity_list = {}
-		return ret_str:gsub('\n','\\n')..'\n'
+		return ret_str..'\n'
 	end,
 
 	fileChange = function(file_name)

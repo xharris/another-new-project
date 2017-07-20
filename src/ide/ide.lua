@@ -307,11 +307,13 @@ IDE = {
 	end,
 
 	refreshAssets = function()
-		local asset_str = "local script_path = (...):match(\'(.-)[^%.]+$\')\n"..
+		local asset_str = 
+		"local script_path = (...):match(\'(.-)[^%.]+$\')\n"..
 		"local asset_path = script_path:gsub('%.','/')..\'/\'\n\n"..
 		"local oldreq = require\n"..
 		"local require = function(s) return oldreq(script_path .. s) end\n"..
 		"assets = Class{}\n\n"
+
 		for m, mod in pairs(IDE.modules) do
 			if mod.getAssets then
 				if mod.getObjectList then mod.getObjectList() end
@@ -319,7 +321,7 @@ IDE = {
 			end
 		end
 		asset_str = asset_str.."require = oldreq\n"
-		HELPER.run('writeAssets', {IDE.getCurrentProject(), '\"'..asset_str..'\"'})
+		HELPER.run('writeAssets', {IDE.getCurrentProject(), '\"'..asset_str:gsub('\n','\\n')..'\"'})
 		IDE.reload()
 	end,
 
