@@ -282,7 +282,7 @@ IDE = {
 				package.path = package.path .. ";"..proj..path
 			end
 ]]
-			IDE.refreshAssets()
+			IDE.refreshAssets(true)
 			IDE.iterateModules(function(m, mod)
 				if mod.onReload then
 					mod.onReload()
@@ -314,7 +314,7 @@ IDE = {
 		end
 	end,
 
-	refreshAssets = function()
+	refreshAssets = function(dont_reload)
 		local asset_str = 
 		"local script_path = (...):match(\'(.-)[^%.]+$\')\n"..
 		"local asset_path = script_path:gsub('%.','/')..\'/\'\n\n"..
@@ -337,7 +337,9 @@ IDE = {
 		end
 		asset_str = asset_str.."require = oldreq\n"
 		HELPER.run('writeAssets', {IDE.getCurrentProject(), '\"'..asset_str:gsub('\n','\\n')..'\"'})
-		IDE.reload()
+		if not dont_reload then
+			IDE.reload()
+		end
 	end,
 
 	validateName = function(new_name, collection)

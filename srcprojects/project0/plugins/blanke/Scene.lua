@@ -1,36 +1,16 @@
-local _btn_place
-local _last_place = {0,0}
-local _snap = {32,32}
-local _place_type
-local _place_obj
-
 Scene = Class{
 	init = function(self, name)
 		self.load_objects = {}
 		self.layers = {}
 		self.images = {}
-		self.name = name
 
-		if BlankE._ide_mode then
-			_btn_place = Input('mouse.1')
-			self._fake_view = View()
-		end
-
-		if name and assets[name] then
+		if name then
+			assert(assets[name] ~= nil, "No scene named '"..name.."'")
 			self:load(assets[name]())
 		end
 
 		self.draw_hitboxes = false
 		_addGameObject('scene',self)
-	end,
-
-	-- returns json
-	export = function(self)
-		local template = {
-			object=self.load_objects,
-			layer=self.layers
-		}
-		print(encode(template))
 	end,
 
 	load = function(self, path, compressed)
@@ -85,7 +65,6 @@ Scene = Class{
 		end
 		if type(layer) == "number" then
 			layer = "layer"..tostring(layer)
-			self.layers[layer] = ifndef(self.layers[layer],{})
 		end
 		return layer
 	end,
@@ -107,6 +86,7 @@ Scene = Class{
 	end,
 
 	_addEntityStr = function(self, ent_name, x, y, layer, width, height)
+
 		Entity.x = x
 		Entity.y = y
 		local new_entity = _G[ent_name](x, y, width, height)
@@ -176,8 +156,7 @@ Scene = Class{
 		end
 	end,
 
-	_real_draw = function(self)
-		self._is_active = true
+	draw = function(self) 
 		for name, layer in pairs(self.layers) do
 			if layer.entity then
 				for i_e, entity in ipairs(layer.entity) do
@@ -197,61 +176,7 @@ Scene = Class{
 				end
 			end
 		end
-	end,
-
-	draw = function(self) 
-	    if BlankE._ide_mode then
-			function _getMouseXY()
-				local mx, my = self._fake_view:mousePosition()
-				return {mx-(mx%_snap[1]), my-(my%_snap[2])}
-			end
-
-	    	love.graphics.push('all')
-	    	love.graphics.setLineWidth(1)
-	    	love.graphics.setLineStyle("rough")
-	    	love.graphics.setColor(255,255,255,40)
-	    			if BlankE._is_init then
-    		--love.graphics.push('all')
-    		love.graphics.setColor(UI.getColor('loved2d'))
-    		love.graphics.rectangle('line',1,1,self._fake_view.port_width-2,self._fake_view.port_height-2)--self.port_x+1,self.port_y+2,self.port_width-2,self.port_height-2)
-    		--love.graphics.pop()
-    	end
-	    	-- vertical lines
-	    	local g_x = self._fake_view.port_x
-	    	local g_y = self._fake_view.port_y
-	    	local g_width = self._fake_view.port_width
-	    	local g_height = self._fake_view.port_height
-	    	for x = g_x,g_width,_snap[1] do
-	    		love.graphics.line(x, g_y, x, g_height)
-	    	end
-	    	for y = g_y,g_height,_snap[2] do
-	    		love.graphics.line(g_x, y,g_width, y)
-	    	end
-	    	love.graphics.pop()
-
-	    	if _btn_place() then
-	    		local _placeXY = _getMouseXY()
-	    		if _placeXY[1] ~= _last_place[1] or _placeXY[2] ~= _last_place[2] then
-	    			_last_place = _placeXY
-
-	    			if _place_type == 'entity' then
-	    				self:addEntity(_place_obj, _placeXY[1], _placeXY[2])--,0,0,0)
-	    			end
-	    		end
-	    	end
-
-	    	self._fake_view:attach()
-	    	self:_real_draw()
-	    	self._fake_view:detach()
-	    else
-	    	self:_real_draw()
-	    end
-	end,
-
-	setPlacer = function(self, type, obj)
-		_place_type = type
-		_place_obj = obj
-	end,
+	end
 }
 
 return Scene

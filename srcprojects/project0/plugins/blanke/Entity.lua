@@ -1,6 +1,4 @@
 Entity = Class{
-	x = 0,
-	y = 0,
     init = function(self, classname)    
     	self.classname = ifndef(classname, 'Entity')
 	    self._images = {}		
@@ -8,8 +6,8 @@ Entity = Class{
 		self.sprite = nil			-- currently active animation
 
 		-- x and y coordinate of sprite
-		self.x = Entity.x
-		self.y = Entity.y
+		self.x = 0
+		self.y = 0
 
 		-- sprite/animation variables
 		self._sprite_prev = '' 		-- previously used sprite
@@ -209,19 +207,14 @@ Entity = Class{
 	end,
 
 	setSpriteIndex = function(self, index)
-		if index == '' then
-			self.sprite_index = ''
-			self.sprite = nil
-		else
-			assert(self._sprites[index], "Animation not found: \'"..index.."\'")
+		assert(self._sprites[index], "Animation not found: \'"..index.."\'")
 
-			self.sprite_index = index
-			self.sprite = self._sprites[self.sprite_index]
+		self.sprite_index = index
+		self.sprite = self._sprites[self.sprite_index]
 
-			if self._sprite_prev ~= self.sprite_index then
-				self:_refreshSpriteDims()
-				self._sprite_prev = self.sprite_index
-			end
+		if self._sprite_prev ~= self.sprite_index then
+			self:_refreshSpriteDims()
+			self._sprite_prev = self.sprite_index
 		end
 	end,
 

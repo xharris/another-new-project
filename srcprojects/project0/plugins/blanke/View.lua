@@ -188,12 +188,6 @@ View = Class{
     end,
 
 	detach = function(self)
-		if BlankE._is_init then
-    		love.graphics.push('all')
-    		love.graphics.setColor(UI.getColor('loved2d'))
-    		love.graphics.rectangle('line',1,1,self.port_width-2,self.port_height-2)--self.port_x+1,self.port_y+2,self.port_width-2,self.port_height-2)
-    		love.graphics.pop()
-    	end
 		self.camera:detach()
 	end,
 

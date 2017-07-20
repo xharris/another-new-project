@@ -7,7 +7,7 @@ function state0:enter(previous)
 	new_img = Image('penguin')
 	new_img.x = 100
 	new_img.y = 120
-	--main_scene = Scene('main_scene')
+	main_scene = Scene('main_scene')
 	test_ent = entity0()
 end
 
@@ -20,6 +20,6 @@ function state0:draw()
 	love.graphics.print("how goes it", 100,100)
 	love.graphics.setColor(255,255,255,255)
 	new_img:draw()
-	--main_scene:draw()
+	main_scene:draw()
 	test_ent:draw()
 end	

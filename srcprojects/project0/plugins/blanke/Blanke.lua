@@ -42,19 +42,16 @@ BlankE = {
 		if not BlankE._callbacks_replaced then
 			BlankE._callbacks_replaced = true
 
-			if not BlankE._ide_mode then
-				old_love = {}
-				for fn_name, func in pairs(BlankE) do
-					if type(func) == 'function' and fn_name ~= 'init' then
-						old_love[fn_name] = love[fn_name]
-						love[fn_name] = function(...)
-							if old_love[fn_name] then old_love[fn_name](...) end
-							return func(...)
-						end
+			old_love = {}
+			for fn_name, func in pairs(BlankE) do
+				if type(func) == 'function' and fn_name ~= 'init' then
+					old_love[fn_name] = love[fn_name]
+					love[fn_name] = function(...)
+						if old_love[fn_name] then old_love[fn_name](...) end
+						return func(...)
 					end
 				end
 			end
-			
 			if BlankE._ide_mode then
 	    		Gamestate.registerEvents({'errhand', 'update' })
 	    	else
@@ -68,17 +65,6 @@ BlankE = {
 		if first_state then
 			Gamestate.switch(first_state)
 		end
-	end,
-
-	getCurrentState = function()
-		local state = Gamestate.current()
-		if type(state) == "string" then
-			return state
-		end
-		if type(state) == "table" then
-			return state.classname
-		end
-		return state
 	end,
 
 	update = function(dt)
@@ -99,10 +85,6 @@ BlankE = {
 	end,
 
 	draw = function()
-		_iterateGameGroup('scene', function(scene)
-			scene._is_active = false
-		end)
-
 	    local cur_time = love.timer.getTime()
 	    if next_time <= cur_time then
 	        next_time = cur_time
