@@ -13,9 +13,18 @@ end
 function _iterateGameGroup(group, func)
 	game[group] = ifndef(game[group], {})
     for i, obj in ipairs(game[group]) do
-        func(obj)
+        func(obj, i)
     end
 end
+
+function _destroyGameObject(type, del_obj)
+	_iterateGameGroup(type, function(obj, i)
+		if obj.uuid == del_obj.uuid then
+			del_obj._destroyed = true
+			table.remove(game[type],i)
+		end
+	end)
+end	
 
 Draw 	= require (blanke_path..'Draw')
 Image 	= require (blanke_path..'Image')

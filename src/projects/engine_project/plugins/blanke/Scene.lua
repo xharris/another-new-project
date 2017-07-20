@@ -1,8 +1,13 @@
 local _btn_place
+local _btn_drag
 local _last_place = {0,0}
 local _snap = {32,32}
 local _place_type
 local _place_obj
+
+local _dragging = false
+local _view_initial_pos = {0,0}
+local _initial_mouse_pos = {0,0}
 
 Scene = Class{
 	init = function(self, name)
@@ -13,7 +18,9 @@ Scene = Class{
 
 		if BlankE._ide_mode then
 			_btn_place = Input('mouse.1')
+			_btn_drag = Input('mouse.3')
 			self._fake_view = View()
+			self._fake_view.motion_type = 'smooth' -- (not working as intended)
 			self._fake_view:moveToPosition(game_width/2, game_height/2)
 		end
 
@@ -173,7 +180,11 @@ Scene = Class{
 		for name, layer in pairs(self.layers) do
 			if layer.entity then
 				for i_e, entity in ipairs(layer.entity) do
-					entity:update(dt)
+					if entity._destroyed then
+						table.remove(layer.entity, i_e)
+					else
+						entity:update(dt)
+					end
 				end
 			end
 
@@ -211,9 +222,34 @@ Scene = Class{
 	draw = function(self) 
 	    if BlankE._ide_mode then
 			function _getMouseXY()
-				local cam_x, cam_y = self._fake_view:mousePosition()
+				local cam_x, cam_y
+				if not self._fake_view.disabled then
+					cam_x, cam_y = self._fake_view:mousePosition()
+				else
+					cam_x, cam_y = mouse_x, mouse_y
+				end
 				local mx, my = cam_x, cam_y
 				return {mx-(mx%_snap[1]), my-(my%_snap[2])}
+			end
+
+			function _drawGrid()
+				love.graphics.push('all')
+		    	love.graphics.setLineWidth(1)
+		    	love.graphics.setLineStyle("rough")
+		    	love.graphics.setColor(255,255,255,40)
+
+		    	local g_x, g_y = 0,0
+		    	local g_width = self._fake_view.port_width
+		    	local g_height = self._fake_view.port_height
+		    	-- vertical lines
+		    	for x = g_x,g_width,_snap[1] do
+		    		love.graphics.line(x, g_y, x, g_height)
+		    	end
+		    	-- horizontal lines
+		    	for y = g_y,g_height,_snap[2] do
+		    		love.graphics.line(g_x, y,g_width, y)
+		    	end
+		    	love.graphics.pop()
 			end
 
 			if CONF then
@@ -223,24 +259,9 @@ Scene = Class{
 	    		love.graphics.pop()
 	    	end
 
-	    	self._fake_view:attach()
-	    	love.graphics.push('all')
-	    	love.graphics.setLineWidth(1)
-	    	love.graphics.setLineStyle("rough")
-	    	love.graphics.setColor(255,255,255,40)
 
-	    	-- vertical lines
-	    	local g_x = 0--self._fake_view.port_x
-	    	local g_y = 0--self._fake_view.port_y
-	    	local g_width = self._fake_view.port_width
-	    	local g_height = self._fake_view.port_height
-	    	for x = g_x,g_width,_snap[1] do
-	    		love.graphics.line(x, g_y, x, g_height)
-	    	end
-	    	for y = g_y,g_height,_snap[2] do
-	    		love.graphics.line(g_x, y,g_width, y)
-	    	end
-	    	love.graphics.pop()
+	    	self._fake_view:attach()
+	    	_drawGrid()
 
 	    	local _placeXY = _getMouseXY()
 	    	BlankE._mouse_x, BlankE._mouse_y = unpack(_placeXY)
@@ -249,10 +270,33 @@ Scene = Class{
 	    			_last_place = _placeXY
 
 	    			if _place_type == 'entity' then
-	    				self:addEntity(_place_obj, _placeXY[1], _placeXY[2])--,0,0,0)
+	    				self:addEntity(_place_obj, _placeXY[1], _placeXY[2])
 	    			end
 	    		end
 	    	end
+
+	    	if not self._fake_view.disabled then
+		    	if _btn_drag() then
+		    		-- on down
+			    	if not _dragging then
+			    		_dragging = true
+			    		_view_initial_pos = {self._fake_view:position()}
+			    		_initial_mouse_pos = {mouse_x, mouse_y}
+			    	end
+			    	-- on hold
+			    	if _dragging then
+			    		local _drag_dist = {mouse_x-_initial_mouse_pos[1], mouse_y-_initial_mouse_pos[2]}
+			    		self._fake_view:moveToPosition(
+			    			_view_initial_pos[1] - _drag_dist[1],
+			    			_view_initial_pos[2] - _drag_dist[2]
+			    		)
+			    	end
+			    end
+		    	-- on release
+		    	if not _btn_drag() and _dragging then
+		    		_dragging = false
+		    	end
+		    end
 
 	    	self:_real_draw()
 	    	self._fake_view:detach()
@@ -263,6 +307,15 @@ Scene = Class{
 
 	focusEntity = function(self, ent)
 		if self._fake_view then
+			-- removing followed entity
+			if ent == nil and self._fake_view.follow_entity then
+				self._fake_view.follow_entity.show_debug = false
+			end
+			-- following entity
+			if ent then
+				ent.show_debug = true
+			end
+
 			self._fake_view:follow(ent)
 		end
 	end,

@@ -3,9 +3,12 @@ Entity = Class{
 	y = 0,
     init = function(self, classname)    
     	self.classname = ifndef(classname, 'Entity')
+    	self._destroyed = false
 	    self._images = {}		
 		self._sprites = {} 			-- is actually the animations
 		self.sprite = nil			-- currently active animation
+
+		self.show_debug = false
 
 		-- x and y coordinate of sprite
 		self.x = Entity.x
@@ -59,8 +62,15 @@ Entity = Class{
     register = function(name)
 
     end,
+
+    destroy = function(self)
+    	_destroyGameObject('entity',self)
+    	self = nil
+	end,
     
     update = function(self, dt)
+    	if self._destroyed then return end
+
 		-- bootstrap sprite:goToFrame()
 		if not self.sprite then
 			self.sprite = {}
@@ -230,6 +240,8 @@ Entity = Class{
 	end,
 
 	draw = function(self)
+		if self._destroyed then return end
+
 		if self.preDraw then
 			self:preDraw()
 		end
@@ -252,6 +264,11 @@ Entity = Class{
 		else
 			self.sprite_width = 0
 			self.sprite_height = 0
+		end
+
+		if self.show_debug then
+			self:debugSprite()
+			self:debugCollision()
 		end
 
 		if self.postDraw then

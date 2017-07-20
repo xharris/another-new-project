@@ -5,6 +5,8 @@ View = Class{
 
 		self._dt = 0
 
+		self.disabled = false
+
 		self.camera = Camera(0, 0)
 		self.follow_entity = nil
 		self.follow_x = 0
@@ -41,6 +43,11 @@ View = Class{
         _addGameObject('view',self)
 	end,
 
+	-- return camera position
+	position = function(self)
+	return self.camera:position()
+	end,
+
 	follow = function(self, entity)
 		self.follow_entity = entity
 
@@ -48,10 +55,12 @@ View = Class{
 	end,
 
 	moveTo = function(self, entity) 
-		self.follow_x = entity.x
-		self.follow_y = entity.y
+		if entity then
+			self.follow_x = entity.x
+			self.follow_y = entity.y
 
-		self:update()
+			self:update()
+		end
 	end,	
 
 	moveToPosition = function(self, x, y, fromUpdate)
@@ -183,18 +192,16 @@ View = Class{
 		self.camera:lockWindow(self.follow_x + shake_x, self.follow_y + shake_y, wx-self.max_distance, wx+self.max_distance,  wy-self.max_distance, wy+self.max_distance, self._smoother)
 	end,
 
-	attach = function(self)   
-        self.camera:attach(self.port_x, self.port_y, self.port_width, self.port_height, self.noclip)
+	attach = function(self)  
+		if not self.disabled then 
+        	self.camera:attach(self.port_x, self.port_y, self.port_width, self.port_height, self.noclip)
+        end
     end,
 
 	detach = function(self)
-		if BlankE._is_init then
-    		love.graphics.push('all')
-    		love.graphics.setColor(UI.getColor('loved2d'))
-    		love.graphics.rectangle('line',1,1,self.port_width-2,self.port_height-2)--self.port_x+1,self.port_y+2,self.port_width-2,self.port_height-2)
-    		love.graphics.pop()
-    	end
-		self.camera:detach()
+		if not self.disabled then
+			self.camera:detach()
+		end
 	end,
 
 	draw = function(self, draw_func)

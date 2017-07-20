@@ -28,6 +28,15 @@ local ideScene = {
 				imgui.SetNextWindowSize(300,300,"FirstUseEver")
 				imgui.Begin(string.format("scene editor (%d,%d)###scene editor", BlankE._mouse_x, BlankE._mouse_y), true)
 
+				-- enable/disable dragging camera
+				if scene_list[curr_scene_index] ~= nil then
+					local _scene = scene_list[curr_scene_index]
+					local status, new_val = imgui.Checkbox("disable camera dragging", _scene._fake_view.disabled)
+					if status then
+						_scene._fake_view.disabled = new_val
+					end 
+				end
+
 				-- scene selection
 				status, new_scene_index = imgui.Combo("scene", curr_scene_index, scene_names, #scene_names);
 				if status then
@@ -103,9 +112,12 @@ local ideScene = {
 											curr_scene:focusEntity(ent)
 										end
 
-										if imgui.TreeNodeEx(ent.classname..' ('..ent.x..','..ent.y..')###'..ent.uuid, flags) then
-            								
+										if imgui.TreeNodeEx(string.format('%s (%d,%d)', ent.classname, ent.x, ent.y)..'###'..ent.uuid, flags) then
             								imgui.BeginChild(ent.uuid, 0, 150, false);
+
+	        								if imgui.SmallButton("delete") then
+	        									ent:destroy()
+	        								end
 
 											for var, value in pairs(ent) do
 												if type(value) == 'number' then
@@ -119,6 +131,12 @@ local ideScene = {
 											end
 											imgui.EndChild()
 											imgui.TreePop()
+										end
+
+										if imgui.IsItemHovered() then
+											ent.show_debug = true
+										elseif selected_entity ~= ent.uuid then
+											ent.show_debug = false
 										end
 
 										-- camera focus/highlight on entity selection

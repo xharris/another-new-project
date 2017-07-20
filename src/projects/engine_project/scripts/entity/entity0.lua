@@ -7,6 +7,7 @@ function entity0:init()
 end
 
 function entity0:postUpdate(dt)
+	self.hspeed = 2
 
 end	
 
