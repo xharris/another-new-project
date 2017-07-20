@@ -18,5 +18,7 @@ end
 state0 = Class{classname='state0'}
 require 'scripts.state.state0'
 
+entity0 = Class{__includes=Entity,classname='entity0'}
+require 'scripts.entity.entity0'
 
 require = oldreq

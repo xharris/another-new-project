@@ -96,6 +96,10 @@ BlankE = {
 	end,
 
 	draw = function()
+		_iterateGameGroup('scene', function(scene)
+			scene._is_active = false
+		end)
+
 	    local cur_time = love.timer.getTime()
 	    if next_time <= cur_time then
 	        next_time = cur_time

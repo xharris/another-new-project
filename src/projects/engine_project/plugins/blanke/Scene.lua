@@ -5,6 +5,11 @@ Scene = Class{
 		self.images = {}
 		self.name = name
 
+		if BlankE._ide_mode then
+			self.btn_place = Input('mouse1')
+			self._fake_view = View()
+		end
+
 		if name and assets[name] then
 			self:load(assets[name]())
 		end
@@ -165,7 +170,8 @@ Scene = Class{
 		end
 	end,
 
-	draw = function(self) 
+	_real_draw = function(self)
+		self._is_active = true
 		for name, layer in pairs(self.layers) do
 			if layer.entity then
 				for i_e, entity in ipairs(layer.entity) do
@@ -185,7 +191,34 @@ Scene = Class{
 				end
 			end
 		end
-	end
+	end,
+
+	draw = function(self) 
+	    if BlankE._ide_mode then
+	    	love.graphics.push('all')
+	    	love.graphics.setLineWidth(1)
+	    	love.graphics.setLineStyle("rough")
+	    	love.graphics.setColor(255,255,255,40)
+	    	-- vertical lines
+	    	for x = 0,game_width,32 do
+	    		love.graphics.line(x, 0, x, game_height)
+	    	end
+	    	for y = 0,game_height,32 do
+	    		love.graphics.line(0, y,game_width, y)
+	    	end
+	    	love.graphics.pop()
+
+	    	self._fake_view:attach()
+	    	self:_real_draw()
+	    	self._fake_view:detach()
+	    else
+	    	self:_real_draw()
+	    end
+	end,
+
+	setPlacer = function(self, type, obj)
+		
+	end,
 }
 
 return Scene

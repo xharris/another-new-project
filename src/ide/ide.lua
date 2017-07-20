@@ -85,7 +85,7 @@ IDE = {
 	        end
 
 	        -- ADD/EDIT OBJECT
-	        if IDE.current_project ~= '' and imgui.BeginMenu("Library") then
+	        if IDE.isProjectOpen() and imgui.BeginMenu("Library") then
 	        	IDE.iterateModules(function(m, mod)
 	        		if mod.getObjectList then
 	        			if imgui.BeginMenu(m) then
@@ -124,8 +124,13 @@ IDE = {
 
 	        -- IDE
 	        if imgui.BeginMenu("IDE") then
+	        	-- scene editor
+	        	if IDE.isProjectOpen() and imgui.MenuItem("scene editor", nil, UI.titlebar.show_scene_editor) then
+	        		UI.titlebar.show_scene_editor = not UI.titlebar.show_scene_editor
+	        	end
+
 	        	-- console
-	            if imgui.MenuItem("show console", nil, UI.titlebar.show_console) then
+	            if imgui.MenuItem("console", nil, UI.titlebar.show_console) then
 	            	UI.titlebar.show_console = not UI.titlebar.show_console
 	            end
 
@@ -141,6 +146,12 @@ IDE = {
 	            if status then
 	                UI.setSetting("project_reload_timer", new_time)
 	            end
+
+	            -- manual reload button
+	            if IDE.isProjectOpen() and imgui.MenuItem("reload project") then
+	            	IDE.reload()
+	            end
+
 	        	imgui.EndMenu()
 	        end
 
@@ -230,9 +241,18 @@ IDE = {
 		return love.filesystem.getRealDirectory(IDE.current_project)..'/'..IDE.project_folder..'/'..basename(IDE.current_project)-- IDE.current_project
 	end,
 
+	isProjectOpen = function()
+		return (IDE.current_project ~= '')
+	end,
+
 	openProject = function(folder_path)
 		if not opening_project then
 			opening_project = true
+
+			if package.loaded['BlankE'] then
+				package.loaded['BlankE'] = nil
+				_G['BlankE'] = nil
+			end
 
 			local old_path = IDE.current_project
 			IDE.current_project = folder_path

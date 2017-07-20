@@ -8,13 +8,13 @@ local ideEntity = {
 	end,
 
 	getObjectList = function()
-		state_list = {}
-		local state_files = love.filesystem.getDirectoryItems(IDE.current_project..'/scripts/entity')
-		for s, entity in ipairs(state_files) do
-			local state_name = string.gsub(entity,'.lua','')
-			table.insert(state_list, state_name)
+		entity_list = {}
+		local entity_files = love.filesystem.getDirectoryItems(IDE.current_project..'/scripts/entity')
+		for s, entity in ipairs(entity_files) do
+			local entity_name = string.gsub(entity,'.lua','')
+			table.insert(entity_list, entity_name)
 		end
-		return state_list
+		return entity_list
 	end,
 
 	getAssets = function()
@@ -35,7 +35,6 @@ local ideEntity = {
 	end,
 
 	edit = function(name)
-		open_states[name] = true
 		HELPER.run('editFile',{IDE.getCurrentProject()..'/scripts/entity/'..name..'.lua'})
 	end,
 

@@ -64,8 +64,11 @@ UI = {
 		-- FILE
 		new_project = false,
 
-		-- DEV
+		-- IDE
 		show_console = true,
+		show_scene_editor = true,
+
+		-- DEV
 		show_dev_tools = false,
 		show_style_editor = false,
 	},
