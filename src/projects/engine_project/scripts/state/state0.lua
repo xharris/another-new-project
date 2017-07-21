@@ -9,6 +9,7 @@ function state0:enter(previous)
 	new_img.y = 120
 	main_scene = Scene('main_scene')
 	test_ent = entity0()
+	main_scene:addEntity(test_ent)
 end
 
 function state0:update(dt)
@@ -21,5 +22,4 @@ function state0:draw()
 	love.graphics.setColor(255,255,255,255)
 	new_img:draw()
 	main_scene:draw()
-	test_ent:draw()
 end	

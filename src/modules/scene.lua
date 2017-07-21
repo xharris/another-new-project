@@ -26,7 +26,7 @@ local ideScene = {
 			-- only show editor if at least one scene is ACTIVE
 			if #scene_names > 0 then
 				imgui.SetNextWindowSize(300,300,"FirstUseEver")
-				imgui.Begin(string.format("scene editor (%d,%d)###scene editor", BlankE._mouse_x, BlankE._mouse_y), true)
+				imgui.Begin(string.format("scene editor (%d,%d) %d,%d###scene editor", BlankE._mouse_x, BlankE._mouse_y, mouse_x, mouse_y), true)
 
 				-- enable/disable dragging camera
 				if scene_list[curr_scene_index] ~= nil then
@@ -120,13 +120,17 @@ local ideScene = {
 	        								end
 
 											for var, value in pairs(ent) do
-												if type(value) == 'number' then
-													status, new_int = imgui.DragInt(var,ent[var])
-													if status then ent[var] = new_int end
-												end
-												if type(value) == 'string' then
-													status, new_str = imgui.InputText(var,ent[var],300)
-													if status then ent[var] = new_str end
+												if not var:starts('_') then
+													if type(value) == 'number' then
+		        										imgui.PushItemWidth(80)
+														status, new_int = imgui.DragInt(var,ent[var])
+														if status then ent[var] = new_int end
+													end
+													if type(value) == 'string' then
+		        										imgui.PushItemWidth(80)
+														status, new_str = imgui.InputText(var,ent[var],300)
+														if status then ent[var] = new_str end
+													end
 												end
 											end
 											imgui.EndChild()

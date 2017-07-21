@@ -1,6 +1,6 @@
 local _btn_place
 local _btn_drag
-local _last_place = {0,0}
+local _last_place = {nil,nil}
 local _snap = {32,32}
 local _place_type
 local _place_obj
@@ -20,8 +20,9 @@ Scene = Class{
 			_btn_place = Input('mouse.1')
 			_btn_drag = Input('mouse.3')
 			self._fake_view = View()
+			self._fake_view.port_width, self._fake_view.port_height = love.window.getDesktopDimensions()
+			self._fake_view:moveToPosition(self._fake_view.port_width/2,self._fake_view.port_height/2)
 			self._fake_view.motion_type = 'smooth' -- (not working as intended)
-			self._fake_view:moveToPosition(game_width/2, game_height/2)
 		end
 
 		if name and assets[name] then
@@ -224,7 +225,10 @@ Scene = Class{
 			function _getMouseXY()
 				local cam_x, cam_y
 				if not self._fake_view.disabled then
-					cam_x, cam_y = self._fake_view:mousePosition()
+					cam_x, cam_y = self._fake_view.camera:cameraCoords(self._fake_view:mousePosition())
+					local cam_pos = {self._fake_view:position()}
+					cam_x = cam_x - ((self._fake_view.port_width/2) - cam_pos[1])
+					cam_y = cam_y - ((self._fake_view.port_height/2) - cam_pos[2])
 				else
 					cam_x, cam_y = mouse_x, mouse_y
 				end
@@ -238,30 +242,40 @@ Scene = Class{
 		    	love.graphics.setLineStyle("rough")
 		    	love.graphics.setColor(255,255,255,40)
 
-		    	local g_x, g_y = 0,0
-		    	local g_width = self._fake_view.port_width
-		    	local g_height = self._fake_view.port_height
+		    	local g_x, g_y
+		    	if not self._fake_view.disabled then
+			    	g_x, g_y = self._fake_view:position()
+			    	g_x = (self._fake_view.port_width/2) + g_x
+			    	g_y = (self._fake_view.port_height/2) + g_y
+			    else
+			    	g_x, g_y = 0, 0
+			    end
+
+		    	local offx, offy = -(g_x%_snap[1]), -(g_y%_snap[2])
+
 		    	-- vertical lines
-		    	for x = g_x,g_width,_snap[1] do
-		    		love.graphics.line(x, g_y, x, g_height)
+		    	for x = 0,game_width,_snap[1] do
+		    		if x+offx == 0 then
+						love.graphics.setLineWidth(3)
+		    		else
+		    			love.graphics.setLineWidth(1)
+		    		end
+		    		love.graphics.line(x+offx, 0, x+offx, game_height)
 		    	end
 		    	-- horizontal lines
-		    	for y = g_y,g_height,_snap[2] do
-		    		love.graphics.line(g_x, y,g_width, y)
+		    	for y = 0,game_height,_snap[2] do
+		    		if y+offy == 0 then
+		    			love.graphics.setLineWidth(3)
+		    		else
+		    			love.graphics.setLineWidth(1)
+		    		end
+		    		love.graphics.line(0, y+offy,game_width, y+offy)
 		    	end
 		    	love.graphics.pop()
 			end
 
-			if CONF then
-	    		love.graphics.push('all')
-	    		love.graphics.setColor(UI.getColor('love2d'))
-	    		love.graphics.rectangle('line',1,1,CONF.window.width,CONF.window.height)--self.port_x+1,self.port_y+2,self.port_width-2,self.port_height-2)
-	    		love.graphics.pop()
-	    	end
-
-
-	    	self._fake_view:attach()
 	    	_drawGrid()
+	    	self._fake_view:attach()
 
 	    	local _placeXY = _getMouseXY()
 	    	BlankE._mouse_x, BlankE._mouse_y = unpack(_placeXY)
