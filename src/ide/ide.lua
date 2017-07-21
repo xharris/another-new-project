@@ -303,6 +303,11 @@ IDE = {
 			BlankE._ide_mode = true
 			if not dont_init_blanke then
 				BlankE.init(_FIRST_STATE)
+				IDE.iterateModules(function(mod)
+					if mod.postBlankeInit then
+						mod.postBlankeInit()
+					end
+				end)	
 			end
 
 			IDE._want_reload = false
@@ -326,11 +331,16 @@ IDE = {
 		"local require = function(s) return oldreq(script_path .. s) end\n"..
 		"assets = Class{}\n\n"
 
-		local high_priority = {'image','audio','entity','state'}
+		local high_priority = {'image','audio','entity','scene','state'}
 
 		for m, mod in ipairs(high_priority) do
-			IDE.modules[mod].getObjectList()
-			asset_str = asset_str .. IDE.modules[mod].getAssets()
+			local _module = IDE.modules[mod]
+			if _module.getObjectList then
+				_module.getObjectList()
+			end
+			if _module.getAssets then
+				asset_str = asset_str .. _module.getAssets()
+			end
 		end
 
 		for m, mod in pairs(IDE.modules) do

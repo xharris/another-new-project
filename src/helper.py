@@ -70,9 +70,17 @@ def copyResource(res_type, src, project_path):
 
 	shutil.copyfile(src, dest)
 
+def writeJSON(path,content):
+	path = os.path.normpath(path)
+	if not os.path.exists(os.path.dirname(path)):
+		os.makedirs(os.path.dirname(path))
+
+	open(path,'w').write(content)
+
 functions = {
 	'newProject':newProject,
 	'newScript':newScript,
+	'writeJSON':writeJSON,
 	'writeAssets':writeAssets,
 	'editFile':editFile,
 	'copyResource':copyResource

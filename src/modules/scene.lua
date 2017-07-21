@@ -6,7 +6,34 @@ local selected_entity = ''
 
 local placeable = {'entity','image','hitbox'}
 
+function writeSceneFiles()
+	_iterateGameGroup('scene', function(scene, s)
+		local scene_name = scene.name
+		local scene_path = IDE.current_project..'/assets/scene/'..scene_name..'.json'
+		local scene_data = scene:export()
+		
+		HELPER.run('writeJSON',{scene_path,scene_data})
+
+		ret_str = ret_str..
+			"function assets:"..scene_name..'()\n'..
+			"\t return \"assets/scene/"..scene_name..".json\"\n"..
+			"end\n\n"
+	end)
+end
+
 local ideScene = {
+	getAssets = function()
+		local ret_str = ''
+		if BlankE then
+			writeSceneFiles()
+		end
+		return ret_str..'\n'
+	end,
+
+	postBlankeInit = function()
+		writeSceneFiles()
+	end,
+
 	draw = function()
 		if UI.titlebar.show_scene_editor and game and #(ifndef(game.scene,{})) > 0 then
 			local scene_list = {}

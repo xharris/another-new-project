@@ -37,9 +37,9 @@ Scene = Class{
 	export = function(self)
 		local output = {
 			object=self.load_objects,
-			layer=self.layers
+			layers=self.layers
 		}
-		print(encode(output))
+		return json.encode(output)
 	end,
 
 	load = function(self, path, compressed)
