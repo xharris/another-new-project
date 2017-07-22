@@ -19,7 +19,7 @@ Scene = Class{
 
 		if BlankE._ide_mode then
 			_btn_place = Input('mouse.1')
-			_btn_drag = Input('mouse.3')
+			_btn_drag = Input('mouse.3','space')
 			self._fake_view = View()
 			self._fake_view.port_width, self._fake_view.port_height = love.window.getDesktopDimensions()
 			self._fake_view:moveToPosition(self._fake_view.port_width/2,self._fake_view.port_height/2)

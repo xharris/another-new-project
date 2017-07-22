@@ -142,7 +142,7 @@ IDE = {
 	        	end
 
 	        	-- ide font
-	        	imgui.PushItemWidth(100)
+	        	imgui.PushItemWidth(120)
 	        	local fonts = love.filesystem.getDirectoryItems('fonts')
 	        	for f, font in ipairs(fonts) do
 	        		fonts[f] = font:gsub(extname(font),'')

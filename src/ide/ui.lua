@@ -84,19 +84,25 @@ UI = {
 		initial_state = '',
 		project_reload_timer = {type='number',value=4,min=0.5,max=60*5},
 		console_height = {type='number',value=100,min=0,max=love.graphics.getHeight()/2},
-		font = "FiraCode",
-		font_size = {type='number',value=14,min=1,max=100}
+		font = "ProggySquare",
+		font_size = {type='number',value=11,min=1,max=100}
 	},
 
 	setStyling = function()
-		imgui.PushStyleVar('WindowRounding', 3)
+		imgui.PushStyleVar('WindowRounding', 6)
 		imgui.PushStyleVar('ScrollbarSize', 2)
 		imgui.PushStyleVar('ScrollbarRounding', 3)
 		imgui.PushStyleVar('GlobalAlpha',1)
 		imgui.PushStyleVar('FrameRounding', 3)
 		imgui.PushStyleVar('GrabRounding', 2)
 		imgui.PushStyleVar('GrabMinSize', 16)
+UI.loadFont()
+		for e, el in pairs(UI.elements) do
+			imgui.PushStyleColor(e, UI.getColor(el))
+		end
+	end,
 
+	loadFont = function()
 		local font_files = love.filesystem.getDirectoryItems('fonts')
 		local font_filename = ''
 		local sel_font = UI.getSetting('font')
@@ -105,11 +111,8 @@ UI = {
 				font_filename = file
 			end
 		end
-		imgui.SetGlobalFontFromFileTTF("fonts/"..font_filename, UI.getSetting('font_size').value)
 
-		for e, el in pairs(UI.elements) do
-			imgui.PushStyleColor(e, UI.getColor(el))
-		end
+		imgui.SetGlobalFontFromFileTTF("fonts/"..font_filename, 11)
 	end,
 
 	resetStyling = function()
@@ -164,14 +167,7 @@ UI = {
 	getSetting = function(index)
 		local setting = UI.setting[index]
 
-		if type(setting) == 'table' then
-			if setting.type == 'number' then
-				return setting
-			end
-			return UI.setting[index].value
-		else
-			return setting
-		end
+		return setting
 	end,
 
 	setSetting = function(index, value)
