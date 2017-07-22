@@ -1,6 +1,7 @@
 local default = {66,66,66,110}
 
 UI = {
+
 	color = {
 		background = {33,33,33,255},
 		_love2d = {
@@ -76,7 +77,9 @@ UI = {
 	setting = {
 		initial_state = '',
 		project_reload_timer = {type='number',value=3,min=0.5,max=60*5},
-		console_height = {type='number',value=100,min=0,max=love.graphics.getHeight()/2}
+		console_height = {type='number',value=100,min=0,max=love.graphics.getHeight()/2},
+		font = "Consolas",
+		font_size = {type='number',value=12,min=1,max=100}
 	},
 
 	setStyling = function()
@@ -87,6 +90,8 @@ UI = {
 		imgui.PushStyleVar('FrameRounding', 3)
 		imgui.PushStyleVar('GrabRounding', 2)
 		imgui.PushStyleVar('GrabMinSize', 16)
+
+		imgui.SetGlobalFontFromFileTTF("fonts/"..UI.getSetting('font')..".ttf", UI.getSetting('font_size').value)
 
 		for e, el in pairs(UI.elements) do
 			imgui.PushStyleColor(e, UI.getColor(el))

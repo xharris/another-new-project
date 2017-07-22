@@ -142,63 +142,79 @@ local ideScene = {
 
 				if imgui.CollapsingHeader("List") then
 					for o, obj in ipairs(placeable) do
-						if obj == 'entity' then
-							local obj_list = curr_scene:getList('entity')
-							for layer, entities in pairs(obj_list) do
-								if imgui.TreeNode(layer) then
-									for e, ent in ipairs(entities) do
-										local clicked = false
-										local flags = {'OpenOnArrow'}
 
-										if selected_entity == ent.uuid then
-											table.insert(flags, 'Selected')
-											curr_scene:focusEntity(ent)
-										end
+							if obj == 'entity' then
+								local obj_list = curr_scene:getList(obj)
+								local obj_count = 0
+								for layer, data in pairs(obj_list) do
+									obj_count = obj_count + #data
+								end
+								if imgui.TreeNode(string.format(obj..' (%d)###'..curr_scene.name..'_entity', obj_count)) then
+							
+									for layer, entities in pairs(obj_list) do
+										if imgui.TreeNode(layer) then
+											for e, ent in ipairs(entities) do
+												local clicked = false
+												local flags = {'OpenOnArrow'}
 
-										if imgui.TreeNodeEx(string.format('%s (%d,%d)', ent.classname, ent.x, ent.y)..'###'..ent.uuid, flags) then
-            								imgui.BeginChild(ent.uuid, 0, 150, false);
+												if selected_entity == ent.uuid then
+													table.insert(flags, 'Selected')
+													curr_scene:focusEntity(ent)
+												end
 
-	        								if imgui.SmallButton("delete") then
-	        									ent:destroy()
-	        								end
+												if imgui.TreeNodeEx(string.format('%s (%d,%d)', ent.classname, ent.x, ent.y)..'###'..ent.uuid, flags) then
+		            								imgui.BeginChild(ent.uuid, 0, 150, false);
 
-											for var, value in pairs(ent) do
-												if not var:starts('_') then
-													if type(value) == 'number' then
-		        										imgui.PushItemWidth(80)
-														status, new_int = imgui.DragInt(var,ent[var])
-														if status then ent[var] = new_int end
+			        								if imgui.SmallButton("delete") then
+			        									ent:destroy()
+			        								end
+
+													for var, value in pairs(ent) do
+														if not var:starts('_') then
+															if type(value) == 'number' then
+				        										imgui.PushItemWidth(80)
+																status, new_int = imgui.DragInt(var,ent[var])
+																if status then ent[var] = new_int end
+															end
+															if type(value) == 'string' then
+				        										imgui.PushItemWidth(80)
+																status, new_str = imgui.InputText(var,ent[var],300)
+																if status then ent[var] = new_str end
+															end
+														end
 													end
-													if type(value) == 'string' then
-		        										imgui.PushItemWidth(80)
-														status, new_str = imgui.InputText(var,ent[var],300)
-														if status then ent[var] = new_str end
+													imgui.EndChild()
+													imgui.TreePop()
+												end
+
+												if imgui.IsItemHovered() then
+													ent.show_debug = true
+
+													if imgui.IsKeyReleased(10) or imgui.IsKeyReleased(11) then	
+			        									ent:destroy()
+													end
+
+												elseif selected_entity ~= ent.uuid then
+													ent.show_debug = false
+												end
+
+												-- camera focus/highlight on entity selection
+												if imgui.IsItemClicked() then
+													if selected_entity == ent.uuid then
+														selected_entity = nil
+														curr_scene:focusEntity()
+													else
+														selected_entity = ent.uuid
 													end
 												end
 											end
-											imgui.EndChild()
-											imgui.TreePop()
-										end
-
-										if imgui.IsItemHovered() then
-											ent.show_debug = true
-										elseif selected_entity ~= ent.uuid then
-											ent.show_debug = false
-										end
-
-										-- camera focus/highlight on entity selection
-										if imgui.IsItemClicked() then
-											if selected_entity == ent.uuid then
-												selected_entity = nil
-												curr_scene:focusEntity()
-											else
-												selected_entity = ent.uuid
-											end
 										end
 									end
+
+								imgui.TreePop()
 								end
 							end
-						end
+
 					end
 				end
 

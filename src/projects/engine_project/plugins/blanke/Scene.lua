@@ -76,18 +76,18 @@ Scene = Class{
 		for layer, data in pairs(scene_data["layers"]) do
 			self.layers[layer] = {entity={},tile={},hitbox={}}
 
+			if data["entity"] then
+				for i_e, entity in ipairs(data["entity"]) do
+					self:addEntity(entity.classname, entity.x, entity.y, layer)
+				end
+			end
+
 			if data["rect"] then
 				for i_r, rect in ipairs(data["rect"]) do
 					local uuid = rect.uuid
 					local rect_obj = self.load_objects[uuid]
 
 					self:addEntity(rect_obj.name, rect.x, rect.y, layer, rect_obj.width, rect_obj.height)
-				end
-			end
-
-			if data["entity"] then
-				for i_e, entity in ipairs(data["entity"]) do
-					self:addEntity(entity.classname, entity.x, entity.y, layer)
 				end
 			end
 

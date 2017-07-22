@@ -141,6 +141,20 @@ IDE = {
 	        		UI.randomizeIDEColor()
 	        	end
 
+	        	-- ide font
+	        	imgui.PushItemWidth(100)
+	        	local fonts = love.filesystem.getDirectoryItems('fonts')
+	        	for f, font in ipairs(fonts) do
+	        		fonts[f] = font:gsub(extname(font),'')
+	        	end
+				status, new_font = imgui.Combo("font", table.find(fonts, UI.getSetting('font')), fonts, #fonts);
+				if status then
+					UI.setSetting('font',fonts[new_font])
+					UI.setStyling()
+				end
+
+
+
 	        	-- project reload timer
 	        	imgui.PushItemWidth(80)
 	        	local reload_timer = UI.getSetting("project_reload_timer")
@@ -218,6 +232,10 @@ IDE = {
 
 		-- change imgui styling
 		UI.randomizeIDEColor()
+	end,
+
+	quit = function()
+		IDE.reload()
 	end,
 
 	newProject = function()

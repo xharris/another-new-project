@@ -35,6 +35,7 @@ function love.draw()
 end
 
 function love.quit()
+    IDE.quit()
     if BlankE then BlankE.quit() end
     imgui.ShutDown();
 end
