@@ -235,7 +235,7 @@ IDE = {
 	end,
 
 	quit = function()
-		IDE.reload()
+		IDE.refreshAssets(true)
 	end,
 
 	newProject = function()

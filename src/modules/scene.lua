@@ -128,11 +128,13 @@ local ideScene = {
 					-- ENTITY
 					if curr_category == 'entity' then
 						curr_scene:setPlacer('entity', curr_object)
-					end
 
 					-- IMAGE
-					if curr_category == 'image' then
+					elseif curr_category == 'image' then
 						--
+						curr_scene:setPlacer()
+					else
+						curr_scene:setPlacer()
 					end
 				end
 

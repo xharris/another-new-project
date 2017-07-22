@@ -143,10 +143,10 @@ Scene = Class{
 	addEntity = function(self, ...)
 		local args = {...}
 		if type(args[1]) == "string" then
-			self:_addEntityStr(unpack(args))
+			return self:_addEntityStr(unpack(args))
 		end
 		if type(args[1]) == "table" then
-			self:_addEntityTable(unpack(args))
+			return self:_addEntityTable(unpack(args))
 		end
 	end,
 
@@ -156,7 +156,7 @@ Scene = Class{
 		table.insert(self.layers[layer].entity, entity)
 	end,
 
-	_addEntityStr = function(self, ent_name, x, y, layer, width, height, fromFile)
+	_addEntityStr = function(self, ent_name, x, y, layer, width, height)
 		Entity.x = x
 		Entity.y = y
 		local new_entity = _G[ent_name](x, y, width, height)
@@ -347,7 +347,8 @@ Scene = Class{
 	    			_last_place = _placeXY
 
 	    			if _place_type == 'entity' then
-	    				self:addEntity(_place_obj, _placeXY[1], _placeXY[2])
+	    				local new_entity = self:addEntity(_place_obj, _placeXY[1], _placeXY[2])
+	    				new_entity._loadedFromFile = true
 	    			end
 	    		end
 	    	end
