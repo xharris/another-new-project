@@ -9,6 +9,7 @@ local _dragging = false
 local _view_initial_pos = {0,0}
 local _initial_mouse_pos = {0,0}
 
+
 Scene = Class{
 	init = function(self, name)
 		self.load_objects = {}
@@ -34,11 +35,35 @@ Scene = Class{
 	end,
 
 	-- returns json
-	export = function(self)
-		local output = {
-			object=self.load_objects,
-			layers=self.layers
-		}
+	export = function(self, path)
+		local output = {layers={},load_objects={}}
+
+		for layer, data in pairs(self.layers) do
+			output.layers[layer] = {}
+
+			for obj_type, objects in pairs(data) do
+				local out_layer = {}
+				for o, obj in ipairs(objects) do
+					if obj_type == 'entity' then
+						local ent_data = {
+							classname=obj.classname,
+							x=obj.x,
+							y=obj.y
+						}
+						table.insert(out_layer, ent_data)
+					end
+
+					if obj_type == 'image' then
+						local img_data = {
+
+						}
+						table.insert(out_layer, img_data)
+					end
+				end
+				output.layers[layer][obj_type] = out_layer
+			end
+		end
+
 		return json.encode(output)
 	end,
 
@@ -48,12 +73,7 @@ Scene = Class{
 
 		self.load_objects = scene_data["object"]
 
-		--[[
-			image -> tile
-			rect -> entity
-			polygon -> hitbox
-		]]
-		for layer, data in pairs(scene_data["layer"]) do
+		for layer, data in pairs(scene_data["layers"]) do
 			self.layers[layer] = {entity={},tile={},hitbox={}}
 
 			if data["rect"] then
@@ -62,6 +82,12 @@ Scene = Class{
 					local rect_obj = self.load_objects[uuid]
 
 					self:addEntity(rect_obj.name, rect.x, rect.y, layer, rect_obj.width, rect_obj.height)
+				end
+			end
+
+			if data["entity"] then
+				for i_e, entity in ipairs(data["entity"]) do
+					self:addEntity(entity.classname, entity.x, entity.y, layer)
 				end
 			end
 

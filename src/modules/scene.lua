@@ -7,31 +7,47 @@ local selected_entity = ''
 local placeable = {'entity','image','hitbox'}
 
 function writeSceneFiles()
-	_iterateGameGroup('scene', function(scene, s)
-		local scene_name = scene.name
-		local scene_path = IDE.current_project..'/assets/scene/'..scene_name..'.json'
-		local scene_data = scene:export()
-		
-		HELPER.run('writeJSON',{scene_path,scene_data})
+	local ret_str = ''
+	local scene_files = love.filesystem.getDirectoryItems(IDE.current_project..'/assets/scene')
 
+	for s, scene_file in ipairs(scene_files) do
+		local scene_name = basename(scene_file)
+		scene_name = scene_name:gsub(extname(scene_name),'')
 		ret_str = ret_str..
 			"function assets:"..scene_name..'()\n'..
-			"\t return \"assets/scene/"..scene_name..".json\"\n"..
+			"\t return asset_path..\"assets/scene/"..scene_name..".json\"\n"..
 			"end\n\n"
-	end)
+	end
+
+	if BlankE then
+		_iterateGameGroup('scene', function(scene, s)
+			local scene_name = scene.name
+			local scene_path = IDE.getCurrentProject()..'/assets/scene/'..scene_name..'.json'
+			local scene_data = scene:export(path)
+
+			HELPER.run('makeDirs', {'"'..scene_path..'"'})
+			local file = io.open(scene_path,"w+")
+			file:write(scene_data)
+			file:close()
+		end)
+	end
+	return ret_str
 end
 
 local ideScene = {
+	getObjectList = function()
+
+	end,
+
 	getAssets = function()
 		local ret_str = ''
-		if BlankE then
-			writeSceneFiles()
-		end
+		ret_str = ret_str .. writeSceneFiles()
 		return ret_str..'\n'
 	end,
 
-	postBlankeInit = function()
-		writeSceneFiles()
+	postReload = function()
+	 	print('hi')
+
 	end,
 
 	draw = function()

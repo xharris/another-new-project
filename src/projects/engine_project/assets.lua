@@ -15,9 +15,13 @@ function assets:second_beat()
 	local new_aud = love.audio.newSource(asset_path..'assets/audio/second_beat.wav','stream')
 	return new_aud
 end
+function assets:main_scene()
+	 return asset_path.."assets/scene/main_scene.json"
+end
+
+
 entity0 = Class{__includes=Entity,classname='entity0'}
 require 'scripts.entity.entity0'
-
 
 state0 = Class{classname='state0'}
 require 'scripts.state.state0'

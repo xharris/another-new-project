@@ -34,9 +34,11 @@ local ideState = {
 			if first_state == '' then
 				first_state = state_name
 				UI.setSetting('initial_state', first_state)
-				ret_str = ret_str .. '_FIRST_STATE = '..first_state..'\n'
 			end
-		
+		end
+
+		if first_state ~= '' then
+			ret_str = ret_str .. '_FIRST_STATE = '..first_state..'\n'
 		end
 		state_list = {}
 		return ret_str..'\n'

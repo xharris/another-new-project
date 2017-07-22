@@ -244,7 +244,7 @@ IDE = {
 	end,
 
 	getProjectFolder = function()
-		return love.filesystem.getRealDirectory(IDE.project_folder)..IDE.project_folder
+		return love.filesystem.getRealDirectory(IDE.project_folder)..'/'..IDE.project_folder
 	end,
 
 	getCurrentProject = function()
@@ -331,7 +331,7 @@ IDE = {
 		"local require = function(s) return oldreq(script_path .. s) end\n"..
 		"assets = Class{}\n\n"
 
-		local high_priority = {'image','audio','entity','scene','state'}
+		local high_priority = {'image','audio','scene','entity','state'}
 
 		for m, mod in ipairs(high_priority) do
 			local _module = IDE.modules[mod]
@@ -343,14 +343,19 @@ IDE = {
 			end
 		end
 
-		for m, mod in pairs(IDE.modules) do
-			if mod.getAssets and not table.find(high_priority,m) then
+		for mod_name, mod in pairs(IDE.modules) do
+			if mod.getAssets and not table.find(high_priority,mod_name) then
 				if mod.getObjectList then mod.getObjectList() end
 				asset_str = asset_str .. mod.getAssets()
 			end
 		end
 		asset_str = asset_str.."require = oldreq\n"
-		HELPER.run('writeAssets', {IDE.getCurrentProject(), '\"'..asset_str:gsub('\n','\\n')..'\"'})
+
+		HELPER.run('makeDirs', {'"'..IDE.getCurrentProject()..'"'})
+		local file = io.open(IDE.getCurrentProject()..'/assets.lua','w+')
+		file:write(asset_str)
+		file:close()
+
 		if not dont_reload then
 			IDE.reload()
 		end

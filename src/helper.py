@@ -52,9 +52,6 @@ def newScript(obj_type, project_path, obj_name):
 		}
 	)
 
-def writeAssets(project_path, content):
-	open(os.path.join(os.path.normpath(project_path),'assets.lua'),'w').write(content.replace('\\n','\n'))
-
 def editFile(path):
 	cmd = path
 	if sys.platform == "darwin":
@@ -70,20 +67,19 @@ def copyResource(res_type, src, project_path):
 
 	shutil.copyfile(src, dest)
 
-def writeJSON(path,content):
+def makeDirs(path):
 	path = os.path.normpath(path)
+	if os.path.isfile(path):
+		path = os.path.dirname(path)
 	if not os.path.exists(os.path.dirname(path)):
 		os.makedirs(os.path.dirname(path))
-
-	open(path,'w').write(content)
 
 functions = {
 	'newProject':newProject,
 	'newScript':newScript,
-	'writeJSON':writeJSON,
-	'writeAssets':writeAssets,
 	'editFile':editFile,
-	'copyResource':copyResource
+	'copyResource':copyResource,
+	'makeDirs':makeDirs
 }
 
 other_args = sys.argv[2:]
