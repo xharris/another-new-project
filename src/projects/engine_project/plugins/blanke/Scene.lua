@@ -44,7 +44,7 @@ Scene = Class{
 			for obj_type, objects in pairs(data) do
 				local out_layer = {}
 				for o, obj in ipairs(objects) do
-					if obj_type == 'entity' then
+					if obj_type == 'entity' and obj._loadedFromFile then
 						local ent_data = {
 							classname=obj.classname,
 							x=obj.x,
@@ -78,7 +78,14 @@ Scene = Class{
 
 			if data["entity"] then
 				for i_e, entity in ipairs(data["entity"]) do
-					self:addEntity(entity.classname, entity.x, entity.y, layer)
+					Entity.x = entity.x
+					Entity.y = entity.y
+					local new_entity = _G[entity.classname](entity.x, entity.y)
+					new_entity._loadedFromFile = true
+					Entity.x = 0
+					Entity.y = 0
+
+					self:addEntity(new_entity, layer)
 				end
 			end
 
@@ -149,7 +156,7 @@ Scene = Class{
 		table.insert(self.layers[layer].entity, entity)
 	end,
 
-	_addEntityStr = function(self, ent_name, x, y, layer, width, height)
+	_addEntityStr = function(self, ent_name, x, y, layer, width, height, fromFile)
 		Entity.x = x
 		Entity.y = y
 		local new_entity = _G[ent_name](x, y, width, height)
@@ -266,7 +273,6 @@ Scene = Class{
 				love.graphics.push('all')
 		    	love.graphics.setLineWidth(1)
 		    	love.graphics.setLineStyle("rough")
-		    	love.graphics.setColor(255,255,255,40)
 
 		    	local g_x, g_y
 		    	if not self._fake_view.disabled then
@@ -279,6 +285,30 @@ Scene = Class{
 
 		    	local offx, offy = -(g_x%_snap[1]), -(g_y%_snap[2])
 
+		    	local function myStencilFunction()
+		    		local conf_w, conf_h = CONF.window.width, CONF.window.height
+
+		    		local rect_x = (game_width/2)-(conf_w/2)
+		    		local rect_y = (game_height/2)-(conf_h/2)
+
+				   	love.graphics.rectangle("fill", rect_x, rect_y, conf_w, conf_h)
+				end
+
+				local function stencilLine(func)
+					-- outside view line
+		    		love.graphics.setColor(255,255,255,30)
+	    			love.graphics.setLineWidth(1)
+	    			func()
+
+	    			-- bold in-view line
+		    		love.graphics.setColor(255,255,255,40)
+		    		love.graphics.stencil(myStencilFunction, "replace", 1)
+				 	love.graphics.setStencilTest("greater", 0)
+				 	love.graphics.setLineWidth(1)
+				 	func()
+		    		love.graphics.setStencilTest()
+				end
+
 		    	-- vertical lines
 		    	for x = 0,game_width,_snap[1] do
 		    		if x+offx == 0 then
@@ -286,7 +316,11 @@ Scene = Class{
 		    		else
 		    			love.graphics.setLineWidth(1)
 		    		end
-		    		love.graphics.line(x+offx, 0, x+offx, game_height)
+
+		    		-- regular line
+		    		stencilLine(function()
+		    			love.graphics.line(x+offx, 0, x+offx, game_height)
+		    		end)
 		    	end
 		    	-- horizontal lines
 		    	for y = 0,game_height,_snap[2] do
@@ -295,7 +329,10 @@ Scene = Class{
 		    		else
 		    			love.graphics.setLineWidth(1)
 		    		end
-		    		love.graphics.line(0, y+offy,game_width, y+offy)
+
+		    		stencilLine(function()
+		    			love.graphics.line(0, y+offy,game_width, y+offy)
+		    		end)
 		    	end
 		    	love.graphics.pop()
 			end
@@ -350,9 +387,14 @@ Scene = Class{
 			-- removing followed entity
 			if ent == nil and self._fake_view.follow_entity then
 				self._fake_view.follow_entity.show_debug = false
+				self._fake_view.offset_x = 0
+				self._fake_view.offset_y = 0
 			end
 			-- following entity
 			if ent then
+				-- TODO: offset not working as intended
+				self._fake_view.offset_x = self._fake_view.port_width - game_width 
+				self._fake_view.offset_y = self._fake_view.port_height - game_height
 				ent.show_debug = true
 			end
 

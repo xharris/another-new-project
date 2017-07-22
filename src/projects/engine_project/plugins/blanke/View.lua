@@ -11,6 +11,8 @@ View = Class{
 		self.follow_entity = nil
 		self.follow_x = 0
 		self.follow_y = 0
+		self.offset_x = 0
+		self.offset_y = 0
 
 		self.motion_type = 'none' -- linear, smooth
 		self.speed = 1 
@@ -189,7 +191,7 @@ View = Class{
 		-- move the camera
 		local wx = love.graphics.getWidth()/2
 		local wy = love.graphics.getHeight()/2
-		self.camera:lockWindow(self.follow_x + shake_x, self.follow_y + shake_y, wx-self.max_distance, wx+self.max_distance,  wy-self.max_distance, wy+self.max_distance, self._smoother)
+		self.camera:lockWindow(self.follow_x + self.offset_x + shake_x, self.follow_y + self.offset_y + shake_y, wx-self.max_distance, wx+self.max_distance,  wy-self.max_distance, wy+self.max_distance, self._smoother)
 	end,
 
 	attach = function(self)  

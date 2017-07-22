@@ -7,4 +7,4 @@ mac:
 
 win:
 	cls
-	"love-0.10.2-win32/love.exe" --console "src"
+	"love-0.10.2-win32/lovec.exe" --console "src"

@@ -35,10 +35,6 @@ function writeSceneFiles()
 end
 
 local ideScene = {
-	getObjectList = function()
-
-	end,
-
 	getAssets = function()
 		local ret_str = ''
 		ret_str = ret_str .. writeSceneFiles()
@@ -162,7 +158,7 @@ local ideScene = {
 													curr_scene:focusEntity(ent)
 												end
 
-												if imgui.TreeNodeEx(string.format('%s (%d,%d)', ent.classname, ent.x, ent.y)..'###'..ent.uuid, flags) then
+												if imgui.TreeNodeEx(string.format('%s (%d,%d)', ifndef(ent.nickname, ent.classname), ent.x, ent.y)..'###'..ent.uuid, flags) then
 		            								imgui.BeginChild(ent.uuid, 0, 150, false);
 
 			        								if imgui.SmallButton("delete") then

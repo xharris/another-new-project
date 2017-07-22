@@ -1,5 +1,7 @@
 local default = {66,66,66,110}
 
+local scrollbar = {117,117,117,255}
+
 UI = {
 
 	color = {
@@ -28,9 +30,9 @@ UI = {
 		Text = {245,245,245,255},
 
 		ScrollbarBg = {0,0,0,0},
-		ScrollbarGrab = {66,66,66,255},
-		ScrollbarGrabHovered = {66,66,66,255},
-		ScrollbarGrabActive = {66,66,66,255},
+		ScrollbarGrab = scrollbar,
+		ScrollbarGrabHovered = scrollbar,
+		ScrollbarGrabActive = scrollbar,
 
 		ResizeGrip = {66,66,66,100},
 		ResizeGripHovered = {66,66,66,100},
@@ -39,6 +41,10 @@ UI = {
 		TitleBg = 'love2d_dark',
 		TitleBgActive = 'love2d',
 		TitleBgCollapsed = 'love2d_transparent',
+
+		CloseButton = {255,255,255,75},
+		ClostButtonHovered = {255,255,255,75},
+		CloseButtonActive = {255,255,255,100},
 
 		Button = 'love2d',
 		ButtonHovered = 'love2d_light',
@@ -76,10 +82,10 @@ UI = {
 
 	setting = {
 		initial_state = '',
-		project_reload_timer = {type='number',value=3,min=0.5,max=60*5},
+		project_reload_timer = {type='number',value=4,min=0.5,max=60*5},
 		console_height = {type='number',value=100,min=0,max=love.graphics.getHeight()/2},
-		font = "Consolas",
-		font_size = {type='number',value=12,min=1,max=100}
+		font = "FiraCode",
+		font_size = {type='number',value=14,min=1,max=100}
 	},
 
 	setStyling = function()
@@ -91,7 +97,15 @@ UI = {
 		imgui.PushStyleVar('GrabRounding', 2)
 		imgui.PushStyleVar('GrabMinSize', 16)
 
-		imgui.SetGlobalFontFromFileTTF("fonts/"..UI.getSetting('font')..".ttf", UI.getSetting('font_size').value)
+		local font_files = love.filesystem.getDirectoryItems('fonts')
+		local font_filename = ''
+		local sel_font = UI.getSetting('font')
+		for f, file in ipairs(font_files) do
+			if file:find(sel_font) then
+				font_filename = file
+			end
+		end
+		imgui.SetGlobalFontFromFileTTF("fonts/"..font_filename, UI.getSetting('font_size').value)
 
 		for e, el in pairs(UI.elements) do
 			imgui.PushStyleColor(e, UI.getColor(el))
@@ -120,12 +134,12 @@ UI = {
 			UI.color.love2d_light[c] = UI.color.love2d_light[c] + 20
 			UI.color.love2d_dark[c] = UI.color.love2d_dark[c] - 80
 		end
-
+--[[
 		UI.elements.CloseButton = table.copy(new_color)
-		UI.elements.CloseButton[4] = 0
+		UI.elements.CloseButton[4] = 75
 		UI.elements.CloseButtonHovered = UI.elements.CloseButton
 		UI.elements.CloseButtonActive = UI.elements.CloseButton
-
+]]
 		UI.setStyling()
 
 		return new_color

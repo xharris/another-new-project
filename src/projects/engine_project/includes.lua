@@ -1,5 +1,12 @@
 game_name = _GAME_NAME
 
+CONF = {
+    window = {
+        width = 800,
+        height = 600
+    }
+}
+
 local oldreq = require
 local require = oldreq
 if _REPLACE_REQUIRE then
