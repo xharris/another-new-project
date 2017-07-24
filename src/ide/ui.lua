@@ -44,7 +44,7 @@ UI = {
 
 		CloseButton = {255,255,255,75},
 		ClostButtonHovered = {255,255,255,75},
-		CloseButtonActive = {255,255,255,100},
+		CloseButtonActive = {255,255,255,75},
 
 		Button = 'love2d',
 		ButtonHovered = 'love2d_light',
@@ -85,7 +85,9 @@ UI = {
 		project_reload_timer = {type='number',value=4,min=0.5,max=60*5},
 		console_height = {type='number',value=100,min=0,max=love.graphics.getHeight()/2},
 		font = "ProggySquare",
-		font_size = {type='number',value=11,min=1,max=100}
+		font_size = {type='number',value=11,min=1,max=100},
+		scene_snapx = {type='number',value=32,min=1,max=1000},
+		scene_snapy = {type='number',value=32,min=1,max=1000},
 	},
 
 	setStyling = function()

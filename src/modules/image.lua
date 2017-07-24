@@ -73,7 +73,6 @@ ideImage = {
 					info._asset = love.graphics.newImage(IDE.current_project..'/'..img_path)
 				end
 
-
 				local img_width = info._asset:getWidth()
 				local img_height = info._asset:getHeight()
 				imgui.Image(info._asset, img_width, img_height, 0, 0, 1, 1, 255, 255, 255, 255, UI.getColor('love2d'));

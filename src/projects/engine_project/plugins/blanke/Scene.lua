@@ -1,7 +1,6 @@
 local _btn_place
 local _btn_drag
 local _last_place = {nil,nil}
-local _snap = {32,32}
 local _place_type
 local _place_obj
 
@@ -16,6 +15,7 @@ Scene = Class{
 		self.layers = {}
 		self.images = {}
 		self.name = name
+		self._snap = {32,32}
 
 		if BlankE._ide_mode then
 			_btn_place = Input('mouse.1')
@@ -266,10 +266,12 @@ Scene = Class{
 					cam_x, cam_y = mouse_x, mouse_y
 				end
 				local mx, my = cam_x, cam_y
-				return {mx-(mx%_snap[1]), my-(my%_snap[2])}
+				return {mx-(mx%self._snap[1]), my-(my%self._snap[2])}
 			end
 
 			function _drawGrid()
+				local min_grid_draw = 8
+
 				love.graphics.push('all')
 		    	love.graphics.setLineWidth(1)
 		    	love.graphics.setLineStyle("rough")
@@ -283,7 +285,7 @@ Scene = Class{
 			    	g_x, g_y = 0, 0
 			    end
 
-		    	local offx, offy = -(g_x%_snap[1]), -(g_y%_snap[2])
+		    	local offx, offy = -(g_x%self._snap[1]), -(g_y%self._snap[2])
 
 		    	local function myStencilFunction()
 		    		local conf_w, conf_h = CONF.window.width, CONF.window.height
@@ -310,30 +312,35 @@ Scene = Class{
 				end
 
 		    	-- vertical lines
-		    	for x = 0,game_width,_snap[1] do
-		    		if x+offx == 0 then
-						love.graphics.setLineWidth(3)
-		    		else
-		    			love.graphics.setLineWidth(1)
-		    		end
+		    	if self._snap[1] >= min_grid_draw then
+			    	for x = 0,game_width,self._snap[1] do
+			    		if x+offx == 0 then
+							love.graphics.setLineWidth(3)
+			    		else
+			    			love.graphics.setLineWidth(1)
+			    		end
 
-		    		-- regular line
-		    		stencilLine(function()
-		    			love.graphics.line(x+offx, 0, x+offx, game_height)
-		    		end)
-		    	end
+			    		-- regular line
+			    		stencilLine(function()
+			    			love.graphics.line(x+offx, 0, x+offx, game_height)
+			    		end)
+			    	end
+			    end
+
 		    	-- horizontal lines
-		    	for y = 0,game_height,_snap[2] do
-		    		if y+offy == 0 then
-		    			love.graphics.setLineWidth(3)
-		    		else
-		    			love.graphics.setLineWidth(1)
-		    		end
+		    	if self._snap[2] >= min_grid_draw then
+			    	for y = 0,game_height,self._snap[2] do
+			    		if y+offy == 0 then
+			    			love.graphics.setLineWidth(3)
+			    		else
+			    			love.graphics.setLineWidth(1)
+			    		end
 
-		    		stencilLine(function()
-		    			love.graphics.line(0, y+offy,game_width, y+offy)
-		    		end)
-		    	end
+			    		stencilLine(function()
+			    			love.graphics.line(0, y+offy,game_width, y+offy)
+			    		end)
+			    	end
+			    end
 		    	love.graphics.pop()
 			end
 

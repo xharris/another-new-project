@@ -6,6 +6,8 @@ local selected_entity = ''
 
 local placeable = {'entity','image','hitbox'}
 
+local images = {}
+
 function writeSceneFiles()
 	local ret_str = ''
 	local scene_files = love.filesystem.getDirectoryItems(IDE.current_project..'/assets/scene')
@@ -82,8 +84,32 @@ local ideScene = {
 					curr_scene_index = new_scene_index
 				end
 				curr_scene = scene_list[curr_scene_index]
+				curr_scene._snap = {UI.getSetting("scene_snapx").value,UI.getSetting("scene_snapy").value}
 
 				if imgui.CollapsingHeader("Place") then
+
+					if imgui.TreeNode('settings') then
+						-- grid snapping setting
+			        	imgui.Text("snap")
+			            imgui.SameLine()
+						imgui.PushItemWidth(80)
+			        	local scene_snapx = UI.getSetting("scene_snapx")
+			            status_snapx, new_snapx = imgui.DragInt("###scene_snapx",scene_snapx.value,1,scene_snapx.min,scene_snapx.max,"x: %.0f")
+			            if status_snapx then
+			            	curr_scene._snap[1] = new_snapx
+			                UI.setSetting("scene_snapx", new_snapx)
+			            end
+			            imgui.SameLine()
+			        	local scene_snapy = UI.getSetting("scene_snapy")
+			            status_snapy, new_snapy = imgui.DragInt("###scene_snapy",scene_snapy.value,1,scene_snapy.min,scene_snapy.max,"y: %.0f")
+			            if status_snapy then
+			            	curr_scene._snap[2] = new_snapx
+			                UI.setSetting("scene_snapy", new_snapy)
+			            end
+			            imgui.PopItemWidth()
+			            imgui.TreePop()
+			        end
+
 					-- category selection
 					local category_names = {}
 					local img_list = {}
@@ -133,6 +159,9 @@ local ideScene = {
 					elseif curr_category == 'image' then
 						--
 						curr_scene:setPlacer()
+
+
+
 					else
 						curr_scene:setPlacer()
 					end
@@ -150,7 +179,7 @@ local ideScene = {
 								if imgui.TreeNode(string.format(obj..' (%d)###'..curr_scene.name..'_entity', obj_count)) then
 							
 									for layer, entities in pairs(obj_list) do
-										if imgui.TreeNode(layer) then
+										if imgui.TreeNode(string.format(layer..' (%d)',#entities)) then
 											for e, ent in ipairs(entities) do
 												local clicked = false
 												local flags = {'OpenOnArrow'}
@@ -163,8 +192,8 @@ local ideScene = {
 												if imgui.TreeNodeEx(string.format('%s (%d,%d)', ifndef(ent.nickname, ent.classname), ent.x, ent.y)..'###'..ent.uuid, flags) then
 		            								imgui.BeginChild(ent.uuid, 0, 150, false);
 
-			        								if imgui.SmallButton("delete") then
-			        									ent:destroy()
+			        								if imgui.SmallButton("save (not implemented yet)") then
+			        									--curr_scene:saveEntity(ent)
 			        								end
 
 													for var, value in pairs(ent) do
@@ -211,6 +240,10 @@ local ideScene = {
 
 								imgui.TreePop()
 								end
+							end
+
+							if obj == 'image' then
+								
 							end
 
 					end
