@@ -6,6 +6,11 @@ local require = function(s) return oldreq(script_path .. s) end
 assets = Class{}
 
 
+function assets:_6C992_circle()
+	local new_img = love.graphics.newImage(asset_path..'assets/image/6C992-circle.png')
+	return new_img
+end
+
 function assets:penguin()
 	local new_img = love.graphics.newImage(asset_path..'assets/image/penguin.png')
 	return new_img

@@ -1,7 +1,7 @@
 local image_list = {}
 local image_info = {}
 
-local getImgPathByName = function(name)
+function getImgPathByName(name)
 	for img, info in pairs(image_info) do
 		if info.name == name then
 			return img
@@ -23,9 +23,8 @@ ideImage = {
 		for s, img in ipairs(image_files) do
 			if not image_info[img] then
 				image_info[img] = {
-					name=img:gsub(extname(img),''),
-					open=false,
-					_asset=nil
+					name=IDE.validateName(img:gsub(extname(img),'')),
+					open=false
 				}
 			end
 			table.insert(image_list, img)
@@ -69,13 +68,7 @@ ideImage = {
 				local img_path = "assets/image/"..img
 				imgui.InputText("path", img_path, img_path:len())
 
-				if not info._asset then
-					info._asset = love.graphics.newImage(IDE.current_project..'/'..img_path)
-				end
-
-				local img_width = info._asset:getWidth()
-				local img_height = info._asset:getHeight()
-				imgui.Image(info._asset, img_width, img_height, 0, 0, 1, 1, 255, 255, 255, 255, UI.getColor('love2d'));
+				UI.drawImage(IDE.current_project..'/'..img_path)
 
 				imgui.End()
 			end

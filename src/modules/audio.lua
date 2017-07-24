@@ -23,7 +23,7 @@ ideAudio = {
 		for s, aud in ipairs(audio_files) do
 			if not audio_info[aud] then
 				audio_info[aud] = {
-					name=aud:gsub(extname(aud),''),
+					name=IDE.validateName(aud:gsub(extname(aud),'')),
 					open=false,
 					_asset=nil,
 					type="stream"

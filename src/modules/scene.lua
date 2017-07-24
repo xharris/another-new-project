@@ -1,12 +1,18 @@
 local curr_scene_index = 1
 local curr_placer_index = 1
 local curr_object_index = 1
-
+-- entity placing
 local selected_entity = ''
+-- image placing
+local _img_dragging = false
+local _img_drag_init_mouse = {0,0}
+local _img_snap = {32,32}
+local drag_x=0
+local drag_y=0
+local drag_width=0
+local drag_height=0
 
 local placeable = {'entity','image','hitbox'}
-
-local images = {}
 
 function writeSceneFiles()
 	local ret_str = ''
@@ -157,10 +163,86 @@ local ideScene = {
 
 					-- IMAGE
 					elseif curr_category == 'image' then
-						--
-						curr_scene:setPlacer()
+						local img_path = IDE.current_project.."/assets/image/"..getImgPathByName(curr_object)
+						local img, img_width, img_height = UI.loadImage(img_path) 
 
+						UI.drawImageButton(img_path, 0, 0, 1, 1, 0, 255, 255, 255, 255)
+							--32,32, 0,0, 32/img_width, 32/img_height, 0)
+						function _getMouseDragPos()
+							local mousepos_x, mousepos_y = imgui.GetMousePos()
+							local screenpos_x, screenpos_y = imgui.GetCursorScreenPos()
+							local _mouse_x = mousepos_x-screenpos_x
+							local _mouse_y = mousepos_y-screenpos_y+img_height+3
 
+							return _mouse_x, _mouse_y
+						end
+
+						if imgui.IsMouseDown(0) and imgui.IsItemHovered() then
+							-- mouse pressed
+							if not _img_dragging then
+								_img_dragging = true
+								_img_drag_init_mouse = {_getMouseDragPos()}
+
+								-- not allowed to be below 0
+								if _img_drag_init_mouse[1] < 0 then _img_drag_init_mouse[1] = 0 end
+								if _img_drag_init_mouse[2] < 0 then _img_drag_init_mouse[2] = 0 end
+
+								drag_x = _img_drag_init_mouse[1] - (_img_drag_init_mouse[1]%_img_snap[1])
+								drag_y = _img_drag_init_mouse[2] - (_img_drag_init_mouse[2]%_img_snap[2])
+								drag_width = img_width
+								drag_height = img_height
+
+								curr_scene:setPlacer('image', {
+									img_name=curr_object,
+									x=drag_x,
+									y=drag_y,
+									width=drag_width,
+									height=drag_height
+								})
+
+							-- mouse dragging
+							else
+								local mouse_pos = {_getMouseDragPos()}
+								drag_width = mouse_pos[1] - _img_drag_init_mouse[1]
+								drag_height = mouse_pos[2] - _img_drag_init_mouse[2]
+
+								drag_width = drag_width - (drag_width % _img_snap[1])
+								drag_height = drag_height - (drag_height % _img_snap[2])
+								--print('start:',drag_x, drag_y,'end:',drag_width,drag_height)
+								curr_scene:setPlacer('image', {
+								img_name=curr_object,
+								x=drag_x,
+								y=drag_y,
+								width=drag_width,
+								height=drag_height
+							})
+							end
+
+						elseif _img_dragging then
+							-- mouse released
+							_img_dragging = false
+
+							
+						end
+
+						if imgui.IsItemHovered() then
+							imgui.BeginTooltip()
+
+							local tooltip = ''
+
+							if not _img_dragging then
+								local tex_screen_pos = {imgui.GetCursorScreenPos()}
+								local mouse_pos = {imgui.GetMousePos()}
+
+				                focus_x = mouse_pos[1] - tex_screen_pos[1]
+				                focus_y = mouse_pos[2] - tex_screen_pos[2]
+								tooltip = string.format('%d, %d', focus_x, focus_y) -- i dont get this
+							else
+								tooltip = string.format('x:%d y:%d, w:%d h:%d', drag_x, drag_y, drag_width, drag_height)
+							end
+							imgui.Text(tooltip)
+							imgui.EndTooltip()
+						end
 
 					else
 						curr_scene:setPlacer()

@@ -8,6 +8,7 @@ local _dragging = false
 local _view_initial_pos = {0,0}
 local _initial_mouse_pos = {0,0}
 
+local _grid_gradient = false
 
 Scene = Class{
 	init = function(self, name)
@@ -287,11 +288,12 @@ Scene = Class{
 
 		    	local offx, offy = (g_x%self._snap[1]), (g_y%self._snap[2])
 
+		    	local offset = 0
 		    	local function myStencilFunction()
-		    		local conf_w, conf_h = CONF.window.width, CONF.window.height
+		    		local conf_w, conf_h = CONF.window.width-(offset*2), CONF.window.height-(offset*2)
 
-		    		local rect_x = (game_width/2)-(conf_w/2)
-		    		local rect_y = (game_height/2)-(conf_h/2)
+		    		local rect_x = (game_width/2)-(conf_w/2)+offset
+		    		local rect_y = (game_height/2)-(conf_h/2)+offset
 
 				   	love.graphics.rectangle("fill", rect_x, rect_y, conf_w, conf_h)
 				end
@@ -303,12 +305,26 @@ Scene = Class{
 	    			func()
 
 	    			-- bold in-view line
-		    		love.graphics.setColor(255,255,255,40)
-		    		love.graphics.stencil(myStencilFunction, "replace", 1)
-				 	love.graphics.setStencilTest("greater", 0)
-				 	love.graphics.setLineWidth(1)
-				 	func()
-		    		love.graphics.setStencilTest()
+	    			if _grid_gradient then
+		    			for o = 0,15,1 do
+		    				offset = -o
+				    		love.graphics.setColor(255,255,255,2)
+				    		love.graphics.stencil(myStencilFunction, "replace", 1)
+						 	love.graphics.setStencilTest("greater", 0)
+						 	love.graphics.setLineWidth(1)
+						 	func()
+				    		love.graphics.setStencilTest()
+		    			end
+		    		else 
+		    			offset = 0
+						love.graphics.setColor(255,255,255,40)
+			    		love.graphics.stencil(myStencilFunction, "replace", 1)
+					 	love.graphics.setStencilTest("greater", 0)
+					 	love.graphics.setLineWidth(1)
+					 	func()
+			    		love.graphics.setStencilTest()
+		    		end
+
 				end
 
 		    	-- vertical lines
@@ -346,15 +362,20 @@ Scene = Class{
 	    	_drawGrid()
 	    	self._fake_view:attach()
 
+	    	-- placing object on click
 	    	local _placeXY = _getMouseXY()
 	    	BlankE._mouse_x, BlankE._mouse_y = unpack(_placeXY)
-	    	if _btn_place() then
+	    	if _btn_place() and _place_type then
 	    		if _placeXY[1] ~= _last_place[1] or _placeXY[2] ~= _last_place[2] then
 	    			_last_place = _placeXY
 
 	    			if _place_type == 'entity' then
 	    				local new_entity = self:addEntity(_place_obj, _placeXY[1], _placeXY[2])
 	    				new_entity._loadedFromFile = true
+	    			end
+	    			
+	    			if _place_type == 'image' then
+	    				local new_tile = self:addTile(self, _place_obj.img_name, _placeXY[1], _placeXY[2], _place_obj)
 	    			end
 	    		end
 	    	end

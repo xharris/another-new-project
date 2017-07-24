@@ -3,7 +3,7 @@ local default = {66,66,66,110}
 local scrollbar = {117,117,117,255}
 
 UI = {
-
+	_images = {},
 	color = {
 		background = {33,33,33,255},
 		_love2d = {
@@ -98,7 +98,7 @@ UI = {
 		imgui.PushStyleVar('FrameRounding', 3)
 		imgui.PushStyleVar('GrabRounding', 2)
 		imgui.PushStyleVar('GrabMinSize', 16)
-UI.loadFont()
+		UI.loadFont()
 		for e, el in pairs(UI.elements) do
 			imgui.PushStyleColor(e, UI.getColor(el))
 		end
@@ -182,6 +182,28 @@ UI.loadFont()
 		else
 			UI.setting[index] = value
 		end
+	end,
+
+	loadImage = function(img_path)
+		if not UI._images[img_path] then
+			UI._images[img_path] = love.graphics.newImage(img_path)
+		end
+		local img = UI._images[img_path]
+
+		local img_width = img:getWidth()
+		local img_height = img:getHeight()
+
+		return img, img_width, img_height
+	end,
+
+	drawImage = function(img_path)
+		local img, img_width, img_height = UI.loadImage(img_path) 
+		return imgui.Image(img, img_width, img_height, 0, 0, 1, 1, 255, 255, 255, 255, UI.getColor('love2d'))
+	end,
+
+	drawImageButton = function(img_path, ...)
+		local img, img_width, img_height = UI.loadImage(img_path)
+		return imgui.ImageButton(img, img_width, img_height, ...)--, 0, 0, 1, 1, 255, 255, 255, 255, UI.getColor('love2d'));
 	end,
 }
 

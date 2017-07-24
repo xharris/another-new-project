@@ -342,6 +342,8 @@ IDE = {
 	end,
 
 	refreshAssets = function(dont_reload)
+		if not IDE.isProjectOpen() then return end
+
 		local asset_str = 
 		"local script_path = (...):match(\'(.-)[^%.]+$\')\n"..
 		"local asset_path = script_path:gsub('%.','/')..\'/\'\n\n"..
@@ -371,8 +373,12 @@ IDE = {
 
 		HELPER.run('makeDirs', {'"'..IDE.getCurrentProject()..'"'})
 		local file = io.open(IDE.getCurrentProject()..'/assets.lua','w+')
-		file:write(asset_str)
-		file:close()
+		if assert(file,"ERR: problem writing to '"..IDE.getCurrentProject().."/assets.lua'") then
+			file:write(asset_str)
+			file:close()
+		else
+			print("ERR: ")
+		end
 
 		if not dont_reload then
 			IDE.reload()
@@ -381,10 +387,21 @@ IDE = {
 
 	validateName = function(new_name, collection)
 		new_name = new_name:trim()
+		if type(collection) ~= 'table' then
+			collection = {}
+		end
+
+		-- cannot start with number
+		if new_name:match("^%d") then
+			new_name = "_"..new_name
+		end
+
+		-- cannot contain hyphens
+		new_name = new_name:gsub("-","_")
 
 		-- returns false if failed to make new name
 		function nameObj() 
-			for e, obj in ipairs(ifndef(collection,{})) do
+			for e, obj in ipairs(collection) do
 				if (type(obj) == 'table' and obj.classname == new_name) or (type(obj) == 'string' and obj == new_name) or _G[new_name] then
 					new_name = new_name..'2'
 					return false
@@ -407,7 +424,7 @@ IDE = {
 	end,
 
 	addResource = function(file)
-		if IDE.getCurrentProject() then
+		if IDE.isProjectOpen() then
 			local path = file:getFilename()
 			local ext = extname(path)
 
