@@ -13,3 +13,4 @@ test_resources
 BlankE-darwin-x64
 *.command
 love.*
+Makefile

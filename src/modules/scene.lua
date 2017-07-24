@@ -179,7 +179,7 @@ local ideScene = {
 								if imgui.TreeNode(string.format(obj..' (%d)###'..curr_scene.name..'_entity', obj_count)) then
 							
 									for layer, entities in pairs(obj_list) do
-										if imgui.TreeNode(string.format(layer..' (%d)',#entities)) then
+										if imgui.TreeNode(string.format(layer..' (%d)###'..layer,#entities)) then
 											for e, ent in ipairs(entities) do
 												local clicked = false
 												local flags = {'OpenOnArrow'}

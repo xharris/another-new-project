@@ -279,13 +279,13 @@ Scene = Class{
 		    	local g_x, g_y
 		    	if not self._fake_view.disabled then
 			    	g_x, g_y = self._fake_view:position()
-			    	g_x = (self._fake_view.port_width/2) + g_x
-			    	g_y = (self._fake_view.port_height/2) + g_y
+			    	g_x = (self._fake_view.port_width/2) - g_x
+			    	g_y = (self._fake_view.port_height/2) - g_y
 			    else
 			    	g_x, g_y = 0, 0
 			    end
 
-		    	local offx, offy = -(g_x%self._snap[1]), -(g_y%self._snap[2])
+		    	local offx, offy = (g_x%self._snap[1]), (g_y%self._snap[2])
 
 		    	local function myStencilFunction()
 		    		local conf_w, conf_h = CONF.window.width, CONF.window.height
@@ -320,7 +320,6 @@ Scene = Class{
 			    			love.graphics.setLineWidth(1)
 			    		end
 
-			    		-- regular line
 			    		stencilLine(function()
 			    			love.graphics.line(x+offx, 0, x+offx, game_height)
 			    		end)
