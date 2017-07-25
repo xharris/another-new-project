@@ -15,7 +15,7 @@ local ideState = {
 
 	getObjectList = function()
 		state_list = {}
-		local state_files = love.filesystem.getDirectoryItems(IDE.current_project..'/scripts/state')
+		local state_files = love.filesystem.getDirectoryItems(IDE.getShortProjectPath()..'/scripts/state')
 		for s, state in ipairs(state_files) do
 			local state_name = string.gsub(state,'.lua','')
 			table.insert(state_list, state_name)
@@ -63,7 +63,7 @@ local ideState = {
 
 	edit = function(name)
 		open_states[name] = true 
-		HELPER.run('editFile',{IDE.getCurrentProject()..'/scripts/state/'..name..'.lua'})
+		HELPER.run('editFile',{IDE.getProjectPath()..'/scripts/state/'..name..'.lua'})
 	end,
 
 	draw = function()

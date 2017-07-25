@@ -16,7 +16,7 @@ local placeable = {'entity','image','hitbox'}
 
 function writeSceneFiles()
 	local ret_str = ''
-	local scene_files = love.filesystem.getDirectoryItems(IDE.current_project..'/assets/scene')
+	local scene_files = love.filesystem.getDirectoryItems(IDE.getShortProjectPath()..'/assets/scene')
 
 	for s, scene_file in ipairs(scene_files) do
 		local scene_name = basename(scene_file)
@@ -30,7 +30,7 @@ function writeSceneFiles()
 	if BlankE then
 		_iterateGameGroup('scene', function(scene, s)
 			local scene_name = scene.name
-			local scene_path = IDE.getCurrentProject()..'/assets/scene/'..scene_name..'.json'
+			local scene_path = IDE.getShortProjectPath()..'/assets/scene/'..scene_name..'.json'
 			local scene_data = scene:export(path)
 
 			HELPER.run('makeDirs', {'"'..scene_path..'"'})
@@ -50,7 +50,6 @@ local ideScene = {
 	end,
 
 	postReload = function()
-	 	print('hi')
 
 	end,
 
@@ -163,7 +162,7 @@ local ideScene = {
 
 					-- IMAGE
 					elseif curr_category == 'image' then
-						local img_path = IDE.current_project.."/assets/image/"..getImgPathByName(curr_object)
+						local img_path = IDE.getShortProjectPath().."/assets/image/"..getImgPathByName(curr_object)
 						local img, img_width, img_height = UI.loadImage(img_path) 
 
 						function setImgPlacer()
@@ -174,7 +173,26 @@ local ideScene = {
 								width=drag_width,
 								height=drag_height
 							})
-						end
+						end			
+
+						if imgui.TreeNode('settings') then
+							imgui.Text("tile size")
+							imgui.PushItemWidth(80)
+
+							-- tile size (even though I named the vars snap)
+				            status_img_snapx, new_img_snapx = imgui.DragInt("###img_tilew",_img_snap[1],1,1,img_width,"w: %.0f")
+				            if status_img_snapx then
+				            	_img_snap[1] = new_img_snapx
+				            end
+				            imgui.SameLine()
+				            status_img_snapy, new_img_snapy = imgui.DragInt("###img_tileh",_img_snap[2],1,1,img_height,"h: %.0f")
+				            if status_img_snapy then
+				            	_img_snap[2] = new_img_snapy
+				            end
+
+				            imgui.PopItemWidth()
+				            imgui.TreePop()
+				        end
 
 						if imgui.Button("All") then
 							drag_x = 0; drag_y = 0

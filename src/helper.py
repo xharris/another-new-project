@@ -74,12 +74,22 @@ def makeDirs(path):
 	if not os.path.exists(os.path.dirname(path)):
 		os.makedirs(os.path.dirname(path))
 
+def listFiles(path):
+	file_list = os.listdir(path)
+	print('return {'+','.join(map(lambda path: "\""+path+"\"",file_list))+'}')
+
+
+def isDirectory(path):
+	print('return '+("true" if os.path.isdir(path) else "false"))
+
 functions = {
 	'newProject':newProject,
 	'newScript':newScript,
 	'editFile':editFile,
 	'copyResource':copyResource,
-	'makeDirs':makeDirs
+	'makeDirs':makeDirs,
+	'listFiles':listFiles,
+	'isDirectory':isDirectory
 }
 
 other_args = sys.argv[2:]

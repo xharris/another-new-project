@@ -19,7 +19,7 @@ ideImage = {
 	getObjectList = function() 
 		image_list = {}
 		local ret_list = {}
-		local image_files = love.filesystem.getDirectoryItems(IDE.current_project..'/assets/image')
+		local image_files = love.filesystem.getDirectoryItems(IDE.getShortProjectPath()..'/assets/image')
 		for s, img in ipairs(image_files) do
 			if not image_info[img] then
 				image_info[img] = {
@@ -68,7 +68,7 @@ ideImage = {
 				local img_path = "assets/image/"..img
 				imgui.InputText("path", img_path, img_path:len())
 
-				UI.drawImage(IDE.current_project..'/'..img_path)
+				UI.drawImage(IDE.getShortProjectPath()..'/'..img_path)
 
 				imgui.End()
 			end

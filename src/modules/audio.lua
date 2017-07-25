@@ -19,7 +19,7 @@ ideAudio = {
 	getObjectList = function() 
 		audio_list = {}
 		local ret_list = {}
-		local audio_files = love.filesystem.getDirectoryItems(IDE.current_project..'/assets/audio')
+		local audio_files = love.filesystem.getDirectoryItems(IDE.getShortProjectPath()..'/assets/audio')
 		for s, aud in ipairs(audio_files) do
 			if not audio_info[aud] then
 				audio_info[aud] = {

@@ -9,7 +9,7 @@ local ideEntity = {
 
 	getObjectList = function()
 		entity_list = {}
-		local entity_files = love.filesystem.getDirectoryItems(IDE.current_project..'/scripts/entity')
+		local entity_files = love.filesystem.getDirectoryItems(IDE.getShortProjectPath()..'/scripts/entity')
 		for s, entity in ipairs(entity_files) do
 			local entity_name = string.gsub(entity,'.lua','')
 			table.insert(entity_list, entity_name)
@@ -35,7 +35,7 @@ local ideEntity = {
 	end,
 
 	edit = function(name)
-		HELPER.run('editFile',{IDE.getCurrentProject()..'/scripts/entity/'..name..'.lua'})
+		HELPER.run('editFile',{IDE.getProjectPath()..'/scripts/entity/'..name..'.lua'})
 	end,
 
 	draw = function()

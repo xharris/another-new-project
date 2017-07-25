@@ -1,12 +1,17 @@
 HELPER = {
+	py_location = 'src/helper.py',
 	run = function(name, args)
 		if args == nil then
 			args = {}
 		end
 
-		str_args = table.concat(args,' ')
-		cmd = 'python src/helper.py '..name..' '..str_args
-		os.execute(cmd)
+		local str_args = table.concat(args,' ')
+		cmd = 'python '..HELPER.py_location..' '..name..' '..str_args
+		--print(cmd)
+		local handle = io.popen(cmd)
+		local result = handle:read("*a")
+		handle:close()
+		return loadstring(result:trim())()
 	end
 }
 

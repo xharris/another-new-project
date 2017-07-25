@@ -11,6 +11,11 @@ function assets:_6C992_circle()
 	return new_img
 end
 
+function assets:example2()
+	local new_img = love.graphics.newImage(asset_path..'assets/image/example2.png')
+	return new_img
+end
+
 function assets:penguin()
 	local new_img = love.graphics.newImage(asset_path..'assets/image/penguin.png')
 	return new_img

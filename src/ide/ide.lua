@@ -67,19 +67,39 @@ IDE = {
 	        	if imgui.MenuItem("New") then
 	        		IDE.newProject()
 	        	end
+
 	            -- project directory
-	            status, new_folder = imgui.InputText("",IDE.project_folder,300)
-	            if status and new_folder ~= IDE.project_folder then
-	                IDE.setProjectFolder(new_folder)
-	            end
+	            if UI.titlebar.secret_stuff then
+		            status, new_folder = imgui.InputText("",IDE.project_folder,300)
+		            if status and new_folder ~= IDE.project_folder then
+		                IDE.setProjectFolder(new_folder)
+		            end
+		            if imgui.IsItemHovered() then
+						imgui.BeginTooltip()
+						imgui.Text(IDE.getProjectFolder())
+						imgui.EndTooltip()
+					end
+					imgui.SameLine()
+					if imgui.Button("Open") then
+						love.system.openURL("file://"..IDE.getProjectPath())
+					end
+				end
+
 	            -- available projects in dir
 	            if #IDE.project_list > 0 then
-	                imgui.BeginChild("project list", 0, 60, true)
+
+	                imgui.BeginChild("project list", 220, 60, true)
 	                for p, project in ipairs(IDE.project_list) do
 	                    -- chose a project to open?
 	                    if imgui.MenuItem(project) then
 	                        IDE.openProject(IDE.project_folder..'/'..project)
 	                    end
+
+						if imgui.IsItemHovered() then
+							imgui.BeginTooltip()
+							imgui.Text(IDE.getProjectPath(project))
+							imgui.EndTooltip()
+						end
 	                end
 	                imgui.EndChild()
 	            end
@@ -176,11 +196,16 @@ IDE = {
 	            	IDE.reload()
 	            end
 
+	            -- show blanke dev stuff
+	            if imgui.MenuItem("secret stuff", nil, UI.titlebar.secret_stuff) then
+	            	UI.titlebar.secret_stuff = not UI.titlebar.secret_stuff
+	            end
+
 	        	imgui.EndMenu()
 	        end
 
 	        -- DEV
-	        if imgui.BeginMenu("Dev") then
+	        if UI.titlebar.secret_stuff and imgui.BeginMenu("Dev") then
 	            if imgui.MenuItem("dev tools") then
 	            	UI.titlebar.show_dev_tools = true
 	            end
@@ -230,6 +255,8 @@ IDE = {
 			end
 		end
 
+		IDE.setProjectFolder(IDE.project_folder)
+
 		-- change imgui styling
 		UI.randomizeIDEColor()
 	end,
@@ -239,19 +266,25 @@ IDE = {
 	end,
 
 	newProject = function()
-		HELPER.run('newProject',{'"'..IDE.getProjectFolder()..'"'})
+		HELPER.run('newProject',{'"'..IDE.getProjectPath()..'"'})
 		IDE.refreshProjectList()
 	end,
 
 	setProjectFolder = function(new_folder)
-		if love.filesystem.isDirectory(new_folder) then
+		if not love.filesystem.isDirectory(new_folder) then
+			if love.filesystem.createDirectory(new_folder) then
+				IDE.project_folder = new_folder
+				IDE.refreshProjectList()
+			end
+		else
 			IDE.project_folder = new_folder
 			IDE.refreshProjectList()
-		end		
+		end
 	end,
 
 	refreshProjectList = function()
 		IDE.project_list = love.filesystem.getDirectoryItems(IDE.project_folder)
+		
 		local new_list = {}
 		for f, file in ipairs(IDE.project_list) do
 			if love.filesystem.isDirectory(IDE.project_folder..'/'..file) then
@@ -262,11 +295,30 @@ IDE = {
 	end,
 
 	getProjectFolder = function()
+		return IDE.project_folder
+	end,
+
+	getProjectPath = function(proj_name)
+		proj_name = ifndef(proj_name,IDE.current_project)
+
+		if proj_name ~= '' then
+			if love.filesystem.getRealDirectory(IDE.project_folder..'/'..proj_name) == love.filesystem.getSaveDirectory() then
+				-- in the save directory
+				return love.filesystem.getRealDirectory(IDE.project_folder)..'/'..IDE.project_folder..'/'..proj_name
+			end
+			-- in the executable directory
+			return love.filesystem.getSource()..'/'..IDE.project_folder..'/'..proj_name
+		end
+
 		return love.filesystem.getRealDirectory(IDE.project_folder)..'/'..IDE.project_folder
 	end,
 
+	getShortProjectPath = function()
+		return IDE.project_folder..'/'..IDE.current_project
+	end,
+
 	getCurrentProject = function()
-		return love.filesystem.getRealDirectory(IDE.current_project)..'/'..IDE.project_folder..'/'..basename(IDE.current_project)-- IDE.current_project
+		return IDE.current_project-- IDE.current_project
 	end,
 
 	isProjectOpen = function()
@@ -283,8 +335,9 @@ IDE = {
 			end
 
 			local old_path = IDE.current_project
-			IDE.current_project = folder_path
-			if not IDE._reload(IDE.current_project..'/includes.lua') then
+			IDE.current_project = basename(folder_path)
+
+			if not IDE._reload(IDE.project_folder..'/'..IDE.current_project..'/includes.lua') then
 				IDE.current_project = old_path
 			end
 
@@ -337,7 +390,7 @@ IDE = {
 	reload = function(dont_init_blanke)
 		IDE._want_reload = true
 		if IDE.current_project ~= '' then
-			IDE._reload(IDE.current_project..'/includes.lua', dont_init_blanke)
+			IDE._reload(IDE.getProjectFolder()..'/includes.lua', dont_init_blanke)
 		end
 	end,
 
@@ -371,9 +424,9 @@ IDE = {
 		end
 		asset_str = asset_str.."require = oldreq\n"
 
-		HELPER.run('makeDirs', {'"'..IDE.getCurrentProject()..'"'})
-		local file = io.open(IDE.getCurrentProject()..'/assets.lua','w+')
-		if assert(file,"ERR: problem writing to '"..IDE.getCurrentProject().."/assets.lua'") then
+		HELPER.run('makeDirs', {'"'..IDE.getProjectPath()..'"'})
+		local file = io.open(IDE.getProjectPath()..'/assets.lua','w+')
+		if assert(file,"ERR: problem writing to '"..IDE.getProjectPath().."/assets.lua'") then
 			file:write(asset_str)
 			file:close()
 		else
