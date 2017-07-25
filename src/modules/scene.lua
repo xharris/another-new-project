@@ -166,8 +166,32 @@ local ideScene = {
 						local img_path = IDE.current_project.."/assets/image/"..getImgPathByName(curr_object)
 						local img, img_width, img_height = UI.loadImage(img_path) 
 
+						function setImgPlacer()
+							curr_scene:setPlacer('image', {
+								img_name=curr_object,
+								x=drag_x,
+								y=drag_y,
+								width=drag_width,
+								height=drag_height
+							})
+						end
+
+						if imgui.Button("All") then
+							drag_x = 0; drag_y = 0
+							drag_width = img_width; drag_height = img_height
+							setImgPlacer()
+						end
+						imgui.SameLine()
+						if imgui.Button("Clear") then
+							drag_x = 0; drag_y = 0
+							drag_width = 0; drag_height = 0
+							setImgPlacer()
+						end
+
+						imgui.Text(string.format('x:%d y:%d, w:%d h:%d', drag_x, drag_y, drag_width, drag_height))
+
 						UI.drawImageButton(img_path, 0, 0, 1, 1, 0, 255, 255, 255, 255)
-							--32,32, 0,0, 32/img_width, 32/img_height, 0)
+
 						function _getMouseDragPos()
 							local mousepos_x, mousepos_y = imgui.GetMousePos()
 							local screenpos_x, screenpos_y = imgui.GetCursorScreenPos()
@@ -192,55 +216,48 @@ local ideScene = {
 								drag_width = img_width
 								drag_height = img_height
 
-								curr_scene:setPlacer('image', {
-									img_name=curr_object,
-									x=drag_x,
-									y=drag_y,
-									width=drag_width,
-									height=drag_height
-								})
+								setImgPlacer()
 
 							-- mouse dragging
 							else
 								local mouse_pos = {_getMouseDragPos()}
-								drag_width = mouse_pos[1] - _img_drag_init_mouse[1]
-								drag_height = mouse_pos[2] - _img_drag_init_mouse[2]
+								drag_width = mouse_pos[1] - _img_drag_init_mouse[1] + _img_snap[1]
+								drag_height = mouse_pos[2] - _img_drag_init_mouse[2] + _img_snap[2]
 
 								drag_width = drag_width - (drag_width % _img_snap[1])
 								drag_height = drag_height - (drag_height % _img_snap[2])
-								--print('start:',drag_x, drag_y,'end:',drag_width,drag_height)
-								curr_scene:setPlacer('image', {
-								img_name=curr_object,
-								x=drag_x,
-								y=drag_y,
-								width=drag_width,
-								height=drag_height
-							})
+
+								-- size cannot be less than initial position
+								if drag_width < 0 then drag_width = 0 end
+								if drag_height < 0 then drag_height = 0 end
+
+								if drag_width+drag_x > img_width then drag_width = img_width - drag_x end
+								if drag_height+drag_y > img_height then drag_height = img_height - drag_y end
+
+								setImgPlacer()
 							end
 
 						elseif _img_dragging then
 							-- mouse released
 							_img_dragging = false
 
-							
 						end
 
 						if imgui.IsItemHovered() then
 							imgui.BeginTooltip()
 
-							local tooltip = ''
+							local mouse_x, mouse_y = _getMouseDragPos()
 
-							if not _img_dragging then
-								local tex_screen_pos = {imgui.GetCursorScreenPos()}
-								local mouse_pos = {imgui.GetMousePos()}
+							-- not allowed to be below 0
+							if mouse_x < 0 then mouse_x = 0 end
+							if mouse_y < 0 then mouse_y = 0 end
 
-				                focus_x = mouse_pos[1] - tex_screen_pos[1]
-				                focus_y = mouse_pos[2] - tex_screen_pos[2]
-								tooltip = string.format('%d, %d', focus_x, focus_y) -- i dont get this
-							else
-								tooltip = string.format('x:%d y:%d, w:%d h:%d', drag_x, drag_y, drag_width, drag_height)
-							end
-							imgui.Text(tooltip)
+							mouse_x = mouse_x - (mouse_x%_img_snap[1])
+							mouse_y = mouse_y - (mouse_y%_img_snap[2])
+
+							local img, img_width, img_height = UI.loadImage(img_path) 
+							imgui.Image(img, drag_width, drag_height, drag_x/img_width, drag_y/img_width, (drag_x+drag_width)/img_width, (drag_y+drag_height)/img_height, 255, 255, 255, 255, UI.getColor('love2d'))
+
 							imgui.EndTooltip()
 						end
 

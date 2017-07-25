@@ -196,9 +196,9 @@ UI = {
 		return img, img_width, img_height
 	end,
 
-	drawImage = function(img_path)
+	drawImage = function(img_path, ...)
 		local img, img_width, img_height = UI.loadImage(img_path) 
-		return imgui.Image(img, img_width, img_height, 0, 0, 1, 1, 255, 255, 255, 255, UI.getColor('love2d'))
+		return imgui.Image(img, img_width, img_height, ...)
 	end,
 
 	drawImageButton = function(img_path, ...)
