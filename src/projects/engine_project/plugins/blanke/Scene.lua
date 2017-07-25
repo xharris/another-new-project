@@ -3,6 +3,7 @@ local _btn_drag
 local _last_place = {nil,nil}
 local _place_type
 local _place_obj
+local _place_layer = 0
 
 local _dragging = false
 local _view_initial_pos = {0,0}
@@ -153,6 +154,7 @@ Scene = Class{
 
 	_addEntityTable = function(self, entity, layer) 
 		layer = self:_checkLayerArg(layer)
+
 		self.layers[layer]["entity"] = ifndef(self.layers[layer]["entity"], {})
 		table.insert(self.layers[layer].entity, entity)
 	end,
@@ -174,6 +176,7 @@ Scene = Class{
 		layer = self:_checkLayerArg(layer)
 
 		-- check if the spritebatch exists yet
+		print_r(layer)
 		self.layers[layer]["tile"] = ifndef(self.layers[layer]["tile"], {})
 		self.images[img_name] = ifndef(self.images[img_name], Image(img_name))
 		self.layers[layer].tile[img_name] = ifndef(self.layers[layer].tile[img_name], love.graphics.newSpriteBatch(self.images[img_name]()))
@@ -370,12 +373,12 @@ Scene = Class{
 	    			_last_place = _placeXY
 
 	    			if _place_type == 'entity' then
-	    				local new_entity = self:addEntity(_place_obj, _placeXY[1], _placeXY[2])
+	    				local new_entity = self:addEntity(_place_obj, _placeXY[1], _placeXY[2], _place_layer)
 	    				new_entity._loadedFromFile = true
 	    			end
 	    			
 	    			if _place_type == 'image' then
-	    				local new_tile = self:addTile(self, _place_obj.img_name, _placeXY[1], _placeXY[2], _place_obj)
+	    				local new_tile = self:addTile(_place_obj.img_name, _placeXY[1], _placeXY[2], _place_obj, _place_layer)
 	    			end
 	    		end
 	    	end
