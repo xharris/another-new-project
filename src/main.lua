@@ -10,6 +10,7 @@ _REPLACE_REQUIRE = 'projects.project4.'
 
 --require "includes"
 
+require "ide.system"
 require "ide.helper"
 require "ide.ui"
 require "ide.ide"

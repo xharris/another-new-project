@@ -283,11 +283,11 @@ IDE = {
 	end,
 
 	refreshProjectList = function()
-		IDE.project_list = love.filesystem.getDirectoryItems(IDE.project_folder)
+		IDE.project_list = SYSTEM.scandir(IDE.getProjectPath())--love.filesystem.getDirectoryItems(IDE.project_folder)
 		
 		local new_list = {}
 		for f, file in ipairs(IDE.project_list) do
-			if love.filesystem.isDirectory(IDE.project_folder..'/'..file) then
+			if not file:starts('.') and love.filesystem.isDirectory(IDE.project_folder..'/'..file) then
 				table.insert(new_list,file)
 			end
 		end	
