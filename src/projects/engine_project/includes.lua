@@ -37,5 +37,4 @@ require 'plugins.blanke.Blanke'
 
 require 'assets'
 
-
 require = oldreq

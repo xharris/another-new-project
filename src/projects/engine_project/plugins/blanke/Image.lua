@@ -1,9 +1,12 @@
 local _images = {}
  
 Image = Class{
-
 	init = function(self, name)
-		assert(assets[name] ~= nil, "No image named '"..tostring(name).."'")
+		name = tostring(name)
+
+		--print('NEW')
+		--print_r(assets)
+		assert(assets[name] ~= nil, "No image named '"..name.."'")
 		self.image = assets[name]()
 
 		self.x = 0

@@ -4,7 +4,7 @@ local asset_path = script_path:gsub('%.','/')..'/'
 local oldreq = require
 local require = function(s) return oldreq(script_path .. s) end
 assets = Class{}
-
+print('including')
 
 function assets:_6C992_circle()
 	local new_img = love.graphics.newImage(asset_path..'assets/image/6C992-circle.png')
@@ -18,6 +18,11 @@ end
 
 function assets:penguin()
 	local new_img = love.graphics.newImage(asset_path..'assets/image/penguin.png')
+	return new_img
+end
+
+function assets:tileset_sample()
+	local new_img = love.graphics.newImage(asset_path..'assets/image/tileset_sample.png')
 	return new_img
 end
 

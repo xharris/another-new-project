@@ -43,6 +43,15 @@ SYSTEM = {
 		)
 	end,
 
+	copy = function(src, dest)
+		SYSTEM.mkdir(dirname(dest))
+		SYSTEM.runCmd(
+			{
+				mac='cp -R "'..src..'" "'..dest..'"'
+			}
+		)
+	end,
+
 	os = function()
 		local pfile = io.popen("uname")
 		local os_type = pfile:read("*a")

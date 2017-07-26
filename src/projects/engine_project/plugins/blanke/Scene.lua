@@ -226,6 +226,8 @@ Scene = Class{
 	addTile = function(self, img_name, x, y, img_info, layer, from_file) 
 		layer = self:_checkLayerArg(layer)
 
+		if not assets[img_name] then return end
+
 		-- check if the spritebatch exists yet
 		self.layers[layer]["tile"] = ifndef(self.layers[layer]["tile"], {})
 		self.images[img_name] = ifndef(self.images[img_name], Image(img_name))

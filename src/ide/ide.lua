@@ -286,16 +286,16 @@ IDE = {
 
 		local new_list = {}
 		for f, file in ipairs(IDE.project_list) do
-			if not file:starts('.') and love.filesystem.isDirectory(IDE.getProjectFolder()..'/'..file) then
+			--if love.filesystem.isDirectory(IDE.getProjectFolder()..'/'..file) then
 				table.insert(new_list,file)
-			end
+			--end
 		end	
 		IDE.project_list = new_list
 	end,
 
 	-- src/myprojects
 	getProjectFolder = function()
-		return IDE.project_folder
+		return love.filesystem.getRealDirectory(IDE.project_folder)..'/'..IDE.project_folder
 	end,
 
 	-- C:/blackstar/src/myprojects/theproject (absolute path)
@@ -405,7 +405,7 @@ IDE = {
 		"local asset_path = script_path:gsub('%.','/')..\'/\'\n\n"..
 		"local oldreq = require\n"..
 		"local require = function(s) return oldreq(script_path .. s) end\n"..
-		"assets = Class{}\n\n"
+		"assets = Class{}\nprint('including')\n"
 
 		local high_priority = {'image','audio','scene','entity','state'}
 
@@ -435,6 +435,7 @@ IDE = {
 		else
 			print("ERR: ")
 		end
+
 
 		if not dont_reload then
 			IDE.reload()
@@ -498,6 +499,8 @@ IDE = {
 					IDE.modules.audio.addAudio(file)
 				end
 			end
+
+			IDE.refreshAssets()
 		end
 	end,
 }

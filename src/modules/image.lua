@@ -11,15 +11,17 @@ end
 
 ideImage = {
 	addImage = function(file)
-		if IDE.getCurrentProject() then
-			HELPER.run('copyResource',{'image',file:getFilename(),IDE.getCurrentProject()})
+		if IDE.isProjectOpen() then
+			local filename = file:getFilename()
+			SYSTEM.copy(filename, IDE.getProjectPath()..'/assets/image/'..basename(filename))
 		end
 	end,
 
 	getObjectList = function() 
 		image_list = {}
 		local ret_list = {}
-		local image_files = love.filesystem.getDirectoryItems(IDE.getShortProjectPath()..'/assets/image')
+		local image_files = SYSTEM.scandir(IDE.getProjectPath()..'/assets/image')
+
 		for s, img in ipairs(image_files) do
 			if not image_info[img] then
 				image_info[img] = {
