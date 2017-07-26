@@ -175,7 +175,9 @@ local ideScene = {
 							})
 						end			
 
-						if imgui.TreeNode('settings') then
+						if imgui.TreeNode('tile settings') then
+
+							imgui.BeginGroup()
 							imgui.Text("tile size")
 							imgui.PushItemWidth(80)
 
@@ -191,9 +193,18 @@ local ideScene = {
 				            end
 
 				            imgui.PopItemWidth()
+				            imgui.EndGroup()
+
+							if imgui.IsItemHovered() then
+				            	imgui.BeginTooltip()
+				            	local img, img_width, img_height = UI.loadImage(img_path) 
+								imgui.Image(img, _img_snap[1], _img_snap[2], 0, 0, (_img_snap[1])/img_width, (_img_snap[2])/img_height, 255, 255, 255, 255, UI.getColor('love2d'))
+								imgui.EndTooltip()
+				            end
+
 				            imgui.TreePop()
 				        end
-
+				            
 						if imgui.Button("All") then
 							drag_x = 0; drag_y = 0
 							drag_width = img_width; drag_height = img_height
