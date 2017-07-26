@@ -81,6 +81,10 @@ BlankE = {
 		end
 	end,
 
+	reloadAssets = function()
+		require 'assets'
+	end,
+
 	getCurrentState = function()
 		local state = Gamestate.current()
 		if type(state) == "string" then

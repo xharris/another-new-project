@@ -11,7 +11,7 @@ local _dragging = false
 local _view_initial_pos = {0,0}
 local _initial_mouse_pos = {0,0}
 
-local _grid_gradient = false
+local _grid_gradient = true
 
 -- special type of hashtable that groups objects with similar coordinates
 local Scenetable = Class{
@@ -394,7 +394,7 @@ Scene = Class{
 
 		    	local offset = 0
 		    	local function myStencilFunction()
-		    		local conf_w, conf_h = CONF.window.width-(offset*2), CONF.window.height-(offset*2)
+		    		local conf_w, conf_h = CONF.window.width+(offset*2), CONF.window.height+(offset*2)
 
 		    		local rect_x = (game_width/2)-(conf_w/2)+offset
 		    		local rect_y = (game_height/2)-(conf_h/2)+offset

@@ -401,11 +401,14 @@ IDE = {
 		if not IDE.isProjectOpen() then return end
 
 		local asset_str = 
-		"local script_path = (...):match(\'(.-)[^%.]+$\')\n"..
-		"local asset_path = script_path:gsub('%.','/')..\'/\'\n\n"..
+		--"local script_path = (...):match(\'(.-)[^%.]+$\')\n"..
+		"local asset_path = ''\n"..
 		"local oldreq = require\n"..
-		"local require = function(s) return oldreq(script_path .. s) end\n"..
-		"assets = Class{}\nprint('including')\n"
+		"if _REPLACE_REQUIRE then\n"..
+		"\tasset_path = _REPLACE_REQUIRE:gsub('%.','/')\n"..
+		"\trequire = function(s) return oldreq(_REPLACE_REQUIRE .. s) end\n"..
+		"end\n"..
+		"assets = Class{}\n"
 
 		local high_priority = {'image','audio','scene','entity','state'}
 
@@ -425,7 +428,7 @@ IDE = {
 				asset_str = asset_str .. mod.getAssets()
 			end
 		end
-		asset_str = asset_str.."require = oldreq\n"
+		asset_str = asset_str.."if _REPLACE_REQUIRE then\n\trequire = oldreq\nend"
 
 		HELPER.run('makeDirs', {'"'..IDE.getProjectPath()..'"'})
 		local file = io.open(IDE.getProjectPath()..'/assets.lua','w+')
@@ -436,9 +439,8 @@ IDE = {
 			print("ERR: ")
 		end
 
-
 		if not dont_reload then
-			IDE.reload()
+			IDE._reload(IDE.getShortProjectPath()..'/assets.lua', true)
 		end
 	end,
 
