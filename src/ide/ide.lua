@@ -282,11 +282,11 @@ IDE = {
 	end,
 
 	refreshProjectList = function()
-		IDE.project_list = SYSTEM.scandir(IDE.getProjectPath())
+		IDE.project_list = SYSTEM.scandir(IDE.getProjectFolder())
 
 		local new_list = {}
 		for f, file in ipairs(IDE.project_list) do
-			if not file:starts('.') and love.filesystem.isDirectory(IDE.project_folder..'/'..file) then
+			if not file:starts('.') and love.filesystem.isDirectory(IDE.getProjectFolder()..'/'..file) then
 				table.insert(new_list,file)
 			end
 		end	

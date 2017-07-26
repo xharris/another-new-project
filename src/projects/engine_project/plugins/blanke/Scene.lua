@@ -176,14 +176,13 @@ Scene = Class{
 		layer = self:_checkLayerArg(layer)
 
 		-- check if the spritebatch exists yet
-		print_r(layer)
 		self.layers[layer]["tile"] = ifndef(self.layers[layer]["tile"], {})
 		self.images[img_name] = ifndef(self.images[img_name], Image(img_name))
 		self.layers[layer].tile[img_name] = ifndef(self.layers[layer].tile[img_name], love.graphics.newSpriteBatch(self.images[img_name]()))
 
 		-- add tile to batch
 		local spritebatch = self.layers[layer].tile[img_name]
-		return spritebatch:add(love.graphics.newQuad(img_info.x, img_info.y, img_info.width, img_info.height, self.images[img_name].height, self.images[img_name].width), x, y)
+		return spritebatch:add(love.graphics.newQuad(img_info.x, img_info.y, img_info.width, img_info.height, self.images[img_name].width, self.images[img_name].height), x, y)
 	end,
 
 	addHitbox = function(self, hit_name, hit_info, layer) 
