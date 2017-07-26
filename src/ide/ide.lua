@@ -48,11 +48,6 @@ IDE = {
 			end)
 		end
 
-		if IDE.refresh_pjlist_timeout == 0 then
-			IDE.refresh_pjlist_timeout = 5
-			IDE.refreshProjectList()	
-		end	
-
 		if IDE._want_reload then
 			IDE.reload()
 		end
@@ -86,6 +81,10 @@ IDE = {
 				end
 
 	            -- available projects in dir
+				if IDE.refresh_pjlist_timeout == 0 then
+					IDE.refresh_pjlist_timeout = 5
+					IDE.refreshProjectList()	
+				end	
 	            if #IDE.project_list > 0 then
 
 	                imgui.BeginChild("project list", 220, 60, true)
@@ -283,8 +282,8 @@ IDE = {
 	end,
 
 	refreshProjectList = function()
-		IDE.project_list = SYSTEM.scandir(IDE.getProjectPath())--love.filesystem.getDirectoryItems(IDE.project_folder)
-		
+		IDE.project_list = SYSTEM.scandir(IDE.getProjectPath())
+
 		local new_list = {}
 		for f, file in ipairs(IDE.project_list) do
 			if not file:starts('.') and love.filesystem.isDirectory(IDE.project_folder..'/'..file) then

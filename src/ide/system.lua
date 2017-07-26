@@ -1,16 +1,20 @@
 SYSTEM = {
 	os = '',
+	os_names = {
+		NT='win',
+		Darwin='mac'
+	},
 
 	runCmd = function(commands, func)
 		if commands[SYSTEM.os] then
-			local pfile = popen(commands[SYSTEM.os])
+			local pfile = io.popen(commands[SYSTEM.os])
 		    if func then func(pfile) end
 		    pfile:close()
 		end
 	end,
 
 	scandir = function(directory) 
-	    local i, t, popen = 0, {}, io.popen
+	    local i, t = 0, {}
 
 	    SYSTEM.runCmd(
 		    {
@@ -40,8 +44,13 @@ SYSTEM = {
 		local pfile = io.popen("uname")
 		local os_type = pfile:read("*a")
 		pfile:close()
-		SYSTEM.os = os_type
-		return os_type
+
+		for alias, name in pairs(SYSTEM.os_names) do
+			if os_type:match(alias) then
+				SYSTEM.os = name
+				return name
+			end
+		end
 	end
 }
 
