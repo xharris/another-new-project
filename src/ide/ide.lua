@@ -293,10 +293,12 @@ IDE = {
 		IDE.project_list = new_list
 	end,
 
+	-- src/myprojects
 	getProjectFolder = function()
 		return IDE.project_folder
 	end,
 
+	-- C:/blackstar/src/myprojects/theproject (absolute path)
 	getProjectPath = function(proj_name)
 		proj_name = ifndef(proj_name,IDE.current_project)
 
@@ -312,10 +314,12 @@ IDE = {
 		return love.filesystem.getRealDirectory(IDE.project_folder)..'/'..IDE.project_folder
 	end,
 
+	-- src/myprojects/theproject (relative path)
 	getShortProjectPath = function()
 		return IDE.project_folder..'/'..IDE.current_project
 	end,
 
+	-- theproject
 	getCurrentProject = function()
 		return IDE.current_project-- IDE.current_project
 	end,
@@ -388,8 +392,8 @@ IDE = {
 
 	reload = function(dont_init_blanke)
 		IDE._want_reload = true
-		if IDE.current_project ~= '' then
-			IDE._reload(IDE.getProjectFolder()..'/includes.lua', dont_init_blanke)
+		if IDE.isProjectOpen() then
+			IDE._reload(IDE.getShortProjectPath()..'/includes.lua', dont_init_blanke)
 		end
 	end,
 

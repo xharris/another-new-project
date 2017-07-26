@@ -3,7 +3,7 @@ local _images = {}
 Image = Class{
 
 	init = function(self, name)
-		assert(assets[name] ~= nil, "No image named '"..name.."'")
+		assert(assets[name] ~= nil, "No image named '"..tostring(name).."'")
 		self.image = assets[name]()
 
 		self.x = 0

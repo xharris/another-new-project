@@ -1,5 +1,7 @@
 local _btn_place
 local _btn_drag
+local _btn_remove
+
 local _last_place = {nil,nil}
 local _place_type
 local _place_obj
@@ -11,6 +13,52 @@ local _initial_mouse_pos = {0,0}
 
 local _grid_gradient = false
 
+-- special type of hashtable that groups objects with similar coordinates
+local Scenetable = Class{
+	init = function(self)
+		self.data = {}
+	end,
+	hash = function(self, x, y)
+		return tostring(x)..','..tostring(y)
+	end,
+	hash2 = function(self, obj)
+		return tostring(obj)
+	end,
+	add = function(self, x, y, obj)
+		local hash_value = self:hash(x, y)
+		local hash_obj = self:hash2(obj)
+
+		self.data[hash_value] = ifndef(self.data[hash_value], {})
+		self.data[hash_value][hash_obj] = obj
+	end,
+	-- returns a table containing all objects at a coordinate
+	search = function(self, x, y) 
+		local hash_value = self:hash(x, y)
+		return ifndef(self.data[hash_value],{})
+	end,
+	delete = function(self, x, y, obj)
+		local hash_value = self:hash(x, y)
+		local hash_obj = self:hash2(obj)
+
+		if self.data[hash_value] ~= nil then
+			if self.data[hash_value][hash_obj] ~= nil then
+				local obj = table.copy(self.data[hash_value][hash_obj])
+				self.data[hash_value][hash_obj] = nil
+				return obj
+			end
+		end
+	end,
+	exportList = function(self)
+		local ret_list = {}
+		for key1, tile_group in pairs(self.data) do
+			for key2, tile in pairs(tile_group) do
+				table.insert(ret_list, tile)
+			end
+		end
+		return ret_list
+	end,
+}
+
 Scene = Class{
 	init = function(self, name)
 		self.load_objects = {}
@@ -19,9 +67,13 @@ Scene = Class{
 		self.name = name
 		self._snap = {32,32}
 
+		self.hash_tile = Scenetable()
+
 		if BlankE._ide_mode then
 			_btn_place = Input('mouse.1')
 			_btn_drag = Input('mouse.3','space')
+			_btn_remove = Input('mouse.2')
+
 			self._fake_view = View()
 			self._fake_view.port_width, self._fake_view.port_height = love.window.getDesktopDimensions()
 			self._fake_view:moveToPosition(self._fake_view.port_width/2,self._fake_view.port_height/2)
@@ -54,16 +106,24 @@ Scene = Class{
 						}
 						table.insert(out_layer, ent_data)
 					end
-
-					if obj_type == 'image' then
-						local img_data = {
-
-						}
-						table.insert(out_layer, img_data)
-					end
 				end
 				output.layers[layer][obj_type] = out_layer
 			end
+		end
+
+		-- save tiles
+		local tiles = self.hash_tile:exportList()
+		--print_r(tiles)
+		for t, tile in pairs(tiles) do
+			output.layers[tile.layer] = ifndef(output.layers[tile.layer],{})
+			output.layers[tile.layer]['tile'] = ifndef(output.layers[tile.layer]['tile'],{})
+			local img_data = {
+				x=tile.x,
+				y=tile.y,
+				img_name=tile.img_name,
+				crop=tile.crop,
+			}
+			table.insert(output.layers[tile.layer].tile, img_data)
 		end
 
 		return json.encode(output)
@@ -91,21 +151,12 @@ Scene = Class{
 				end
 			end
 
-			if data["rect"] then
-				for i_r, rect in ipairs(data["rect"]) do
-					local uuid = rect.uuid
-					local rect_obj = self.load_objects[uuid]
+			if data["tile"] then
+				for i_i, tile in ipairs(data["tile"]) do
+					local uuid = tile.uuid
+					--local image_obj = self.load_objects[uuid]
 
-					self:addEntity(rect_obj.name, rect.x, rect.y, layer, rect_obj.width, rect_obj.height)
-				end
-			end
-
-			if data["image"] then
-				for i_i, image in ipairs(data["image"]) do
-					local uuid = image.uuid
-					local image_obj = self.load_objects[uuid]
-
-					self:addTile(image_obj.name, image.x, image.y, image.crop, layer)
+					self:addTile(tile.img_name, tile.x, tile.y, tile.crop, layer, true)
 				end
 			end
 
@@ -172,7 +223,7 @@ Scene = Class{
 		return new_entity
 	end,
 
-	addTile = function(self, img_name, x, y, img_info, layer) 
+	addTile = function(self, img_name, x, y, img_info, layer, from_file) 
 		layer = self:_checkLayerArg(layer)
 
 		-- check if the spritebatch exists yet
@@ -182,7 +233,48 @@ Scene = Class{
 
 		-- add tile to batch
 		local spritebatch = self.layers[layer].tile[img_name]
-		return spritebatch:add(love.graphics.newQuad(img_info.x, img_info.y, img_info.width, img_info.height, self.images[img_name].width, self.images[img_name].height), x, y)
+		local sb_id = spritebatch:add(love.graphics.newQuad(img_info.x, img_info.y, img_info.width, img_info.height, self.images[img_name].width, self.images[img_name].height), x, y)
+
+		-- add tile info to "hashtable"
+		self.hash_tile:add(x,y,
+		{
+			layer=layer,
+			x=x,
+			y=y,
+			img_name=img_name,
+			crop=img_info,
+			id=sb_id,
+			from_file=from_file
+		})
+	end,
+
+	removeTile = function(self, x, y, layer)
+		layer = self:_checkLayerArg(layer)
+		local rm_tiles = {}
+
+		-- find tiles that should be removed
+		local tiles = self.hash_tile:search(x, y)
+		for hash, tile in pairs(tiles) do
+			local can_remove = true
+
+			if tile.layer ~= layer then
+				can_remove = false
+			end
+
+			if can_remove then
+				table.insert(rm_tiles, tile)
+				self.hash_tile:delete(x, y, tile)
+			end
+		end
+
+		-- remove them from spritebatches
+		for l_name, it_layer in pairs(self.layers) do
+			if layer == l_name then
+				for t, tile in ipairs(rm_tiles) do
+					it_layer.tile[tile.img_name]:set(tile.id, 0, 0, 0, 0, 0)
+				end
+			end
+		end
 	end,
 
 	addHitbox = function(self, hit_name, hit_info, layer) 
@@ -235,7 +327,15 @@ Scene = Class{
 
 	_real_draw = function(self)
 		self._is_active = true
-		for name, layer in pairs(self.layers) do
+		local layer_count = 0
+		for nam, lay in pairs(self.layers) do
+			layer_count = layer_count + 1
+		end
+
+		for l = 0,layer_count-1 do
+			local name = 'layer'..tostring(l)
+			local layer = self.layers[name]
+
 			if layer.entity then
 				for i_e, entity in ipairs(layer.entity) do
 					entity:draw()
@@ -377,8 +477,15 @@ Scene = Class{
 	    			end
 	    			
 	    			if _place_type == 'image' then
-	    				local new_tile = self:addTile(_place_obj.img_name, _placeXY[1], _placeXY[2], _place_obj, _place_layer)
+	    				local new_tile = self:addTile(_place_obj.img_name, _placeXY[1], _placeXY[2], _place_obj, _place_layer, true)
 	    			end
+	    		end
+	    	end
+
+	    	-- removing objects on click
+	    	if _btn_remove() and _place_type then
+	    		if _place_type == 'image' then
+	    			self:removeTile(_placeXY[1], _placeXY[2])
 	    		end
 	    	end
 

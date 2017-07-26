@@ -13,8 +13,9 @@ SYSTEM = {
 		end
 	end,
 
-	scandir = function(directory) 
+	scandir = function(directory, remove_dot_files) 
 	    local i, t = 0, {}
+	    remove_dot_files = ifndef(remove_dot_files, true)
 
 	    SYSTEM.runCmd(
 		    {
@@ -23,8 +24,10 @@ SYSTEM = {
 		    },
 		    function(pfile)
 			    for filename in pfile:lines() do
-			        i = i + 1
-			        t[i] = filename
+					if not remove_dot_files or (remove_dot_files and not filename:starts('.')) then
+				        i = i + 1
+				        t[i] = filename
+				    end
 			    end
 		    end
 	    )

@@ -16,7 +16,7 @@ local placeable = {'entity','image','hitbox'}
 
 function writeSceneFiles()
 	local ret_str = ''
-	local scene_files = love.filesystem.getDirectoryItems(IDE.getShortProjectPath()..'/assets/scene')
+	local scene_files = SYSTEM.scandir(IDE.getProjectPath()..'/assets/scene')
 
 	for s, scene_file in ipairs(scene_files) do
 		local scene_name = basename(scene_file)
@@ -30,7 +30,7 @@ function writeSceneFiles()
 	if BlankE then
 		_iterateGameGroup('scene', function(scene, s)
 			local scene_name = scene.name
-			local scene_path = IDE.getShortProjectPath()..'/assets/scene/'..scene_name..'.json'
+			local scene_path = IDE.getProjectPath()..'/assets/scene/'..scene_name..'.json'
 			local scene_data = scene:export(path)
 
 			HELPER.run('makeDirs', {'"'..scene_path..'"'})
