@@ -203,6 +203,7 @@ UI = {
 
 	loadImage = function(img_path)
 		if not UI._images[img_path] then
+			print(img_path)
 			UI._images[img_path] = love.graphics.newImage(img_path)
 		end
 		local img = UI._images[img_path]
@@ -221,6 +222,11 @@ UI = {
 	drawImageButton = function(img_path, ...)
 		local img, img_width, img_height = UI.loadImage(img_path)
 		return imgui.ImageButton(img, img_width, img_height, ...)--, 0, 0, 1, 1, 255, 255, 255, 255, UI.getColor('love2d'));
+	end,
+
+	drawIconButton = function(icon_name, tooltip)
+		local img, img_width, img_height = UI.loadImage('icons/'..icon_name..'.png')
+		return imgui.ImageButton(img, img_width, img_height)--, 0, 0, 1, 1, 255, 255, 255, 255, UI.getColor('love2d'))
 	end,
 }
 

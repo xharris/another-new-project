@@ -393,7 +393,7 @@ local ideScene = {
 												end
 
 												if imgui.TreeNodeEx(string.format('%s (%d,%d)', ifndef(ent.nickname, ent.classname), ent.x, ent.y)..'###'..ent.uuid, flags) then
-		            								imgui.BeginChild(ent.uuid, 0, 150, false);
+		            								imgui.BeginChild(ent.uuid, 0, 180, false);
 
 			        								if imgui.SmallButton("save (not implemented yet)") then
 			        									--curr_scene:saveEntity(ent)

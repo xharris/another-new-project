@@ -19,6 +19,7 @@ IDE = {
 	project_list = {},
 	current_project = '',
 	modules = {},
+	plugins = {},
 
 	iterateModules = function(func)
 		for m, mod in pairs(IDE.modules) do
@@ -203,6 +204,21 @@ IDE = {
 	        	imgui.EndMenu()
 	        end
 
+	        -- TOOLS (plugins)
+	        if imgui.BeginMenu("Tools") then
+	        	for p, plugin in pairs(IDE.plugins) do
+	        		if plugin.menu_text and 
+	        		   (not plugin.project_plugin or (plugin.project_plugin and IDE.isProjectOpen())) 
+	        		   and plugin.onMenuClick
+	        		then
+	        			if imgui.MenuItem(plugin.menu_text) then
+	        				plugin.onMenuClick()
+	        			end
+	        		end
+	        	end
+	        	imgui.EndMenu()
+	        end
+
 	        -- DEV
 	        if UI.titlebar.secret_stuff and imgui.BeginMenu("Dev") then
 	            if imgui.MenuItem("dev tools") then
@@ -222,6 +238,13 @@ IDE = {
 	    		mod.draw()
 	    	end
 	    end
+
+	     -- draw plugins
+	    for p, plugin in pairs(IDE.plugins) do
+	    	if plugin.draw then
+	    		plugin.draw()
+	    	end
+	    end
 	    
 	    --checkUI("titlebar.new_project", IDE.newProject)
 	    if UI.titlebar.new_project then UI.titlebar.new_project = IDE.newProject() end
@@ -239,10 +262,22 @@ IDE = {
     	if not BlankE or (BlankE and not BlankE._ide_mode) then
         	love.graphics.clear(unpack(UI.color.background))
         end
+
         imgui.Render()
 	end,
 
 	load = function()
+		-- load ide plugins
+		for f, file in ipairs(love.filesystem.getDirectoryItems('plugins')) do
+			file = file:gsub('.lua','')
+			IDE.plugins[file] = require('plugins.'..file)
+
+			if IDE.plugins[file].disabled then
+				package.loaded[file] = nil
+				_G[file] = nil
+			end
+		end
+
 		-- get modules
 		for f, file in ipairs(love.filesystem.getDirectoryItems('modules')) do
 			file = file:gsub('.lua','')

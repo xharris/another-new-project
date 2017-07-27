@@ -1,5 +1,6 @@
 SYSTEM = {
 	os = '',
+	cwd = '',
 	os_names = {
 		NT='win',
 		Darwin='mac'
@@ -65,5 +66,14 @@ SYSTEM = {
 		end
 	end
 }
+
+SYSTEM.runCmd({
+	mac='cd',
+	win='cd'
+},function(pfile)
+	print('hi')
+	SYSTEM.cwd = pfile:read'*l'
+	print('CWD',SYSTEM.cwd)
+end)
 
 print('OS: '..SYSTEM.os())
