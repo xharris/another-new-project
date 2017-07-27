@@ -607,7 +607,7 @@ Scene = Class{
 		    			table.remove(hitbox_points, #hitbox_points)
 		    			table.remove(hitbox_points, #hitbox_points)
 		    			hitbox_rem_point = false
-		    		elseif #hitbox_points > 0 then
+		    		elseif #hitbox_points == 0 then
 		    			local new_mx, new_my = unpack(_getMouseXY(true))
 					    self:removeHitboxAtPoint(new_mx, new_my)
 		    		end
