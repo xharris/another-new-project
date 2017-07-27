@@ -290,7 +290,7 @@ Scene = Class{
 
 	addBlankHitboxType = function(self)
 		local new_name = self:validateHitboxName('hitbox'..tostring(#Scene.hitbox))
-
+		
 		self:setHitboxInfo(new_name,{
 			color={255,255,255,255},
 			uuid=uuid()

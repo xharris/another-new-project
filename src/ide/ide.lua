@@ -374,7 +374,6 @@ IDE = {
 			result, chunk = pcall(chunk)
 			if not result then print("exec. error: " .. chunk) return false end
 
-
 			IDE.iterateModules(function(m, mod)
 				if mod.postReload then
 					mod.postReload()
@@ -391,6 +390,14 @@ IDE = {
 			return true
 		end
 		return false
+	end,
+
+	onAddGameObject = function()
+		IDE.iterateModules(function(m, mod)
+			if mod.onAddGameObject then
+				mod.onAddGameObject()
+			end
+		end)	
 	end,
 
 	reload = function(dont_init_blanke)

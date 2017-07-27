@@ -18,6 +18,7 @@ local placeable = {'hitbox','entity','image'}
 local category_names = {}
 local objects = {}
 function refreshObjectList()
+	category_names = {}
 	for c, cat in ipairs(placeable) do
 		objects[cat] = {}
 		--[[
@@ -73,6 +74,10 @@ local ideScene = {
 	end,
 
 	postReload = function()
+		refreshObjectList()
+	end,
+
+	onAddGameObject = function()
 		refreshObjectList()
 	end,
 
@@ -139,8 +144,6 @@ local ideScene = {
 			        end
 
 					-- category selection
-
-
 					imgui.Text(" > ")
 					imgui.SameLine()
 					status, new_placer_index = imgui.Combo("category", curr_placer_index, category_names, #category_names);
@@ -296,9 +299,9 @@ local ideScene = {
 						end
 
 					elseif curr_category == 'hitbox' then
-						
 						if imgui.Button("Add") then
 							curr_scene:addBlankHitboxType()
+							refreshObjectList()
 						end
 						for o, obj in ipairs(object_list) do
 							local hitbox = curr_scene:getHitboxType(obj)

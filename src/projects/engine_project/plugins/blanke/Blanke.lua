@@ -8,6 +8,10 @@ function _addGameObject(type, obj)
     if obj.update then obj.auto_update = true end
     game[type] = ifndef(game[type],{})
     table.insert(game[type], obj)
+
+    if BlankE and BlankE._ide_mode then -- (cant access BlankE for some reason)
+    	IDE.onAddGameObject()
+    end
 end
 
 function _iterateGameGroup(group, func)
