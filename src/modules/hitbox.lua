@@ -1,3 +1,5 @@
+local hitbox_list = {}
+
 ideHitbox = {
 	getObjectList = function() 
 		local ret_list = {}

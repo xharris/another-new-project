@@ -374,14 +374,17 @@ IDE = {
 			result, chunk = pcall(chunk)
 			if not result then print("exec. error: " .. chunk) return false end
 
+
+			IDE.iterateModules(function(m, mod)
+				if mod.postReload then
+					mod.postReload()
+				end
+			end)
+
 			BlankE._ide_mode = true
 			if not dont_init_blanke then
 				BlankE.init(_FIRST_STATE)
-				IDE.iterateModules(function(mod)
-					if mod.postBlankeInit then
-						mod.postBlankeInit()
-					end
-				end)	
+					
 			end
 
 			IDE._want_reload = false

@@ -12,7 +12,30 @@ local drag_y=0
 local drag_width=0
 local drag_height=0
 
+
 local placeable = {'hitbox','entity','image'}
+
+local category_names = {}
+local objects = {}
+function refreshObjectList()
+	for c, cat in ipairs(placeable) do
+		objects[cat] = {}
+		--[[
+		if game[cat] and #game[cat] > 0 then
+			objects[cat] = game[cat]
+			table.insert(category_names, cat)
+		end
+		]]--
+
+		if IDE.modules[cat] then
+			objects[cat] = IDE.modules[cat].getObjectList()
+
+			if cat == 'hitbox' or #objects[cat] > 0 then
+				table.insert(category_names, cat)
+			end
+		end
+	end
+end
 
 function writeSceneFiles()
 	local ret_str = ''
@@ -50,7 +73,7 @@ local ideScene = {
 	end,
 
 	postReload = function()
-
+		refreshObjectList()
 	end,
 
 	draw = function()
@@ -116,27 +139,8 @@ local ideScene = {
 			        end
 
 					-- category selection
-					local category_names = {}
-					local img_list = {}
-					local objects = {}
-					for c, cat in ipairs(placeable) do
-						objects[cat] = {}
-						--[[
-						if game[cat] and #game[cat] > 0 then
-							objects[cat] = game[cat]
-							table.insert(category_names, cat)
-						end
-						]]--
 
-						if IDE.modules[cat] then
-							objects[cat] = IDE.modules[cat].getObjectList()
 
-							if cat == 'hitbox' or #objects[cat] > 0 then
-								table.insert(category_names, cat)
-							end
-						end
-
-					end
 					imgui.Text(" > ")
 					imgui.SameLine()
 					status, new_placer_index = imgui.Combo("category", curr_placer_index, category_names, #category_names);
@@ -146,7 +150,7 @@ local ideScene = {
 					curr_category = placeable[curr_placer_index]
 
 					-- object selection
-					local object_list = objects[curr_category]
+					local object_list = ifndef(objects[curr_category],{})
 					if curr_category ~= 'hitbox' and #object_list > 0 then
 						imgui.Text("  >  ")
 						imgui.SameLine()
@@ -292,10 +296,10 @@ local ideScene = {
 						end
 
 					elseif curr_category == 'hitbox' then
+						
 						if imgui.Button("Add") then
 							curr_scene:addBlankHitboxType()
 						end
-
 						for o, obj in ipairs(object_list) do
 							local hitbox = curr_scene:getHitboxType(obj)
 

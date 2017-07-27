@@ -11,7 +11,7 @@ local _dragging = false
 local _view_initial_pos = {0,0}
 local _initial_mouse_pos = {0,0}
 
-local _grid_gradient = true
+local _grid_gradient = false
 
 -- special type of hashtable that groups objects with similar coordinates
 local Scenetable = Class{
