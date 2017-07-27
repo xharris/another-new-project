@@ -60,6 +60,7 @@ local Scenetable = Class{
 }
 
 Scene = Class{
+	hitbox = {},
 	init = function(self, name)
 		self.load_objects = {}
 		self.layers = {}
@@ -279,12 +280,73 @@ Scene = Class{
 		end
 	end,
 
+	getHitboxType = function(self, name)
+		for h, hitbox in pairs(Scene.hitbox) do
+			if hitbox.name == name then
+				return hitbox
+			end
+		end
+	end,
+
+	addBlankHitboxType = function(self)
+		local new_name = self:validateHitboxName('hitbox'..tostring(#Scene.hitbox))
+
+		self:setHitboxInfo(new_name,{
+			color={255,255,255,255},
+			uuid=uuid()
+		})
+	end,
+
+	validateHitboxName = function(self, new_name)
+		local count = 1
+		while self:getHitboxType(new_name) ~= nil do
+			new_name = new_name..tostring(count)
+			count = count + 1
+		end
+		return new_name
+	end,
+
+	renameHitbox = function(self, old_name, new_name) 
+		for h, hitbox in pairs(Scene.hitbox) do
+			if hitbox.name == old_name then
+				hitbox.name = self:validateHitboxName(new_name)
+				return hitbox
+			end
+		end
+	end,
+
+	setHitboxInfo = function(self, name, info)
+		local found = false
+		for h, hitbox in pairs(Scene.hitbox) do
+			if hitbox.name == name then
+				hitbox = info
+				found = true
+			end
+		end
+
+		if not found then
+			info.name = name
+			table.insert(Scene.hitbox, info)
+		end
+	end,
+
 	addHitbox = function(self, hit_name, hit_info, layer) 
 		layer = self:_checkLayerArg(layer)
 
+		-- hitboxes are accessable to all scenes
+		local hitbox_info = self:getHitboxType(hit_name)
+		if not hitbox_info then
+			self:setHitboxInfo(hit_name,{
+				name=hit_name,
+				color=hit_info.color,
+				uuid=uuid()
+			})
+			hitbox_info = self:getHitboxType(hit_name)
+		end
+
 		self.layers[layer]["hitbox"] = ifndef(self.layers[layer]["hitbox"], {})
 		local new_hitbox = Hitbox("polygon", hit_info.points, hit_name)
-		new_hitbox:setColor(hit_info.color)
+		new_hitbox:setColor(hitbox_info.color)
 		table.insert(self.layers[layer].hitbox, new_hitbox)
 	end,
 

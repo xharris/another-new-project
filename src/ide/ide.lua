@@ -401,7 +401,6 @@ IDE = {
 		if not IDE.isProjectOpen() then return end
 
 		local asset_str = 
-		--"local script_path = (...):match(\'(.-)[^%.]+$\')\n"..
 		"local asset_path = ''\n"..
 		"local oldreq = require\n"..
 		"if _REPLACE_REQUIRE then\n"..

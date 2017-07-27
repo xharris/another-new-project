@@ -1,13 +1,10 @@
 local asset_path = ''
 local oldreq = require
 if _REPLACE_REQUIRE then
-	print('replacing require')
 	asset_path = _REPLACE_REQUIRE:gsub('%.','/')
 	require = function(s) return oldreq(_REPLACE_REQUIRE .. s) end
 end
 assets = Class{}
-print('asseting',_REPLACE_REQUIRE,asset_path)
-
 
 function assets:_6C992_circle()
 	local new_img = love.graphics.newImage(asset_path..'assets/image/6C992-circle.png')

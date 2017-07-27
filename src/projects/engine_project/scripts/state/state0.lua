@@ -10,7 +10,7 @@ function state0:enter(previous)
 	main_scene = Scene('main_scene')
 	test_ent = entity0()
     test_ent.nickname = "the first one"
-	main_scene:addEntity(test_ent)
+	--main_scene:addEntity(test_ent)
 end
 
 function state0:update(dt)

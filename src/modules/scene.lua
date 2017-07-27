@@ -12,7 +12,7 @@ local drag_y=0
 local drag_width=0
 local drag_height=0
 
-local placeable = {'entity','image','hitbox'}
+local placeable = {'hitbox','entity','image'}
 
 function writeSceneFiles()
 	local ret_str = ''
@@ -130,7 +130,8 @@ local ideScene = {
 
 						if IDE.modules[cat] then
 							objects[cat] = IDE.modules[cat].getObjectList()
-							if #objects[cat] > 0 then
+
+							if cat == 'hitbox' or #objects[cat] > 0 then
 								table.insert(category_names, cat)
 							end
 						end
@@ -146,7 +147,7 @@ local ideScene = {
 
 					-- object selection
 					local object_list = objects[curr_category]
-					if #object_list > 0 then
+					if curr_category ~= 'hitbox' and #object_list > 0 then
 						imgui.Text("  >  ")
 						imgui.SameLine()
 						status, new_object_index = imgui.Combo("object", curr_object_index, object_list, #object_list);
@@ -290,6 +291,34 @@ local ideScene = {
 							imgui.EndTooltip()
 						end
 
+					elseif curr_category == 'hitbox' then
+						if imgui.Button("Add") then
+							curr_scene:addBlankHitboxType()
+						end
+
+						for o, obj in ipairs(object_list) do
+							local hitbox = curr_scene:getHitboxType(obj)
+
+							--imgui.PushStyleColor(e, UI.getColor(el))
+							if hitbox and imgui.TreeNode(hitbox.name..'###'..hitbox.uuid) then
+								--imgui.PopStyleColor(1)
+								-- name
+								local name_status, new_name = imgui.InputText("name",hitbox.name,300)
+					            if name_status then
+					            	Scene:renameHitbox(hitbox.name, new_name)
+					            end
+
+								-- color
+								local color_copy = table.copy(hitbox.color)
+								color_copy[4] = nil
+								local status, r, g, b = imgui.DragInt3("color", unpack(color_copy), 1, 0, 255)
+								if status then
+									hitbox.color = {r, g, b, 255}
+								end
+
+								imgui.TreePop()
+							end
+						end
 					else
 						curr_scene:setPlacer()
 					end
@@ -370,7 +399,7 @@ local ideScene = {
 								end
 							end
 
-							if obj == 'image' then
+							if obj == 'hitbox' then
 								
 							end
 
