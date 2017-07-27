@@ -167,6 +167,22 @@ UI = {
 		return unpack(ret_color)
 	end,
 
+	getElement = function(index, dont_divide)
+		local ret_color = {}
+
+		if type(index) == "string" then
+			index = UI.elements[index]
+		end
+
+		if not dont_divide then
+			for c, color in ipairs(index) do
+				table.insert(ret_color, color/255)
+			end
+		end
+
+		return unpack(ret_color)
+	end,
+
 	getSetting = function(index)
 		local setting = UI.setting[index]
 

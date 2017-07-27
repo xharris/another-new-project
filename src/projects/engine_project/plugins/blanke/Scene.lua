@@ -91,7 +91,7 @@ Scene = Class{
 
 	-- returns json
 	export = function(self, path)
-		local output = {layers={},load_objects={}}
+		local output = {layers={},objects={}}
 
 		for layer, data in pairs(self.layers) do
 			output.layers[layer] = {}
@@ -114,7 +114,7 @@ Scene = Class{
 
 		-- save tiles
 		local tiles = self.hash_tile:exportList()
-		--print_r(tiles)
+
 		for t, tile in pairs(tiles) do
 			output.layers[tile.layer] = ifndef(output.layers[tile.layer],{})
 			output.layers[tile.layer]['tile'] = ifndef(output.layers[tile.layer]['tile'],{})
@@ -127,6 +127,9 @@ Scene = Class{
 			table.insert(output.layers[tile.layer].tile, img_data)
 		end
 
+		-- save hitboxes
+		output.objects['hitbox'] = Scene.hitbox
+
 		return json.encode(output)
 	end,
 
@@ -134,7 +137,8 @@ Scene = Class{
 		scene_string = love.filesystem.read(path)
 		scene_data = json.decode(scene_string)
 
-		self.load_objects = scene_data["object"]
+		self.load_objects = scene_data["objects"]
+		Scene.hitbox = self.load_objects.hitbox
 
 		for layer, data in pairs(scene_data["layers"]) do
 			self.layers[layer] = {entity={},tile={},hitbox={}}
@@ -290,7 +294,7 @@ Scene = Class{
 
 	addBlankHitboxType = function(self)
 		local new_name = self:validateHitboxName('hitbox'..tostring(#Scene.hitbox))
-		
+
 		self:setHitboxInfo(new_name,{
 			color={255,255,255,255},
 			uuid=uuid()
@@ -455,7 +459,7 @@ Scene = Class{
 		    	local offx, offy = (g_x%self._snap[1]), (g_y%self._snap[2])
 
 		    	local offset = 0
-		    	local function myStencilFunction()
+		    	local function myStencilFunction() -- TODO: change to shader?
 		    		local conf_w, conf_h = CONF.window.width+(offset*2), CONF.window.height+(offset*2)
 
 		    		local rect_x = (game_width/2)-(conf_w/2)+offset

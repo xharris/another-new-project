@@ -11,22 +11,18 @@ local drag_x=0
 local drag_y=0
 local drag_width=0
 local drag_height=0
+-- hitbox placing
+local selected_hitbox = nil
 
 
 local placeable = {'hitbox','entity','image'}
 
 local category_names = {}
 local objects = {}
-function refreshObjectList()
+function refreshObjectList(only_cat) -- haha cats
 	category_names = {}
 	for c, cat in ipairs(placeable) do
 		objects[cat] = {}
-		--[[
-		if game[cat] and #game[cat] > 0 then
-			objects[cat] = game[cat]
-			table.insert(category_names, cat)
-		end
-		]]--
 
 		if IDE.modules[cat] then
 			objects[cat] = IDE.modules[cat].getObjectList()
@@ -77,8 +73,16 @@ local ideScene = {
 		refreshObjectList()
 	end,
 
-	onAddGameObject = function()
-		refreshObjectList()
+	onAddGameObject = function(obj_type)
+		local types = {
+			Entity='entity',
+			Hitbox='hitbox'
+		}
+		if types[obj_type] then
+			refreshObjectList(types[obj_type])
+		else
+			refreshObjectList()
+		end
 	end,
 
 	draw = function()
@@ -303,27 +307,59 @@ local ideScene = {
 							curr_scene:addBlankHitboxType()
 							refreshObjectList()
 						end
+						imgui.SameLine()
+
+						-- show currently selected hitbox
+						local hitbox_name = '-'
+						local sel_color_copy = {UI.getElement('Text')}
+						if selected_hitbox then
+							sel_color_copy = table.copy(selected_hitbox.color)
+							sel_color_copy = {sel_color_copy[1]/255, sel_color_copy[2]/255, sel_color_copy[3]/255, 1}
+							hitbox_name = selected_hitbox.name
+						end
+						imgui.Text("Selected: ")
+						imgui.SameLine()
+						imgui.TextColored(sel_color_copy[1],sel_color_copy[2],sel_color_copy[3],sel_color_copy[4], hitbox_name)
 						for o, obj in ipairs(object_list) do
 							local hitbox = curr_scene:getHitboxType(obj)
+							local color_copy = {}
+							if hitbox then
+								color_copy = table.copy(hitbox.color)
+								local r, g, b = color_copy[1]/255, color_copy[2]/255, color_copy[3]/255
+								imgui.PushStyleColor("Text", r, g, b, 255)
+							end
 
-							--imgui.PushStyleColor(e, UI.getColor(el))
-							if hitbox and imgui.TreeNode(hitbox.name..'###'..hitbox.uuid) then
-								--imgui.PopStyleColor(1)
+							-- hitbox options
+							if hitbox and imgui.TreeNodeEx(hitbox.name..'###'..hitbox.uuid, {'OpenOnArrow'}) then
+								imgui.PushStyleColor("Text", UI.getElement("Text"))
 								-- name
 								local name_status, new_name = imgui.InputText("name",hitbox.name,300)
 					            if name_status then
 					            	Scene:renameHitbox(hitbox.name, new_name)
+					            	refreshObjectList('hitbox')
 					            end
 
 								-- color
-								local color_copy = table.copy(hitbox.color)
-								color_copy[4] = nil
-								local status, r, g, b = imgui.DragInt3("color", unpack(color_copy), 1, 0, 255)
-								if status then
-									hitbox.color = {r, g, b, 255}
+								local r, g, b = unpack(hitbox.color)
+								local color_status, r, g, b = imgui.ColorEdit3("color", r/255, g/255, b/255)
+								if color_status then
+									hitbox.color = {r*255, g*255, b*255, 255}
 								end
 
 								imgui.TreePop()
+							elseif hitbox then
+								imgui.PushStyleColor("Text", UI.getElement("Text"))
+							end
+
+							if hitbox and imgui.IsItemClicked() then
+								-- selecting hitbox
+								if not selected_hitbox or selected_hitbox.name ~= hitbox.name then
+									selected_hitbox = hitbox
+								-- deselecting hitbox
+								elseif selected_hitbox and selected_hitbox.name == hitbox.name then
+									selected_hitbox = nil
+								end
+								curr_scene:setPlacer('hitbox', selected_hitbox)
 							end
 						end
 					else

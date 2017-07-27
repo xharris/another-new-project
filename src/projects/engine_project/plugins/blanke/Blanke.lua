@@ -10,7 +10,7 @@ function _addGameObject(type, obj)
     table.insert(game[type], obj)
 
     if BlankE and BlankE._ide_mode then -- (cant access BlankE for some reason)
-    	IDE.onAddGameObject()
+    	IDE.onAddGameObject(type)
     end
 end
 
