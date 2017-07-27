@@ -28,9 +28,12 @@ asset_explorer = {
 						local path_object = path_assets..'/'..obj
 
 						imgui.Text(obj)
-						imgui.SameLine()
+						imgui.SameLine(300)
 						if imgui.Button("rename") then
+							-- show rename box
 
+							-- call module rename method
+							
 						end
 						imgui.SameLine()
 						if imgui.Button("delete") then

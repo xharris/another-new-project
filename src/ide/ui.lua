@@ -203,7 +203,6 @@ UI = {
 
 	loadImage = function(img_path)
 		if not UI._images[img_path] then
-			print(img_path)
 			UI._images[img_path] = love.graphics.newImage(img_path)
 		end
 		local img = UI._images[img_path]

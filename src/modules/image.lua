@@ -1,5 +1,7 @@
 local image_list = {}
 local image_info = {}
+local zoom = 1
+local zoom_range = {0.25, 20}
 
 function getImgPathByName(name)
 	for img, info in pairs(image_info) do
@@ -61,17 +63,32 @@ ideImage = {
 				imgui.SetNextWindowSize(300,300,"FirstUseEver")
 				status, info.open = imgui.Begin(info.name..'###'..img, true)
 
+				-- image name (editable)
 				status, new_name = imgui.InputText("name",info.name,300)
 				if status then
 					info.name = IDE.validateName(new_name, IDE.modules['image'].getObjectList())
 					IDE.reload()
 				end
 
+				-- image path
 				local img_path = "assets/image/"..img
 				imgui.InputText("path", img_path, img_path:len())
 
-				UI.drawImage(IDE.getShortProjectPath()..'/'..img_path)
+				-- image size
+				local image, img_width, img_height = UI.loadImage(IDE.getShortProjectPath()..'/'..img_path)
+				imgui.Text(string.format("size: %d x %d", img_width, img_height))
 
+				-- zoom
+	        	imgui.PushItemWidth(120)
+				local zoom_status, new_zoom = imgui.InputFloat('zoom', zoom, 0.25, 1, 2)
+				if zoom_status then
+					zoom = new_zoom
+				end
+				if zoom < zoom_range[1] then zoom = zoom_range[1] end
+				if zoom > zoom_range[2] then zoom = zoom_range[2] end
+
+				imgui.Image(image, img_width*zoom, img_height*zoom, 0, 0, 1, 1, 255, 255, 255, 255, UI.getColor('love2d'))
+				
 				imgui.End()
 			end
 		end
