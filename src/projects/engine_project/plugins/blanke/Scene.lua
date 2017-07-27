@@ -1,6 +1,7 @@
 local _btn_place
 local _btn_drag
 local _btn_remove
+local _btn_confirm
 
 local _last_place = {nil,nil}
 local _place_type
@@ -12,6 +13,10 @@ local _view_initial_pos = {0,0}
 local _initial_mouse_pos = {0,0}
 
 local _grid_gradient = false
+
+-- hitbox placing
+local hitbox_points = {}
+local hitbox_rem_point = true
 
 -- special type of hashtable that groups objects with similar coordinates
 local Scenetable = Class{
@@ -74,6 +79,7 @@ Scene = Class{
 			_btn_place = Input('mouse.1')
 			_btn_drag = Input('mouse.3','space')
 			_btn_remove = Input('mouse.2')
+			_btn_confirm = Input('return','kpenter')
 
 			self._fake_view = View()
 			self._fake_view.port_width, self._fake_view.port_height = love.window.getDesktopDimensions()
@@ -99,13 +105,23 @@ Scene = Class{
 			for obj_type, objects in pairs(data) do
 				local out_layer = {}
 				for o, obj in ipairs(objects) do
-					if obj_type == 'entity' and obj._loadedFromFile then
-						local ent_data = {
-							classname=obj.classname,
-							x=obj.x,
-							y=obj.y
-						}
-						table.insert(out_layer, ent_data)
+					if obj._loadedFromFile then
+						if obj_type == 'entity' then
+							local ent_data = {
+								classname=obj.classname,
+								x=obj.x,
+								y=obj.y
+							}
+							table.insert(out_layer, ent_data)
+						end
+
+						if obj_type == 'hitbox' then
+							local hit_data = {
+								name=obj:getTag(),
+								points=obj.args
+							}
+							table.insert(out_layer, hit_data)
+						end
 					end
 				end
 				output.layers[layer][obj_type] = out_layer
@@ -158,22 +174,18 @@ Scene = Class{
 
 			if data["tile"] then
 				for i_i, tile in ipairs(data["tile"]) do
-					local uuid = tile.uuid
-					--local image_obj = self.load_objects[uuid]
-
 					self:addTile(tile.img_name, tile.x, tile.y, tile.crop, layer, true)
 				end
 			end
 
-			if data["polygon"] then
-				for i_h, hitbox in ipairs(data["polygon"]) do
-					local uuid = hitbox.uuid
-					local hitbox_obj = self.load_objects[uuid]
+			if data["hitbox"] then
+				for i_h, hitbox in ipairs(data["hitbox"]) do
 
 					-- turn points into array
-					hitbox.points = hitbox.points:split(',')
+					--hitbox.points = hitbox.points:split(',')
 
-					self:addHitbox(hitbox_obj.name, hitbox, layer)
+					local new_hitbox = self:addHitbox(hitbox.name, {points=hitbox.points}, layer)
+					new_hitbox._loadedFromFile = true
 				end
 			end
 		end
@@ -351,7 +363,23 @@ Scene = Class{
 		self.layers[layer]["hitbox"] = ifndef(self.layers[layer]["hitbox"], {})
 		local new_hitbox = Hitbox("polygon", hit_info.points, hit_name)
 		new_hitbox:setColor(hitbox_info.color)
+		new_hitbox.hitbox_uuid = hit_info.uuid
 		table.insert(self.layers[layer].hitbox, new_hitbox)
+
+		return new_hitbox
+	end,
+
+	removeHitboxAtPoint = function(self, x, y, in_layer)
+		in_layer = self:_checkLayerArg(in_layer)
+
+	    for l_name, layer in pairs(self.layers) do
+	    	for h, hitbox in ipairs(layer.hitbox) do
+				if l_name == in_layer and hitbox:pointTest(x, y) then
+					hitbox:destroy()
+					table.remove(self.layers[in_layer].hitbox, h)
+				end
+			end
+		end
 	end,
 
 	getEntity = function(self, in_entity, in_layer)
@@ -426,7 +454,7 @@ Scene = Class{
 
 	draw = function(self) 
 	    if BlankE._ide_mode then
-			function _getMouseXY()
+			function _getMouseXY(dont_snap)
 				local cam_x, cam_y
 				if not self._fake_view.disabled then
 					cam_x, cam_y = self._fake_view.camera:cameraCoords(self._fake_view:mousePosition())
@@ -437,7 +465,13 @@ Scene = Class{
 					cam_x, cam_y = mouse_x, mouse_y
 				end
 				local mx, my = cam_x, cam_y
-				return {mx-(mx%self._snap[1]), my-(my%self._snap[2])}
+
+				if not dont_snap then
+					mx = mx-(mx%self._snap[1])
+					my = my-(my%self._snap[2])
+				end
+
+				return {mx, my}
 			end
 
 			function _drawGrid()
@@ -532,6 +566,12 @@ Scene = Class{
 	    	_drawGrid()
 	    	self._fake_view:attach()
 
+	    	-- reset hitbox vars
+	    	if _place_type ~= 'hitbox' or (_place_type == 'hitbox' and not _place_obj) then
+				hitbox_points = {}
+				hitbox_rem_point = true
+	    	end
+
 	    	-- placing object on click
 	    	local _placeXY = _getMouseXY()
 	    	BlankE._mouse_x, BlankE._mouse_y = unpack(_placeXY)
@@ -547,13 +587,34 @@ Scene = Class{
 	    			if _place_type == 'image' then
 	    				local new_tile = self:addTile(_place_obj.img_name, _placeXY[1], _placeXY[2], _place_obj, _place_layer, true)
 	    			end
+
+	    			if _place_type == 'hitbox' then
+	    				table.insert(hitbox_points, _placeXY[1])
+	    				table.insert(hitbox_points, _placeXY[2])
+	    			end
 	    		end
 	    	end
 
 	    	-- removing objects on click
 	    	if _btn_remove() and _place_type then
+				_last_place = {nil,nil}
 	    		if _place_type == 'image' then
 	    			self:removeTile(_placeXY[1], _placeXY[2])
+	    		end
+
+	    		if _place_type == 'hitbox' then
+	    			if #hitbox_points > 0 and hitbox_rem_point then
+		    			table.remove(hitbox_points, #hitbox_points)
+		    			table.remove(hitbox_points, #hitbox_points)
+		    			hitbox_rem_point = false
+		    		elseif #hitbox_points > 0 then
+		    			local new_mx, new_my = unpack(_getMouseXY(true))
+					    self:removeHitboxAtPoint(new_mx, new_my)
+		    		end
+	    		end
+	    	else
+	    		if _place_type == 'hitbox' then
+	    			hitbox_rem_point = true
 	    		end
 	    	end
 
@@ -580,7 +641,71 @@ Scene = Class{
 		    	end
 		    end
 
+		    -- confirm button
+		    if _btn_confirm() and not confirm_pressed then
+		    	confirm_pressed = true
+
+		    	if _place_type == 'hitbox' then
+		    		if #hitbox_points >= 6 then
+		    			-- make sure it's not a straight line
+		    			local invalid = true
+		    			local slope = 0
+
+		    			for h=1,#hitbox_points-2,2 do
+		    				local h1 = {hitbox_points[h], hitbox_points[h+1]}
+		    				local h2 = {hitbox_points[h+2], hitbox_points[h+3]}
+
+		    				local new_slope = (h2[2]-h1[2])/(h2[1]-h1[1])
+
+		    				--print('h1',unpack(h1))
+		    				--print('h2',unpack(h2))
+		    				--print(new_slope)
+		    				if slope ~= new_slope then
+		    					slope = new_slope
+		    					invalid = false
+		    				end
+		    			end
+
+		    			if not invalid then
+		    				local new_hitbox = self:addHitbox(_place_obj.name, {points=hitbox_points})
+		    				new_hitbox._loadedFromFile = true
+		    				hitbox_points = {}
+		    				hitbox_rem_point = true
+		    			end
+		    		end
+		    	end
+
+		    elseif confirm_pressed then
+		    	confirm_pressed = false
+		    end
+
 	    	self:_real_draw()
+
+	    	-- draw hitbox being placed
+	    	if _place_type == 'hitbox' and _place_obj and #hitbox_points > 0 then
+		    	love.graphics.push('all')
+		    	local color_copy = table.copy(_place_obj.color)
+	    		color_copy[4] = 255/2
+		    	for h=1,#hitbox_points,2 do
+		    		love.graphics.setColor(unpack(color_copy))
+		    		love.graphics.circle('fill', hitbox_points[h], hitbox_points[h+1], 2)
+		    	end
+	    		love.graphics.setColor(unpack(color_copy))
+	    		if #hitbox_points == 4 then
+	    			love.graphics.line(unpack(hitbox_points))
+	    		elseif #hitbox_points > 4 then
+	    			love.graphics.polygon('fill', unpack(hitbox_points))
+	    		end
+		    	love.graphics.pop()
+		    end
+
+		    -- draw hitboxes
+		    for l_name, layer in pairs(self.layers) do
+		    	for h, hitbox in ipairs(layer.hitbox) do
+		    		hitbox:draw()
+		    	end
+		    end
+
 	    	self._fake_view:detach()
 	    else
 	    	self:_real_draw()

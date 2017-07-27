@@ -36,6 +36,7 @@ Hitbox = Class{
 		self._enabled = true
 		self.color = {255,0,0,255*(.5)}
 		self.parent = nil
+		self.args = args
 		HC.register(self.HCShape)
 	end,
 
@@ -44,6 +45,14 @@ Hitbox = Class{
 			love.graphics.setColor(self.color)
 			self.HCShape:draw(ifndef(mode, 'fill'))
 		love.graphics.pop()
+	end,
+
+	setTag = function(self, new_tag)
+		self.HCShape.tag = new_tag
+	end,
+
+	getTag = function(self)
+		return self.HCShape.tag
 	end,
 
 	getHCShape = function(self)
@@ -62,6 +71,10 @@ Hitbox = Class{
 		return self.HCShape:center()
 	end,	
 
+	pointTest = function(self, x, y)
+		return self.HCShape:contains(x,y)
+	end,
+
 	enable = function(self)
 		if not self._enabled then
 			self._enabled = true
@@ -71,14 +84,24 @@ Hitbox = Class{
 
 	disable = function(self)
 		if self._enabled then
-			self._enable = false
+			self._enabled = false
 			HC.remove(self.HCShape)
 		end
 	end,
 
+	destroy = function(self)
+		self:disable()
+		_destroyGameObject('hitbox',self)
+    	self = nil
+	end,
+
 	setColor = function(self, new_color)
-		self.color = hex2rgb(new_color)
-		self.color[4] = 255/2
+		if type(new_color) == "string" then
+			self.color = hex2rgb(new_color)
+		else
+			self.color = new_color
+		end
+		self.color[4] = 255/3
 	end,
 
 	setParent = function(self, parent)
