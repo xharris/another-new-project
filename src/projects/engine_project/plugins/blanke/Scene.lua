@@ -109,8 +109,8 @@ Scene = Class{
 						if obj_type == 'entity' then
 							local ent_data = {
 								classname=obj.classname,
-								x=obj.x,
-								y=obj.y
+								x=obj.xstart,
+								y=obj.ystart
 							}
 							table.insert(out_layer, ent_data)
 						end

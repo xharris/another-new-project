@@ -365,6 +365,10 @@ local ideScene = {
 					else
 						curr_scene:setPlacer()
 					end
+				else
+					curr_scene:setPlacer()
+					selected_entity = ''
+					selected_hitbox = nil
 				end
 
 				if imgui.CollapsingHeader("List") then
@@ -386,7 +390,6 @@ local ideScene = {
 
 												if selected_entity == ent.uuid then
 													table.insert(flags, 'Selected')
-													curr_scene:focusEntity(ent)
 												end
 
 												if imgui.TreeNodeEx(string.format('%s (%d,%d)', ifndef(ent.nickname, ent.classname), ent.x, ent.y)..'###'..ent.uuid, flags) then
@@ -432,6 +435,7 @@ local ideScene = {
 														curr_scene:focusEntity()
 													else
 														selected_entity = ent.uuid
+														curr_scene:focusEntity(ent)
 													end
 												end
 											end
