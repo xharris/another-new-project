@@ -83,7 +83,7 @@ UI = {
 
 	setting = {
 		initial_state = '',
-		project_reload_timer = {type='number',value=4,min=0.5,max=60*5},
+		project_reload_timer = {type='number',value=5,min=0.5,max=60*5},
 		console_height = {type='number',value=100,min=0,max=love.graphics.getHeight()/2},
 		font = "ProggySquare",
 		font_size = {type='number',value=11,min=1,max=100},
@@ -218,6 +218,8 @@ UI = {
 		return imgui.Image(img, img_width, img_height, ...)
 	end,
 
+	-- icon border: #263238 (blue gray 900)
+	-- other colors: (300)
 	drawImageButton = function(img_path, ...)
 		local img, img_width, img_height = UI.loadImage(img_path)
 		return imgui.ImageButton(img, img_width, img_height, ...)--, 0, 0, 1, 1, 255, 255, 255, 255, UI.getColor('love2d'));
@@ -225,7 +227,13 @@ UI = {
 
 	drawIconButton = function(icon_name, tooltip)
 		local img, img_width, img_height = UI.loadImage('icons/'..icon_name..'.png')
-		return imgui.ImageButton(img, img_width, img_height)--, 0, 0, 1, 1, 255, 255, 255, 255, UI.getColor('love2d'))
+		local ret_btn = imgui.ImageButton(img, img_width, img_height, 0, 0, 1, 1, 1)
+		if imgui.IsItemHovered() then
+			imgui.BeginTooltip()
+			imgui.Text(tooltip)
+			imgui.EndTooltip()
+		end
+		return ret_btn
 	end,
 }
 

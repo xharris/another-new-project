@@ -9,6 +9,21 @@ local getAudByPathName = function(name)
 	end
 end
 
+-- https://gist.github.com/jesseadams/791673
+function SecondsToClock(seconds)
+  local seconds = tonumber(seconds)
+
+  if seconds <= 0 then
+    return "00:00:00";
+  else
+    hours = string.format("%02.f", math.floor(seconds/3600));
+    mins = string.format("%02.f", math.floor(seconds/60 - (hours*60)));
+    secs = string.format("%02.f", math.floor(seconds - hours*3600 - mins *60));
+    return hours..":"..mins..":"..secs
+  end
+  return ''
+end
+
 ideAudio = {
 	addAudio = function(file)
 		if IDE.isProjectOpen() then
@@ -61,6 +76,10 @@ ideAudio = {
 				imgui.SetNextWindowSize(300,300,"FirstUseEver")
 				status, info.open = imgui.Begin(aud, true)
 
+				if not info._asset then
+					info._asset = assets[info.name]()
+				end
+
 				-- name
 				status, new_name = imgui.InputText("name",info.name,300)
 				if status then
@@ -72,14 +91,32 @@ ideAudio = {
 				local aud_path = "assets/audio/"..aud
 				imgui.InputText("path", aud_path, aud_path:len())
 
+				-- duration
+				imgui.Text("duration "..SecondsToClock(info._asset:getDuration("seconds")))
+
 				-- play sound
-				if imgui.Button("play") then
-					info._asset = assets[info.name]()
+				if not info._asset:isPlaying() and UI.drawIconButton("play", "play") then
 					love.audio.play(info._asset)
+				
+				-- pause 
+				elseif info._asset:isPlaying() and UI.drawIconButton("pause", "pause") then
+					love.audio.pause(info._asset)
 				end
-				if imgui.Button("stop") and info._asset then
+				imgui.SameLine()
+
+				-- stop
+				if UI.drawIconButton("stop", "stop playing") then
 					love.audio.stop(info._asset)
 				end
+				imgui.SameLine()
+
+				local progress = 0
+				local progress_text = info.name
+				if info._asset then
+					progress = info._asset:tell("seconds")/info._asset:getDuration("seconds")
+					progress_text = SecondsToClock(info._asset:tell("seconds"))
+				end
+				imgui.ProgressBar(progress, 0, 0, progress_text)
 
 				imgui.End()
 			else

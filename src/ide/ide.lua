@@ -27,17 +27,29 @@ IDE = {
 		end
 	end,
 
+	iteratePlugins = function(func)
+		for p, plugin in pairs(IDE.plugins) do
+			func(p, plugin)
+		end
+	end,
+
 	update = function(dt)
 		updateTimeout(dt, 'update_timeout')
 		updateTimeout(dt, 'watch_timeout')
 		updateTimeout(dt, 'refresh_pjlist_timeout')
 
-    	if IDE.current_project ~= '' and IDE.watch_timeout == 0 then
+    	if IDE.isProjectOpen() and IDE.watch_timeout == 0 then
     		IDE.watch_timeout = UI.getSetting('project_reload_timer').value
     		_watcher('/', function(file_name)
     			IDE.iterateModules(function(m, mod)
     				if mod.fileChange then
     					mod.fileChange(file_name)
+    				end
+    			end)
+
+    			IDE.iteratePlugins(function(p, plugin)
+    				if plugin.fileChange then
+    					plugin.fileChange(file_name)
     				end
     			end)
 
@@ -206,7 +218,8 @@ IDE = {
 
 	        -- TOOLS (plugins)
 	        if imgui.BeginMenu("Tools") then
-	        	for p, plugin in pairs(IDE.plugins) do
+	        	IDE.iteratePlugins(function(p, plugin)
+
 	        		if plugin.menu_text and 
 	        		   (not plugin.project_plugin or (plugin.project_plugin and IDE.isProjectOpen())) 
 	        		   and plugin.onMenuClick
@@ -215,7 +228,9 @@ IDE = {
 	        				plugin.onMenuClick()
 	        			end
 	        		end
-	        	end
+
+	        	end)
+	        	
 	        	imgui.EndMenu()
 	        end
 
@@ -239,12 +254,12 @@ IDE = {
 	    	end
 	    end
 
-	     -- draw plugins
-	    for p, plugin in pairs(IDE.plugins) do
+	    -- draw plugins
+	    IDE.iteratePlugins(function(p, plugin)
 	    	if plugin.draw then
 	    		plugin.draw()
 	    	end
-	    end
+	    end)
 	    
 	    --checkUI("titlebar.new_project", IDE.newProject)
 	    if UI.titlebar.new_project then UI.titlebar.new_project = IDE.newProject() end
@@ -379,6 +394,18 @@ IDE = {
 				IDE.current_project = old_path
 			end
 
+			IDE.iterateModules(function(m, module)
+				if module.onOpenProject then
+					module.onOpenProject()
+				end
+			end)
+
+			IDE.iteratePlugins(function(p, plugin)
+				if plugin.onOpenProject then
+					plugin.onOpenProject()
+				end
+			end)
+
 			opening_project = false
 		end
 	end,
@@ -394,6 +421,13 @@ IDE = {
 			end
 ]]
 			IDE.refreshAssets(true)
+
+	        IDE.iteratePlugins(function(p, plugin)
+	        	if plugin.onReload then
+	        		plugin.onReload()
+	        	end
+	        end)
+
 			IDE.iterateModules(function(m, mod)
 				if mod.onReload then
 					mod.onReload()
@@ -402,7 +436,6 @@ IDE = {
 
 			_REPLACE_REQUIRE = dirname(path):gsub('/','.')
 			if _REPLACE_REQUIRE:starts('.') then _REPLACE_REQUIRE:replaceAt(1,'') end
-
 			local result, chunk
 			result, chunk = pcall(love.filesystem.load, path)
 			if not result then print("chunk error: " .. chunk) return false end

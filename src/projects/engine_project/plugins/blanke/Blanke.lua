@@ -130,6 +130,14 @@ BlankE = {
 	    love.timer.sleep(next_time - cur_time)
 	end,
 
+	resize = function(w,h)
+		if BlankE._ide_mode then
+			_iterateGameGroup('scene', function(scene)
+				scene:_drawGrid()
+			end)
+		end
+	end,
+
 	keypressed = function(key)
 	    _iterateGameGroup("input", function(input)
 	        input:keypressed(key)

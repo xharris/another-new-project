@@ -1,6 +1,7 @@
 local curr_scene_index = 1
 local curr_placer_index = 1
 local curr_object_index = 1
+local last_object = nil
 -- entity placing
 local selected_entity = ''
 -- image placing
@@ -15,7 +16,7 @@ local drag_height=0
 local selected_hitbox = nil
 
 
-local placeable = {'hitbox','entity','image'}
+local placeable = {'entity','image','hitbox'}
 
 local category_names = {}
 local objects = {}
@@ -176,7 +177,7 @@ local ideScene = {
 					elseif curr_category == 'image' then
 						local img_path = IDE.getShortProjectPath().."/assets/image/"..getImgPathByName(curr_object)
 						local img, img_width, img_height = UI.loadImage(img_path) 
-
+						
 						function setImgPlacer()
 							curr_scene:setPlacer('image', {
 								img_name=curr_object,
@@ -185,7 +186,15 @@ local ideScene = {
 								width=drag_width,
 								height=drag_height
 							})
-						end			
+						end	
+
+						-- initial selection size
+						if last_object ~= curr_object then
+							last_object = curr_object
+							drag_x = 0; drag_y = 0
+							drag_width = img_width; drag_height = img_height
+							setImgPlacer()
+						end
 
 						if imgui.TreeNode('tile settings') then
 

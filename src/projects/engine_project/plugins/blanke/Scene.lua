@@ -191,6 +191,97 @@ Scene = Class{
 		end
 	end,
 
+	_drawGrid = function(self)
+		local min_grid_draw = 8
+		local grid_alpha = 30
+
+		local g_x, g_y
+    	if not self._fake_view.disabled then
+	    	g_x, g_y = self._fake_view:position()
+	    	g_x = (self._fake_view.port_width/2) - g_x
+	    	g_y = (self._fake_view.port_height/2) - g_y
+	    else
+	    	g_x, g_y = 0, 0
+	    end
+
+    	local offx, offy = (g_x%self._snap[1]), (g_y%self._snap[2])
+
+    	local offset = 0
+    	local function myStencilFunction() -- TODO: change to shader?
+    		local conf_w, conf_h = CONF.window.width+(offset*2), CONF.window.height+(offset*2)
+
+    		local rect_x = (game_width/2)-(conf_w/2)+offset
+    		local rect_y = (game_height/2)-(conf_h/2)+offset
+
+		   	love.graphics.rectangle("fill", rect_x, rect_y, conf_w, conf_h)
+		end
+
+		local function stencilLine(func)
+			-- outside view line
+    		love.graphics.setColor(255,255,255,grid_alpha)
+			love.graphics.setLineWidth(1)
+			func()
+
+			-- bold in-view line
+			if _grid_gradient then
+    			for o = 0,15,1 do
+    				offset = -o
+		    		love.graphics.setColor(255,255,255,2)
+		    		love.graphics.stencil(myStencilFunction, "replace", 1)
+				 	love.graphics.setStencilTest("greater", 0)
+				 	love.graphics.setLineWidth(1)
+				 	func()
+		    		love.graphics.setStencilTest()
+    			end
+    		else 
+    			offset = 0
+				love.graphics.setColor(255,255,255,grid_alpha+20)
+	    		love.graphics.stencil(myStencilFunction, "replace", 1)
+			 	love.graphics.setStencilTest("greater", 0)
+			 	love.graphics.setLineWidth(1)
+			 	func()
+	    		love.graphics.setStencilTest()
+    		end
+
+		end
+
+		love.graphics.push('all')
+    	love.graphics.setLineWidth(1)
+    	love.graphics.setLineStyle("rough")
+    	love.graphics.setBlendMode('replace')
+
+    	-- vertical lines
+    	if self._snap[1] >= min_grid_draw then
+	    	for x = 0,game_width,self._snap[1] do
+	    		if x+offx == 0 then
+					love.graphics.setLineWidth(3)
+	    		else
+	    			love.graphics.setLineWidth(1)
+	    		end
+
+	    		stencilLine(function()
+	    			love.graphics.line(x+offx, 0, x+offx, game_height)
+	    		end)
+	    	end
+	    end
+
+    	-- horizontal lines
+    	if self._snap[2] >= min_grid_draw then
+	    	for y = 0,game_height,self._snap[2] do
+	    		if y+offy == 0 then
+	    			love.graphics.setLineWidth(3)
+	    		else
+	    			love.graphics.setLineWidth(1)
+	    		end
+
+	    		stencilLine(function()
+	    			love.graphics.line(0, y+offy, game_width, y+offy)
+	    		end)
+	    	end
+	    end
+    	love.graphics.pop()
+	end,
+
 	_checkLayerArg = function(self, layer)
 		if layer == nil then
 			return self:_checkLayerArg(0)
@@ -267,7 +358,7 @@ Scene = Class{
 		})
 	end,
 
-	removeTile = function(self, x, y, layer)
+	removeTile = function(self, x, y, layer, img_name)
 		layer = self:_checkLayerArg(layer)
 		local rm_tiles = {}
 
@@ -276,7 +367,10 @@ Scene = Class{
 		for hash, tile in pairs(tiles) do
 			local can_remove = true
 
-			if tile.layer ~= layer then
+			if tile.layer ~= layer  then
+				can_remove = false
+			end
+			if img_name and tile.img_name ~= img_name then
 				can_remove = false
 			end
 
@@ -474,96 +568,7 @@ Scene = Class{
 				return {mx, my}
 			end
 
-			function _drawGrid()
-				local min_grid_draw = 8
-
-				love.graphics.push('all')
-		    	love.graphics.setLineWidth(1)
-		    	love.graphics.setLineStyle("rough")
-
-		    	local g_x, g_y
-		    	if not self._fake_view.disabled then
-			    	g_x, g_y = self._fake_view:position()
-			    	g_x = (self._fake_view.port_width/2) - g_x
-			    	g_y = (self._fake_view.port_height/2) - g_y
-			    else
-			    	g_x, g_y = 0, 0
-			    end
-
-		    	local offx, offy = (g_x%self._snap[1]), (g_y%self._snap[2])
-
-		    	local offset = 0
-		    	local function myStencilFunction() -- TODO: change to shader?
-		    		local conf_w, conf_h = CONF.window.width+(offset*2), CONF.window.height+(offset*2)
-
-		    		local rect_x = (game_width/2)-(conf_w/2)+offset
-		    		local rect_y = (game_height/2)-(conf_h/2)+offset
-
-				   	love.graphics.rectangle("fill", rect_x, rect_y, conf_w, conf_h)
-				end
-
-				local function stencilLine(func)
-					-- outside view line
-		    		love.graphics.setColor(255,255,255,30)
-	    			love.graphics.setLineWidth(1)
-	    			func()
-
-	    			-- bold in-view line
-	    			if _grid_gradient then
-		    			for o = 0,15,1 do
-		    				offset = -o
-				    		love.graphics.setColor(255,255,255,2)
-				    		love.graphics.stencil(myStencilFunction, "replace", 1)
-						 	love.graphics.setStencilTest("greater", 0)
-						 	love.graphics.setLineWidth(1)
-						 	func()
-				    		love.graphics.setStencilTest()
-		    			end
-		    		else 
-		    			offset = 0
-						love.graphics.setColor(255,255,255,40)
-			    		love.graphics.stencil(myStencilFunction, "replace", 1)
-					 	love.graphics.setStencilTest("greater", 0)
-					 	love.graphics.setLineWidth(1)
-					 	func()
-			    		love.graphics.setStencilTest()
-		    		end
-
-				end
-
-		    	-- vertical lines
-		    	if self._snap[1] >= min_grid_draw then
-			    	for x = 0,game_width,self._snap[1] do
-			    		if x+offx == 0 then
-							love.graphics.setLineWidth(3)
-			    		else
-			    			love.graphics.setLineWidth(1)
-			    		end
-
-			    		stencilLine(function()
-			    			love.graphics.line(x+offx, 0, x+offx, game_height)
-			    		end)
-			    	end
-			    end
-
-		    	-- horizontal lines
-		    	if self._snap[2] >= min_grid_draw then
-			    	for y = 0,game_height,self._snap[2] do
-			    		if y+offy == 0 then
-			    			love.graphics.setLineWidth(3)
-			    		else
-			    			love.graphics.setLineWidth(1)
-			    		end
-
-			    		stencilLine(function()
-			    			love.graphics.line(0, y+offy,game_width, y+offy)
-			    		end)
-			    	end
-			    end
-		    	love.graphics.pop()
-			end
-
-	    	_drawGrid()
+	    	self:_drawGrid()
 	    	self._fake_view:attach()
 
 	    	-- reset hitbox vars
@@ -599,7 +604,8 @@ Scene = Class{
 	    	if _btn_remove() and _place_type then
 				_last_place = {nil,nil}
 	    		if _place_type == 'image' then
-	    			self:removeTile(_placeXY[1], _placeXY[2])
+	    			print('remove '.._place_obj.img_name)
+	    			self:removeTile(_placeXY[1], _placeXY[2], nil, _place_obj.img_name)
 	    		end
 
 	    		if _place_type == 'hitbox' then
