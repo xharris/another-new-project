@@ -6,8 +6,8 @@ if _REPLACE_REQUIRE then
 end
 assets = Class{}
 
-function assets:_6C992_circle()
-	local new_img = love.graphics.newImage(asset_path..'assets/image/6C992-circle.png')
+function assets:_6C992_girble()
+	local new_img = love.graphics.newImage(asset_path..'assets/image/6C992-girble.png')
 	return new_img
 end
 

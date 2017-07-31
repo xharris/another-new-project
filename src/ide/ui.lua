@@ -72,7 +72,7 @@ UI = {
 		new_project = false,
 
 		-- IDE
-		show_console = true,
+		show_console = false,
 		show_scene_editor = true,
 		secret_stuff = true,
 
@@ -89,7 +89,8 @@ UI = {
 		font_size = {type='number',value=11,min=1,max=100},
 		scene_snapx = {type='number',value=32,min=1,max=1000},
 		scene_snapy = {type='number',value=32,min=1,max=1000},
-		fullscreen = false
+		fullscreen = false,
+		show_game = true,
 	},
 
 	setStyling = function()

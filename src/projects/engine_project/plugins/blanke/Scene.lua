@@ -72,6 +72,7 @@ Scene = Class{
 		self.images = {}
 		self.name = name
 		self._snap = {32,32}
+		self._delete_similar = true
 
 		self.hash_tile = Scenetable()
 
@@ -334,7 +335,7 @@ Scene = Class{
 	addTile = function(self, img_name, x, y, img_info, layer, from_file) 
 		layer = self:_checkLayerArg(layer)
 
-		if not assets[img_name] then return end
+		if not assets[img_name] then print('where is it') return end
 
 		-- check if the spritebatch exists yet
 		self.layers[layer]["tile"] = ifndef(self.layers[layer]["tile"], {})
@@ -367,10 +368,10 @@ Scene = Class{
 		for hash, tile in pairs(tiles) do
 			local can_remove = true
 
-			if tile.layer ~= layer  then
+			if tile.layer ~= layer then
 				can_remove = false
 			end
-			if img_name and tile.img_name ~= img_name then
+			if img_name and self._delete_similar and tile.img_name ~= img_name then
 				can_remove = false
 			end
 
@@ -612,7 +613,7 @@ Scene = Class{
 		    			table.remove(hitbox_points, #hitbox_points)
 		    			table.remove(hitbox_points, #hitbox_points)
 		    			hitbox_rem_point = false
-		    		elseif #hitbox_points == 0 then
+		    		elseif #hitbox_points == 0 and hitbox_rem_point then -- added 'hitbox_rem_point' and it just happened to work here
 		    			local new_mx, new_my = unpack(_getMouseXY(true))
 					    self:removeHitboxAtPoint(new_mx, new_my)
 		    		end

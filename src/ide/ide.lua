@@ -41,28 +41,32 @@ IDE = {
     	if IDE.isProjectOpen() and IDE.watch_timeout == 0 then
     		IDE.watch_timeout = UI.getSetting('project_reload_timer').value
     		_watcher('/', function(file_name)
-    			IDE.iterateModules(function(m, mod)
-    				if mod.fileChange then
-    					mod.fileChange(file_name)
-    				end
-    			end)
-
-    			IDE.iteratePlugins(function(p, plugin)
-    				if plugin.fileChange then
-    					plugin.fileChange(file_name)
-    				end
-    			end)
-
-				if string.match(file_name, "empty_state") then
-					if Gamestate.current() == _empty_state then
-						IDE._reload(file_name)
-					end
-				end
+    			IDE.fileChange(file_name)
 			end)
 		end
 
 		if IDE._want_reload then
 			IDE.reload()
+		end
+	end,
+
+	fileChange = function(file_name) 
+		IDE.iterateModules(function(m, mod)
+			if mod.fileChange then
+				mod.fileChange(file_name)
+			end
+		end)
+
+		IDE.iteratePlugins(function(p, plugin)
+			if plugin.fileChange then
+				plugin.fileChange(file_name)
+			end
+		end)
+
+		if string.match(file_name, "empty_state") then
+			if Gamestate.current() == _empty_state then
+				IDE._reload(file_name)
+			end
 		end
 	end,
 
@@ -184,8 +188,6 @@ IDE = {
 					UI.setSetting('font',fonts[new_font])
 					UI.setStyling()
 				end
-
-
 
 	        	-- project reload timer
 	        	imgui.PushItemWidth(80)
@@ -518,8 +520,6 @@ IDE = {
 		if assert(file,"ERR: problem writing to '"..IDE.getProjectPath().."/assets.lua'") then
 			file:write(asset_str)
 			file:close()
-		else
-			print("ERR: ")
 		end
 
 		if not dont_reload then

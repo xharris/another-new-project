@@ -12,6 +12,7 @@ local drag_x=0
 local drag_y=0
 local drag_width=0
 local drag_height=0
+local delete_similar = true
 -- hitbox placing
 local selected_hitbox = nil
 
@@ -200,6 +201,7 @@ local ideScene = {
 
 							imgui.BeginGroup()
 							imgui.Text("tile size")
+							imgui.SameLine()
 							imgui.PushItemWidth(80)
 
 							-- tile size (even though I named the vars snap)
@@ -222,6 +224,12 @@ local ideScene = {
 								imgui.Image(img, _img_snap[1], _img_snap[2], 0, 0, (_img_snap[1])/img_width, (_img_snap[2])/img_height, 255, 255, 255, 255, UI.getColor('love2d'))
 								imgui.EndTooltip()
 				            end
+
+				            -- only delete similar tiles
+				            if imgui.Checkbox("only delete similar tiles", delete_similar) then
+				            	delete_similar = not delete_similar
+				            end
+				            curr_scene._delete_similar = delete_similar
 
 				            imgui.TreePop()
 				        end

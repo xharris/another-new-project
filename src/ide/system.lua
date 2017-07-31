@@ -53,6 +53,15 @@ SYSTEM = {
 		)
 	end,
 
+	rename = function(src, dest)
+		SYSTEM.mkdir(dirname(dest))
+		SYSTEM.runCmd(
+			{
+				mac='mv "'..src..'" "'..dest..'"'
+			}
+		)
+	end,
+
 	os = function()
 		local pfile = io.popen("uname")
 		local os_type = pfile:read("*a")

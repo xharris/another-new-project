@@ -28,7 +28,7 @@ function love.update(dt)
 end
 
 function love.draw()
-    if BlankE then
+    if BlankE and UI.getSetting('show_game') then
         BlankE.draw()
         Gamestate.draw()
     end
