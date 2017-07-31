@@ -9,6 +9,7 @@ function state0:enter(previous)
 	new_img.y = 120
 	main_scene = Scene('main_scene')
 	test_ent = entity0(96, 224)
+    test_ent.pause = true
     test_ent.nickname = "the first one"
 	main_scene:addEntity(test_ent)
 end

@@ -74,7 +74,7 @@ ideAudio = {
 		for aud, info in pairs(audio_info) do
 			if info.open then
 				imgui.SetNextWindowSize(300,300,"FirstUseEver")
-				status, info.open = imgui.Begin(aud, true)
+				status, info.open = imgui.Begin(aud, true, {"AlwaysAutoResize"})
 
 				if not info._asset then
 					info._asset = assets[info.name]()

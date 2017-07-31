@@ -213,6 +213,12 @@ IDE = {
 	            	UI.titlebar.secret_stuff = not UI.titlebar.secret_stuff
 	            end
 
+	            local fullscreen = UI.getSetting("fullscreen")
+	            if imgui.MenuItem("fullscreen", nil, fullscreen) then
+	            	UI.setSetting("fullscreen", not fullscreen)
+	            	love.window.setFullscreen(not fullscreen)
+	            end
+
 	        	imgui.EndMenu()
 	        end
 

@@ -64,7 +64,16 @@ SYSTEM = {
 				return name
 			end
 		end
-	end
+	end,
+
+	execute = function(cmd)
+		SYSTEM.runCmd(
+			{
+				mac=cmd,
+				win='start \"\" \"'..cmd..'\"'
+			}
+		)
+	end,
 }
 
 SYSTEM.runCmd({

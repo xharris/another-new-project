@@ -568,7 +568,7 @@ Scene = Class{
 				return {mx, my}
 			end
 
-	    	self:_drawGrid()
+	    	self:_drawGrid() -- work on grid drawing (performace improvement)
 	    	self._fake_view:attach()
 
 	    	-- reset hitbox vars
@@ -604,7 +604,6 @@ Scene = Class{
 	    	if _btn_remove() and _place_type then
 				_last_place = {nil,nil}
 	    		if _place_type == 'image' then
-	    			print('remove '.._place_obj.img_name)
 	    			self:removeTile(_placeXY[1], _placeXY[2], nil, _place_obj.img_name)
 	    		end
 
@@ -662,10 +661,7 @@ Scene = Class{
 		    				local h2 = {hitbox_points[h+2], hitbox_points[h+3]}
 
 		    				local new_slope = (h2[2]-h1[2])/(h2[1]-h1[1])
-
-		    				--print('h1',unpack(h1))
-		    				--print('h2',unpack(h2))
-		    				--print(new_slope)
+		    				
 		    				if slope ~= new_slope then
 		    					slope = new_slope
 		    					invalid = false

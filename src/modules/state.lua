@@ -63,7 +63,8 @@ local ideState = {
 
 	edit = function(name)
 		open_states[name] = true 
-		HELPER.run('editFile',{IDE.getProjectPath()..'/scripts/state/'..name..'.lua'})
+		
+		SYSTEM.execute("\""..IDE.getProjectPath()..'/scripts/state/'..name..'.lua\"')
 	end,
 
 	draw = function()

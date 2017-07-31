@@ -89,6 +89,7 @@ UI = {
 		font_size = {type='number',value=11,min=1,max=100},
 		scene_snapx = {type='number',value=32,min=1,max=1000},
 		scene_snapy = {type='number',value=32,min=1,max=1000},
+		fullscreen = false
 	},
 
 	setStyling = function()
@@ -192,7 +193,10 @@ UI = {
 	setSetting = function(index, value)
 		local setting = UI.setting[index]
 
-		if setting.type == 'number' then
+		if type(setting) ~= "table" then
+			UI.setting[index] = value
+
+		elseif setting.type == 'number' then
 			if value >= ifndef(setting.min, value) and value <= ifndef(setting.max, value) then
 				UI.setting[index].value = value
 			end

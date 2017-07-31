@@ -7,7 +7,7 @@ Entity = Class{
 	    self._images = {}		
 		self._sprites = {} 			-- is actually the animations
 		self.sprite = nil			-- currently active animation
-
+		self.pause = false
 		self.show_debug = false
 
 		-- x and y coordinate of sprite
@@ -94,7 +94,7 @@ Entity = Class{
 		end
 
 		-- move shapes if the x/y is different
-		if self.xprevious ~= self.x or self.yprevious ~= self.y then
+		if not self.pause and (self.xprevious ~= self.x or self.yprevious ~= self.y) then
 			for s, shape in pairs(self.shapes) do
 				-- account for x/y offset?
 				shape:moveTo(self.x, self.y)
@@ -105,77 +105,79 @@ Entity = Class{
 		self.xprevious = self.x
 		self.yprevious = self.y
 
-		-- calculate speed/direction
-		local speedx = self.speed * math.cos(math.rad(self.direction))
-		local speedy = self.speed * math.sin(math.rad(self.direction))
-
-		-- calculate gravity/gravity_direction
-		local gravx = self.gravity * math.cos(math.rad(self.gravity_direction))
-		local gravy = self.gravity * math.sin(math.rad(self.gravity_direction))
-	
-		--self.hspeed = ifndef(self.hspeed, 0)
-		--self.vspeed = ifndef(self.vspeed, 0)
-
-		self.hspeed = self.hspeed + gravx
-		self.vspeed = self.vspeed + gravy
-
-		local dx = self.hspeed + speedx
-		local dy = self.vspeed + speedy
-
-		local _main_shape = self.shapes[self._main_shape]
-
 		-- check for collisions
-		for name, fn in pairs(self.onCollision) do
-			-- make sure it actually exists
-			if self.shapes[name] ~= nil then
-				local obj_shape = self.shapes[name]:getHCShape()
+		if not self.pause then
+			-- calculate speed/direction
+			local speedx = self.speed * math.cos(math.rad(self.direction))
+			local speedy = self.speed * math.sin(math.rad(self.direction))
 
-				local collisions = HC.collisions(obj_shape)
-				for other, separating_vector in pairs(collisions) do
-                
-					-- collision action functions
-					self.collisionStopX = function(self)
-						for name, shape in pairs(self.shapes) do
-							shape:move(separating_vector.x, 0)
+			-- calculate gravity/gravity_direction
+			local gravx = self.gravity * math.cos(math.rad(self.gravity_direction))
+			local gravy = self.gravity * math.sin(math.rad(self.gravity_direction))
+		
+			--self.hspeed = ifndef(self.hspeed, 0)
+			--self.vspeed = ifndef(self.vspeed, 0)
+
+			self.hspeed = self.hspeed + gravx
+			self.vspeed = self.vspeed + gravy
+
+			local dx = self.hspeed + speedx
+			local dy = self.vspeed + speedy
+
+			local _main_shape = self.shapes[self._main_shape]
+			
+			for name, fn in pairs(self.onCollision) do
+				-- make sure it actually exists
+				if self.shapes[name] ~= nil then
+					local obj_shape = self.shapes[name]:getHCShape()
+
+					local collisions = HC.collisions(obj_shape)
+					for other, separating_vector in pairs(collisions) do
+	                
+						-- collision action functions
+						self.collisionStopX = function(self)
+							for name, shape in pairs(self.shapes) do
+								shape:move(separating_vector.x, 0)
+							end
+				            self.hspeed = 0
+				            dx = 0
 						end
-			            self.hspeed = 0
-			            dx = 0
-					end
 
-					self.collisionStopY = function(self)
-						for name, shape in pairs(self.shapes) do
-							shape:move(0, separating_vector.y)
+						self.collisionStopY = function(self)
+							for name, shape in pairs(self.shapes) do
+								shape:move(0, separating_vector.y)
+							end
+				            self.vspeed = 0
+				            dy = 0
 						end
-			            self.vspeed = 0
-			            dy = 0
-					end
-					
-					self.collisionStop = function(self)
-						self:collisionStopX()
-						self:collisionStopY()
-					end
+						
+						self.collisionStop = function(self)
+							self:collisionStopX()
+							self:collisionStopY()
+						end
 
-					-- call users collision callback if it exists
-					fn(other, separating_vector)
+						-- call users collision callback if it exists
+						fn(other, separating_vector)
+					end
 				end
 			end
-		end
         
-		-- move all shapes
-		for s, shape in pairs(self.shapes) do
-			shape:move(dx*dt, dy*dt)
-		end
+			-- move all shapes
+			for s, shape in pairs(self.shapes) do
+				shape:move(dx*dt, dy*dt)
+			end
 
-		-- set position of sprite
-		if self.shapes[self._main_shape] ~= nil then
-			self.x, self.y = self.shapes[self._main_shape]:center()
-		else
-			self.x = self.x + dx*dt
-			self.y = self.y + dy*dt
-		end
+			-- set position of sprite
+			if self.shapes[self._main_shape] ~= nil then
+				self.x, self.y = self.shapes[self._main_shape]:center()
+			else
+				self.x = self.x + dx*dt
+				self.y = self.y + dy*dt
+			end
 
-		if self.speed > 0 then
-			self.speed = self.speed - (self.speed * self.friction)*dt
+			if self.speed > 0 then
+				self.speed = self.speed - (self.speed * self.friction)*dt
+			end
 		end
 
 		if self.postUpdate then

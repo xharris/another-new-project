@@ -411,14 +411,18 @@ local ideScene = {
 													for var, value in pairs(ent) do
 														if not var:starts('_') then
 															if type(value) == 'number' then
-				        										imgui.PushItemWidth(80)
+				        										imgui.PushItemWidth(100)
 																status, new_int = imgui.DragInt(var,ent[var])
 																if status then ent[var] = new_int end
 															end
 															if type(value) == 'string' then
-				        										imgui.PushItemWidth(80)
+				        										imgui.PushItemWidth(100)
 																status, new_str = imgui.InputText(var,ent[var],300)
 																if status then ent[var] = new_str end
+															end
+															if type(value) == 'boolean' then
+																local status, new_val = imgui.Checkbox(var, ent[var])
+																if status then ent[var] = new_val end
 															end
 														end
 													end
@@ -437,7 +441,7 @@ local ideScene = {
 													ent.show_debug = false
 												end
 
-												-- camera focus/highlight on entity selection
+												--[[ camera focus/highlight on entity selection (TODO: BUGGY)
 												if imgui.IsItemClicked() then
 													if selected_entity == ent.uuid then
 														selected_entity = nil
@@ -446,7 +450,7 @@ local ideScene = {
 														selected_entity = ent.uuid
 														curr_scene:focusEntity(ent)
 													end
-												end
+												end]]
 											end
 										end
 									end
