@@ -18,6 +18,7 @@
     - run game externally (export and run)
     - plugins
         - asset explorer                                            (D)
+        - image editor (pixel art, spritesheets)
 ]]
 
 package.cpath = package.cpath .. ";/usr/local/lib/lua/5.2/?.so;/usr/local/lib/lua/5.2/?.dll;./?.dll;./?.so"
