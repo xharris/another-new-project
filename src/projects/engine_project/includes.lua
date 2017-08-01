@@ -23,10 +23,8 @@ require 'plugins.blanke.Globals'
 require 'plugins.blanke.Util'
 require 'plugins.blanke.Debug'
 
-Input = require 'plugins.blanke.Input'
 
 Gamestate = require 'plugins.hump.gamestate'
-Timer = require 'plugins.hump.timer'
 Vector = require 'plugins.hump.vector'
 Camera = require 'plugins.hump.camera'
 anim8 = require 'plugins.anim8'

@@ -17,10 +17,11 @@ function entity0:init(x, y)
     self.jump_power = 330
 
     self.show_debug = true
+    self.jump_timer = Timer():before(function() self:jump() end, 1)
 
     Signal.on('jump', function()
         if self.nickname ~= 'player' then
-            self:jump()
+            self.jump_timer:start()
         end
     end)
 end
@@ -31,6 +32,7 @@ function entity0:postDraw()
 end
 
 function entity0:jump()
+    if self.nickname ~= 'player' then print('do it') end
     if self.can_jump then
         self.vspeed = -self.jump_power
         self.can_jump = false

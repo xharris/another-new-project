@@ -74,6 +74,10 @@ IDE = {
 	draw = function()
 		love.graphics.setColor(255,255,255)
 	    -- Menu
+
+    	imgui.PushStyleColor('WindowBg', 0,0,0,0)
+    	imgui.PushStyleColor('MenuBarBg', 0,0,0,0)
+
 	    if imgui.BeginMainMenuBar() then
 	        -- FILE
 	        if imgui.BeginMenu("File") then
@@ -255,6 +259,7 @@ IDE = {
 	        end
 	        imgui.EndMainMenuBar()
 	    end
+	    imgui.PopStyleColor(2)
 
 	    -- draw modules
 	    for m, mod in pairs(IDE.modules) do

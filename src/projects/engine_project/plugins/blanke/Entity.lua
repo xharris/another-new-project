@@ -62,11 +62,6 @@ Entity = Class{
     register = function(name)
 
     end,
-
-    destroy = function(self)
-    	_destroyGameObject('entity',self)
-    	self = nil
-	end,
     
     update = function(self, dt)
     	if self._destroyed then return end

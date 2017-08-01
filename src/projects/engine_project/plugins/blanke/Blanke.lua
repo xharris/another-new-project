@@ -6,7 +6,17 @@ AUTO_UPDATE = true
 function _addGameObject(type, obj)
     obj.uuid = uuid()
     obj.nickname = ifndef(obj.nickname,obj.classname)
+
     if obj.update then obj.auto_update = true end
+    obj._destroyed = false
+    if not obj.destroy then
+
+    	obj.destroy = function(self)
+	    	_destroyGameObject(type,self)
+	    	self = nil
+	    end
+    end
+
     game[type] = ifndef(game[type],{})
     table.insert(game[type], obj)
 
@@ -31,6 +41,8 @@ function _destroyGameObject(type, del_obj)
 	end)
 end	
 
+Input 	= require (blanke_path..'Input')
+Timer 	= require (blanke_path..'Timer')
 Signal	= require (blanke_path..'Signal')
 Draw 	= require (blanke_path..'Draw')
 Image 	= require (blanke_path..'Image')
