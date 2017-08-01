@@ -5,6 +5,7 @@ AUTO_UPDATE = true
 
 function _addGameObject(type, obj)
     obj.uuid = uuid()
+    obj.nickname = ifndef(obj.nickname,obj.classname)
     if obj.update then obj.auto_update = true end
     game[type] = ifndef(game[type],{})
     table.insert(game[type], obj)

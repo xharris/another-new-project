@@ -17,11 +17,24 @@ function entity0:init(x, y)
     self.jump_power = 330
 
     self.show_debug = true
+
+    Signal.on('jump', function()
+        if self.nickname ~= 'player' then
+            self:jump()
+        end
+    end)
 end
 
 function entity0:postDraw()
 	Draw.setColor(0,0,255,255)
 	Draw.rect('line',self.x-16,self.y-16,32,32)
+end
+
+function entity0:jump()
+    if self.can_jump then
+        self.vspeed = -self.jump_power
+        self.can_jump = false
+    end
 end
 
 function entity0:preUpdate(dt)
@@ -41,10 +54,10 @@ function entity0:preUpdate(dt)
     self.onCollision["jump_box"] = function(other, sep_vector)
         if other.tag == "ground" and sep_vector.y < 0 then
                 -- floor collision
-            self.can_jump = true 
-            if self.nickname == 'player' then
+            if not self.can_jump and self.nickname == 'player' then
                 Signal.emit('jump')
             end
+            self.can_jump = true 
         self:collisionStopY()
         end 
     end
@@ -67,9 +80,8 @@ function entity0:preUpdate(dt)
         end
         
         -- jumping
-        if k_up and self.can_jump then
-            self.vspeed = -self.jump_power
-            self.can_jump = false
+        if k_up then
+            self:jump()
         end	
     end
 end	
