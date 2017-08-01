@@ -1,3 +1,25 @@
+--  GOALS
+--[[
+(C) complete, usable, good enough
+(D) done, but feels incomplete
+(W) wip
+
+    - add 'return self' to end of some classes                      (W)
+    - slowly replace 3rd party plugins                              (W)
+        ~ keep an eye on system.lua for os compatibility issues     (W)
+    - game exporting
+        - download 10.2 of LoVE for needed os
+        - .love
+        - win
+        - mac
+        - web
+        - android
+        - ios
+    - run game externally (export and run)
+    - plugins
+        - asset explorer                                            (D)
+]]
+
 package.cpath = package.cpath .. ";/usr/local/lib/lua/5.2/?.so;/usr/local/lib/lua/5.2/?.dll;./?.dll;./?.so"
 
 require "imgui"
