@@ -13,6 +13,10 @@ Draw = Class{
 		Draw.color = color
 	end,
 
+	resetColor = function()
+		Draw.color = {0,0,0,255}
+	end,
+
 	_draw = function(func)
 		love.graphics.push('all')
 		love.graphics.setColor(Draw.color)
@@ -24,6 +28,13 @@ Draw = Class{
 		local args = {...}
 		Draw._draw(function()
 			love.graphics.rectangle(unpack(args))
+		end)
+	end,
+
+	circle = function(...)
+		local args = {...}
+		Draw._draw(function()
+			love.graphics.circle(unpack(args))
 		end)
 	end,
 }

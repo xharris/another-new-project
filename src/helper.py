@@ -85,11 +85,11 @@ def isDirectory(path):
 functions = {
 	'newProject':newProject,
 	'newScript':newScript,
-	'editFile':editFile,
+	'editFile':editFile,			# deprecated
 	'copyResource':copyResource,
 	'makeDirs':makeDirs,
-	'listFiles':listFiles,
-	'isDirectory':isDirectory
+	'listFiles':listFiles,			# deprecated
+	'isDirectory':isDirectory		# unused?
 }
 
 other_args = sys.argv[2:]

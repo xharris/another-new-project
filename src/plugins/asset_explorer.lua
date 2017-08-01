@@ -79,14 +79,31 @@ asset_explorer = {
 							if imgui.Button("Cancel") then
 								imgui.CloseCurrentPopup()
 							end
-							-- call module rename method?
 
 							imgui.EndPopup()
 						end
 
 						imgui.SameLine()
 						if UI.drawIconButton("trash", "delete") then
+							obj_to_delete = obj
+							imgui.OpenPopup("Delete")
+						end
 
+						if obj_to_delete == obj and imgui.BeginPopupModal("Delete", nil, {"AlwaysAutoResize"}) then
+							imgui.PushTextWrapPos(game_width/1.5)
+							imgui.Text("Are you sure you want to delete:\n"..path_object)
+
+							if imgui.Button("Yes") then
+								SYSTEM.remove(path_object)
+								IDE.refreshAssets()
+								imgui.CloseCurrentPopup()
+							end
+							imgui.SameLine()
+							if imgui.Button("No") then
+								imgui.CloseCurrentPopup()
+							end
+
+							imgui.EndPopup()
 						end
 					end
 

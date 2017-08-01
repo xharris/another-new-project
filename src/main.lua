@@ -6,7 +6,7 @@ require "template.plugins.blanke.Util"
 _watcher = require 'watcher'
 
 _GAME_NAME = "blanke"
-_REPLACE_REQUIRE = 'projects.project4.'
+_REPLACE_REQUIRE = ''
 
 --require "includes"
 
@@ -23,12 +23,12 @@ end
 
 function love.update(dt)
     imgui.NewFrame()
-    if BlankE then BlankE.update(dt) end
+    if BlankE and not IDE.errd then BlankE.update(dt) end
     IDE.update(dt)
 end
 
 function love.draw()
-    if BlankE and UI.getSetting('show_game') then
+    if BlankE and not IDE.errd and UI.getSetting('show_game') then
         BlankE.draw()
         Gamestate.draw()
     end
@@ -104,46 +104,11 @@ end
 local function error_printer(msg, layer)
     print((debug.traceback("Error: " .. tostring(msg), 1+(layer or 1)):gsub("\n[^\n]+$", "")))
 end
-function derp(msg)--love.errhand(msg)
-    msg = tostring(msg)
  
-    error_printer(msg, 2)
- 
-    if not love.window or not love.graphics or not love.event then
-        return
-    end
- 
-    if not love.graphics.isCreated() or not love.window.isOpen() then
-        local success, status = pcall(love.window.setMode, 800, 600)
-        if not success or not status then
-            return
-        end
-    end
- 
-    -- Reset state
-    if love.mouse then
-        love.mouse.setVisible(true)
-        love.mouse.setGrabbed(false)
-        love.mouse.setRelativeMode(false)
-    end
-    if love.joystick then
-        -- Stop all joystick vibrations
-        for i,v in ipairs(love.joystick.getJoysticks()) do
-            v:setVibration()
-        end
-    end
-    if love.audio then love.audio.stop() end
-    love.graphics.reset()
-    local font = love.graphics.setNewFont(math.floor(love.window.toPixels(14)))
- 
-    love.graphics.setBackgroundColor(89, 157, 220)
-    love.graphics.setColor(255, 255, 255, 255)
- 
+function love.errhand(msg)
+    IDE.errd = true
+
     local trace = debug.traceback()
- 
-    love.graphics.clear(love.graphics.getBackgroundColor())
-    love.graphics.origin()
- 
     local err = {}
  
     table.insert(err, "Error\n")
@@ -161,42 +126,56 @@ function derp(msg)--love.errhand(msg)
     p = string.gsub(p, "\t", "")
     p = string.gsub(p, "%[string \"(.-)\"%]", "%1")
  
-    local function draw()
-        local pos = love.window.toPixels(70)
-        love.graphics.clear(love.graphics.getBackgroundColor())
-        love.graphics.printf(p, pos, pos, love.graphics.getWidth() - pos)
-        love.graphics.present()
+    if love.math then
+        love.math.setRandomSeed(os.time())
     end
  
-    while true do
-        love.event.pump()
+    if love.load then love.load(arg) end
  
-        for e, a, b, c in love.event.poll() do
-            if e == "quit" then
-                return
-            elseif e == "keypressed" and a == "escape" then
-                return
-            elseif e == "touchpressed" then
-                local name = love.window.getTitle()
-                if #name == 0 or name == "Untitled" then name = "Game" end
-                local buttons = {"OK", "Cancel"}
-                local pressed = love.window.showMessageBox("Quit "..name.."?", "", buttons)
-                if pressed == 1 then
-                    return
+    -- We don't want the first frame's dt to include time taken by love.load.
+    if love.timer then love.timer.step() end
+ 
+    local dt = 0
+ 
+    -- Main loop time.
+    while true do
+        -- Process events.
+        if love.event then
+            love.event.pump()
+            for name, a,b,c,d,e,f in love.event.poll() do
+                if name == "quit" then
+                    if not love.quit or not love.quit() then
+                        return a
+                    end
                 end
+                love.handlers[name](a,b,c,d,e,f)
             end
         end
-
-        IDE.update(dt)
  
-        draw()
- 
+        -- Update dt, as we'll be passing it to update
         if love.timer then
-            love.timer.sleep(0.1)
+            love.timer.step()
+            dt = love.timer.getDelta()
         end
-    end
+ 
+        -- Call update and draw
+        if love.update then love.update(dt) end -- will pass 0 if love.timer is disabled
+ 
+        if love.graphics and love.graphics.isActive() then
+            love.graphics.clear(love.graphics.getBackgroundColor())
+            love.graphics.origin()
+            
+            if IDE.errd then
+                BlankE.errhand(p)
+                IDE.draw()
+            else
+                love.draw()
+            end
 
-    if not BlankE or (BlankE and not BlankE._ide_mode) then
-        IDE.draw()
+            love.graphics.present()
+        end
+ 
+        if love.timer then love.timer.sleep(0.001) end
     end
+ 
 end

@@ -30,6 +30,7 @@ function _destroyGameObject(type, del_obj)
 	end)
 end	
 
+Signal	= require (blanke_path..'Signal')
 Draw 	= require (blanke_path..'Draw')
 Image 	= require (blanke_path..'Image')
 Net 	= require (blanke_path..'Net')
@@ -48,12 +49,15 @@ local max_fps = 120
 local min_dt = 1/max_fps
 local next_time = love.timer.getTime()
 
+_err_state = Class{error_msg='NO GAME'}
+
 BlankE = {
 	_ide_mode = false,
 	_mouse_x = 0,
 	_mouse_y = 0,
 	_callbacks_replaced = false,
 	init = function(first_state)
+		first_state = ifndef(first_state, _err_state)
 		if not BlankE._callbacks_replaced then
 			BlankE._callbacks_replaced = true
 
@@ -71,7 +75,7 @@ BlankE = {
 			end
 			
 			if BlankE._ide_mode then
-	    		Gamestate.registerEvents({'errhand', 'update' })
+	    		Gamestate.registerEvents({'update'})
 	    	else
 	    		Gamestate.registerEvents()
 	    	end
@@ -164,5 +168,37 @@ BlankE = {
 
 	quit = function()
 	    Net.disconnect()
-	end
+	end,
+
+	errhand = function(msg)
+		_err_state.error_msg = msg
+		_err_state.draw()
+	end,
 }
+
+local _offset=0
+function _err_state:draw()
+	local _max_size = math.max(game_width, game_height)
+	_offset = _offset + 1
+	if _offset >= _max_size then _offset = 0 end
+
+	love.graphics.push('all')
+	for _c = 0,_max_size*2,10 do
+		local _new_radius = _c-_offset
+		local opacity = (_new_radius/_max_size)*300
+		love.graphics.setColor(0,(_new_radius)/_max_size*255,0,opacity)
+		love.graphics.circle("line", game_width/2, game_height/2, _new_radius)
+	end
+	local posx = 0
+	local posy = game_height/2
+	local align = "center"
+	if #_err_state.error_msg > 100 then
+		align = "left"
+		posx = love.window.toPixels(70)
+		posy = posx
+	end
+	love.graphics.setColor(255,255,255,sinusoidal(150,255,0.5))
+	love.graphics.printf(_err_state.error_msg,posx,posy,game_width,align)
+	love.graphics.pop()
+end	
+

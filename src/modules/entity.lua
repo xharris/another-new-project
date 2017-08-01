@@ -35,7 +35,7 @@ local ideEntity = {
 	end,
 
 	edit = function(name)
-		HELPER.run('editFile',{IDE.getProjectPath()..'/scripts/entity/'..name..'.lua'})
+		SYSTEM.edit(IDE.getProjectPath()..'/scripts/entity/'..name..'.lua')
 	end,
 
 	draw = function()

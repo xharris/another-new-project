@@ -1,5 +1,12 @@
 game_name = _GAME_NAME
 
+CONF = {
+    window = {
+        width = 800,
+        height = 600
+    }
+}
+
 local oldreq = require
 local require = oldreq
 if _REPLACE_REQUIRE then
@@ -26,8 +33,8 @@ Camera = require 'plugins.hump.camera'
 anim8 = require 'plugins.anim8'
 HC = require 'plugins.HC'
 
-require 'assets'
-
 require 'plugins.blanke.Blanke'
+
+require 'assets'
 
 require = oldreq

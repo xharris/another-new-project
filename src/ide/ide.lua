@@ -13,6 +13,7 @@ IDE = {
 	watch_timeout = 0,
 	refresh_pjlist_timeout = 0,
 	_initial_watch = true,
+	errd = false,
 
 	project_folder = 'projects',
 	_project_folder_changed = false,
@@ -421,6 +422,8 @@ IDE = {
 	_reload = function(path, dont_init_blanke)	
 		if IDE.update_timeout == 0 then
 			IDE.update_timeout = 2
+
+			IDE.errd = false
 --[[
 			local proj = 'projects/project1/'
 			local paths = {"?/?.lua","?.lua","?/init.lua"}

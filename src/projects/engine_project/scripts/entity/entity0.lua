@@ -1,6 +1,6 @@
 function entity0:init(x, y)
 	Entity.init(self,'entity0')
-	
+
 	self.x = x
     self.y = y
     
@@ -17,7 +17,14 @@ function entity0:init(x, y)
     self.jump_power = 330
 
     self.show_debug = true
-    
+end
+
+function entity0:postDraw()
+	Draw.setColor(0,0,255,255)
+	Draw.rect('line',self.x-16,self.y-16,32,32)
+end
+
+function entity0:preUpdate(dt)
     self.onCollision["main"] = function(other, sep_vector)
         if other.tag == "ground" then
             -- ceiling collision
@@ -29,43 +36,40 @@ function entity0:init(x, y)
                 self:collisionStopX() 
             end
         end
-	end
+    end
     
     self.onCollision["jump_box"] = function(other, sep_vector)
-       	if other.tag == "ground" and sep_vector.y < 0 then
+        if other.tag == "ground" and sep_vector.y < 0 then
                 -- floor collision
-           	self.can_jump = true 
-		self:collisionStopY()
+            self.can_jump = true 
+            if self.nickname == 'player' then
+                Signal.emit('jump')
+            end
+        self:collisionStopY()
         end 
     end
-end
 
-function entity0:postDraw()
-	love.graphics.setColor(0,0,255,255)
-	love.graphics.rectangle('line',self.x-16,self.y-16,32,32)
-	love.graphics.resetColor()
-end
-
-function entity0:preUpdate(dt)
-    local k_right = love.keyboard.isDown("right")
-    local k_left = love.keyboard.isDown("left")
-    local k_up = love.keyboard.isDown("up")
-    
-    -- horizontal movement
-	if k_right or k_left then
-        if k_left then
-	    self.hspeed = -self.move_speed    
+    if self.nickname == 'player' then
+        local k_right = love.keyboard.isDown("right")
+        local k_left = love.keyboard.isDown("left")
+        local k_up = love.keyboard.isDown("up")
+        
+        -- horizontal movement
+    	if k_right or k_left then
+            if k_left then
+    	    self.hspeed = -self.move_speed    
+            end
+            if k_right then
+               self.hspeed = self.move_speed 
+            end
+        else
+           	self.hspeed = 0 
         end
-        if k_right then
-           self.hspeed = self.move_speed 
-        end
-    else
-       	self.hspeed = 0 
+        
+        -- jumping
+        if k_up and self.can_jump then
+            self.vspeed = -self.jump_power
+            self.can_jump = false
+        end	
     end
-    
-    -- jumping
-    if k_up and self.can_jump then
-        self.vspeed = -self.jump_power
-        self.can_jump = false
-    end	
 end	

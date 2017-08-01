@@ -77,6 +77,10 @@ Tween = Class{
 		self._go = true
 	end,
 
+	destroy = function(self)
+		_destroyGameObject('tween',self)
+	end,
+
 	_onFinish = function(self) 
 		Debug.log("tween finished") 
 		self._go = false

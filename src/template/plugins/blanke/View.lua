@@ -5,10 +5,14 @@ View = Class{
 
 		self._dt = 0
 
+		self.disabled = false
+
 		self.camera = Camera(0, 0)
 		self.follow_entity = nil
 		self.follow_x = 0
 		self.follow_y = 0
+		self.offset_x = 0
+		self.offset_y = 0
 
 		self.motion_type = 'none' -- linear, smooth
 		self.speed = 1 
@@ -41,17 +45,24 @@ View = Class{
         _addGameObject('view',self)
 	end,
 
+	-- return camera position
+	position = function(self)
+	return self.camera:position()
+	end,
+
 	follow = function(self, entity)
-		self.followEntity = entity
+		self.follow_entity = entity
 
 		self:update()
 	end,
 
 	moveTo = function(self, entity) 
-		self.follow_x = entity.x
-		self.follow_y = entity.y
+		if entity then
+			self.follow_x = entity.x
+			self.follow_y = entity.y
 
-		self:update()
+			self:update()
+		end
 	end,	
 
 	moveToPosition = function(self, x, y, fromUpdate)
@@ -104,9 +115,9 @@ View = Class{
     end,
 
 	update = function(self, dt)
-		if self.followEntity then
-			local follow_x = self.followEntity.x
-			local follow_y = self.followEntity.y
+		if self.follow_entity then
+			local follow_x = self.follow_entity.x
+			local follow_y = self.follow_entity.y
 
 			self:moveToPosition(follow_x, follow_y, true)
 		end
@@ -180,15 +191,19 @@ View = Class{
 		-- move the camera
 		local wx = love.graphics.getWidth()/2
 		local wy = love.graphics.getHeight()/2
-		self.camera:lockWindow(self.follow_x + shake_x, self.follow_y + shake_y, wx-self.max_distance, wx+self.max_distance,  wy-self.max_distance, wy+self.max_distance, self._smoother)
+		self.camera:lockWindow(self.follow_x + self.offset_x + shake_x, self.follow_y + self.offset_y + shake_y, wx-self.max_distance, wx+self.max_distance,  wy-self.max_distance, wy+self.max_distance, self._smoother)
 	end,
 
-	attach = function(self)   
-        self.camera:attach(self.port_x, self.port_y, self.port_width, self.port_height, self.noclip)
+	attach = function(self)  
+		if not self.disabled then 
+        	self.camera:attach(self.port_x, self.port_y, self.port_width, self.port_height, self.noclip)
+        end
     end,
 
 	detach = function(self)
-		self.camera:detach()
+		if not self.disabled then
+			self.camera:detach()
+		end
 	end,
 
 	draw = function(self, draw_func)

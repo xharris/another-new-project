@@ -7,6 +7,10 @@ Input = Class{
         self.onInput = nil
         self._on = false -- are any of the inputs active?
 
+        -- implement later
+        self.pressed = false
+        self.released = false
+
 		-- store inputs
 		arg_inputs = {...}
 		for i_in, input in ipairs(arg_inputs) do
@@ -73,8 +77,8 @@ Input = Class{
     getRegion = function(self, x, y)
         return nil
     end,
-    
-    __call = function(self)
+
+    _isOn = function(self)
         for input, val in pairs(self.in_key) do
             if val == true then return true end
         end
@@ -86,8 +90,12 @@ Input = Class{
         for input, val in pairs(self.in_region) do
             if val == true then return true end
         end
-        
+
         return false
+    end,
+    
+    __call = function(self)
+        return self:_isOn()
     end
 }
 

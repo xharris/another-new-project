@@ -62,6 +62,14 @@ SYSTEM = {
 		)
 	end,
 
+	remove = function(path)
+		SYSTEM.runCmd(
+			{
+				mac='rm -rf "'..path..'"'
+			}
+		)
+	end,
+
 	os = function()
 		local pfile = io.popen("uname")
 		local os_type = pfile:read("*a")
@@ -73,6 +81,15 @@ SYSTEM = {
 				return name
 			end
 		end
+	end,
+
+	edit = function(path)
+		SYSTEM.runCmd(
+			{
+				mac='open \"'..path..'\"',
+				win='start \"\" \"'..path..'\"'
+			}
+		)	
 	end,
 
 	execute = function(cmd)
@@ -89,7 +106,6 @@ SYSTEM.runCmd({
 	mac='cd',
 	win='cd'
 },function(pfile)
-	print('hi')
 	SYSTEM.cwd = pfile:read'*l'
 	print('CWD',SYSTEM.cwd)
 end)

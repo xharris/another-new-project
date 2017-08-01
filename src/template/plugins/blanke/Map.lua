@@ -1,3 +1,5 @@
+-- for loading Tiled map (probably outdated)
+
 Map = Class{
 	init = function (self, map_name)
 		self.name = map_name

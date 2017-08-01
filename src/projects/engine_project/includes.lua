@@ -25,7 +25,7 @@ require 'plugins.blanke.Debug'
 
 Input = require 'plugins.blanke.Input'
 
-Signal = require 'plugins.hump.signal'
+--Signal = require 'plugins.hump.signal'
 Gamestate = require 'plugins.hump.gamestate'
 Timer = require 'plugins.hump.timer'
 Vector = require 'plugins.hump.vector'
