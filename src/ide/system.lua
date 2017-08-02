@@ -101,7 +101,7 @@ SYSTEM = {
 		print('open '..cmd)
 		SYSTEM.runCmd(
 			{
-				mac=cmd,
+				mac="echo "..cmd.." > blanke.command; chmod +x blanke.command; open blanke.command",
 				win='start \"\" \"'..cmd..'\"'
 			}
 		)

@@ -1,4 +1,9 @@
-local os_list = {'love','win','mac','android','ios'}
+local os_list = {'love','win','mac'}--,'web','android','ios'}
+
+local love2d_binary_path = {
+	win=SYSTEM.cwd..'/love2d-win32',
+	mac=SYSTEM.cwd..'/love.app'
+}
 
 -- folder_name: put the .love in /project/export/<folder_name>/
 function buildLove(folder_name)
@@ -35,11 +40,11 @@ function export(target_os, open_dir)
 	local love_path = buildLove(output_dir)
 	local build_path = dirname(love_path)	-- has a trailing '/'!!!!!
 
+	local curr_os = SYSTEM.os
 	if target_os == 'win' then
-		local curr_os = SYSTEM.os
 		if curr_os == 'mac' then
 			-- build EXE on a mac
-			local binary_path = SYSTEM.cwd..'/love2d-win32'
+			local binary_path = love2d_binary_path['win']
 			local build_cmd ='cat '..binary_path..'/love.exe '..build_path.._GAME_NAME..'.love > '..build_path.._GAME_NAME..'.exe'
 			os.execute(build_cmd)
 
@@ -52,6 +57,17 @@ function export(target_os, open_dir)
 				SYSTEM.copy(binary_path..'/'..file, build_path..file)
 			end
 		end
+
+	elseif target_os == 'mac' then
+		if curr_os == 'mac' then
+			-- combine love2d with .love
+			local binary_path = love2d_binary_path['mac']
+			local app_path = build_path.._GAME_NAME..'.app'
+			SYSTEM.copy(binary_path, app_path)
+			SYSTEM.rename(love_path, app_path..'/Contents/Resources/'.._GAME_NAME..'.love')
+
+		end
+
 	end
 
 	SYSTEM.explore(build_path)
@@ -62,7 +78,9 @@ exporter = {
 
 	onMenuDraw = function()
 		if imgui.MenuItem("run") then
-			buildLove()
+			if SYSTEM.os == 'mac' then
+				SYSTEM.execute(SYSTEM.cwd.."\"/love.app/Contents/MacOS/love\" \""..IDE.getProjectPath().."\"")
+			end
 		end
 
 		if imgui.BeginMenu("export") then
