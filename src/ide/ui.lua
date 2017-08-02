@@ -101,7 +101,7 @@ UI = {
 		imgui.PushStyleVar('FrameRounding', 3)
 		imgui.PushStyleVar('GrabRounding', 2)
 		imgui.PushStyleVar('GrabMinSize', 16)
-		UI.loadFont()
+
 		for e, el in pairs(UI.elements) do
 			imgui.PushStyleColor(e, UI.getColor(el))
 		end

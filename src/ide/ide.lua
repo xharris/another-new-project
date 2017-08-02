@@ -34,6 +34,36 @@ IDE = {
 		end
 	end,
 
+	load = function()
+		UI.loadFont()
+		-- load ide plugins
+		for f, file in ipairs(love.filesystem.getDirectoryItems('plugins')) do
+			file = file:gsub('.lua','')
+			IDE.plugins[file] = require('plugins.'..file)
+
+			if IDE.plugins[file].disabled then
+				package.loaded[file] = nil
+				_G[file] = nil
+			end
+		end
+
+		-- get modules
+		for f, file in ipairs(love.filesystem.getDirectoryItems('modules')) do
+			file = file:gsub('.lua','')
+			IDE.modules[file] = require('modules.'..file)
+
+			if IDE.modules[file].disabled then
+				package.loaded[file] = nil
+				_G[file] = nil
+			end
+		end
+
+		IDE.setProjectFolder(IDE.project_folder)
+
+		-- change imgui styling
+		UI.randomizeIDEColor()
+	end,
+
 	update = function(dt)
 		updateTimeout(dt, 'update_timeout')
 		updateTimeout(dt, 'watch_timeout')
@@ -259,7 +289,7 @@ IDE = {
 	        end
 	        imgui.EndMainMenuBar()
 	    end
-	    imgui.PopStyleColor(2)
+	    UI.setStyling()
 
 	    -- draw modules
 	    for m, mod in pairs(IDE.modules) do
@@ -293,35 +323,6 @@ IDE = {
         end
 
         imgui.Render()
-	end,
-
-	load = function()
-		-- load ide plugins
-		for f, file in ipairs(love.filesystem.getDirectoryItems('plugins')) do
-			file = file:gsub('.lua','')
-			IDE.plugins[file] = require('plugins.'..file)
-
-			if IDE.plugins[file].disabled then
-				package.loaded[file] = nil
-				_G[file] = nil
-			end
-		end
-
-		-- get modules
-		for f, file in ipairs(love.filesystem.getDirectoryItems('modules')) do
-			file = file:gsub('.lua','')
-			IDE.modules[file] = require('modules.'..file)
-
-			if IDE.modules[file].disabled then
-				package.loaded[file] = nil
-				_G[file] = nil
-			end
-		end
-
-		IDE.setProjectFolder(IDE.project_folder)
-
-		-- change imgui styling
-		UI.randomizeIDEColor()
 	end,
 
 	quit = function()
