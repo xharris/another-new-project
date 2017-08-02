@@ -28,6 +28,7 @@ Net = {
         Net.is_init = true
 
         Debug.log("networking initialized")
+        return Net
     end,
     
     update = function(dt,override)
@@ -42,6 +43,7 @@ Net = {
                 Net.updateEntities()
             end
         end
+        return Net
     end,
 
     -- returns "Server" object
@@ -62,7 +64,7 @@ Net = {
         Net.server:startserver(Net.port)
         -- room_create() -- default room
 
-        return true
+        return Net
     end,
     
     -- returns "Client" object
@@ -89,7 +91,7 @@ Net = {
         })
         ]]
 
-        return true
+        return Net
     end,
     
     _onConnect = function(data) 
@@ -204,10 +206,12 @@ Net = {
         data = json.encode(data)
         if Net.server then Net.server:send(data) end
         if Net.client then Net.client:send(data) end
+        return Net
     end,
 
     disconnect = function()
         if Net.client then Net.client:disconnect() end
+        return Net
     end,
 
     _getEntityInfo = function(entity) 
@@ -244,6 +248,7 @@ Net = {
             event='entity.add',
             info=Net._getEntityInfo(entity)
         })
+        return Net
     end,
 
     updateEntities = function()
@@ -254,6 +259,7 @@ Net = {
                 info=Net._getEntityInfo(entity)
             })
         end
+        return Net
     end,
 
     draw = function(obj_name)
@@ -262,6 +268,7 @@ Net = {
                 obj:draw()
             end
         end
+        return Net
     end,
     
     --[[

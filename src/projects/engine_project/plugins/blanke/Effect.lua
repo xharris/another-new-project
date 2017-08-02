@@ -31,6 +31,7 @@ Effect = Class{
 		if self.dt then self.dt = self.dt + dt end
 		if self.screen_size then self.screen_size = {game_width, game_height} end
 		if self.inv_screen_size then self.inv_screen_size = {1/game_width, 1/game_height} end
+		return self
 	end,
 
 	draw = function (self, func)
@@ -61,14 +62,17 @@ Effect = Class{
 		else
 			self._effect_data:extra_draw(func)
 		end
+		return self
 	end,
 
 	send = function (self, name, value)
 		self._shader:send(name, value)
+		return self
 	end,
 
 	clear = function(self)
 		love.graphics.setShader()
+		return self
 	end
 }
 

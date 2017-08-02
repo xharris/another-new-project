@@ -178,6 +178,7 @@ Entity = Class{
 		if self.postUpdate then
 			self:postUpdate(dt)
 		end	
+		return self
 	end,
 
 	getCollisions = function(self, shape_name)

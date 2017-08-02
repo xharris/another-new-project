@@ -18,14 +18,17 @@ Debug = {
             love.graphics.print(line, Debug.margin, y+Debug.margin)
             love.graphics.pop()
         end
+        return Debug
     end,
 
     setFontSize = function(new_size)
         Debug._font = love.graphics.newFont(new_size)
+        return Debug
     end,
 
     setMargin = function(new_margin)
         Debug.margin = new_margin
+        return Debug
     end,
     
     log = function(...)
@@ -47,10 +50,12 @@ Debug = {
             table.insert(Debug.lines, 1, new_line)
         end
         print(...)
+        return Debug
     end,
 
     clear = function()
         Debug.lines = {}
+        return Debug
     end
 }
 

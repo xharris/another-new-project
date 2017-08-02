@@ -22,23 +22,28 @@ Dialog = Class{
     
     update = function(self, dt)
         self.timer:update(dt)
+        return self
     end,
     
     draw = function(self)
         love.graphics.draw(self.text_obj, self.x, self.y)
+        return self
     end,
     
     setFont = function(self, new_font)
         self.font_obj = new_font
+        return self
     end,    
     
     addText = function(self, text)
         table.insert(self.texts, text)
+        return self
     end,
     
     _resetPrintVars = function(self)
         self.text_index = 1
         self.text_char = 1
+        return self
     end,
     
     _normal = function(self, str, isPlayAll)
@@ -46,15 +51,16 @@ Dialog = Class{
         self.text_obj:setf(str, self.width, self.align)
         table.remove(self.texts, 1)
 
-            if isPlayAll and #self.texts > 0 then
-                -- show next text after delay
-                self.timer:after(self.delay/1000, function()
-                    self:_normal("", isPlayAll)
-                end)
-            else
-                -- set text to nothing
-                self.timer:after(self.delay/1000, function() self:reset() end)
-            end
+        if isPlayAll and #self.texts > 0 then
+            -- show next text after delay
+            self.timer:after(self.delay/1000, function()
+                self:_normal("", isPlayAll)
+            end)
+        else
+            -- set text to nothing
+            self.timer:after(self.delay/1000, function() self:reset() end)
+        end
+        return self
     end,
     
     _typewriter = function(self, str, isPlayAll)        
@@ -82,16 +88,19 @@ Dialog = Class{
             end
             
         end
+        return self
     end,
     
     play = function(self)
         self:_resetPrintVars()
         self["_" .. self.type](self, "", false)
+        return self
     end,
     
     playAll = function(self)
         self:_resetPrintVars()
         self["_" .. self.type](self, "", true)
+        return self
     end,
     
     -- remove all dialogs
@@ -99,6 +108,7 @@ Dialog = Class{
         self.texts = {}
         self.text_obj:set("")
         self:_resetPrintVars()
+        return self
     end
 }
 

@@ -190,6 +190,7 @@ Scene = Class{
 				end
 			end
 		end
+		return self
 	end,
 
 	_drawGrid = function(self)
@@ -281,6 +282,7 @@ Scene = Class{
 	    	end
 	    end
     	love.graphics.pop()
+    	return self
 	end,
 
 	_checkLayerArg = function(self, layer)
@@ -357,6 +359,7 @@ Scene = Class{
 			id=sb_id,
 			from_file=from_file
 		})
+		return self
 	end,
 
 	removeTile = function(self, x, y, layer, img_name)
@@ -389,6 +392,7 @@ Scene = Class{
 				end
 			end
 		end
+		return self
 	end,
 
 	getHitboxType = function(self, name)
@@ -406,6 +410,7 @@ Scene = Class{
 			color={255,255,255,255},
 			uuid=uuid()
 		})
+		return self
 	end,
 
 	validateHitboxName = function(self, new_name)
