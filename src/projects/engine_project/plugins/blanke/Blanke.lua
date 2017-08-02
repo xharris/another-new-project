@@ -117,6 +117,115 @@ BlankE = {
 		return state
 	end,
 
+	main_cam = nil,
+	snap = {32,32},
+	initial_cam_pos = {0,0},
+	_drawGrid = function()
+		local min_grid_draw = 8
+		local grid_alpha = 30
+		local snap = BlankE.snap
+
+		local g_x, g_y
+		if BlankE.main_cam and not BlankE.main_cam.disabled then
+			g_x, g_y = BlankE.main_cam:position()
+			g_x = (BlankE.main_cam.port_width/2) - g_x 
+			g_y = (BlankE.main_cam.port_height/2) - g_y
+		else
+			g_x, g_y = 0, 0
+		end
+
+		local offx, offy = (g_x%snap[1]), (g_y%snap[2])
+
+		local offset = 0
+		local function myStencilFunction() -- TODO: change to shader?
+			local conf_w, conf_h = CONF.window.width+(offset*2), CONF.window.height+(offset*2)
+
+			local rect_x = (game_width/2)-(conf_w/2)+offset
+			local rect_y = (game_height/2)-(conf_h/2)+offset
+
+		   	love.graphics.rectangle("fill", rect_x, rect_y, conf_w, conf_h)
+		end
+
+		local function stencilLine(func)
+			-- outside view line
+			love.graphics.setColor(255,255,255,grid_alpha)
+			love.graphics.setLineWidth(1)
+			func()
+
+			-- bold in-view line
+			if _grid_gradient then
+				for o = 0,15,1 do
+					offset = -o
+		    		love.graphics.setColor(255,255,255,2)
+		    		love.graphics.stencil(myStencilFunction, "replace", 1)
+				 	love.graphics.setStencilTest("greater", 0)
+				 	love.graphics.setLineWidth(1)
+				 	func()
+		    		love.graphics.setStencilTest()
+				end
+			else 
+				offset = 0
+				love.graphics.setColor(255,255,255,grid_alpha+20)
+				love.graphics.stencil(myStencilFunction, "replace", 1)
+			 	love.graphics.setStencilTest("greater", 0)
+			 	love.graphics.setLineWidth(1)
+			 	func()
+				love.graphics.setStencilTest()
+			end
+
+		end
+
+		love.graphics.push('all')
+		love.graphics.setLineWidth(1)
+		love.graphics.setLineStyle("rough")
+		love.graphics.setBlendMode('replace')
+
+		-- vertical lines
+		if snap[1] >= min_grid_draw then
+			for x = 0,game_width,snap[1] do
+				if x+offx == 0 then
+					love.graphics.setLineWidth(3)
+				else
+					love.graphics.setLineWidth(1)
+				end
+
+				stencilLine(function()
+					love.graphics.line(x+offx, 0, x+offx, game_height)
+				end)
+			end
+		end
+
+		-- horizontal lines
+		if snap[2] >= min_grid_draw then
+			for y = 0,game_height,snap[2] do
+				if y+offy == 0 then
+					love.graphics.setLineWidth(3)
+				else
+					love.graphics.setLineWidth(1)
+				end
+
+				stencilLine(function()
+					love.graphics.line(0, y+offy, game_width, y+offy)
+				end)
+			end
+		end
+		love.graphics.pop()
+	end,
+
+	drawGrid = function(snapx, snapy, camera)
+		BlankE.snap = {snapx, snapy}
+		BlankE.main_cam = camera
+	end,
+
+	setGridSnap = function(snapx, snapy)
+		BlankE.snap = {snapx, snapy}
+	end,
+
+	setGridCamera = function(camera)
+		BlankE.main_cam = camera
+		BlankE.initial_cam_pos = camera:position()
+	end,
+
 	update = function(dt)
 	    dt = math.min(dt, min_dt)
 	    next_time = next_time + min_dt
@@ -135,9 +244,13 @@ BlankE = {
 	end,
 
 	draw = function()
+		local fake_view = nil
 		_iterateGameGroup('scene', function(scene)
 			scene._is_active = false
 		end)
+		if BlankE._ide_mode then
+			BlankE._drawGrid()
+		end
 
 	    local cur_time = love.timer.getTime()
 	    if next_time <= cur_time then
@@ -150,7 +263,7 @@ BlankE = {
 	resize = function(w,h)
 		if BlankE._ide_mode then
 			_iterateGameGroup('scene', function(scene)
-				scene:_drawGrid()
+				--scene:_drawGrid()
 			end)
 		end
 	end,

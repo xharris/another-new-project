@@ -1,3 +1,7 @@
+local k_left = Input('left','a')
+local k_right = Input('right','d')
+local k_up = Input('up','w')
+
 function entity0:init(x, y)
 	Entity.init(self,'entity0')
 
@@ -65,16 +69,13 @@ function entity0:preUpdate(dt)
     end
 
     if self.nickname == 'player' then
-        local k_right = love.keyboard.isDown("right")
-        local k_left = love.keyboard.isDown("left")
-        local k_up = love.keyboard.isDown("up")
         
         -- horizontal movement
-    	if k_right or k_left then
-            if k_left then
+    	if k_right() or k_left() then
+            if k_left() then
     	    self.hspeed = -self.move_speed    
             end
-            if k_right then
+            if k_right() then
                self.hspeed = self.move_speed 
             end
         else
@@ -82,7 +83,7 @@ function entity0:preUpdate(dt)
         end
         
         -- jumping
-        if k_up then
+        if k_up() then
             self:jump()
         end	
     end

@@ -18,6 +18,7 @@ local selected_hitbox = nil
 
 
 local placeable = {'entity','image','hitbox'}
+local listable = {'entity','view'}
 
 local category_names = {}
 local objects = {}
@@ -62,6 +63,33 @@ function writeSceneFiles()
 		end)
 	end
 	return ret_str
+end
+
+function inspectObj(obj, title, flags)
+	if imgui.TreeNodeEx(ifndef(title,obj.nickname)..'###'..obj.uuid, flags) then
+		imgui.BeginChild(obj.uuid, 0, 180, false);
+
+		for var, value in pairs(obj) do
+			if not var:starts('_') then
+				if type(value) == 'number' then
+					imgui.PushItemWidth(100)
+					status, new_int = imgui.DragInt(var,obj[var])
+					if status then obj[var] = new_int end
+				end
+				if type(value) == 'string' then
+					imgui.PushItemWidth(100)
+					status, new_str = imgui.InputText(var,obj[var],300)
+					if status then obj[var] = new_str end
+				end
+				if type(value) == 'boolean' then
+					local status, new_val = imgui.Checkbox(var, obj[var])
+					if status then obj[var] = new_val end
+				end
+			end
+		end
+		imgui.EndChild()
+		imgui.TreePop()
+	end
 end
 
 local ideScene = {
@@ -389,7 +417,7 @@ local ideScene = {
 				end
 
 				if imgui.CollapsingHeader("List") then
-					for o, obj in ipairs(placeable) do
+					for o, obj in ipairs(listable) do
 
 							if obj == 'entity' then
 								local obj_list = curr_scene:getList(obj)
@@ -409,34 +437,7 @@ local ideScene = {
 													table.insert(flags, 'Selected')
 												end
 
-												if imgui.TreeNodeEx(string.format('%s (%d,%d)', ifndef(ent.nickname, ent.classname), ent.x, ent.y)..'###'..ent.uuid, flags) then
-		            								imgui.BeginChild(ent.uuid, 0, 180, false);
-
-			        								if imgui.SmallButton("save (not implemented yet)") then
-			        									--curr_scene:saveEntity(ent)
-			        								end
-
-													for var, value in pairs(ent) do
-														if not var:starts('_') then
-															if type(value) == 'number' then
-				        										imgui.PushItemWidth(100)
-																status, new_int = imgui.DragInt(var,ent[var])
-																if status then ent[var] = new_int end
-															end
-															if type(value) == 'string' then
-				        										imgui.PushItemWidth(100)
-																status, new_str = imgui.InputText(var,ent[var],300)
-																if status then ent[var] = new_str end
-															end
-															if type(value) == 'boolean' then
-																local status, new_val = imgui.Checkbox(var, ent[var])
-																if status then ent[var] = new_val end
-															end
-														end
-													end
-													imgui.EndChild()
-													imgui.TreePop()
-												end
+												inspectObj(ent, string.format('%s (%d,%d)', ifndef(ent.nickname, ent.classname), ent.x, ent.y), flags)
 
 												if imgui.IsItemHovered() then
 													ent.show_debug = true
@@ -460,6 +461,7 @@ local ideScene = {
 													end
 												end]]
 											end
+											imgui.TreePop()
 										end
 									end
 
@@ -467,8 +469,12 @@ local ideScene = {
 								end
 							end
 
-							if obj == 'hitbox' then
-								
+							if obj == 'view' and imgui.TreeNode(obj) then
+								_iterateGameGroup('view', function(view, v)
+									inspectObj(view, ifndef(view.nickname, 'view'..v))
+								end)
+
+								imgui.TreePop()
 							end
 
 					end
