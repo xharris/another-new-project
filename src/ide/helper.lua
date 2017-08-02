@@ -9,9 +9,12 @@ HELPER = {
 		cmd = 'python '..HELPER.py_location..' '..name..' '..str_args
 		--print(cmd)
 		local handle = io.popen(cmd)
-		local result = handle:read("*a")
+		local result = handle:read("*a"):trim()
 		handle:close()
-		return loadstring(result:trim())()
+		print(result)
+		if result ~= '' then
+			return loadstring(result)()
+		end
 	end
 }
 

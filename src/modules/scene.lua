@@ -56,7 +56,8 @@ function writeSceneFiles()
 			local scene_path = IDE.getProjectPath()..'/assets/scene/'..scene_name..'.json'
 			local scene_data = scene:export(path)
 
-			HELPER.run('makeDirs', {'"'..scene_path..'"'})
+			SYSTEM.mkdir(scene_path)
+			--HELPER.run('makeDirs', {'"'..scene_path..'"'})
 			local file = io.open(scene_path,"w+")
 			file:write(scene_data)
 			file:close()

@@ -265,7 +265,10 @@ IDE = {
 	        if imgui.BeginMenu("Tools") then
 	        	IDE.iteratePlugins(function(p, plugin)
 
-	        		if plugin.menu_text and 
+	        		if plugin.onMenuDraw and (not plugin.project_plugin or (plugin.project_plugin and IDE.isProjectOpen())) then
+        				plugin.onMenuDraw()
+
+	        		elseif plugin.menu_text and 
 	        		   (not plugin.project_plugin or (plugin.project_plugin and IDE.isProjectOpen())) 
 	        		   and plugin.onMenuClick
 	        		then
@@ -525,7 +528,8 @@ IDE = {
 		end
 		asset_str = asset_str.."if _REPLACE_REQUIRE then\n\trequire = oldreq\nend"
 
-		HELPER.run('makeDirs', {'"'..IDE.getProjectPath()..'"'})
+		SYSTEM.mkdir(IDE.getProjectPath())
+		--HELPER.run('makeDirs', {'"'..IDE.getProjectPath()..'"'})
 		local file = io.open(IDE.getProjectPath()..'/assets.lua','w+')
 		if assert(file,"ERR: problem writing to '"..IDE.getProjectPath().."/assets.lua'") then
 			file:write(asset_str)

@@ -1,4 +1,4 @@
-import sys,os,subprocess,shutil
+import sys,os,subprocess,shutil,zipfile
 
 BASE_FOLDER = os.path.dirname(__file__)
 
@@ -82,6 +82,17 @@ def listFiles(path):
 def isDirectory(path):
 	print('return '+("true" if os.path.isdir(path) else "false"))
 
+def zipDir(src, dest):
+    zf = zipfile.ZipFile("%s" % (dest), "w", zipfile.ZIP_DEFLATED)
+    abs_src = os.path.abspath(src)
+    for dirname, subdirs, files in os.walk(src):
+        for filename in files:
+        	if filename != os.path.basename(dest):
+	            absname = os.path.abspath(os.path.join(dirname, filename))
+	            arcname = absname[len(abs_src) + 1:]
+	            zf.write(absname, arcname)
+    zf.close()
+
 functions = {
 	'newProject':newProject,
 	'newScript':newScript,
@@ -89,7 +100,8 @@ functions = {
 	'copyResource':copyResource,
 	'makeDirs':makeDirs,
 	'listFiles':listFiles,			# deprecated
-	'isDirectory':isDirectory		# unused?
+	'isDirectory':isDirectory,		# unused?
+	'zipDir':zipDir
 }
 
 other_args = sys.argv[2:]

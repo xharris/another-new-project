@@ -39,7 +39,8 @@ SYSTEM = {
 	mkdir = function(path)
 		SYSTEM.runCmd(
 			{
-				mac="mkdir -p "..path
+				mac="mkdir -p \""..path.."\"",
+				win="mkdir \""..path.."\""
 			}
 		)
 	end,
@@ -70,7 +71,7 @@ SYSTEM = {
 		)
 	end,
 
-	os = function()
+	getOS = function()
 		local pfile = io.popen("uname")
 		local os_type = pfile:read("*a")
 		pfile:close()
@@ -92,7 +93,12 @@ SYSTEM = {
 		)	
 	end,
 
+	explore = function(path)
+		love.system.openURL("file://"..path)
+	end,
+
 	execute = function(cmd)
+		print('open '..cmd)
 		SYSTEM.runCmd(
 			{
 				mac=cmd,
@@ -102,12 +108,12 @@ SYSTEM = {
 	end,
 }
 
+print('OS: '..SYSTEM.getOS())
+
 SYSTEM.runCmd({
-	mac='cd',
-	win='cd'
+	mac='pwd',
+	win='echo %cd%'
 },function(pfile)
 	SYSTEM.cwd = pfile:read'*l'
 	print('CWD',SYSTEM.cwd)
 end)
-
-print('OS: '..SYSTEM.os())
