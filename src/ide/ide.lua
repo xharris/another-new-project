@@ -71,7 +71,8 @@ IDE = {
 
     	if IDE.isProjectOpen() and IDE.watch_timeout == 0 then
     		IDE.watch_timeout = UI.getSetting('project_reload_timer').value
-    		_watcher('/', function(file_name)
+    		
+    		_watcher(IDE.getShortProjectPath(), function(file_name)
     			IDE.fileChange(file_name)
 			end)
 		end
@@ -107,8 +108,9 @@ IDE = {
 
     	imgui.PushStyleColor('WindowBg', 0,0,0,0)
     	imgui.PushStyleColor('MenuBarBg', 0,0,0,0)
-
-	    if imgui.BeginMainMenuBar() then
+	    local main_menu_bar = imgui.BeginMainMenuBar()
+	    imgui.PopStyleColor(2)
+	    if main_menu_bar then
 	        -- FILE
 	        if imgui.BeginMenu("File") then
 	        	if imgui.MenuItem("New") then
@@ -289,7 +291,6 @@ IDE = {
 	        end
 	        imgui.EndMainMenuBar()
 	    end
-	    UI.setStyling()
 
 	    -- draw modules
 	    for m, mod in pairs(IDE.modules) do
