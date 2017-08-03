@@ -1,7 +1,7 @@
 Debug = {
     lines = {},
     _font = love.graphics.newFont(12),
-    margin = 10,
+    margin = 15,
     _duplicate_count = 0,
     _duplicate_line = '',
     

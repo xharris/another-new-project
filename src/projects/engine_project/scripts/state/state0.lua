@@ -4,7 +4,8 @@ function state0:leave() end
 
 -- Called every time when entering the state.
 function state0:enter(previous)
-	love.graphics.setBackgroundColor(180,0,0)
+	love.graphics.setBackgroundColor(255,255,255,255)
+
 	new_img = Image('penguin')
 	new_img.x = 100
 	new_img.y = 120

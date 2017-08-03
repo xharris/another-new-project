@@ -67,6 +67,7 @@ _err_state = Class{error_msg='NO GAME'}
 BlankE = {
 	_ide_mode = false,
 	show_grid = true,
+	grid_color = {255,255,255},
 	_mouse_x = 0,
 	_mouse_y = 0,
 	_callbacks_replaced = false,
@@ -125,8 +126,9 @@ BlankE = {
 		if not BlankE.show_grid then return BlankE end
 
 		local r,g,b,a = love.graphics.getBackgroundColor()
-		color_offset = 2000
-		local grid_color = {clamp(r+color_offset,0,255),clamp(g+color_offset,0,255),clamp(b+color_offset,0,255),30}
+	    r = 255 - r; g = 255 - g; b = 255 - b;
+		BlankE.grid_color = {r,g,b}
+		local grid_color = BlankE.grid_color
 
 		local min_grid_draw = 8
 		local snap = BlankE.snap
@@ -154,11 +156,10 @@ BlankE = {
 
 		local function stencilLine(func)
 			-- outside view line
-			love.graphics.setColor(unpack(grid_color))
-			love.graphics.setLineWidth(1)
+			love.graphics.setColor(grid_color[1], grid_color[2], grid_color[3], 25)
 			func()
 
-			-- bold in-view line
+			-- in-view lines
 			if _grid_gradient then
 				for o = 0,15,1 do
 					offset = -o
@@ -171,10 +172,9 @@ BlankE = {
 				end
 			else 
 				offset = 0
-				love.graphics.setColor(grid_color[1], grid_color[2], grid_color[3], clamp(grid_color[4]+20, 0, 255))
 				love.graphics.stencil(myStencilFunction, "replace", 1)
 			 	love.graphics.setStencilTest("greater", 0)
-			 	love.graphics.setLineWidth(1)
+			 	love.graphics.setColor(grid_color[1], grid_color[2], grid_color[3], 25)
 			 	func()
 				love.graphics.setStencilTest()
 			end
@@ -184,7 +184,7 @@ BlankE = {
 		love.graphics.push('all')
 		love.graphics.setLineWidth(1)
 		love.graphics.setLineStyle("rough")
-		love.graphics.setBlendMode('replace')
+		--love.graphics.setBlendMode('replace')
 
 		-- vertical lines
 		if snap[1] >= min_grid_draw then

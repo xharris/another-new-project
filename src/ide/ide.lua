@@ -113,15 +113,27 @@ IDE = {
 
 	draw = function()
 		love.graphics.setColor(255,255,255)
+
 	    -- Menu
+	    function beginMenu(title)
+	    	local g_color = {255,255,255}
+	    	if BlankE then
+	    		g_color = BlankE.grid_color
+	    	end
+    		imgui.PushStyleColor('Text', g_color[1]/255, g_color[2]/255, g_color[3]/255, 1)
+	    	local menu = imgui.BeginMenu(title)
+	    	imgui.PopStyleColor(1)
+	    	return menu
+	    end
 
     	imgui.PushStyleColor('WindowBg', 0,0,0,0)
     	imgui.PushStyleColor('MenuBarBg', 0,0,0,0)
 	    local main_menu_bar = imgui.BeginMainMenuBar()
 	    imgui.PopStyleColor(2)
+
 	    if main_menu_bar then
 	        -- FILE
-	        if imgui.BeginMenu("File") then
+	        if beginMenu("File") then
 	        	if imgui.MenuItem("New") then
 	        		IDE.newProject()
 	        	end
@@ -169,7 +181,7 @@ IDE = {
 	        end
 
 	        -- ADD/EDIT OBJECT
-	        if IDE.isProjectOpen() and imgui.BeginMenu("Library") then
+	        if IDE.isProjectOpen() and beginMenu("Library") then
 	        	IDE.iterateModules(function(m, mod)
 	        		if mod.getObjectList then
 	        			if imgui.BeginMenu(m) then
@@ -207,7 +219,7 @@ IDE = {
 	        end
 
 	        -- IDE
-	        if imgui.BeginMenu("IDE") then
+	        if beginMenu("IDE") then
 	        	-- scene editor
 	        	if IDE.isProjectOpen() and imgui.MenuItem("scene editor", nil, UI.titlebar.show_scene_editor) then
 	        		UI.titlebar.show_scene_editor = not UI.titlebar.show_scene_editor
@@ -271,7 +283,7 @@ IDE = {
 	        end
 
 	        -- TOOLS (plugins)
-	        if imgui.BeginMenu("Tools") then
+	        if beginMenu("Tools") then
 	        	IDE.iteratePlugins(function(p, plugin)
 
 	        		if plugin.onMenuDraw and (not plugin.project_plugin or (plugin.project_plugin and IDE.isProjectOpen())) then
@@ -292,7 +304,7 @@ IDE = {
 	        end
 
 	        -- DEV
-	        if UI.titlebar.secret_stuff and imgui.BeginMenu("Dev") then
+	        if UI.titlebar.secret_stuff and beginMenu("Dev") then
 	            if imgui.MenuItem("dev tools") then
 	            	UI.titlebar.show_dev_tools = true
 	            end
