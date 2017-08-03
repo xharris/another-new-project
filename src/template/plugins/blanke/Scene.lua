@@ -2,6 +2,7 @@ local _btn_place
 local _btn_drag
 local _btn_remove
 local _btn_confirm
+local _btn_no_snap
 
 local _last_place = {nil,nil}
 local _place_type
@@ -81,11 +82,14 @@ Scene = Class{
 			_btn_drag = Input('mouse.3','space')
 			_btn_remove = Input('mouse.2')
 			_btn_confirm = Input('return','kpenter')
+			_btn_no_snap = Input('lctrl','rctrl')
 
 			self._fake_view = View()
+			self._fake_view.nickname = '_fake_view'
+			BlankE.setGridCamera(self._fake_view)
 			self._fake_view.port_width, self._fake_view.port_height = love.window.getDesktopDimensions()
 			self._fake_view:moveToPosition(self._fake_view.port_width/2,self._fake_view.port_height/2)
-			self._fake_view.motion_type = 'smooth' -- (not working as intended)
+			self._fake_view.motion_type = 'smooth' -- (not working as intended)		
 		end
 
 		if name and assets[name] then
@@ -93,6 +97,7 @@ Scene = Class{
 		end
 
 		self.draw_hitboxes = false
+		self.show_debug = false
 		_addGameObject('scene',self)
 	end,
 
@@ -190,97 +195,7 @@ Scene = Class{
 				end
 			end
 		end
-	end,
-
-	_drawGrid = function(self)
-		local min_grid_draw = 8
-		local grid_alpha = 30
-
-		local g_x, g_y
-    	if not self._fake_view.disabled then
-	    	g_x, g_y = self._fake_view:position()
-	    	g_x = (self._fake_view.port_width/2) - g_x
-	    	g_y = (self._fake_view.port_height/2) - g_y
-	    else
-	    	g_x, g_y = 0, 0
-	    end
-
-    	local offx, offy = (g_x%self._snap[1]), (g_y%self._snap[2])
-
-    	local offset = 0
-    	local function myStencilFunction() -- TODO: change to shader?
-    		local conf_w, conf_h = CONF.window.width+(offset*2), CONF.window.height+(offset*2)
-
-    		local rect_x = (game_width/2)-(conf_w/2)+offset
-    		local rect_y = (game_height/2)-(conf_h/2)+offset
-
-		   	love.graphics.rectangle("fill", rect_x, rect_y, conf_w, conf_h)
-		end
-
-		local function stencilLine(func)
-			-- outside view line
-    		love.graphics.setColor(255,255,255,grid_alpha)
-			love.graphics.setLineWidth(1)
-			func()
-
-			-- bold in-view line
-			if _grid_gradient then
-    			for o = 0,15,1 do
-    				offset = -o
-		    		love.graphics.setColor(255,255,255,2)
-		    		love.graphics.stencil(myStencilFunction, "replace", 1)
-				 	love.graphics.setStencilTest("greater", 0)
-				 	love.graphics.setLineWidth(1)
-				 	func()
-		    		love.graphics.setStencilTest()
-    			end
-    		else 
-    			offset = 0
-				love.graphics.setColor(255,255,255,grid_alpha+20)
-	    		love.graphics.stencil(myStencilFunction, "replace", 1)
-			 	love.graphics.setStencilTest("greater", 0)
-			 	love.graphics.setLineWidth(1)
-			 	func()
-	    		love.graphics.setStencilTest()
-    		end
-
-		end
-
-		love.graphics.push('all')
-    	love.graphics.setLineWidth(1)
-    	love.graphics.setLineStyle("rough")
-    	love.graphics.setBlendMode('replace')
-
-    	-- vertical lines
-    	if self._snap[1] >= min_grid_draw then
-	    	for x = 0,game_width,self._snap[1] do
-	    		if x+offx == 0 then
-					love.graphics.setLineWidth(3)
-	    		else
-	    			love.graphics.setLineWidth(1)
-	    		end
-
-	    		stencilLine(function()
-	    			love.graphics.line(x+offx, 0, x+offx, game_height)
-	    		end)
-	    	end
-	    end
-
-    	-- horizontal lines
-    	if self._snap[2] >= min_grid_draw then
-	    	for y = 0,game_height,self._snap[2] do
-	    		if y+offy == 0 then
-	    			love.graphics.setLineWidth(3)
-	    		else
-	    			love.graphics.setLineWidth(1)
-	    		end
-
-	    		stencilLine(function()
-	    			love.graphics.line(0, y+offy, game_width, y+offy)
-	    		end)
-	    	end
-	    end
-    	love.graphics.pop()
+		return self
 	end,
 
 	_checkLayerArg = function(self, layer)
@@ -347,7 +262,7 @@ Scene = Class{
 		local sb_id = spritebatch:add(love.graphics.newQuad(img_info.x, img_info.y, img_info.width, img_info.height, self.images[img_name].width, self.images[img_name].height), x, y)
 
 		-- add tile info to "hashtable"
-		self.hash_tile:add(x,y,
+		self.hash_tile:add(x-(x%self._snap[1]),y-(y%self._snap[2]),
 		{
 			layer=layer,
 			x=x,
@@ -357,9 +272,12 @@ Scene = Class{
 			id=sb_id,
 			from_file=from_file
 		})
+		return self
 	end,
 
 	removeTile = function(self, x, y, layer, img_name)
+		x = x-(x%self._snap[1])
+		y = y-(y%self._snap[2])
 		layer = self:_checkLayerArg(layer)
 		local rm_tiles = {}
 
@@ -389,6 +307,7 @@ Scene = Class{
 				end
 			end
 		end
+		return self
 	end,
 
 	getHitboxType = function(self, name)
@@ -406,6 +325,7 @@ Scene = Class{
 			color={255,255,255,255},
 			uuid=uuid()
 		})
+		return self
 	end,
 
 	validateHitboxName = function(self, new_name)
@@ -529,6 +449,7 @@ Scene = Class{
 
 			if layer.entity then
 				for i_e, entity in ipairs(layer.entity) do
+					entity.scene_show_debug = self.show_debug
 					entity:draw()
 				end
 			end
@@ -539,7 +460,7 @@ Scene = Class{
 				end
 			end
 
-			if layer.hitbox and self.draw_hitboxes then
+			if layer.hitbox and (self.draw_hitboxes or (self.show_debug and not BlankE._ide_mode)) then
 				for i_h, hitbox in ipairs(layer.hitbox) do
 					hitbox:draw()
 				end
@@ -550,12 +471,15 @@ Scene = Class{
 	draw = function(self) 
 	    if BlankE._ide_mode then
 			function _getMouseXY(dont_snap)
+				dont_snap = ifndef(dont_snap, _btn_no_snap())
+
 				local cam_x, cam_y
-				if not self._fake_view.disabled then
-					cam_x, cam_y = self._fake_view.camera:cameraCoords(self._fake_view:mousePosition())
-					local cam_pos = {self._fake_view:position()}
-					cam_x = cam_x - ((self._fake_view.port_width/2) - cam_pos[1])
-					cam_y = cam_y - ((self._fake_view.port_height/2) - cam_pos[2])
+				local place_cam = ifndef(BlankE.main_cam, self._fake_view)
+				if not place_cam.disabled then
+					cam_x, cam_y = place_cam.camera:cameraCoords(place_cam:mousePosition())
+					local cam_pos = {place_cam:position()}
+					cam_x = cam_x - ((place_cam.port_width/2) - cam_pos[1])
+					cam_y = cam_y - ((place_cam.port_height/2) - cam_pos[2])
 				else
 					cam_x, cam_y = mouse_x, mouse_y
 				end
@@ -569,7 +493,6 @@ Scene = Class{
 				return {mx, my}
 			end
 
-	    	self:_drawGrid() -- work on grid drawing (performace improvement)
 	    	self._fake_view:attach()
 
 	    	-- reset hitbox vars
@@ -624,13 +547,18 @@ Scene = Class{
 	    		end
 	    	end
 
+	    	-- dragging the view/grid around
+	    	BlankE.setGridSnap(self._snap[1], self._snap[2])
 	    	if not self._fake_view.disabled then
+	    		View._disable_grid = true
+				BlankE.setGridCamera(self._fake_view)
 		    	if _btn_drag() then
 		    		-- on down
 			    	if not _dragging then
 			    		_dragging = true
 			    		_view_initial_pos = {self._fake_view:position()}
 			    		_initial_mouse_pos = {mouse_x, mouse_y}
+			    		--
 			    	end
 			    	-- on hold
 			    	if _dragging then
@@ -645,6 +573,8 @@ Scene = Class{
 		    	if not _btn_drag() and _dragging then
 		    		_dragging = false
 		    	end
+		    else
+		    	View._disable_grid = false
 		    end
 
 		    -- confirm button

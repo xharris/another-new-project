@@ -9,6 +9,7 @@ Entity = Class{
 		self.sprite = nil			-- currently active animation
 		self.pause = false
 		self.show_debug = false
+		self.scene_show_debug = false
 
 		-- x and y coordinate of sprite
 		self.x = Entity.x
@@ -62,11 +63,6 @@ Entity = Class{
     register = function(name)
 
     end,
-
-    destroy = function(self)
-    	_destroyGameObject('entity',self)
-    	self = nil
-	end,
     
     update = function(self, dt)
     	if self._destroyed then return end
@@ -183,6 +179,7 @@ Entity = Class{
 		if self.postUpdate then
 			self:postUpdate(dt)
 		end	
+		return self
 	end,
 
 	getCollisions = function(self, shape_name)
@@ -211,6 +208,7 @@ Entity = Class{
 		love.graphics.circle("line", 0, 0, 2)
 
 		love.graphics.pop()
+		return self
 	end,
 
 	debugCollision = function(self)
@@ -218,6 +216,7 @@ Entity = Class{
 		for s, shape in pairs(self.shapes) do
 			shape:draw("line")
 		end
+		return self
 	end,
 
 	setSpriteIndex = function(self, index)
@@ -235,6 +234,7 @@ Entity = Class{
 				self._sprite_prev = self.sprite_index
 			end
 		end
+		return self
 	end,
 
 	_refreshSpriteDims = function(self)
@@ -268,7 +268,7 @@ Entity = Class{
 			self.sprite_height = 0
 		end
 
-		if self.show_debug then
+		if self.show_debug or self.scene_show_debug then
 			self:debugSprite()
 			self:debugCollision()
 		end
@@ -276,6 +276,7 @@ Entity = Class{
 		if self.postDraw then
 			self:postDraw()
 		end
+		return self
 	end,
 
 	addAnimation = function(...)
@@ -305,7 +306,8 @@ Entity = Class{
 				self._images[ani_name] = image
 				self._sprites[ani_name] = sprite
 			end
-		end	
+		end
+		return self
 	end,
 
 	-- add a collision shape
@@ -316,6 +318,7 @@ Entity = Class{
 		local new_hitbox = Hitbox(shape, args, tag, self.x, self.y)
 		new_hitbox:setParent(self)
 		self.shapes[name] = new_hitbox
+		return self
 	end,
 
 	-- remove a collision shape
@@ -323,6 +326,7 @@ Entity = Class{
 		if self.shapes[name] ~= nil then
 			self.shapes:disable()
 		end
+		return self
 	end,
 
 	-- the shape that the sprite will follow
@@ -330,6 +334,7 @@ Entity = Class{
 		if self.shapes[name] ~= nil then
 			self._main_shape = name
 		end 
+		return self
 	end,
 
 	distance_point = function(self, x, y)
@@ -347,6 +352,7 @@ Entity = Class{
 	move_towards_point = function(self, x, y, speed)
 		self.direction = math.deg(math.atan2(y - self.y, x - self.x))
 		self.speed = speed
+		return self
 	end,
     
     -- checks if the point is inside the current sprite

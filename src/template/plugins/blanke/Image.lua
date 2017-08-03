@@ -27,10 +27,12 @@ Image = Class{
 
 	setWidth = function(self, width)
 		self.xscale = width / self.orig_width
+		return self
 	end,
 
 	setHeight = function(self, height)
 		self.yscale = height / self.orig_height
+		return self
 	end,
 
 	draw = function(self)
@@ -41,6 +43,7 @@ Image = Class{
 		love.graphics.setColor(self.color.r, self.color.g, self.color.b, self.alpha)	
 		love.graphics.draw(self.image, self.x, self.y, math.rad(self.angle), self.xscale, self.yscale, self.xoffset, self.yoffset, self.xshear, self.yshear)
 		love.graphics.pop()
+		return self
 	end,
 
     __call = function(self)

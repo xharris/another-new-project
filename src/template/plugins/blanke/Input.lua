@@ -29,6 +29,7 @@ Input = Class{
             self.in_key[input] = false
             
         end
+        return self
 	end,
     
     remove = function(self, input)
@@ -40,18 +41,22 @@ Input = Class{
             self.in_key[input] = nil
             
         end
+        return self
     end,
     
     addRegion = function(self, shape_type, ...)
         local other_args = {...}
+        return self
     end,
     
     keypressed = function(self, key)
         if self.in_key[key] ~= nil then self.in_key[key] = true end
+        return self
     end,
     
     keyreleased = function(self, key)
         if self.in_key[key] ~= nil then self.in_key[key] = false end
+        return self
     end,
     
     mousepressed = function(self, x, y, button)
@@ -62,6 +67,7 @@ Input = Class{
         if region ~= nil then
             region = true
         end
+        return self
     end,
     
     mousereleased = function(self, x, y, button)
@@ -72,6 +78,7 @@ Input = Class{
         if region ~= nil then
             region = false
         end
+        return self
     end,
     
     getRegion = function(self, x, y)

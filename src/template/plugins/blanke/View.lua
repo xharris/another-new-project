@@ -1,5 +1,6 @@
 local _views = {}
 View = Class{
+	_disable_grid = false,
 	init = function (self)
 		table.insert(_views, self)
 
@@ -47,7 +48,7 @@ View = Class{
 
 	-- return camera position
 	position = function(self)
-	return self.camera:position()
+		return self.camera:position()
 	end,
 
 	follow = function(self, entity)
@@ -115,10 +116,14 @@ View = Class{
     end,
 
 	update = function(self, dt)
+
 		if self.follow_entity then
 			local follow_x = self.follow_entity.x
 			local follow_y = self.follow_entity.y
 
+			if not View._disable_grid then
+				BlankE.setGridCamera(self)
+			end	
 			self:moveToPosition(follow_x, follow_y, true)
 		end
 
@@ -195,13 +200,13 @@ View = Class{
 	end,
 
 	attach = function(self)  
-		if not self.disabled then 
+		if not (self.disabled or View._disable_grid) or (self.nickname == '_fake_view' and not self.disabled) then 
         	self.camera:attach(self.port_x, self.port_y, self.port_width, self.port_height, self.noclip)
         end
     end,
 
 	detach = function(self)
-		if not self.disabled then
+		if not (self.disabled or View._disable_grid) or (self.nickname == '_fake_view' and not self.disabled) then
 			self.camera:detach()
 		end
 	end,
