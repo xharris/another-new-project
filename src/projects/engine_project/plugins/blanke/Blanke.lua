@@ -63,6 +63,14 @@ Tween 	= require (blanke_path..'Tween')
 Scene 	= require (blanke_path..'Scene')
 Camera 	= require (blanke_path..'Camera') 	-- hump.camera cuz it's so brilliant
 
+-- load bundled effects
+eff_files = love.filesystem.getDirectoryItems(dirname((...):gsub('[.]','/'))..'effects')
+print(dirname((...):gsub('[.]','/'))..'effects')
+for i_e, effect in pairs(eff_files) do
+	print('load '..dirname((...):gsub('[.]','/'))..'effects'..effect)
+	EffectManager.load(dirname((...):gsub('[.]','/'))..'effects'..effect)
+end
+
 -- prevents updating while window is being moved (would mess up collisions)
 local max_fps = 120
 local min_dt = 1/max_fps
@@ -139,6 +147,8 @@ BlankE = {
 
 		local min_grid_draw = 8
 		local snap = BlankE.snap
+		snap[1] = snap[1] * Scene._zoom_amt
+		snap[2] = snap[2] * Scene._zoom_amt
 
 		local g_x, g_y
 		if BlankE.main_cam and not BlankE.main_cam.disabled then
@@ -248,7 +258,7 @@ BlankE = {
 	    updateGlobals(dt)
 	    
 	    Net.update(dt, false)
-	    
+
 	    for i_arr, arr in pairs(game) do
 	        for i_e, e in ipairs(arr) do
 	            if e.auto_update then
@@ -276,11 +286,7 @@ BlankE = {
 	end,
 
 	resize = function(w,h)
-		if BlankE._ide_mode then
-			_iterateGameGroup('scene', function(scene)
-				--scene:_drawGrid()
-			end)
-		end
+
 	end,
 
 	keypressed = function(key)
@@ -307,6 +313,12 @@ BlankE = {
 	    end)
 	end,
 
+	wheelmoved = function(x, y)
+	    _iterateGameGroup("input", function(input)
+	        input:wheelmoved(x, y)
+	    end)		
+	end,
+
 	quit = function()
 	    Net.disconnect()
 	end,
@@ -319,6 +331,7 @@ BlankE = {
 
 local _offset=0
 function _err_state:draw()
+	love.graphics.setBackgroundColor(0,0,0,255)
 	local _max_size = math.max(game_width, game_height)
 	_offset = _offset + 1
 	if _offset >= _max_size then _offset = 0 end

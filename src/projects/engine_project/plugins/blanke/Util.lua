@@ -90,3 +90,10 @@ function table.find(t, value)
 	end
 	return 0
 end	
+
+function table.has_value(t, value)
+	for v, val in ipairs(t) do
+		if val == value then return true end
+	end
+	return false
+end

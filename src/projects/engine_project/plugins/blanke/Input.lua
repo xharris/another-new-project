@@ -6,6 +6,7 @@ Input = Class{
 
         self.onInput = nil
         self._on = false -- are any of the inputs active?
+        self._reset_wheel = false
 
         -- implement later
         self.pressed = false
@@ -21,7 +22,7 @@ Input = Class{
 	end,
 
 	add = function(self, input)
-        if input:starts("mouse") then
+        if input:starts("mouse") or input:starts("wheel") then
             local btn = input:split(".")[2]
             self.in_mouse[input] = false
         
@@ -80,6 +81,33 @@ Input = Class{
         end
         return self
     end,
+
+    wheelmoved = function(self, x, y)
+        local dir_strings = {
+            ['wheel.up']    = y>0 and y or 0,
+            ['wheel.down']  = y<0 and y or 0,
+            ['wheel.right'] = x>0 and x or 0,
+            ['wheel.left']  = x<0 and x or 0
+        }
+        
+        for dir, value in pairs(self.in_mouse) do
+            if dir_strings[dir] ~= nil then
+                self._reset_wheel = true
+                self.in_mouse[dir] = dir_strings[dir]
+            end
+        end
+    end,
+
+    reset = function(self)
+        if self._reset_wheel then
+            for dir, value in pairs(self.in_mouse) do
+                if dir:starts("wheel") then
+                    self.in_mouse[dir] = 0
+                end
+            end
+            self._reset_wheel = false
+        end
+    end,
     
     getRegion = function(self, x, y)
         return nil
@@ -91,7 +119,10 @@ Input = Class{
         end
         
         for input, val in pairs(self.in_mouse) do
-            if val == true then return true end
+            if input:starts("wheel") and val ~= 0 then
+                self.in_mouse[input] = 0
+                return val
+            elseif val == true then return true end
         end
         
         for input, val in pairs(self.in_region) do

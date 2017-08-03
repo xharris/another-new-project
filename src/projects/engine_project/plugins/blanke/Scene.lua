@@ -3,6 +3,7 @@ local _btn_drag
 local _btn_remove
 local _btn_confirm
 local _btn_no_snap
+local _btn_zoom_in
 
 local _last_place = {nil,nil}
 local _place_type
@@ -67,6 +68,7 @@ local Scenetable = Class{
 
 Scene = Class{
 	hitbox = {},
+	_zoom_amt = 1,
 	init = function(self, name)
 		self.load_objects = {}
 		self.layers = {}
@@ -83,6 +85,8 @@ Scene = Class{
 			_btn_remove = Input('mouse.2')
 			_btn_confirm = Input('return','kpenter')
 			_btn_no_snap = Input('lctrl','rctrl')
+			_btn_zoom_in = Input('wheel.up')
+			_btn_zoom_out = Input('wheel.down')
 
 			self._fake_view = View()
 			self._fake_view.nickname = '_fake_view'
@@ -483,7 +487,7 @@ Scene = Class{
 				else
 					cam_x, cam_y = mouse_x, mouse_y
 				end
-				local mx, my = cam_x, cam_y
+				local mx, my = cam_x*Scene._zoom_amt, cam_y*Scene._zoom_amt
 
 				if not dont_snap then
 					mx = mx-(mx%self._snap[1])
@@ -546,6 +550,16 @@ Scene = Class{
 	    			hitbox_rem_point = true
 	    		end
 	    	end
+
+	    	-- zooming in and out
+	    	if _btn_zoom_in() then
+	    		Scene._zoom_amt = clamp(Scene._zoom_amt - 0.1, 0, 3)
+	    	end
+
+	    	if _btn_zoom_out() then
+	    		Scene._zoom_amt = clamp(Scene._zoom_amt + 0.1, 0, 3)
+	    	end
+	    	self._fake_view:zoom(Scene._zoom_amt)
 
 	    	-- dragging the view/grid around
 	    	BlankE.setGridSnap(self._snap[1], self._snap[2])

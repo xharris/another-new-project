@@ -28,6 +28,7 @@
     BUGS
 
     - Timer/Entity jumping example is not consistent in exported game
+    - Shaders cause screen to go white/black
 ]]
 
 package.cpath = package.cpath .. ";/usr/local/lib/lua/5.2/?.so;/usr/local/lib/lua/5.2/?.dll;./?.dll;./?.so"
@@ -130,6 +131,7 @@ function love.wheelmoved(x, y)
     imgui.WheelMoved(y)
     if not imgui.GetWantCaptureMouse() then
         -- Pass event to the game
+        if BlankE then BlankE.wheelmoved(x,y) end
     end
 end
 

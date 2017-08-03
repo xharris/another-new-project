@@ -99,11 +99,11 @@ EffectManager = Class{
 		return Effect(options.name)
 	end,
 
-	load = function(self, file_path)
+	load = function(file_path)
 		love.filesystem.load(file_path)()
 	end,
 
-	_render_to_canvas = function(self, canvas, func)
+	_render_to_canvas = function(canvas, func)
 		local old_canvas = love.graphics.getCanvas()
 
 		love.graphics.setCanvas(canvas)
@@ -147,12 +147,6 @@ extern number myNum;
 #endif
 	]]
 }
-
--- load bundled effects
-eff_files = love.filesystem.getDirectoryItems('plugins/blanke/effects')
-for i_e, effect in pairs(eff_files) do
-	EffectManager:load('plugins/blanke/effects/'..effect)
-end
 
 --[[
 scale with screen position

@@ -24,7 +24,6 @@ function entity0:init(x, y)
 
     Signal.on('jump', function()
         if self.nickname ~= 'player' then
-            Debug.log('do it!!')
             self.jump_timer:start()
         end
     end)
