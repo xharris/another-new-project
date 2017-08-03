@@ -12,6 +12,12 @@ function hex2rgb(hex)
     end
 end
 
+function clamp(x, min, max)
+	if x < min then return min end
+	if x > max then return max end
+	return x
+end
+
 function lerp(a,b,amt)
 	return a + (b-a) * amt
 end

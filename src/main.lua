@@ -8,17 +8,25 @@
     - slowly replace 3rd party plugins                              (W)
         ~ keep an eye on system.lua for os compatibility issues     (W)
     - game exporting
-        - download 10.2 of LoVE for needed os
-        - .love
-        - win
-        - mac
+        ? download 10.2 of LoVE for needed os                       
+        - .LoVE                                                     (W)
+        - win                                                       (W)
+        - mac                                                       (W)
         - web
         - android
         - ios
-    - run game externally (export and run)
+    - run game externally (export and run)                          (W)
     - plugins
         - asset explorer                                            (D)
+            - call rename method of modules on rename
         - image editor (pixel art, spritesheets)
+        - exporter
+            - see "game exporting" ^^^
+
+
+    BUGS
+
+    - Timer/Entity jumping example is not consistent in exported game
 ]]
 
 package.cpath = package.cpath .. ";/usr/local/lib/lua/5.2/?.so;/usr/local/lib/lua/5.2/?.dll;./?.dll;./?.so"

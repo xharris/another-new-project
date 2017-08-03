@@ -1,9 +1,10 @@
 -- Called once, and only once, before entering the state the first time.
 function state0:init() end
 function state0:leave() end 
-local test_ent
+
 -- Called every time when entering the state.
 function state0:enter(previous)
+	love.graphics.setBackgroundColor(180,0,0)
 	new_img = Image('penguin')
 	new_img.x = 100
 	new_img.y = 120
@@ -30,4 +31,5 @@ function state0:draw()
     main_view:draw(function()
         main_scene:draw()
     end)
+    Debug.draw()
 end	

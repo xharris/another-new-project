@@ -67,12 +67,13 @@ asset_explorer = {
 	           				rename_status, new_name = imgui.InputText("", new_name,300)
 
 	           				if imgui.Button("Rename") then
-								--new_name = IDE.validateName(new_name, objects)
 								-- actually rename file
 								local new_path = path_assets..'/'..cat..'/'..new_name
-								SYSTEM.rename(path_object, new_path)
-								IDE.refreshAssets()
-
+								if not IDE.rename(cat, path_object, new_path) then
+									-- default rename 
+									SYSTEM.rename(path_object, new_path)
+									IDE.refreshAssets()
+								end
 								imgui.CloseCurrentPopup()
 							end
 							imgui.SameLine()

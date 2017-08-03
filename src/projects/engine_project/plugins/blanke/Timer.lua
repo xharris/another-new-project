@@ -5,6 +5,7 @@ Timer = Class{
 		self._after = {}					-- when the timer is over 
 		self.time = 0						-- seconds
 		self.duration = ifndef(duration,0)	-- seconds
+		self.disable_on_all_called = true
 
 		self._running = false
 		self._start_time = 0
@@ -43,9 +44,11 @@ Timer = Class{
 	-- END add functions
 
 	update = function(self, dt)
+		local all_called = true
 		if self._running then
 			-- call BEFORE
 			for b, before in ipairs(self._before) do
+				if not before.called then all_called = false end
 				if not before.called and self.time >= before.delay then
 					before.func()
 					before.called = true
@@ -61,6 +64,7 @@ Timer = Class{
 					if fl_time ~= 0 and fl_time % during.interval == 0 and during.last_time_ran ~= fl_time then
 						during.func()
 						during.last_time_ran = fl_time
+						all_called = false
 					end
 				end
 			end
@@ -69,6 +73,7 @@ Timer = Class{
 				-- call AFTER
 				local calls_left = #self._after
 				for a, after in ipairs(self._after) do
+					if not after.called then all_called = false end
 					if not after.called and self.time >= self.duration+after.delay then
 						after.func()
 						after.called = true
@@ -81,6 +86,10 @@ Timer = Class{
 				if calls_left == 0 then
 					self._running = false
 				end
+			end	
+
+			if all_called and self.disable_on_all_called then
+				self._running = false
 			end
 		end
 		return self

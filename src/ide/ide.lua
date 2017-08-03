@@ -102,6 +102,15 @@ IDE = {
 		end
 	end,
 
+	renameObj = function(type, old_path, new_path)
+		if mod.onRename then
+			mod.onRename(old_path, new_path)
+			IDE.refreshAssets()
+			return true
+		end
+		return false
+	end,	
+
 	draw = function()
 		love.graphics.setColor(255,255,255)
 	    -- Menu

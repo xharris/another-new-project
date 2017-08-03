@@ -34,12 +34,17 @@ local ideEntity = {
 		end
 	end,
 
+	onRename = function(old_path, new_path)
+		print(old_path, new_path)
+		--SYSTEM.rename(path_object, new_path)
+	end,
+
 	edit = function(name)
 		SYSTEM.edit(IDE.getProjectPath()..'/scripts/entity/'..name..'.lua')
 	end,
 
 	draw = function()
-
+		
 	end
 }
 

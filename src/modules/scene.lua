@@ -140,10 +140,15 @@ local ideScene = {
 				-- enable/disable dragging camera
 				if scene_list[curr_scene_index] ~= nil then
 					local _scene = scene_list[curr_scene_index]
-					local status, new_val = imgui.Checkbox("disable camera dragging", _scene._fake_view.disabled)
-					if status then
-						_scene._fake_view.disabled = new_val
+					local cam_status, new_cam = imgui.Checkbox("disable camera dragging", _scene._fake_view.disabled)
+					if cam_status then
+						_scene._fake_view.disabled = new_cam
 					end 
+
+					local grid_status, new_grid = imgui.Checkbox("show grid", BlankE.show_grid)
+					if grid_status then
+						BlankE.show_grid = new_grid
+					end
 				end
 
 				-- scene selection
