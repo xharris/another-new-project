@@ -56,7 +56,7 @@ local ideState = {
 
 			local curr_state = BlankE.getCurrentState()
 			if string.match(file_name, curr_state) then
-				Gamestate.switch(_G[curr_state])
+				State.switch(_G[curr_state])
 			end
 		end
 	end,

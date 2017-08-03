@@ -96,7 +96,7 @@ IDE = {
 		end)
 
 		if string.match(file_name, "empty_state") then
-			if Gamestate.current() == _empty_state then
+			if State.current() == _empty_state then
 				IDE._reload(file_name)
 			end
 		end

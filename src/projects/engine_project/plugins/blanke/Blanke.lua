@@ -1,5 +1,9 @@
 local blanke_path = (...):match("(.-)[^%.]+$")
 
+require (blanke_path..'Globals')
+require (blanke_path..'Util')
+require (blanke_path..'Debug')
+
 game = {}
 AUTO_UPDATE = true
 
@@ -41,6 +45,7 @@ function _destroyGameObject(type, del_obj)
 	end)
 end	
 
+State 	= require (blanke_path..'State')	-- hump.gamestate
 Input 	= require (blanke_path..'Input')
 Timer 	= require (blanke_path..'Timer')
 Signal	= require (blanke_path..'Signal')
@@ -56,6 +61,7 @@ Effect 	= require (blanke_path..'Effect')
 Dialog 	= require (blanke_path..'Dialog')
 Tween 	= require (blanke_path..'Tween')
 Scene 	= require (blanke_path..'Scene')
+Camera 	= require (blanke_path..'Camera') 	-- hump.camera cuz it's so brilliant
 
 -- prevents updating while window is being moved (would mess up collisions)
 local max_fps = 120
@@ -90,17 +96,18 @@ BlankE = {
 			end
 			
 			if BlankE._ide_mode then
-	    		Gamestate.registerEvents({'update'})
+	    		State.registerEvents({'update'})
 	    	else
-	    		Gamestate.registerEvents()
+	    		State.registerEvents()
 	    	end
 		end
 	    uuid.randomseed(love.timer.getTime()*10000)
 	    
-		-- register gamestates
+		-- register States
 	    updateGlobals(0)
 		if first_state then
-			Gamestate.switch(first_state)
+			-- State.enter(first_state)
+			State.switch(first_state)
 		end
 	end,
 
@@ -109,7 +116,7 @@ BlankE = {
 	end,
 
 	getCurrentState = function()
-		local state = Gamestate.current()
+		local state = State.current()
 		if type(state) == "string" then
 			return state
 		end

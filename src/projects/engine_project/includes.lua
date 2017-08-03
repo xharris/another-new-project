@@ -17,15 +17,8 @@ require "plugins.printr"
 require "plugins.json.json"
 uuid = require("plugins.uuid")
 
-Class = require 'plugins.hump.class'
+Class = require ('plugins.blanke.Class') -- hump.class
 
-require 'plugins.blanke.Globals'
-require 'plugins.blanke.Util'
-require 'plugins.blanke.Debug'
-
-
-Gamestate = require 'plugins.hump.gamestate'
-Camera = require 'plugins.hump.camera'
 anim8 = require 'plugins.anim8'
 HC = require 'plugins.HC'
 

@@ -5,7 +5,7 @@
 (W) wip
 
     - add 'return self' to end of some classes                      (W)
-    - slowly replace 3rd party plugins                              (W)
+    - slowly replace 3rd party plugins                              (D)
         ~ keep an eye on system.lua for os compatibility issues     (W)
     - game exporting
         ? download 10.2 of LoVE for needed os                       
@@ -62,7 +62,7 @@ end
 function love.draw()
     if BlankE and not IDE.errd and UI.getSetting('show_game') then
         BlankE.draw()
-        Gamestate.draw()
+        State.draw()
     end
     IDE.draw()
 end
