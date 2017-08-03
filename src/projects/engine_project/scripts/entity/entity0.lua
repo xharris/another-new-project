@@ -20,7 +20,6 @@ function entity0:init(x, y)
     self.can_jump = true
     self.jump_power = 330
 
-    self.show_debug = true
     self.jump_timer = Timer():before(function() self:jump() end, 1)
 
     Signal.on('jump', function()

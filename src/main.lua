@@ -22,7 +22,8 @@
         - image editor (pixel art, spritesheets)
         - exporter
             - see "game exporting" ^^^
-
+    - scene editor
+        - zooming in/out
 
     BUGS
 

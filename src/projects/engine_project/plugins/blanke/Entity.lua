@@ -9,6 +9,7 @@ Entity = Class{
 		self.sprite = nil			-- currently active animation
 		self.pause = false
 		self.show_debug = false
+		self.scene_show_debug = false
 
 		-- x and y coordinate of sprite
 		self.x = Entity.x
@@ -267,7 +268,7 @@ Entity = Class{
 			self.sprite_height = 0
 		end
 
-		if self.show_debug then
+		if self.show_debug or self.scene_show_debug then
 			self:debugSprite()
 			self:debugCollision()
 		end

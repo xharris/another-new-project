@@ -149,6 +149,11 @@ local ideScene = {
 					if grid_status then
 						BlankE.show_grid = new_grid
 					end
+
+					local debug_status, new_debug = imgui.Checkbox("show object debugs", _scene.show_debug)
+					if debug_status then
+						_scene.show_debug = new_debug
+					end
 				end
 
 				-- scene selection

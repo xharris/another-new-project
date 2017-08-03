@@ -25,7 +25,6 @@ require 'plugins.blanke.Debug'
 
 
 Gamestate = require 'plugins.hump.gamestate'
-Vector = require 'plugins.hump.vector'
 Camera = require 'plugins.hump.camera'
 anim8 = require 'plugins.anim8'
 HC = require 'plugins.HC'

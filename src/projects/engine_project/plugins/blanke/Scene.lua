@@ -97,6 +97,7 @@ Scene = Class{
 		end
 
 		self.draw_hitboxes = false
+		self.show_debug = false
 		_addGameObject('scene',self)
 	end,
 
@@ -261,7 +262,7 @@ Scene = Class{
 		local sb_id = spritebatch:add(love.graphics.newQuad(img_info.x, img_info.y, img_info.width, img_info.height, self.images[img_name].width, self.images[img_name].height), x, y)
 
 		-- add tile info to "hashtable"
-		self.hash_tile:add(x,y,
+		self.hash_tile:add(x-(x%self._snap[1]),y-(y%self._snap[2]),
 		{
 			layer=layer,
 			x=x,
@@ -275,6 +276,8 @@ Scene = Class{
 	end,
 
 	removeTile = function(self, x, y, layer, img_name)
+		x = x-(x%self._snap[1])
+		y = y-(y%self._snap[2])
 		layer = self:_checkLayerArg(layer)
 		local rm_tiles = {}
 
@@ -446,6 +449,7 @@ Scene = Class{
 
 			if layer.entity then
 				for i_e, entity in ipairs(layer.entity) do
+					entity.scene_show_debug = self.show_debug
 					entity:draw()
 				end
 			end
@@ -456,7 +460,7 @@ Scene = Class{
 				end
 			end
 
-			if layer.hitbox and self.draw_hitboxes then
+			if layer.hitbox and (self.draw_hitboxes or (self.show_debug and not BlankE._ide_mode)) then
 				for i_h, hitbox in ipairs(layer.hitbox) do
 					hitbox:draw()
 				end
