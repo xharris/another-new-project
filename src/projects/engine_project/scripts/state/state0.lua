@@ -28,12 +28,7 @@ vec4 effect( vec4 col, Image texture, vec2 texturePos, vec2 screenPos )
 
 -- Called every time when entering the state.
 function state0:enter(previous)
-<<<<<<< Updated upstream
 	love.graphics.setBackgroundColor(255,255,255,255)
-
-=======
-	love.graphics.setBackgroundColor(100,100,100)
->>>>>>> Stashed changes
 	new_img = Image('penguin')
 	new_img.x = 100
 	new_img.y = 120
