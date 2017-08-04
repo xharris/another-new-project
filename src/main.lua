@@ -7,7 +7,7 @@
     - add 'return self' to end of some classes                      (W)
     - slowly replace 3rd party plugins                              (D)
         ~ keep an eye on system.lua for os compatibility issues     (W)
-    - game exporting
+    - game exporting (D=works on mac and windows)
         ? download 10.2 of LoVE for needed os                       
         - .LoVE                                                     (W)
         - win                                                       (W)
@@ -28,7 +28,9 @@
     BUGS
 
     - Timer/Entity jumping example is not consistent in exported game
-    - Shaders cause screen to go white/black
+    - Rework shaders
+        - Some shaders cause screen to go white/black (crt)
+        - Poor use of canvases
 ]]
 
 package.cpath = package.cpath .. ";/usr/local/lib/lua/5.2/?.so;/usr/local/lib/lua/5.2/?.dll;./?.dll;./?.so"

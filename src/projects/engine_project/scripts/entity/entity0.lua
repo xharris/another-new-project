@@ -35,7 +35,6 @@ function entity0:postDraw()
 end
 
 function entity0:jump()
-    if self.nickname ~= 'player' then print('do it') end
     if self.can_jump then
         self.vspeed = -self.jump_power
         self.can_jump = false

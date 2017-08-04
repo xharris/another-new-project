@@ -37,8 +37,7 @@ Effect = Class{
 	draw = function (self, func)
 		if not self._effect_data.extra_draw then
 			love.graphics.setCanvas(self.canvas[1])
-			love.graphics.clear()
-			
+			--love.graphics.clear()
 			if func then
 				func()
 			end

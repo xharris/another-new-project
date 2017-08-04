@@ -64,11 +64,10 @@ Scene 	= require (blanke_path..'Scene')
 Camera 	= require (blanke_path..'Camera') 	-- hump.camera cuz it's so brilliant
 
 -- load bundled effects
-eff_files = love.filesystem.getDirectoryItems(dirname((...):gsub('[.]','/'))..'effects')
-print(dirname((...):gsub('[.]','/'))..'effects')
+local eff_path = dirname((...):gsub('[.]','/'))..'effects'
+eff_files = love.filesystem.getDirectoryItems(eff_path)
 for i_e, effect in pairs(eff_files) do
-	print('load '..dirname((...):gsub('[.]','/'))..'effects'..effect)
-	EffectManager.load(dirname((...):gsub('[.]','/'))..'effects'..effect)
+	EffectManager.load(eff_path..'/'..effect)
 end
 
 -- prevents updating while window is being moved (would mess up collisions)
@@ -173,7 +172,7 @@ BlankE = {
 
 		local function stencilLine(func)
 			-- outside view line
-			love.graphics.setColor(grid_color[1], grid_color[2], grid_color[3], 25)
+			love.graphics.setColor(grid_color[1], grid_color[2], grid_color[3], 15)
 			func()
 
 			-- in-view lines

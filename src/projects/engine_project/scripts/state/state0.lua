@@ -43,7 +43,7 @@ function state0:enter(previous)
     main_view = View()
     main_view:follow(test_ent)
 
-    main_effect = Effect('crt') 
+    main_effect = Effect('chroma shift') 
     --main_effect.stepSize = {3/new_img.width, 3/new_img.height}
 end
 
@@ -52,15 +52,17 @@ function state0:update(dt)
 end
 
 function state0:draw()
+	main_effect.strength = {sinusoidal(0,1,0.5),sinusoidal(0,1,0.5)}
+	main_effect.size = {new_img.width, new_img.height}
+    main_effect:draw(function()
+		new_img:draw() 
+    end)
+    love.graphics.setBackgroundColor(255,255,255,255)
 	love.graphics.setColor(255,0,0,255)
 	love.graphics.print("hey how goes it", 100,100)
 	love.graphics.setColor(255,255,255,255)
 
-	new_img:draw()
-    main_effect:draw(function()
-    	new_img:draw() 
-    end)
-
+--new_img:draw()
     main_view:draw(function()
         main_scene:draw()
     end)

@@ -40,7 +40,7 @@ UI = {
 
 		TitleBg = 'love2d_dark',
 		TitleBgActive = 'love2d',
-		TitleBgCollapsed = 'love2d_transparent',
+		TitleBgCollapsed = 'love2d',
 
 		CloseButton = {255,255,255,75},
 		ClostButtonHovered = {255,255,255,75},
