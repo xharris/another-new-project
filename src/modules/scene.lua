@@ -18,7 +18,7 @@ local selected_hitbox = nil
 
 
 local placeable = {'entity','image','hitbox'}
-local listable = {'entity','view'}
+local listable = {'entity','view','effect'}
 
 local category_names = {}
 local objects = {}
@@ -488,6 +488,13 @@ local ideScene = {
 								imgui.TreePop()
 							end
 
+							if obj =='effect' and imgui.TreeNode(obj) then
+								_iterateGameGroup('effect', function(effect, v)
+									inspectObj(effect, ifndef(effect.name, 'effect'..v))
+								end)
+
+								imgui.TreePop()
+							end
 					end
 				end
 

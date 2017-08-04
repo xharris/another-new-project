@@ -21,6 +21,11 @@ function assets:tileset_sample()
 	return new_img
 end
 
+function assets:windows_xp_00247791()
+	local new_img = love.graphics.newImage(asset_path..'assets/image/windows-xp_00247791.jpg')
+	return new_img
+end
+
 function assets:second_beat()
 	local new_aud = love.audio.newSource(asset_path..'assets/audio/second_beat.wav','stream')
 	return new_aud

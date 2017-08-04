@@ -1,8 +1,13 @@
+-- completely working effects:
+-- - chroma shift : angle(rad), radius
+
+
 local _effects = {}
 Effect = Class{
 	init = function (self, name)
 		self._shader = nil
 		self._effect_data = nil
+		self.name = name
 		self.canvas = {love.graphics.newCanvas(love.window.getDesktopDimensions())}
 
 		-- load stored effect
@@ -83,7 +88,7 @@ Effect = Class{
 			self:applyParams()
 
 			if func then
-				self:applyShader(self._shader, self.canvas[1], func)
+				self:applyShader(func, self._shader, self.canvas[1])
 			end
 
 
@@ -120,7 +125,7 @@ EffectManager = Class{
 		end
 
 		_effects[options.name] = new_eff
-		return Effect(options.name)
+		--return Effect(options.name)
 	end,
 
 	load = function(file_path)

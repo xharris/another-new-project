@@ -20,7 +20,10 @@ function entity0:init(x, y)
     self.can_jump = true
     self.jump_power = 330
 
-    self.jump_timer = Timer():before(function() self:jump() end, 1)
+    self.jump_timer = Timer(1):after(function()
+            print('wump')
+            self:jump()
+    end)
 
     k_left = Input('left','a')
     k_right = Input('right','d')

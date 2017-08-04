@@ -514,7 +514,9 @@ Scene = Class{
 
 	    			if _place_type == 'entity' then
 	    				local new_entity = self:addEntity(_place_obj, _placeXY[1], _placeXY[2], _place_layer)
-	    				new_entity._loadedFromFile = true
+	    				if new_entity then
+	    					new_entity._loadedFromFile = true
+	    				end
 	    			end
 	    			
 	    			if _place_type == 'image' then
