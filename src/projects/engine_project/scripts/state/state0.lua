@@ -56,9 +56,9 @@ function state0:draw()
 	love.graphics.setColor(255,255,255,255)
 
 	new_img:draw()
-    main_effect:draw(function()
+    --main_effect:draw(function()
     	new_img:draw() 
-    end)
+    --end)
 
     main_view:draw(function()
         main_scene:draw()

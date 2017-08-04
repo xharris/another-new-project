@@ -64,11 +64,11 @@ Scene 	= require (blanke_path..'Scene')
 Camera 	= require (blanke_path..'Camera') 	-- hump.camera cuz it's so brilliant
 
 -- load bundled effects
-eff_files = love.filesystem.getDirectoryItems(dirname((...):gsub('[.]','/'))..'effects')
-print(dirname((...):gsub('[.]','/'))..'effects')
+local eff_path = dirname((...):gsub('[.]','/'))..'effects'
+local eff_files = love.filesystem.getDirectoryItems(eff_path)
+print(eff_path)
 for i_e, effect in pairs(eff_files) do
-	print('load '..dirname((...):gsub('[.]','/'))..'effects'..effect)
-	EffectManager.load(dirname((...):gsub('[.]','/'))..'effects'..effect)
+	EffectManager.load(eff_path..'/'..effect)
 end
 
 -- prevents updating while window is being moved (would mess up collisions)
@@ -190,10 +190,9 @@ BlankE = {
 				end
 			else 
 				offset = 0
-<<<<<<< Updated upstream
-=======
-				love.graphics.setColor(grid_color[1], grid_color[2], grid_color[3], 0)--clamp(grid_color[4]+80, 0, 255))
->>>>>>> Stashed changes
+
+--				love.graphics.setColor(grid_color[1], grid_color[2], grid_color[3], 0)--clamp(grid_color[4]+80, 0, 255))
+
 				love.graphics.stencil(myStencilFunction, "replace", 1)
 			 	love.graphics.setStencilTest("greater", 0)
 			 	love.graphics.setColor(grid_color[1], grid_color[2], grid_color[3], 25)
