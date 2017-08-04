@@ -59,10 +59,6 @@ Entity = Class{
 		self.onCollision = {["*"] = function() end}
     	_addGameObject('entity', self)
     end,
-
-    register = function(name)
-
-    end,
     
     update = function(self, dt)
     	if self._destroyed then return end

@@ -36,13 +36,20 @@ SYSTEM = {
 	    return t
 	end,
 
+	exists = function(path)
+	   local f=io.open(path,"r")
+	   if f~=nil then io.close(f) return true else return false end
+	end,
+
 	mkdir = function(path)
-		SYSTEM.runCmd(
-			{
-				mac="mkdir -p \""..path.."\"",
-				win="mkdir \""..path.."\""
-			}
-		)
+		if not SYSTEM.exists(path) then
+			SYSTEM.runCmd(
+				{
+					mac="mkdir -p \""..path.."\"",
+					win="mkdir \""..path.."\""
+				}
+			)
+		end
 	end,
 
 	copy = function(src, dest)

@@ -65,7 +65,8 @@ Camera 	= require (blanke_path..'Camera') 	-- hump.camera cuz it's so brilliant
 
 -- load bundled effects
 local eff_path = dirname((...):gsub('[.]','/'))..'effects'
-eff_files = love.filesystem.getDirectoryItems(eff_path)
+local eff_files = love.filesystem.getDirectoryItems(eff_path)
+
 for i_e, effect in pairs(eff_files) do
 	EffectManager.load(eff_path..'/'..effect)
 end
@@ -140,6 +141,7 @@ BlankE = {
 		if not BlankE.show_grid then return BlankE end
 
 		local r,g,b,a = love.graphics.getBackgroundColor()
+		
 	    r = 255 - r; g = 255 - g; b = 255 - b;
 		BlankE.grid_color = {r,g,b}
 		local grid_color = BlankE.grid_color
@@ -188,6 +190,9 @@ BlankE = {
 				end
 			else 
 				offset = 0
+
+--				love.graphics.setColor(grid_color[1], grid_color[2], grid_color[3], 0)--clamp(grid_color[4]+80, 0, 255))
+
 				love.graphics.stencil(myStencilFunction, "replace", 1)
 			 	love.graphics.setStencilTest("greater", 0)
 			 	love.graphics.setColor(grid_color[1], grid_color[2], grid_color[3], 25)

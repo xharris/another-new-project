@@ -1,6 +1,6 @@
-local k_left = Input('left','a')
-local k_right = Input('right','d')
-local k_up = Input('up','w')
+local k_left 
+local k_right
+local k_up 
 
 function entity0:init(x, y)
 	Entity.init(self,'entity0')
@@ -22,6 +22,10 @@ function entity0:init(x, y)
 
     self.jump_timer = Timer():before(function() self:jump() end, 1)
 
+    k_left = Input('left','a')
+    k_right = Input('right','d')
+    k_up = Input('up','w')
+
     Signal.on('jump', function()
         if self.nickname ~= 'player' then
             self.jump_timer:start()
@@ -31,7 +35,7 @@ end
 
 function entity0:postDraw()
 	Draw.setColor(0,0,255,255)
-	Draw.rect('line',self.x-16,self.y-16,32,32)
+	Draw.circle('line',self.x,self.y,16)--('line',self.x-16,self.y-16,32,32)
 end
 
 function entity0:jump()

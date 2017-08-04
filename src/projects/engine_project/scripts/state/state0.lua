@@ -29,7 +29,6 @@ vec4 effect( vec4 col, Image texture, vec2 texturePos, vec2 screenPos )
 -- Called every time when entering the state.
 function state0:enter(previous)
 	love.graphics.setBackgroundColor(255,255,255,255)
-
 	new_img = Image('penguin')
 	new_img.x = 100
 	new_img.y = 120
@@ -62,7 +61,11 @@ function state0:draw()
 	love.graphics.print("hey how goes it", 100,100)
 	love.graphics.setColor(255,255,255,255)
 
---new_img:draw()
+	--new_img:draw()
+    --main_effect:draw(function()
+    	new_img:draw() 
+    --end)
+
     main_view:draw(function()
         main_scene:draw()
     end)
