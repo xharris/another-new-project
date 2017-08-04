@@ -1,7 +1,7 @@
 EffectManager.new{
 	name = 'pixelate',
 	params = {pixel_size=1.0},
-	code = [[
+	shader = [[
 vec2 textureSize = love_ScreenSize.xy;
 extern float pixel_size = 2.0;
 

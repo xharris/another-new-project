@@ -1,7 +1,7 @@
 EffectManager.new{
 	name = 'bloom',
 	params = {['screen_size']={0,0}, ['samples']=5, ['quality']=1},
-	code = [[
+	shader = [[
 // adapted from http://www.youtube.com/watch?v=qNM0k522R7o
 
 extern vec2 screen_size;

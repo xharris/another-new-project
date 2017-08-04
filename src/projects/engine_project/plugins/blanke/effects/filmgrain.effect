@@ -10,7 +10,7 @@ EffectManager.new{
 		noisetex = nil,
 		tex_ratio = 0
 	},
-	code = [[
+	shader = [[
 		extern number opacity;
 		extern number grainsize;
 		extern number noise;

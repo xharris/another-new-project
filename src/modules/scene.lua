@@ -50,7 +50,7 @@ function writeSceneFiles()
 			"end\n\n"
 	end
 
-	if BlankE then
+	if BlankE and not IDE.errd then
 		_iterateGameGroup('scene', function(scene, s)
 			local scene_name = scene.name
 			local scene_path = IDE.getProjectPath()..'/assets/scene/'..scene_name..'.json'

@@ -1,7 +1,7 @@
 EffectManager.new{
 	name = 'ripple',
 	params = {['x'] = 0, ['y'] = 0, ['time'] = 0, ['img'] = nil},
-	code = [[
+	shader = [[
 		extern number time = 0.0;
         extern number x = 0.25;
         extern number y = -0.25;

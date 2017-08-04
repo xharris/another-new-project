@@ -117,6 +117,7 @@ BlankE = {
 			-- State.enter(first_state)
 			State.switch(first_state)
 		end
+
 	end,
 
 	reloadAssets = function()
@@ -138,7 +139,7 @@ BlankE = {
 	snap = {32,32},
 	initial_cam_pos = {0,0},
 	_drawGrid = function()
-		if not BlankE.show_grid then return BlankE end
+		if not (BlankE.show_grid and BlankE._ide_mode) then return BlankE end
 
 		local r,g,b,a = love.graphics.getBackgroundColor()
 		
@@ -147,9 +148,10 @@ BlankE = {
 		local grid_color = BlankE.grid_color
 
 		local min_grid_draw = 8
-		local snap = BlankE.snap
-		snap[1] = snap[1] * Scene._zoom_amt
-		snap[2] = snap[2] * Scene._zoom_amt
+		local snap = ifndef(BlankE.snap, {32,32})
+		local zoom_amt = ifndef(Scene._zoom_amt, 1)
+		snap[1] = snap[1] * zoom_amt
+		snap[2] = snap[2] * zoom_amt
 
 		local g_x, g_y
 		if BlankE.main_cam and not BlankE.main_cam.disabled then
