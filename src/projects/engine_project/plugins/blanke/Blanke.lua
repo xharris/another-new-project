@@ -141,6 +141,7 @@ BlankE = {
 		if not BlankE.show_grid then return BlankE end
 
 		local r,g,b,a = love.graphics.getBackgroundColor()
+		
 	    r = 255 - r; g = 255 - g; b = 255 - b;
 		BlankE.grid_color = {r,g,b}
 		local grid_color = BlankE.grid_color
@@ -189,6 +190,10 @@ BlankE = {
 				end
 			else 
 				offset = 0
+<<<<<<< Updated upstream
+=======
+				love.graphics.setColor(grid_color[1], grid_color[2], grid_color[3], 0)--clamp(grid_color[4]+80, 0, 255))
+>>>>>>> Stashed changes
 				love.graphics.stencil(myStencilFunction, "replace", 1)
 			 	love.graphics.setStencilTest("greater", 0)
 			 	love.graphics.setColor(grid_color[1], grid_color[2], grid_color[3], 25)
