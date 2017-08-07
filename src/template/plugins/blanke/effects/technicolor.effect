@@ -1,7 +1,7 @@
 EffectManager.new{
 	name = 'technicolor',
 	params = {amount=1},
-	code=	
+	shader=	
 [[
 extern number amount = 0.5;
 

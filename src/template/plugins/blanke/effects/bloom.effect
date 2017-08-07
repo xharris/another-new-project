@@ -1,10 +1,10 @@
 EffectManager.new{
 	name = 'bloom',
-	params = {['size']={0,0}, ['samples']=5, ['quality']=2.5},
-	code = [[
+	params = {['screen_size']={0,0}, ['samples']=5, ['quality']=1},
+	shader = [[
 // adapted from http://www.youtube.com/watch?v=qNM0k522R7o
 
-extern vec2 size;
+extern vec2 screen_size;
 extern int samples; // pixels per axis; higher = bigger glow, worse performance
 extern float quality; // lower = smaller glow, better quality
 
@@ -13,7 +13,7 @@ vec4 effect(vec4 colour, Image tex, vec2 tc, vec2 sc)
   vec4 source = Texel(tex, tc);
   vec4 sum = vec4(0);
   int diff = (samples - 1) / 2;
-  vec2 sizeFactor = vec2(1) / size * quality;
+  vec2 sizeFactor = vec2(1) / screen_size * quality;
   
   for (int x = -diff; x <= diff; x++)
   {

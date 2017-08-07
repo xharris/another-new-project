@@ -135,7 +135,7 @@ local ideScene = {
 			-- only show editor if at least one scene is ACTIVE
 			if #scene_names > 0 then
 				imgui.SetNextWindowSize(300,300,"FirstUseEver")
-				imgui.Begin(string.format("scene editor (%d,%d) %d,%d###scene editor", BlankE._mouse_x, BlankE._mouse_y, mouse_x, mouse_y), true)
+				scene_status, UI.titlebar.show_scene_editor = imgui.Begin(string.format("scene editor (%d,%d) %d,%d###scene editor", BlankE._mouse_x, BlankE._mouse_y, mouse_x, mouse_y), true)
 
 				-- enable/disable dragging camera
 				if scene_list[curr_scene_index] ~= nil then

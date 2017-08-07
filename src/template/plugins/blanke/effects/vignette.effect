@@ -7,7 +7,7 @@ EffectManager.new{
 		opacity = .5,
 		aspect = love.graphics.getWidth() / love.graphics.getHeight(),
 	},
-	code = [[
+	shader = [[
 		extern number radius;
 		extern number softness;
 		extern number opacity;

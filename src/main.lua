@@ -23,7 +23,8 @@
         - exporter
             - see "game exporting" ^^^
     - scene editor
-        - zooming in/out
+        - zooming in/out                                            (W)
+        - add/remove/move layer                                     (D)
 
     BUGS
 

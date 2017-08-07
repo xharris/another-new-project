@@ -1,7 +1,7 @@
 EffectManager.new{
 	name = 'crt',
 	params = {outputSize={0,0}, opacity=0.5},
-	code = [[
+	shader = [[
 /*
     CRT-simple shader
     Copyright (C) 2011 DOLLS. Based on cgwg's CRT shader.
@@ -120,7 +120,7 @@ vec4 effect(vec4 vcolor, Image texture, vec2 texCoord, vec2 pixel_coords)
 	
 	
 	// Here's a helpful diagram to keep in mind while trying to
-	// understand the code:
+	// understand the shader:
 	//
 	//  |      |      |      |      |
 	// -------------------------------

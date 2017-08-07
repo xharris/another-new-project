@@ -1,9 +1,14 @@
+-- completely working effects:
+-- - chroma shift : angle(rad), radius
+
+
 local _effects = {}
 Effect = Class{
 	init = function (self, name)
 		self._shader = nil
 		self._effect_data = nil
-		self.canvas = {love.graphics.newCanvas()}
+		self.name = name
+		self.canvas = {love.graphics.newCanvas(love.window.getDesktopDimensions())}
 
 		-- load stored effect
 		assert(_effects[name]~=nil, "Effect '"..name.."' not found")
@@ -23,6 +28,8 @@ Effect = Class{
 			self._shader = love.graphics.newShader(_effects[name].string)
 		end	
 
+		if self.create then self:create() end
+
 		_addGameObject('effect',self)
 	end,
 
@@ -34,33 +41,60 @@ Effect = Class{
 		return self
 	end,
 
+	applyCanvas = function(self, func, canvas)
+		local curr_canvas = love.graphics.getCanvas()
+
+		love.graphics.setCanvas(canvas)
+		love.graphics.clear(255,255,255,0)
+		func()
+		love.graphics.setCanvas(curr_canvas)
+	end,
+
+	applyShader = function(self, func, shader, canvas)
+		shader = ifndef(shader, self._shader)
+		canvas = ifndef(canvas, self.canvas[1])
+
+		local curr_shader = love.graphics.getShader()
+		local curr_color = {love.graphics.getColor()}
+		local curr_blend = love.graphics.getBlendMode()
+
+		self:applyCanvas(func, canvas)
+
+		love.graphics.setColor(curr_color)
+		love.graphics.setShader(shader)
+		love.graphics.setBlendMode('alpha', 'premultiplied')
+
+		love.graphics.draw(canvas, 0 ,0)
+		love.graphics.setBlendMode(curr_blend)
+		love.graphics.setShader(curr_shader)
+		BlankE._drawGrid()
+	end,
+
+	applyParams = function(self)
+		-- send variables
+		for p, default in pairs(self._effect_data.params) do
+			local var_name = p
+			local var_value = default
+
+			if self[p] then
+				var_value = self[p]
+				self:send(var_name, var_value)
+			end
+		end
+	end,
+
 	draw = function (self, func)
 		if not self._effect_data.extra_draw then
-			love.graphics.setCanvas(self.canvas[1])
-			love.graphics.clear()
-			
+			self:applyParams()
+
 			if func then
-				func()
+				self:applyShader(func, self._shader, self.canvas[1])
 			end
-			love.graphics.setCanvas()
 
-			love.graphics.setShader(self._shader)
-			-- send variables
-			for p, default in pairs(self._effect_data.params) do
-				local var_name = p
-				local var_value = default
 
-				if self[p] then
-					var_value = self[p]
-					self:send(var_name, var_value)
-				end
-			end
-			love.graphics.draw(self.canvas[1])
-
-			self:clear()
 		-- call extra draw function
 		else
-			self._effect_data:extra_draw(func)
+			self._effect_data.extra_draw(self, func)
 		end
 		return self
 	end,
@@ -69,11 +103,6 @@ Effect = Class{
 		self._shader:send(name, value)
 		return self
 	end,
-
-	clear = function(self)
-		love.graphics.setShader()
-		return self
-	end
 }
 
 local _love_replacements = {
@@ -85,7 +114,7 @@ local _love_replacements = {
 EffectManager = Class{
 	new = function (options)
 		local new_eff = {}
-		new_eff.string = options.code
+		new_eff.string = options.shader
 		new_eff.params = options.params
 		new_eff.extra_draw = options.draw
 
@@ -96,14 +125,14 @@ EffectManager = Class{
 		end
 
 		_effects[options.name] = new_eff
-		return Effect(options.name)
+		--return Effect(options.name)
 	end,
 
-	load = function(self, file_path)
+	load = function(file_path)
 		love.filesystem.load(file_path)()
 	end,
 
-	_render_to_canvas = function(self, canvas, func)
+	_render_to_canvas = function(canvas, func)
 		local old_canvas = love.graphics.getCanvas()
 
 		love.graphics.setCanvas(canvas)
@@ -119,7 +148,7 @@ EffectManager = Class{
 EffectManager.new{
 	name = 'template',
 	params = {['myNum']=1},
-	code = [[
+	shader = [[
 extern number myNum;
 
 #ifdef VERTEX
@@ -147,12 +176,6 @@ extern number myNum;
 #endif
 	]]
 }
-
--- load bundled effects
-eff_files = love.filesystem.getDirectoryItems('plugins/blanke/effects')
-for i_e, effect in pairs(eff_files) do
-	EffectManager:load('plugins/blanke/effects/'..effect)
-end
 
 --[[
 scale with screen position

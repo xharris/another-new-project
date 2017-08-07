@@ -3,7 +3,7 @@ EffectManager.new{
     params={
         exposure=1, decay=1, density=1, weight=1, position={0,0}
     },
-    code=[[
+    shader=[[
 extern number exposure = 1.0;
 extern number decay = 1.0;
 extern number density = 1.0;
@@ -38,7 +38,7 @@ EffectManager.new{
     params={
         inv_screen_size={0, 0}
     },
-    code=[[
+    shader=[[
 extern vec2 inv_screen_size;
 
 vec4 effect(vec4 color, Image tex, vec2 tc, vec2 pixel_coords)

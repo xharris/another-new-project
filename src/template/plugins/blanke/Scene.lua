@@ -3,17 +3,20 @@ local _btn_drag
 local _btn_remove
 local _btn_confirm
 local _btn_no_snap
+local _btn_zoom_in
 
 local _last_place = {nil,nil}
 local _place_type
 local _place_obj
-local _place_layer = 0
+local _place_layer
 
 local _dragging = false
 local _view_initial_pos = {0,0}
 local _initial_mouse_pos = {0,0}
 
 local _grid_gradient = false
+
+local layer_template = {entity={},tile={},hitbox={}}
 
 -- hitbox placing
 local hitbox_points = {}
@@ -67,6 +70,7 @@ local Scenetable = Class{
 
 Scene = Class{
 	hitbox = {},
+	_zoom_amt = 1,
 	init = function(self, name)
 		self.load_objects = {}
 		self.layers = {}
@@ -83,6 +87,8 @@ Scene = Class{
 			_btn_remove = Input('mouse.2')
 			_btn_confirm = Input('return','kpenter')
 			_btn_no_snap = Input('lctrl','rctrl')
+			_btn_zoom_in = Input('wheel.up')
+			_btn_zoom_out = Input('wheel.down')
 
 			self._fake_view = View()
 			self._fake_view.nickname = '_fake_view'
@@ -151,6 +157,7 @@ Scene = Class{
 
 		-- save hitboxes
 		output.objects['hitbox'] = Scene.hitbox
+		output.objects['layers'] = self.load_objects.layers
 
 		return json.encode(output)
 	end,
@@ -162,8 +169,14 @@ Scene = Class{
 		self.load_objects = scene_data["objects"]
 		Scene.hitbox = self.load_objects.hitbox
 
-		for layer, data in pairs(scene_data["layers"]) do
-			self.layers[layer] = {entity={},tile={},hitbox={}}
+		for l, layer in ipairs(self.load_objects.layers) do
+			layer = self:_checkLayerArg(layer)
+			local data = scene_data.layers[layer]
+			
+			if not _place_layer then
+				self:setPlaceLayer(layer)
+			end
+			self.layers[layer] = table.copy(layer_template)
 
 			if data["entity"] then
 				for i_e, entity in ipairs(data["entity"]) do
@@ -204,17 +217,101 @@ Scene = Class{
 		end
 		if type(layer) == "number" then
 			layer = "layer"..tostring(layer)
-			self.layers[layer] = ifndef(self.layers[layer],{})
+			self.layers[layer] = ifndef(self.layers[layer],table.copy(layer_template))
 		end
+
+		self.load_objects.layers = ifndef(self.load_objects.layers,{})
+		if not table.has_value(self.load_objects.layers, layer) then
+			table.insert(self.load_objects.layers, layer)
+		end
+
 		return layer
 	end,
 
 	getList = function(self, obj_type) 
 		local obj_list = {}
-		for layer, data in pairs(self.layers) do
-			obj_list[layer] = data[obj_type]
+		if obj_type == 'layer' then
+			return ifndef(self.load_objects.layers,{})
+		else
+			for layer, data in pairs(self.layers) do
+				obj_list[layer] = data[obj_type]
+			end
 		end
 		return obj_list
+	end,
+
+	addLayer = function(self)
+		local layer_list = self.load_objects.layers
+		local layer_num = #layer_list
+		local valid_name = false
+		local layer_name = 'layer'..layer_num
+
+		while not valid_name do
+			valid_name = true
+			for l, layer in ipairs(layer_list) do
+				if layer == layer_name then
+					valid_name = false
+					layer_num = layer_num + 1
+					layer_name = 'layer'..layer_num
+				end
+			end
+		end
+
+		self.load_objects['layers'] = ifndef(layer_list, {})
+		table.insert(self.load_objects.layers, layer_name)
+		self.layers[layer_name] = table.copy(layer_template)
+		self:setPlaceLayer(layer_name)
+	end,
+
+	removeLayer = function(self)
+		local layer_index = table.find(self.load_objects.layers, _place_layer)
+		table.remove(self.load_objects.layers, layer_index)
+	end,
+
+	getPlaceLayer = function(self)
+		return _place_layer
+	end,
+
+	setPlaceLayer = function(self, layer_num)
+		_place_layer = self:_checkLayerArg(layer_num)
+	end,
+
+	moveLayerUp = function(self)
+		-- get position of current layer
+		local curr_layer_pos = 1
+		for l, layer in ipairs(self.load_objects.layers) do
+			if layer == _place_layer then
+				curr_layer_pos = l
+			end
+		end
+
+		-- able to move the layer up anymore?
+		if curr_layer_pos > 1 then
+			-- switch their contents
+			local prev_layer = self.load_objects.layers[curr_layer_pos-1]
+			local curr_layer = self.load_objects.layers[curr_layer_pos]
+			self.load_objects.layers[curr_layer_pos] = prev_layer
+			self.load_objects.layers[curr_layer_pos-1] = curr_layer
+		end
+	end,
+
+	moveLayerDown = function(self)
+		-- get position of current layer
+		local curr_layer_pos = 1
+		for l, layer in ipairs(self.load_objects.layers) do
+			if layer == _place_layer then
+				curr_layer_pos = l
+			end
+		end
+
+		-- able to move the layer up anymore?
+		if curr_layer_pos < #self.load_objects.layers then
+			-- switch their contents
+			local prev_layer = self.load_objects.layers[curr_layer_pos+1]
+			local curr_layer = self.load_objects.layers[curr_layer_pos]
+			self.load_objects.layers[curr_layer_pos] = prev_layer
+			self.load_objects.layers[curr_layer_pos+1] = curr_layer
+		end
 	end,
 
 	addEntity = function(self, ...)
@@ -249,8 +346,6 @@ Scene = Class{
 
 	addTile = function(self, img_name, x, y, img_info, layer, from_file) 
 		layer = self:_checkLayerArg(layer)
-
-		if not assets[img_name] then print('where is it') return end
 
 		-- check if the spritebatch exists yet
 		self.layers[layer]["tile"] = ifndef(self.layers[layer]["tile"], {})
@@ -438,14 +533,14 @@ Scene = Class{
 
 	_real_draw = function(self)
 		self._is_active = true
-		local layer_count = 0
-		for nam, lay in pairs(self.layers) do
-			layer_count = layer_count + 1
-		end
 
-		for l = 0,layer_count-1 do
-			local name = 'layer'..tostring(l)
+		for l, name in ipairs(self.load_objects.layers) do
 			local layer = self.layers[name]
+
+			if BlankE._ide_mode and _place_layer ~= name then
+				love.graphics.push('all')
+				love.graphics.setColor(255,255,255,255/2.5)
+			end
 
 			if layer.entity then
 				for i_e, entity in ipairs(layer.entity) do
@@ -458,6 +553,10 @@ Scene = Class{
 				for name, tile in pairs(layer.tile) do
 					love.graphics.draw(tile)
 				end
+			end
+
+			if BlankE._ide_mode and _place_layer ~= name then
+				love.graphics.pop()
 			end
 
 			if layer.hitbox and (self.draw_hitboxes or (self.show_debug and not BlankE._ide_mode)) then
@@ -483,7 +582,7 @@ Scene = Class{
 				else
 					cam_x, cam_y = mouse_x, mouse_y
 				end
-				local mx, my = cam_x, cam_y
+				local mx, my = cam_x*Scene._zoom_amt, cam_y*Scene._zoom_amt
 
 				if not dont_snap then
 					mx = mx-(mx%self._snap[1])
@@ -510,7 +609,9 @@ Scene = Class{
 
 	    			if _place_type == 'entity' then
 	    				local new_entity = self:addEntity(_place_obj, _placeXY[1], _placeXY[2], _place_layer)
-	    				new_entity._loadedFromFile = true
+	    				if new_entity then
+	    					new_entity._loadedFromFile = true
+	    				end
 	    			end
 	    			
 	    			if _place_type == 'image' then
@@ -528,7 +629,7 @@ Scene = Class{
 	    	if _btn_remove() and _place_type then
 				_last_place = {nil,nil}
 	    		if _place_type == 'image' then
-	    			self:removeTile(_placeXY[1], _placeXY[2], nil, _place_obj.img_name)
+	    			self:removeTile(_placeXY[1], _placeXY[2], _place_layer, _place_obj.img_name)
 	    		end
 
 	    		if _place_type == 'hitbox' then
@@ -546,6 +647,16 @@ Scene = Class{
 	    			hitbox_rem_point = true
 	    		end
 	    	end
+
+	    	-- zooming in and out
+	    	if _btn_zoom_in() then
+	    		Scene._zoom_amt = clamp(Scene._zoom_amt - 0.1, 0, 3)
+	    	end
+
+	    	if _btn_zoom_out() then
+	    		Scene._zoom_amt = clamp(Scene._zoom_amt + 0.1, 0, 3)
+	    	end
+	    	self._fake_view:zoom(Scene._zoom_amt)
 
 	    	-- dragging the view/grid around
 	    	BlankE.setGridSnap(self._snap[1], self._snap[2])
@@ -634,9 +745,11 @@ Scene = Class{
 
 		    -- draw hitboxes
 		    for l_name, layer in pairs(self.layers) do
-		    	for h, hitbox in ipairs(layer.hitbox) do
-		    		hitbox:draw()
-		    	end
+		    	if layer.hitbox then
+			    	for h, hitbox in ipairs(layer.hitbox) do
+			    		hitbox:draw()
+			    	end
+			    end
 		    end
 
 	    	self._fake_view:detach()

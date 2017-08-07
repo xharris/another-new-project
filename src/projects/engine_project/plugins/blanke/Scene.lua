@@ -93,6 +93,7 @@ Scene = Class{
 			self._fake_view = View()
 			self._fake_view.nickname = '_fake_view'
 			BlankE.setGridCamera(self._fake_view)
+			BlankE.initial_cam_pos = {0,0}
 			self._fake_view.port_width, self._fake_view.port_height = love.window.getDesktopDimensions()
 			self._fake_view:moveToPosition(self._fake_view.port_width/2,self._fake_view.port_height/2)
 			self._fake_view.motion_type = 'smooth' -- (not working as intended)		

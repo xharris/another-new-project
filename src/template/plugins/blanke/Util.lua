@@ -91,6 +91,13 @@ function table.find(t, value)
 	return 0
 end	
 
+function table.has_value(t, value)
+	for v, val in ipairs(t) do
+		if val == value then return true end
+	end
+	return false
+end
+
 function table.copy(t)
 	return {unpack(t)}
 end

@@ -39,7 +39,7 @@ Hitbox = Class{
 		self.HCShape.tag = tag
 
 		self._enabled = true
-		self.color = {255,0,0,255*(.6)}
+		self.color = {255,0,0,255*(.5)}
 		self.parent = nil
 		self.args = args
 		--HC.register(self.HCShape)

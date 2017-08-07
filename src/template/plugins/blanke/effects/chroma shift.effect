@@ -1,21 +1,25 @@
 EffectManager.new{
 	name = 'chroma shift',
-	params = {['strength'] = {1, 1}, ['size'] = {20, 20}},
-	code = [[ 
+	params = {['angle']=0,['radius']=4,['direction']={0,0}},--['strength'] = {1, 1}, ['size'] = {20, 20}},
+	shader = [[ 
 		#ifdef PIXEL
-		extern vec2 strength;
-		extern vec2 size;
+		extern vec2 direction;
 
-		vec4 effect(vec4 color, Image tex, vec2 tc, vec2 pc)
+		vec4 effect(vec4 color, Image texture, vec2 tc, vec2 _)
 		{
-			//vec2 screenSize = love_ScreenSize.xy;        
-			//number factor_x = pc.x/screenSize.x;
-			//number factor_y = pc.y/screenSize.y;
-			//number factor = (factor_x + factor_y)/2.0;
-
-            vec2 shift = (strength / size);// * factor;
-			return vec4(Texel(tex, tc+shift).r, Texel(tex,tc).g, Texel(tex,tc-shift).b, Texel(tex, tc).a);
+			return color * vec4(
+				Texel(texture, tc - direction).r,
+				Texel(texture, tc).g,
+				Texel(texture, tc + direction).b,
+				1.0);
 		}
 		#endif
-	]]
+	]],
+	draw = function(self, draw) 
+		local dx = math.cos(self.angle) * self.radius / love.graphics.getWidth()
+		local dy = math.sin(self.angle) * self.radius / love.graphics.getHeight()
+		self:send("direction", {dx,dy})
+		
+		self:applyShader(draw)
+	end,
 }
