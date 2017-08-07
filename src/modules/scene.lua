@@ -188,6 +188,41 @@ local ideScene = {
 			            imgui.TreePop()
 			        end
 
+
+					-- layer selection
+					if imgui.Button("^") then
+						curr_scene:moveLayerUp()
+					end
+					imgui.SameLine();
+					if imgui.Button("v") then
+						curr_scene:moveLayerDown()
+					end
+					imgui.SameLine();
+
+					local layer_list = curr_scene:getList('layer')
+					local curr_layer = curr_scene:getPlaceLayer()
+					local curr_layer_index = 1
+					for l, layer in ipairs(layer_list) do
+						if layer == curr_layer then
+							curr_layer_index = l
+						end
+					end
+
+					layer_status, new_layer = imgui.Combo("", curr_layer_index, layer_list, #layer_list); imgui.SameLine();
+					if layer_status then
+						curr_scene:setPlaceLayer(layer_list[new_layer])
+					end
+
+					if imgui.Button("+") then
+						curr_scene:addLayer()
+					end
+					imgui.SameLine();
+					if imgui.Button("-") then
+						curr_scene:removeLayer()
+					end
+
+					imgui.Separator()
+
 					-- category selection
 					imgui.Text(" > ")
 					imgui.SameLine()

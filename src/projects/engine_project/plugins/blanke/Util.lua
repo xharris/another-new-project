@@ -97,3 +97,7 @@ function table.has_value(t, value)
 	end
 	return false
 end
+
+function table.copy(t)
+	return {unpack(t)}
+end

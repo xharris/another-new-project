@@ -90,3 +90,7 @@ function table.find(t, value)
 	end
 	return 0
 end	
+
+function table.copy(t)
+	return {unpack(t)}
+end
