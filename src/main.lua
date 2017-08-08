@@ -9,8 +9,8 @@
         ~ keep an eye on system.lua for os compatibility issues     (W)
     - game exporting (D=works on mac and windows)
         ? download 10.2 of LoVE for needed os                       
-        - .LoVE                                                     (W)
-        - win                                                       (W)
+        - .LoVE                                                     (D)
+        - win                                                       (D)
         - mac                                                       (W)
         - web
         - android

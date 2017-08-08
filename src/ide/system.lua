@@ -56,6 +56,7 @@ SYSTEM = {
 		SYSTEM.mkdir(dirname(dest))
 		SYSTEM.runCmd(
 			{
+				win='cp -R "'..src..'" "'..dest..'"',
 				mac='cp -R "'..src..'" "'..dest..'"'
 			}
 		)
@@ -65,6 +66,7 @@ SYSTEM = {
 		SYSTEM.mkdir(dirname(dest))
 		SYSTEM.runCmd(
 			{
+				win='mv "'..src..'" "'..dest..'"',
 				mac='mv "'..src..'" "'..dest..'"'
 			}
 		)
@@ -73,6 +75,7 @@ SYSTEM = {
 	remove = function(path)
 		SYSTEM.runCmd(
 			{
+				win='rm -r "'..path..'"',
 				mac='rm -rf "'..path..'"'
 			}
 		)

@@ -229,7 +229,7 @@ UI = {
 		local img, img_width, img_height = UI.loadImage(img_path)
 		return imgui.ImageButton(img, img_width, img_height, ...)--, 0, 0, 1, 1, 255, 255, 255, 255, UI.getColor('love2d'));
 	end,
-
+	
 	drawIconButton = function(icon_name, tooltip)
 		local img, img_width, img_height = UI.loadImage('icons/'..icon_name..'.png')
 		local ret_btn = imgui.ImageButton(img, img_width, img_height, 0, 0, 1, 1, 1)

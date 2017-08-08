@@ -190,11 +190,11 @@ local ideScene = {
 
 
 					-- layer selection
-					if imgui.Button("^") then
+					if UI.drawIconButton("arrow-up", "move layer up (farther)") then
 						curr_scene:moveLayerUp()
 					end
 					imgui.SameLine();
-					if imgui.Button("v") then
+					if UI.drawIconButton("arrow-down", "move layer down (closer)") then
 						curr_scene:moveLayerDown()
 					end
 					imgui.SameLine();
@@ -213,11 +213,11 @@ local ideScene = {
 						curr_scene:setPlaceLayer(layer_list[new_layer])
 					end
 
-					if imgui.Button("+") then
+					if UI.drawIconButton("plus", "add layer") then
 						curr_scene:addLayer()
 					end
 					imgui.SameLine();
-					if imgui.Button("-") then
+					if UI.drawIconButton("minus", "remove layer") then
 						curr_scene:removeLayer()
 					end
 

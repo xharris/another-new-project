@@ -28,6 +28,10 @@ function buildLove(folder_name)
 	return folder_name..'/'.._GAME_NAME..'.love'
 end
 
+function cleanWinPath(path)
+	return path:gsub("(\\)","\\\\"):gsub("(/)","\\\\")
+end
+
 -- os to build for
 -- open_dir: open the export directory when finished
 function export(target_os, open_dir)
@@ -42,20 +46,29 @@ function export(target_os, open_dir)
 
 	local curr_os = SYSTEM.os
 	if target_os == 'win' then
+		
+		local binary_path = love2d_binary_path['win']
+		local build_cmd = ''
+
 		if curr_os == 'mac' then
 			-- build EXE on a mac
-			local binary_path = love2d_binary_path['win']
-			local build_cmd ='cat '..binary_path..'/love.exe '..build_path.._GAME_NAME..'.love > '..build_path.._GAME_NAME..'.exe'
-			os.execute(build_cmd)
+			build_cmd = 'cat '..binary_path..'/love.exe '..build_path.._GAME_NAME..'.love > '..build_path.._GAME_NAME..'.exe'
+		
+		elseif curr_os == 'win' then
+			-- build EXE on windows
+			build_cmd = 'cmd /c \"copy /b '..cleanWinPath(binary_path..'/love.exe+'..build_path.._GAME_NAME..'.love '..build_path.._GAME_NAME)..'.exe\"'
 
-			-- remove .love
-			SYSTEM.remove(love_path)
+		end
+		
+		os.execute(build_cmd)
 
-			-- copy dlls
-			local extra_files = {"SDL2.dll", "OpenAL32.dll", "license.txt", "love.dll", "lua51.dll", "mpg123.dll", "msvcp120.dll", "msvcr120.dll"}
-			for f, file in ipairs(extra_files) do
-				SYSTEM.copy(binary_path..'/'..file, build_path..file)
-			end
+		-- remove .love
+		SYSTEM.remove(love_path)
+
+		-- copy dlls
+		local extra_files = {"SDL2.dll", "OpenAL32.dll", "license.txt", "love.dll", "lua51.dll", "mpg123.dll", "msvcp120.dll", "msvcr120.dll"}
+		for f, file in ipairs(extra_files) do
+			SYSTEM.copy(binary_path..'/'..file, build_path..file)
 		end
 
 	elseif target_os == 'mac' then
