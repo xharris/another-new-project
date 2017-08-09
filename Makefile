@@ -24,8 +24,3 @@ build_mac:
 	#cp src/helper.py releases/mac/BlankE.app/Contents/Resources/helper.py
 
 	open releases/mac/BlankE.app
-
-build_win:
-	# remove old folder
-	rm -R -i releases/win
-	

@@ -25,6 +25,11 @@ Image = Class{
 		self.height = self.orig_height
 	end,
 
+	-- static: check if an image exists
+	exists = function(self, img_name)
+		return (assets[img_name] ~= nil)
+	end,
+
 	setWidth = function(self, width)
 		self.xscale = width / self.orig_width
 		return self

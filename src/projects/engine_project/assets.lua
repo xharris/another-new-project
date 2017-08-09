@@ -6,23 +6,13 @@ if _REPLACE_REQUIRE then
 end
 assets = Class{}
 
-function assets:_6C992_girble()
-	local new_img = love.graphics.newImage(asset_path..'assets/image/6C992-girble.png')
-	return new_img
-end
-
 function assets:penguin()
 	local new_img = love.graphics.newImage(asset_path..'assets/image/penguin.png')
 	return new_img
 end
 
-function assets:tileset_sample()
-	local new_img = love.graphics.newImage(asset_path..'assets/image/tileset_sample.png')
-	return new_img
-end
-
-function assets:windows_xp_00247791()
-	local new_img = love.graphics.newImage(asset_path..'assets/image/windows-xp_00247791.jpg')
+function assets:tile_ground()
+	local new_img = love.graphics.newImage(asset_path..'assets/image/tile_ground.png')
 	return new_img
 end
 

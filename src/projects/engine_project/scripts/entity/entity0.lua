@@ -19,21 +19,10 @@ function entity0:init(x, y)
     self.move_speed = 125    
     self.can_jump = true
     self.jump_power = 330
-
-    self.jump_timer = Timer(1):after(function()
-            print('wump')
-            self:jump()
-    end)
-
+    
     k_left = Input('left','a')
     k_right = Input('right','d')
     k_up = Input('up','w')
-
-    Signal.on('jump', function()
-        if self.nickname ~= 'player' then
-            self.jump_timer:start()
-        end
-    end)
 end
 
 function entity0:postDraw()
@@ -73,23 +62,20 @@ function entity0:preUpdate(dt)
         end 
     end
 
-    if self.nickname == 'player' then
-        
-        -- horizontal movement
-    	if k_right() or k_left() then
-            if k_left() then
-    	    self.hspeed = -self.move_speed    
-            end
-            if k_right() then
-               self.hspeed = self.move_speed 
-            end
-        else
-           	self.hspeed = 0 
+    -- horizontal movement
+    if k_right() or k_left() then
+        if k_left() then
+        self.hspeed = -self.move_speed    
         end
-        
-        -- jumping
-        if k_up() then
-            self:jump()
-        end	
+        if k_right() then
+           self.hspeed = self.move_speed 
+        end
+    else
+        self.hspeed = 0 
     end
+    
+    -- jumping
+    if k_up() then
+        self:jump()
+    end	
 end	

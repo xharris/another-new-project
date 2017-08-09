@@ -181,14 +181,16 @@ Scene = Class{
 
 			if data["entity"] then
 				for i_e, entity in ipairs(data["entity"]) do
-					Entity.x = entity.x
-					Entity.y = entity.y
-					local new_entity = _G[entity.classname](entity.x, entity.y)
-					new_entity._loadedFromFile = true
-					Entity.x = 0
-					Entity.y = 0
+					if _G[entity.classname] then
+						Entity.x = entity.x
+						Entity.y = entity.y
+						local new_entity = _G[entity.classname](entity.x, entity.y)
+						new_entity._loadedFromFile = true
+						Entity.x = 0
+						Entity.y = 0
 
-					self:addEntity(new_entity, layer)
+						self:addEntity(new_entity, layer)
+					end
 				end
 			end
 
@@ -266,6 +268,8 @@ Scene = Class{
 
 	removeLayer = function(self)
 		local layer_index = table.find(self.load_objects.layers, _place_layer)
+		local layer_name = self.load_objects.layers[layer_index]
+		self.layers[layer_name] = nil
 		table.remove(self.load_objects.layers, layer_index)
 	end,
 
@@ -348,26 +352,28 @@ Scene = Class{
 	addTile = function(self, img_name, x, y, img_info, layer, from_file) 
 		layer = self:_checkLayerArg(layer)
 
-		-- check if the spritebatch exists yet
-		self.layers[layer]["tile"] = ifndef(self.layers[layer]["tile"], {})
-		self.images[img_name] = ifndef(self.images[img_name], Image(img_name))
-		self.layers[layer].tile[img_name] = ifndef(self.layers[layer].tile[img_name], love.graphics.newSpriteBatch(self.images[img_name]()))
+		--if Image.exists(img_name) then
+			-- check if the spritebatch exists yet
+			self.layers[layer]["tile"] = ifndef(self.layers[layer]["tile"], {})
+			self.images[img_name] = ifndef(self.images[img_name], Image(img_name))
+			self.layers[layer].tile[img_name] = ifndef(self.layers[layer].tile[img_name], love.graphics.newSpriteBatch(self.images[img_name]()))
 
-		-- add tile to batch
-		local spritebatch = self.layers[layer].tile[img_name]
-		local sb_id = spritebatch:add(love.graphics.newQuad(img_info.x, img_info.y, img_info.width, img_info.height, self.images[img_name].width, self.images[img_name].height), x, y)
+			-- add tile to batch
+			local spritebatch = self.layers[layer].tile[img_name]
+			local sb_id = spritebatch:add(love.graphics.newQuad(img_info.x, img_info.y, img_info.width, img_info.height, self.images[img_name].width, self.images[img_name].height), x, y)
 
-		-- add tile info to "hashtable"
-		self.hash_tile:add(x-(x%self._snap[1]),y-(y%self._snap[2]),
-		{
-			layer=layer,
-			x=x,
-			y=y,
-			img_name=img_name,
-			crop=img_info,
-			id=sb_id,
-			from_file=from_file
-		})
+			-- add tile info to "hashtable"
+			self.hash_tile:add(x-(x%self._snap[1]),y-(y%self._snap[2]),
+			{
+				layer=layer,
+				x=x,
+				y=y,
+				img_name=img_name,
+				crop=img_info,
+				id=sb_id,
+				from_file=from_file
+			})
+		--end
 		return self
 	end,
 

@@ -6,6 +6,15 @@ SYSTEM = {
 		Darwin='mac'
 	},
 
+	winPath = function(path)
+		return path:gsub("(\\)","\\\\"):gsub("(/)","\\\\")
+	end,
+
+	-- cleans up slashes
+	cleanPath = function(path)
+		return path:gsub("(\\)","/"):gsub("(\\\\)","/")
+	end,
+
 	runCmd = function(commands, func)
 		if commands[SYSTEM.os] then
 			local pfile = io.popen(commands[SYSTEM.os])
@@ -37,8 +46,9 @@ SYSTEM = {
 	end,
 
 	exists = function(path)
-	   local f=io.open(path,"r")
-	   if f~=nil then io.close(f) return true else return false end
+	   return love.filesystem.exists(path)
+	   --local f=io.open(path,"r")
+	   --if f~=nil then io.close(f) return true else return false end
 	end,
 
 	mkdir = function(path)

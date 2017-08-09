@@ -28,10 +28,6 @@ function buildLove(folder_name)
 	return folder_name..'/'.._GAME_NAME..'.love'
 end
 
-function cleanWinPath(path)
-	return path:gsub("(\\)","\\\\"):gsub("(/)","\\\\")
-end
-
 -- os to build for
 -- open_dir: open the export directory when finished
 function export(target_os, open_dir)
@@ -56,7 +52,7 @@ function export(target_os, open_dir)
 		
 		elseif curr_os == 'win' then
 			-- build EXE on windows
-			build_cmd = 'cmd /c \"copy /b '..cleanWinPath(binary_path..'/love.exe+'..build_path.._GAME_NAME..'.love '..build_path.._GAME_NAME)..'.exe\"'
+			build_cmd = 'cmd /c \"copy /b '..SYSTEM.winPath(binary_path..'/love.exe+'..build_path.._GAME_NAME..'.love '..build_path.._GAME_NAME)..'.exe\"'
 
 		end
 		

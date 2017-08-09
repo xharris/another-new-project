@@ -229,6 +229,7 @@ local ideScene = {
 					status, new_placer_index = imgui.Combo("category", curr_placer_index, category_names, #category_names);
 					if status then
 						curr_placer_index = new_placer_index
+						curr_scene:setPlacer()
 					end
 					curr_category = placeable[curr_placer_index]
 

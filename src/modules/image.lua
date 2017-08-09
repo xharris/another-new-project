@@ -14,8 +14,8 @@ end
 ideImage = {
 	addImage = function(file)
 		if IDE.isProjectOpen() then
-			local filename = file:getFilename()
-			SYSTEM.copy(filename, IDE.getProjectPath()..'/assets/image/'..basename(filename))
+			local filename = SYSTEM.cleanPath(file:getFilename())
+			SYSTEM.copy(filename, IDE.getProjectPath()..'/assets/image/'..basename((filename)))
 		end
 	end,
 
