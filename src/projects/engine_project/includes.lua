@@ -14,7 +14,7 @@ if _REPLACE_REQUIRE then
 end
 
 require "plugins.printr"
-require "plugins.json.json"
+require "plugins.json"
 uuid = require("plugins.uuid")
 
 Class = require ('plugins.blanke.Class') -- hump.class

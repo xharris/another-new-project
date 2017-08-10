@@ -159,20 +159,20 @@ BlankE = {
 
 		local min_grid_draw = 8
 		local snap = ifndef(BlankE.snap, {32,32})
-		local zoom_amt = ifndef(Scene._zoom_amt, 1)
+		local zoom_amt = 1--ifndef(Scene._zoom_amt, 1)
 		snap[1] = snap[1] * zoom_amt
 		snap[2] = snap[2] * zoom_amt
 
 		local g_x, g_y
 		if BlankE.main_cam and not BlankE.main_cam.disabled then
 			g_x, g_y = BlankE.main_cam:position()
-			g_x = (BlankE.main_cam.port_width/2) - g_x 
-			g_y = (BlankE.main_cam.port_height/2) - g_y
+			--g_x = g_x - ((game_width-CONF.window.width)%snap[1])
+			--g_y = g_y - ((game_height-CONF.window.height)%snap[2])
 		else
 			g_x, g_y = 0, 0
 		end
 
-		local offx, offy = (g_x%snap[1]), (g_y%snap[2])
+		local offx, offy = -(g_x-(g_x%snap[1]))-(BlankE.main_cam.port_width/2%snap[1]), -(g_y-(g_y%snap[2]))-(BlankE.main_cam.port_height/2%snap[2])
 
 		local offset = 0
 		local function myStencilFunction() -- TODO: change to shader?
@@ -181,7 +181,7 @@ BlankE = {
 			local rect_x = (game_width/2)-(conf_w/2)+offset
 			local rect_y = (game_height/2)-(conf_h/2)+offset
 
-		   	love.graphics.rectangle("fill", rect_x, rect_y, conf_w, conf_h)
+		   	love.graphics.rectangle("fill", rect_x+g_x-(game_width/2), rect_y+g_y-(game_height/2), conf_w, conf_h)
 		end
 
 		local function stencilLine(func)
@@ -191,20 +191,18 @@ BlankE = {
 
 			-- in-view lines
 			if _grid_gradient then
+				-- grid gradient
 				for o = 0,15,1 do
 					offset = -o
 		    		love.graphics.setColor(grid_color[1], grid_color[2], grid_color[3], 2)
 		    		love.graphics.stencil(myStencilFunction, "replace", 1)
 				 	love.graphics.setStencilTest("greater", 0)
-				 	love.graphics.setLineWidth(1)
 				 	func()
 		    		love.graphics.setStencilTest()
 				end
 			else 
+				-- no grid gradient
 				offset = 0
-
---				love.graphics.setColor(grid_color[1], grid_color[2], grid_color[3], 0)--clamp(grid_color[4]+80, 0, 255))
-
 				love.graphics.stencil(myStencilFunction, "replace", 1)
 			 	love.graphics.setStencilTest("greater", 0)
 			 	love.graphics.setColor(grid_color[1], grid_color[2], grid_color[3], 25)
@@ -215,36 +213,30 @@ BlankE = {
 		end
 
 		love.graphics.push('all')
-		love.graphics.setLineWidth(1)
 		love.graphics.setLineStyle("rough")
 		--love.graphics.setBlendMode('replace')
 
+		-- draw origin
+		love.graphics.setLineWidth(3)
+		love.graphics.setColor(grid_color[1], grid_color[2], grid_color[3], 15)
+		love.graphics.line(0,-offy-(game_height/2)-snap[1],0,game_height) -- vert
+		love.graphics.line(-offx-(game_width/2)-snap[2],0,game_width,0)  -- horiz			
+		love.graphics.setLineWidth(1)
+
 		-- vertical lines
 		if snap[1] >= min_grid_draw then
-			for x = 0,game_width,snap[1] do
-				if x+offx == 0 then
-					love.graphics.setLineWidth(3)
-				else
-					love.graphics.setLineWidth(1)
-				end
-
+			for x = -game_width/2,game_width,snap[1] do
 				stencilLine(function()
-					love.graphics.line(x+offx, 0, x+offx, game_height)
+					love.graphics.line(x-offx, (-game_height/2)-offy, x-offx, game_height-offy)
 				end)
 			end
 		end
 
 		-- horizontal lines
 		if snap[2] >= min_grid_draw then
-			for y = 0,game_height,snap[2] do
-				if y+offy == 0 then
-					love.graphics.setLineWidth(3)
-				else
-					love.graphics.setLineWidth(1)
-				end
-
+			for y = -game_height/2,game_height,snap[2] do
 				stencilLine(function()
-					love.graphics.line(0, y+offy, game_width, y+offy)
+					love.graphics.line((-game_width/2)-offx, y-offy, game_width-offx, y-offy)
 				end)
 			end
 		end
@@ -289,7 +281,7 @@ BlankE = {
 		_iterateGameGroup('scene', function(scene)
 			scene._is_active = false
 		end)
-		if BlankE._ide_mode then
+		if BlankE._ide_mode and #game.scene == 0 then
 			BlankE._drawGrid()
 		end
 
