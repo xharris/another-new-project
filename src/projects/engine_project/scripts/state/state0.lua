@@ -2,6 +2,8 @@
 function state0:init() end
 function state0:leave() end 
 
+
+
 -- Called every time when entering the state.
 function state0:enter(previous)
 	love.graphics.setBackgroundColor(255,255,255)
@@ -12,6 +14,7 @@ function state0:enter(previous)
 	main_scene = Scene('main_scene')
   
     main_view = View()
+    main_effect = Effect("crt") 
 end
 
 function state0:update(dt)
@@ -19,15 +22,17 @@ function state0:update(dt)
 end
 
 function state0:draw()
-    --love.graphics.setBackgroundColor(255,255,255,255)
-	love.graphics.setColor(255,0,0,255)
-	love.graphics.print("hey how goes it", 100,100)
-	love.graphics.setColor(255,255,255,255)
+	main_effect:draw(function()
+	    --love.graphics.setBackgroundColor(255,255,255,255)
+		love.graphics.setColor(255,0,0,255)
+		love.graphics.print("hey how goes it", 100,100)
+		love.graphics.setColor(255,255,255,255)
 
-	new_img:draw() 
+		new_img:draw() 
 
-    main_view:draw(function()
-        main_scene:draw()
-    end)
+	    main_view:draw(function()
+	        main_scene:draw()
+	    end)
+	end)
     Debug.draw()
 end	

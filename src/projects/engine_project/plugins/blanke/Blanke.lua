@@ -135,6 +135,16 @@ BlankE = {
 		return state
 	end,
 
+	clearObjects = function(include_persistent)
+		for key, objects in pairs(game) do
+			for o, obj in ipairs(objects) do
+				if include_persistent or not obj.persistent then
+					obj:destroy()
+				end
+			end
+		end
+	end,
+
 	main_cam = nil,
 	snap = {32,32},
 	initial_cam_pos = {0,0},
@@ -327,9 +337,11 @@ BlankE = {
 
 	quit = function()
 	    Net.disconnect()
+	    BlankE.clearObjects(true)
 	end,
 
 	errhand = function(msg)
+		BlankE.clearObjects(true)
 		_err_state.error_msg = msg
 		_err_state.draw()
 	end,

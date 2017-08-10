@@ -51,13 +51,7 @@ end
 function GS.switch(to, ...)
 	assert(to, "Missing argument: State to switch to")
 	assert(to ~= GS, "Can't call switch with colon operator")
-	for key, objects in pairs(game) do
-		for o, obj in ipairs(objects) do
-			if not obj.persistent then
-				obj:destroy()
-			end
-		end
-	end
+	BlankE.clearObjects()
 	;(stack[#stack].leave or __NULL__)(stack[#stack])
 	return change_state(0, to, ...)
 end

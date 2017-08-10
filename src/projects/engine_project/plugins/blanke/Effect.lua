@@ -1,6 +1,9 @@
--- completely working effects:
--- - chroma shift : angle(rad), radius
-
+--[[
+completely working effects:
+ - chroma shift : angle(rad), radius
+ - crt : lineSize(vec2) opacity, scanlines(bool), distortion, inputGamma, outputGamma
+ - 
+]]
 
 local _effects = {}
 Effect = Class{
@@ -16,6 +19,7 @@ Effect = Class{
 			self._effect_data = _effects[name]
 
 			-- turn options into member variables
+			_effects[name].params = ifndef(_effects[name].params, {})
 			for p, default in pairs(_effects[name].params) do
 				self[p] = default
 
@@ -76,7 +80,7 @@ Effect = Class{
 			local var_name = p
 			local var_value = default
 
-			if self[p] then
+			if self[p] ~= nil then
 				var_value = self[p]
 				self:send(var_name, var_value)
 			end
@@ -100,6 +104,11 @@ Effect = Class{
 	end,
 
 	send = function (self, name, value)
+		if type(value) == 'boolean' then
+			if value then value = 1 
+			else value = 0 end
+		end
+
 		self._shader:send(name, value)
 		return self
 	end,

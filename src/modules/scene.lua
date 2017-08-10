@@ -74,7 +74,7 @@ function inspectObj(obj, title, flags)
 			if not var:starts('_') then
 				if type(value) == 'number' then
 					imgui.PushItemWidth(100)
-					status, new_int = imgui.DragInt(var,obj[var])
+					status, new_int = imgui.DragFloat(var,obj[var])
 					if status then obj[var] = new_int end
 				end
 				if type(value) == 'string' then
@@ -85,6 +85,11 @@ function inspectObj(obj, title, flags)
 				if type(value) == 'boolean' then
 					local status, new_val = imgui.Checkbox(var, obj[var])
 					if status then obj[var] = new_val end
+				end
+				if type(value) == 'table' then
+					if #value == 2 then
+						
+					end
 				end
 			end
 		end
