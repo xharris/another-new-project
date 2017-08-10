@@ -5,7 +5,7 @@ Timer = Class{
 		self._after = {}					-- when the timer is over 
 		self.time = 0						-- seconds
 		self.duration = ifndef(duration,0)	-- seconds
-		self.disable_on_all_called = true
+		self.disable_on_all_called = true	-- disable the timer when all functions are called (before, after)
 
 		self._running = false
 		self._start_time = 0

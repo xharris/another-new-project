@@ -263,11 +263,6 @@ IDE = {
 	                UI.setSetting("console_height", new_height)
 	            end
 
-	            -- manual reload button
-	            if IDE.isProjectOpen() and imgui.MenuItem("reload project") then
-	            	IDE.reload()
-	            end
-
 	            -- show blanke dev stuff
 	            if imgui.MenuItem("secret stuff", nil, UI.titlebar.secret_stuff) then
 	            	UI.titlebar.secret_stuff = not UI.titlebar.secret_stuff
@@ -313,6 +308,12 @@ IDE = {
 	            end
 	            imgui.EndMenu()
 	        end
+	        
+	        -- manual reload button
+	        if IDE.isProjectOpen() and UI.drawIconButton("pencil", "reload", 0, 0, 5, 5) then
+				IDE.reload()
+			end
+
 	        imgui.EndMainMenuBar()
 	    end
 
