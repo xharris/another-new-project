@@ -38,9 +38,9 @@ UI = {
 		ResizeGripHovered = {66,66,66,100},
 		ResizeGripActive = {66,66,66,100},
 
-		TitleBg = 'love2d_dark',
-		TitleBgActive = 'love2d',
-		TitleBgCollapsed = 'love2d',
+		TitleBg = {66,66,66,200},
+		TitleBgActive = {66,66,66,200},
+		TitleBgCollapsed = 'love2d_dark',
 
 		CloseButton = {255,255,255,75},
 		ClostButtonHovered = {255,255,255,75},
