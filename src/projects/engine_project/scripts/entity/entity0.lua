@@ -8,6 +8,11 @@ function entity0:init(x, y)
 	self.x = x
     self.y = y
     
+    self:addAnimation("walk", "penguin", {'1-2',1}, 0.4)
+    self:setSpriteIndex("walk")
+    self.sprite_xoffset = -self.sprite_width/2
+    self.sprite_yoffset = -self.sprite_height/2
+
     self:addShape("main", "rectangle", {0, 0, 32, 32})
     self:addShape("jump_box", "rectangle", {4, 30, 24, 2})
     self:setMainShape("main")
@@ -20,15 +25,10 @@ function entity0:init(x, y)
     self.can_jump = true
     self.jump_power = 330
     
-    k_left = Input('left','a')
-    k_right = Input('right','d')
-    k_up = Input('up','w')
-end
-
-function entity0:postDraw()
-	Draw.setColor(0,0,255,255)
-	Draw.circle('line',self.x,self.y,16)--('line',self.x-16,self.y-16,32,32)
-end
+    self.k_left = Input('left','a')
+    self.k_right = Input('right','d')
+    self.k_up = Input('up','w')
+end 
 
 function entity0:jump()
     if self.can_jump then
@@ -63,11 +63,11 @@ function entity0:preUpdate(dt)
     end
 
     -- horizontal movement
-    if k_right() or k_left() then
-        if k_left() then
+    if self.k_right() or self.k_left() then
+        if self.k_left() then
         self.hspeed = -self.move_speed    
         end
-        if k_right() then
+        if self.k_right() then
            self.hspeed = self.move_speed 
         end
     else
@@ -75,7 +75,7 @@ function entity0:preUpdate(dt)
     end
     
     -- jumping
-    if k_up() then
+    if self.k_up() then
         self:jump()
     end	
 end	

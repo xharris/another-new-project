@@ -94,7 +94,8 @@ Scene = Class{
 			self._fake_view.nickname = '_fake_view'
 			BlankE.setGridCamera(self._fake_view)
 			BlankE.initial_cam_pos = {0,0}
-			self._fake_view.port_width, self._fake_view.port_height = love.window.getDesktopDimensions()
+			--self._fake_view.port_width, self._fake_view.port_height = love.window.getDesktopDimensions()
+			self._fake_view.noclip = true
 			self._fake_view:moveToPosition(self._fake_view.port_width/2,self._fake_view.port_height/2)
 			self._fake_view.motion_type = 'smooth' -- (not working as intended)		
 		end
@@ -664,7 +665,9 @@ Scene = Class{
 	    		Scene._zoom_amt = clamp(Scene._zoom_amt + 0.1, 0, 3)
 	    	end
 	    	self._fake_view:zoom(Scene._zoom_amt)
-
+	    	self._fake_view.port_width = game_width
+	    	self._fake_view.port_height = game_height
+	    	
 	    	-- dragging the view/grid around
 	    	BlankE.setGridSnap(self._snap[1], self._snap[2])
 	    	if not self._fake_view.disabled then
@@ -759,6 +762,7 @@ Scene = Class{
 			    end
 		    end
 
+			BlankE._drawGrid()
 	    	self._fake_view:detach()
 	    else
 	    	self:_real_draw()

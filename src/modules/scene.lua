@@ -88,7 +88,7 @@ function inspectObj(obj, title, flags)
 				end
 				if type(value) == 'table' then
 					if #value == 2 then
-						
+
 					end
 				end
 			end
@@ -139,12 +139,14 @@ local ideScene = {
 
 			-- only show editor if at least one scene is ACTIVE
 			if #scene_names > 0 then
+				local _scene = scene_list[curr_scene_index] -- check if nil when using this var
+
 				imgui.SetNextWindowSize(300,300,"FirstUseEver")
-				scene_status, UI.titlebar.show_scene_editor = imgui.Begin(string.format("scene editor (%d,%d) %d,%d###scene editor", BlankE._mouse_x, BlankE._mouse_y, mouse_x, mouse_y), true)
+				local cam_zoom = ifndef(Scene._zoom_amt,1)*100
+				scene_status, UI.titlebar.show_scene_editor = imgui.Begin(string.format("scene editor (%d,%d) %d,%d %d%%###scene editor", BlankE._mouse_x, BlankE._mouse_y, mouse_x, mouse_y, cam_zoom), true)
 
 				-- enable/disable dragging camera
-				if scene_list[curr_scene_index] ~= nil then
-					local _scene = scene_list[curr_scene_index]
+				if _scene then
 					local cam_status, new_cam = imgui.Checkbox("disable camera dragging", _scene._fake_view.disabled)
 					if cam_status then
 						_scene._fake_view.disabled = new_cam
@@ -523,7 +525,9 @@ local ideScene = {
 
 							if obj == 'view' and imgui.TreeNode(obj) then
 								_iterateGameGroup('view', function(view, v)
-									inspectObj(view, ifndef(view.nickname, 'view'..v))
+									if view.nickname ~= '_fake_view' then
+										inspectObj(view, ifndef(view.nickname, 'view'..v))
+									end
 								end)
 
 								imgui.TreePop()
