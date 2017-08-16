@@ -35,8 +35,10 @@ local ideEntity = {
 	end,
 
 	onRename = function(old_path, new_path)
-		print(old_path, new_path)
-		--SYSTEM.rename(path_object, new_path)
+		if not new_path:ends(".lua") then
+			new_path = new_path..'.lua'
+		end
+		SYSTEM.rename(old_path, new_path)
 	end,
 
 	edit = function(name)

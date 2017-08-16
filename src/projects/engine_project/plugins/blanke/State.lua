@@ -56,6 +56,13 @@ function GS.switch(to, ...)
 	return change_state(0, to, ...)
 end
 
+function GS.restart()
+	local curr_state = GS.current()
+	if curr_state ~= nil then
+		GS.switch(curr_state)
+	end
+end
+
 function GS.push(to, ...)
 	assert(to, "Missing argument: State to switch to")
 	assert(to ~= GS, "Can't call push with colon operator")

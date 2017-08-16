@@ -172,7 +172,8 @@ BlankE = {
 			g_x, g_y = 0, 0
 		end
 
-		local offx, offy = -(g_x-(g_x%snap[1]))-(BlankE.main_cam.port_width/2%snap[1]), -(g_y-(g_y%snap[2]))-(BlankE.main_cam.port_height/2%snap[2])
+		local offx = -(g_x-(g_x%snap[1]))-(BlankE.main_cam.port_width/2%snap[1]) + snap[1]
+		local offy = -(g_y-(g_y%snap[2]))-(BlankE.main_cam.port_height/2%snap[2]) + snap[2]
 
 		local offset = 0
 		local function myStencilFunction() -- TODO: change to shader?
@@ -342,6 +343,7 @@ BlankE = {
 local _offset=0
 function _err_state:draw()
 	love.graphics.setBackgroundColor(0,0,0,255)
+
 	local _max_size = math.max(game_width, game_height)
 	_offset = _offset + 1
 	if _offset >= _max_size then _offset = 0 end

@@ -4,8 +4,6 @@ Image = Class{
 	init = function(self, name)
 		name = tostring(name)
 
-		--print('NEW')
-		--print_r(assets)
 		assert(assets[name] ~= nil, "No image named '"..name.."'")
 		self.image = assets[name]()
 
@@ -26,7 +24,7 @@ Image = Class{
 	end,
 
 	-- static: check if an image exists
-	exists = function(self, img_name)
+	exists = function(img_name)
 		return (assets[img_name] ~= nil)
 	end,
 

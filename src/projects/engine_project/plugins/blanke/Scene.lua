@@ -71,6 +71,7 @@ local Scenetable = Class{
 Scene = Class{
 	hitbox = {},
 	_zoom_amt = 1,
+	_fake_view_start = {game_width/2, game_height/2},
 	init = function(self, name)
 		self.load_objects = {}
 		self.layers = {}
@@ -96,7 +97,7 @@ Scene = Class{
 			BlankE.initial_cam_pos = {0,0}
 			--self._fake_view.port_width, self._fake_view.port_height = love.window.getDesktopDimensions()
 			self._fake_view.noclip = true
-			self._fake_view:moveToPosition(self._fake_view.port_width/2,self._fake_view.port_height/2)
+			self._fake_view:moveToPosition(Scene._fake_view_start[1], Scene._fake_view_start[2])
 			self._fake_view.motion_type = 'smooth' -- (not working as intended)		
 		end
 
@@ -688,6 +689,7 @@ Scene = Class{
 			    			_view_initial_pos[1] - _drag_dist[1],
 			    			_view_initial_pos[2] - _drag_dist[2]
 			    		)
+			    		Scene._fake_view_start = {self._fake_view:position()}
 			    	end
 			    end
 		    	-- on release

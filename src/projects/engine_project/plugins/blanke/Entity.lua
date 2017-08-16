@@ -254,9 +254,9 @@ Entity = Class{
 			
 			-- is it an Animation or an Image
 			if self.sprite.update ~= nil then
-				self.sprite:draw(img, self.x, self.y, math.rad(self.sprite_angle), self.sprite_xscale, self.sprite_yscale, self.sprite_xoffset, self.sprite_yoffset, self.sprite_xshear, self.sprite_yshear)
+				self.sprite:draw(img(), self.x, self.y, math.rad(self.sprite_angle), self.sprite_xscale, self.sprite_yscale, self.sprite_xoffset, self.sprite_yoffset, self.sprite_xshear, self.sprite_yshear)
 			elseif img then
-				love.graphics.draw(img, self.x, self.y, math.rad(self.sprite_angle), self.sprite_xscale, self.sprite_yscale, self.sprite_xoffset, self.sprite_yoffset, self.sprite_xshear, self.sprite_yshear)
+				love.graphics.draw(img(), self.x, self.y, math.rad(self.sprite_angle), self.sprite_xscale, self.sprite_yscale, self.sprite_xoffset, self.sprite_yoffset, self.sprite_xshear, self.sprite_yshear)
 			end
 			love.graphics.pop()
 		else
@@ -275,33 +275,26 @@ Entity = Class{
 		return self
 	end,
 
-	addAnimation = function(...)
-		local args = {...}
-		local self = args[1]
+	addAnimation = function(self, args)
+		-- main args
+		local ani_name = args.name
+		local name = args.image
+		local frames = args.frames
+		local frame_size = args.frame_size
+		-- other args
+		local left = ifndef(args.left, 0)
+		local border = ifndef(args.border, 0)
+		local speed = ifndef(args.speed, 0.1)
 
-		local ani_name = args[2]
-		local name = args[3]
-		local frames = args[4]
-		local other_args = {}
+		if Image.exists(name) then
+			print('it exists')
+			local image = Image(name)
+		    local grid = anim8.newGrid(frame_size[1], frame_size[2], image.width, image.height)
+			local sprite = anim8.newAnimation(grid(unpack(frames)), speed)
 
-		-- get other args
-		for a = 5,#args do
-			table.insert(other_args, args[a])
-		end
-
-		if assets[name] ~= nil then
-			local sprite, image = assets[name]()
-
-			-- this is an image not a spritesheet
-			if image == nil then
-				self._images[ani_name] = sprite
-				self._sprites[ani_name] = sprite
-			else
-				local sprite = anim8.newAnimation(sprite(unpack(frames)), unpack(other_args))
-
-				self._images[ani_name] = image
-				self._sprites[ani_name] = sprite
-			end
+			self._images[ani_name] = image
+			self._sprites[ani_name] = sprite
+		
 		end
 		return self
 	end,

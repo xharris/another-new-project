@@ -10,8 +10,14 @@ function state0:enter(previous)
 	new_img.y = 120
     
 	main_scene = Scene('main_scene')
+
+	main_player = entity0()
+	main_player.x = 352
+	main_player.y = 368
+	main_scene:addEntity(main_player)
   
     main_view = View()
+    main_view:follow(main_player)                         
     --main_effect = Effect("crt") 
 end
 
@@ -20,17 +26,13 @@ function state0:update(dt)
 end
 
 function state0:draw()
-	--main_effect:draw(function()
-	    --love.graphics.setBackgroundColor(255,255,255,255)
-		love.graphics.setColor(255,0,0,255)
-		love.graphics.print("hey how goes it", 100,100)
-		love.graphics.setColor(255,255,255,255)
+	love.graphics.setColor(255,0,0,255)
+	love.graphics.print("hey how goes it", 100,100)
+	love.graphics.setColor(255,255,255,255)
 
-		new_img:draw() 
+	new_img:draw() 
 
-	    main_view:draw(function()
-	        main_scene:draw()
-	    end)
-	--end)
-    Debug.draw()
+    main_view:draw(function()
+        main_scene:draw()
+    end)
 end	

@@ -32,6 +32,7 @@
     - Rework shaders
         - Some shaders cause screen to go white/black (crt)
         - Poor use of canvases
+    - IDE text color does not update on errors
 ]]
 
 package.cpath = package.cpath .. ";/usr/local/lib/lua/5.2/?.so;/usr/local/lib/lua/5.2/?.dll;./?.dll;./?.so"

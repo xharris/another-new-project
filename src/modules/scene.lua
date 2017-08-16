@@ -1,9 +1,13 @@
+local window_margin = 10
+local titlebar_height = 20
+
 local curr_scene_index = 1
 local curr_placer_index = 1
 local curr_object_index = 1
 local last_object = nil
 -- entity placing
 local selected_entity = ''
+local show_obj_debug = false
 -- image placing
 local _img_dragging = false
 local _img_drag_init_mouse = {0,0}
@@ -141,7 +145,8 @@ local ideScene = {
 			if #scene_names > 0 then
 				local _scene = scene_list[curr_scene_index] -- check if nil when using this var
 
-				imgui.SetNextWindowSize(300,300,"FirstUseEver")
+				imgui.SetNextWindowPos(game_width-300-window_margin, window_margin, {"Once"})
+				imgui.SetNextWindowSize(300,game_height-(titlebar_height+window_margin), {"Once"})
 				local cam_zoom = ifndef(Scene._zoom_amt,1)*100
 				scene_status, UI.titlebar.show_scene_editor = imgui.Begin(string.format("scene editor (%d,%d) %d,%d %d%%###scene editor", BlankE._mouse_x, BlankE._mouse_y, mouse_x, mouse_y, cam_zoom), true)
 
@@ -157,10 +162,11 @@ local ideScene = {
 						BlankE.show_grid = new_grid
 					end
 
-					local debug_status, new_debug = imgui.Checkbox("show object debugs", _scene.show_debug)
+					local debug_status, new_obj_debug = imgui.Checkbox("show object debugs", show_obj_debug)
 					if debug_status then
-						_scene.show_debug = new_debug
+						show_obj_debug = new_obj_debug
 					end
+					_scene.show_debug = show_obj_debug
 				end
 
 				-- scene selection

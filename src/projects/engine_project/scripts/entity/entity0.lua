@@ -8,11 +8,18 @@ function entity0:init(x, y)
 	self.x = x
     self.y = y
     
-    self:addAnimation("walk", "penguin", {'1-2',1}, 0.4)
+    self:addAnimation{
+        name="walk",
+        image="penguin",
+        frames={'1-2', 1},
+        frame_size={32,32},
+        speed=0.4
+    }
     self:setSpriteIndex("walk")
-    self.sprite_xoffset = -self.sprite_width/2
-    self.sprite_yoffset = -self.sprite_height/2
+    self.sprite_xoffset = self.sprite_width/2
+    self.sprite_yoffset = self.sprite_height/2
 
+    
     self:addShape("main", "rectangle", {0, 0, 32, 32})
     self:addShape("jump_box", "rectangle", {4, 30, 24, 2})
     self:setMainShape("main")

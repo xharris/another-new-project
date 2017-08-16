@@ -102,12 +102,15 @@ IDE = {
 		end
 	end,
 
-	renameObj = function(type, old_path, new_path)
-		if mod.onRename then
-			mod.onRename(old_path, new_path)
-			IDE.refreshAssets()
-			return true
-		end
+	-- returns false if a module was not found that handles the renaming for this file
+	rename = function(type, old_path, new_path)
+		IDE.iterateModules(function(m, mod)
+			if mod.onRename then
+				mod.onRename(old_path, new_path)
+				IDE.refreshAssets()
+				return true
+			end
+		end)
 		return false
 	end,	
 
@@ -310,8 +313,13 @@ IDE = {
 	        end
 	        
 	        -- manual reload button
-	        if IDE.isProjectOpen() and UI.drawIconButton("pencil", "reload", 0, 0, 5, 5) then
+	        if IDE.isProjectOpen() and UI.drawIconButton("reload", "reload game") then
 				IDE.reload()
+			end
+
+			-- refresh just state
+	        if IDE.isProjectOpen() and UI.drawIconButton("reload", "restart state") then
+				
 			end
 
 	        imgui.EndMainMenuBar()
