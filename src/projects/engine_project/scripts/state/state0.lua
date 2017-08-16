@@ -12,6 +12,7 @@ function state0:enter(previous)
 	main_scene = Scene('main_scene')
 
 	main_player = entity0()
+	main_player.nickname = "player"
 	main_player.x = 352
 	main_player.y = 368
 	main_scene:addEntity(main_player)

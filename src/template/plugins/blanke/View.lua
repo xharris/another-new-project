@@ -202,12 +202,25 @@ View = Class{
 	attach = function(self)  
 		if not (self.disabled or View._disable_grid) or (self.nickname == '_fake_view' and not self.disabled) then 
         	self.camera:attach(self.port_x, self.port_y, self.port_width, self.port_height, self.noclip)
+			--[[local cx, cy = self.port_x+self.port_width/2, self.port_y+self.port_height/2
+
+			self._sx,self._sy,self._sw,self._sh = love.graphics.getScissor()
+			love.graphics.setScissor(x,y,w,h)
+
+			love.graphics.push()
+			love.graphics.translate(cx, cy)
+			love.graphics.scale(self.scale_x, self.scale_y)
+			love.graphics.rotate(math.rad(self.angle))
+			love.graphics.translate(-self.follow_x, -self.follow_y)
+			]]
         end
     end,
 
 	detach = function(self)
 		if not (self.disabled or View._disable_grid) or (self.nickname == '_fake_view' and not self.disabled) then
 			self.camera:detach()
+			--love.graphics.pop()
+			--love.graphics.setScissor(self._sx,self._sy,self._sw,self._sh)
 		end
 	end,
 

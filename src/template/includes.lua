@@ -14,15 +14,15 @@ if _REPLACE_REQUIRE then
 end
 
 require "plugins.printr"
-require "plugins.json.json"
+require "plugins.json"
 uuid = require("plugins.uuid")
 
-Class = require ('plugins.blanke.Class') -- hump.class
+Class = oldreq('template.plugins.blanke.Class') -- hump.class
 
 anim8 = require 'plugins.anim8'
 HC = require 'plugins.HC'
 
-require 'plugins.blanke.Blanke'
+oldreq('template.plugins.blanke.BlankE')
 
 require 'assets'
 

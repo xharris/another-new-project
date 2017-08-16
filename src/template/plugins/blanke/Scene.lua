@@ -71,6 +71,7 @@ local Scenetable = Class{
 Scene = Class{
 	hitbox = {},
 	_zoom_amt = 1,
+	_fake_view_start = {game_width/2, game_height/2},
 	init = function(self, name)
 		self.load_objects = {}
 		self.layers = {}
@@ -93,8 +94,10 @@ Scene = Class{
 			self._fake_view = View()
 			self._fake_view.nickname = '_fake_view'
 			BlankE.setGridCamera(self._fake_view)
-			self._fake_view.port_width, self._fake_view.port_height = love.window.getDesktopDimensions()
-			self._fake_view:moveToPosition(self._fake_view.port_width/2,self._fake_view.port_height/2)
+			BlankE.initial_cam_pos = {0,0}
+			--self._fake_view.port_width, self._fake_view.port_height = love.window.getDesktopDimensions()
+			self._fake_view.noclip = true
+			self._fake_view:moveToPosition(Scene._fake_view_start[1], Scene._fake_view_start[2])
 			self._fake_view.motion_type = 'smooth' -- (not working as intended)		
 		end
 
@@ -180,14 +183,16 @@ Scene = Class{
 
 			if data["entity"] then
 				for i_e, entity in ipairs(data["entity"]) do
-					Entity.x = entity.x
-					Entity.y = entity.y
-					local new_entity = _G[entity.classname](entity.x, entity.y)
-					new_entity._loadedFromFile = true
-					Entity.x = 0
-					Entity.y = 0
+					if _G[entity.classname] then
+						Entity.x = entity.x
+						Entity.y = entity.y
+						local new_entity = _G[entity.classname](entity.x, entity.y)
+						new_entity._loadedFromFile = true
+						Entity.x = 0
+						Entity.y = 0
 
-					self:addEntity(new_entity, layer)
+						self:addEntity(new_entity, layer)
+					end
 				end
 			end
 
@@ -265,6 +270,8 @@ Scene = Class{
 
 	removeLayer = function(self)
 		local layer_index = table.find(self.load_objects.layers, _place_layer)
+		local layer_name = self.load_objects.layers[layer_index]
+		self.layers[layer_name] = nil
 		table.remove(self.load_objects.layers, layer_index)
 	end,
 
@@ -347,26 +354,28 @@ Scene = Class{
 	addTile = function(self, img_name, x, y, img_info, layer, from_file) 
 		layer = self:_checkLayerArg(layer)
 
-		-- check if the spritebatch exists yet
-		self.layers[layer]["tile"] = ifndef(self.layers[layer]["tile"], {})
-		self.images[img_name] = ifndef(self.images[img_name], Image(img_name))
-		self.layers[layer].tile[img_name] = ifndef(self.layers[layer].tile[img_name], love.graphics.newSpriteBatch(self.images[img_name]()))
+		--if Image.exists(img_name) then
+			-- check if the spritebatch exists yet
+			self.layers[layer]["tile"] = ifndef(self.layers[layer]["tile"], {})
+			self.images[img_name] = ifndef(self.images[img_name], Image(img_name))
+			self.layers[layer].tile[img_name] = ifndef(self.layers[layer].tile[img_name], love.graphics.newSpriteBatch(self.images[img_name]()))
 
-		-- add tile to batch
-		local spritebatch = self.layers[layer].tile[img_name]
-		local sb_id = spritebatch:add(love.graphics.newQuad(img_info.x, img_info.y, img_info.width, img_info.height, self.images[img_name].width, self.images[img_name].height), x, y)
+			-- add tile to batch
+			local spritebatch = self.layers[layer].tile[img_name]
+			local sb_id = spritebatch:add(love.graphics.newQuad(img_info.x, img_info.y, img_info.width, img_info.height, self.images[img_name].width, self.images[img_name].height), x, y)
 
-		-- add tile info to "hashtable"
-		self.hash_tile:add(x-(x%self._snap[1]),y-(y%self._snap[2]),
-		{
-			layer=layer,
-			x=x,
-			y=y,
-			img_name=img_name,
-			crop=img_info,
-			id=sb_id,
-			from_file=from_file
-		})
+			-- add tile info to "hashtable"
+			self.hash_tile:add(x-(x%self._snap[1]),y-(y%self._snap[2]),
+			{
+				layer=layer,
+				x=x,
+				y=y,
+				img_name=img_name,
+				crop=img_info,
+				id=sb_id,
+				from_file=from_file
+			})
+		--end
 		return self
 	end,
 
@@ -657,7 +666,9 @@ Scene = Class{
 	    		Scene._zoom_amt = clamp(Scene._zoom_amt + 0.1, 0, 3)
 	    	end
 	    	self._fake_view:zoom(Scene._zoom_amt)
-
+	    	self._fake_view.port_width = game_width
+	    	self._fake_view.port_height = game_height
+	    	
 	    	-- dragging the view/grid around
 	    	BlankE.setGridSnap(self._snap[1], self._snap[2])
 	    	if not self._fake_view.disabled then
@@ -678,6 +689,7 @@ Scene = Class{
 			    			_view_initial_pos[1] - _drag_dist[1],
 			    			_view_initial_pos[2] - _drag_dist[2]
 			    		)
+			    		Scene._fake_view_start = {self._fake_view:position()}
 			    	end
 			    end
 		    	-- on release
@@ -752,6 +764,7 @@ Scene = Class{
 			    end
 		    end
 
+			BlankE._drawGrid()
 	    	self._fake_view:detach()
 	    else
 	    	self:_real_draw()

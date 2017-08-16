@@ -4,13 +4,16 @@ local love2d_binary_path = {
 	win=SYSTEM.cwd..'/love2d-win32',
 	mac=SYSTEM.cwd..'/love.app'
 }
+local engine_path = SYSTEM.cleanPath(SYSTEM.cwd.."/src/template/plugins")
 
 -- folder_name: put the .love in /project/export/<folder_name>/
 function buildLove(folder_name)
+	engine_path = SYSTEM.cleanPath(SYSTEM.cwd.."/src/template/plugins")
+
 	-- make export directory
 	SYSTEM.mkdir(folder_name)
 
-	-- copy all files/folders except export foler
+	-- copy all files/folders except export folder
 	local src_dir = IDE.getProjectPath()
 	local src_dir_list = SYSTEM.scandir(src_dir)
 	for f, file in ipairs(src_dir_list) do
@@ -18,6 +21,9 @@ function buildLove(folder_name)
 			SYSTEM.copy(src_dir..'/'..file, folder_name..'/src/'..file)
 		end
 	end
+
+	-- copy engine
+	SYSTEM.copy(engine_path, folder_name..'/src/plugins')
 
 	-- zip into .love
 	HELPER.run('zipDir',{folder_name..'/src', folder_name..'/'.._GAME_NAME..'.love'})

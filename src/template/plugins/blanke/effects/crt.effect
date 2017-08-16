@@ -1,6 +1,6 @@
 EffectManager.new{
 	name = 'crt',
-	params = {outputSize={0,0}, opacity=0.5},
+	params = {lineSize={0,0},  opacity=0.5, scanlines=true, distortion=0.2, inputGamma=2.4, outputGamma=2.2},
 	shader = [[
 /*
     CRT-simple shader
@@ -13,32 +13,31 @@ EffectManager.new{
     modified by slime73 for use with love2d and mari0
 */
 
+extern number scanlines;
+
 extern number opacity;
-extern vec2 outputSize;
+extern vec2 lineSize;
 
-vec2 inputSize = love_ScreenSize.xy;
-vec2 textureSize = love_ScreenSize.xy;
-
-#define SCANLINES
+vec2 inputSize = vec2(800,600); // love_ScreenSize.xy;
+vec2 textureSize = vec2(800, 600); // love_ScreenSize.xy;
 
 // Enable screen curvature.
-#define CURVATURE
+#define CURVATURE 
 
 // Controls the intensity of the barrel distortion used to emulate the
 // curvature of a CRT. 0.0 is perfectly flat, 1.0 is annoyingly
 // distorted, higher values are increasingly ridiculous.
-#define distortion 0.2
+extern number distortion;
 
 // Simulate a CRT gamma of 2.4.
-#define inputGamma  2.4
+extern number inputGamma;
 
 // Compensate for the standard sRGB gamma of 2.2.
-#define outputGamma 2.2
+extern number outputGamma;
 
 // Macros.
 #define TEX2D(c) pow(checkTexelBounds(_tex0_, (c)), vec4(inputGamma))
 #define PI 3.141592653589
-
 
 vec2 bounds = vec2(inputSize.x / textureSize.x, 1.0 - inputSize.y / textureSize.y);
 
@@ -116,7 +115,7 @@ vec4 scanlineWeights(float distance, vec4 color)
 vec4 effect(vec4 vcolor, Image texture, vec2 texCoord, vec2 pixel_coords)
 {
 	vec2 one = 1.0 / textureSize;
-	float mod_factor = texCoord.x * textureSize.x * outputSize.x / inputSize.x;
+	float mod_factor = texCoord.x * textureSize.x * lineSize.x / inputSize.x;
 	
 	
 	// Here's a helpful diagram to keep in mind while trying to
@@ -147,8 +146,9 @@ vec4 effect(vec4 vcolor, Image texture, vec2 texCoord, vec2 pixel_coords)
 	vec2 xy = texCoord;
 #endif
 
-#ifdef SCANLINES
-
+vec4 mul_res_f;
+vec3 mul_res;
+if (scanlines == 1) {
 	// Of all the pixels that are mapped onto the texel we are
 	// currently rendering, which pixel are we currently rendering?
 	vec2 ratio_scale = xy * textureSize - 0.5;
@@ -167,14 +167,13 @@ vec4 effect(vec4 vcolor, Image texture, vec2 texCoord, vec2 pixel_coords)
 	vec4 weights  = scanlineWeights(uv_ratio.y, col);
 	vec4 weights2 = scanlineWeights(1.0 - uv_ratio.y, col2);
 	
-	vec4 mul_res_f = (col * weights + col2 * weights2);
-	vec3 mul_res  = mul_res_f.rgb;
+	mul_res_f = (col * weights + col2 * weights2);
+	mul_res  = mul_res_f.rgb;
 
-#else
-	vec3 mul_res_f = TEX2D(xy);
-	vec3 mul_res = mul_res_f.rgb;
-	
-#endif
+} else {
+	mul_res_f = TEX2D(xy);
+	mul_res = mul_res_f.rgb;
+}
 
 	// dot-mask emulation:
 	// Output pixels are alternately tinted green and magenta.
