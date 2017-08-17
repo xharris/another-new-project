@@ -184,8 +184,15 @@ BlankE = {
 			g_x, g_y = 0, 0
 		end
 
-		local offx = -(g_x-(g_x%snap[1]))-(BlankE.main_cam.port_width/2%snap[1]) + snap[1]
-		local offy = -(g_y-(g_y%snap[2]))-(BlankE.main_cam.port_height/2%snap[2]) + snap[2]
+		local scr_w = game_width
+		local scr_h = game_height
+		if BlankE.main_cam then
+			scr_w = BlankE.main_cam.port_width
+			scr_h = BlankE.main_cam.port_height
+		end
+
+		local offx = -(g_x-(g_x%snap[1]))-(scr_w/2%snap[1]) + snap[1]
+		local offy = -(g_y-(g_y%snap[2]))-(scr_h/2%snap[2]) + snap[2]
 
 		local offset = 0
 		local function myStencilFunction() -- TODO: change to shader?
@@ -294,7 +301,8 @@ BlankE = {
 		_iterateGameGroup('scene', function(scene)
 			scene._is_active = false
 		end)
-		if BlankE._ide_mode and #game.scene == 0 then
+		
+		if BlankE._ide_mode and #game.scene == 0 and BlankE.getCurrentState() ~= '_empty_state' then
 			BlankE._drawGrid()
 		end
 

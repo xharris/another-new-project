@@ -42,6 +42,14 @@ Draw = Class{
 		end)
 		return Draw
 	end,
+
+	polygon = function(...)
+		local args = {...}
+		Draw._draw(function()
+			love.graphics.polygon(unpack(args))
+		end)
+		return Draw
+	end,
 }
 
 return Draw

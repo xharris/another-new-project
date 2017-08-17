@@ -21,7 +21,7 @@ def copyTemplate(src, dest, replacements):
 	if not os.path.exists(dest):
 		open(dest, "w").write(s_template)
 
-def newProject(pj_folder):
+def newProject(pj_folder, pj_name):
 	pj_folder = os.path.normpath(pj_folder)
 
 	# make sure project folder exists
@@ -30,18 +30,20 @@ def newProject(pj_folder):
 
 	# get name of new project
 	pj_list = os.listdir(pj_folder)
-	proj_name = 'project'+str(len(pj_list))
+	proj_name = pj_name or 'project'+str(len(pj_list))
 	while proj_name in pj_list:
 		proj_name += '_new'
 	proj_path = os.path.join(pj_folder,proj_name)
 
 	# create project folder and transfer files
-	shutil.copytree(os.path.join(BASE_FOLDER,'template'),proj_path)
+	shutil.copytree(os.path.join(BASE_FOLDER,'template'),proj_path,ignore=shutil.ignore_patterns('plugins'))
 
 	#remove template files
 	rem_files = ['entity.lua','state.lua']
 	for f in rem_files:
-		os.remove(os.path.join(proj_path,f))
+		file_path = os.path.join(proj_path,f)
+		if os.path.exists(file_path):
+			os.remove(file_path)
 
 def newScript(obj_type, project_path, obj_name):
 	copyTemplate(

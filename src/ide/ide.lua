@@ -1,3 +1,4 @@
+local new_pj_name = 'myproject'
 local opening_project = false
 
 function updateTimeout(dt, var)
@@ -137,9 +138,25 @@ IDE = {
 	    if main_menu_bar then
 	        -- FILE
 	        if beginMenu("File") then
-	        	if imgui.MenuItem("New") then
-	        		IDE.newProject()
+	        	if imgui.Button("New") then
+	        		imgui.OpenPopup("new_project")
 	        	end
+
+	        	-- new project
+				if imgui.BeginPopupModal("new_project", nil, {"AlwaysAutoResize"}) then
+					new_status, new_pj_name = imgui.InputText("name", new_pj_name,300)
+
+					if imgui.Button("Ok") then
+						IDE.newProject(new_pj_name)
+						imgui.CloseCurrentPopup()
+					end
+					imgui.SameLine()
+					if imgui.Button("Cancel") then
+						imgui.CloseCurrentPopup()
+					end
+
+					imgui.EndPopup()
+				end
 
 	            -- project directory
 	            if UI.titlebar.secret_stuff then
@@ -324,7 +341,7 @@ IDE = {
 
 	        imgui.EndMainMenuBar()
 	    end
-
+				
 	    -- draw modules
 	    for m, mod in pairs(IDE.modules) do
 	    	if mod.draw then
@@ -364,7 +381,7 @@ IDE = {
 	end,
 
 	newProject = function()
-		HELPER.run('newProject',{'"'..IDE.getProjectPath()..'"'})
+		HELPER.run('newProject',{'"'..IDE.getProjectPath()..'"', new_pj_name})
 		IDE.refreshProjectList()
 	end,
 
