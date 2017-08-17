@@ -180,7 +180,7 @@ IDE = {
 					IDE.refresh_pjlist_timeout = 5
 					IDE.refreshProjectList()	
 				end	
-	            if #IDE.project_list > 0 then
+	            if #IDE.project_list > 0 and not IDE.isProjectOpen() then
 
 	                imgui.BeginChild("project list", 220, 60, true)
 	                for p, project in ipairs(IDE.project_list) do
@@ -197,6 +197,12 @@ IDE = {
 	                end
 	                imgui.EndChild()
 	            end
+
+	            -- close project
+	            if IDE.isProjectOpen() and imgui.MenuItem("close project") then
+	            	love.event.quit( "restart" )
+	            end
+
 	            imgui.EndMenu()
 	        end
 
@@ -355,9 +361,9 @@ IDE = {
 	    		plugin.draw()
 	    	end
 	    end)
-	    
+	   
 	    --checkUI("titlebar.new_project", IDE.newProject)
-	    if UI.titlebar.new_project then UI.titlebar.new_project = IDE.newProject() end
+	    --if UI.titlebar.new_project then UI.titlebar.new_project = IDE.newProject() end
 	    if UI.titlebar.show_dev_tools then UI.titlebar.show_dev_tools = imgui.ShowTestWindow(true) end
 	    
 	    if UI.titlebar.show_style_editor then 

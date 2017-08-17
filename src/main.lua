@@ -4,7 +4,7 @@
 (D) done, but feels incomplete
 (W) wip
 
-    - add 'return self' to end of some classes                      (W)
+    - add 'return self' to end of some classes                      (C)
     - slowly replace 3rd party plugins                              (D)
         ~ keep an eye on system.lua for os compatibility issues     (W)
     - game exporting (D=works on mac and windows)
@@ -18,13 +18,14 @@
     - run game externally (export and run)                          (W)
     - plugins
         - asset explorer                                            (D)
-            - call rename method of modules on rename
+            - call rename method of modules on rename               (W)
         - image editor (pixel art, spritesheets)
-        - exporter
-            - see "game exporting" ^^^
+        - exporter                                                  (-)
+            - see "game exporting" ^^^                              (-)
     - scene editor
-        - zooming in/out                                            (W)
+        - zooming in/out                                            (D)
         - add/remove/move layer                                     (D)
+    - closing a project
 
     BUGS
 
@@ -33,6 +34,7 @@
         - Some shaders cause screen to go white/black (crt)
         - Poor use of canvases
     - IDE text color does not update on errors
+    - replace more helper.py functions (newScript)
 ]]
 
 package.cpath = package.cpath .. ";/usr/local/lib/lua/5.2/?.so;/usr/local/lib/lua/5.2/?.dll;./?.dll;./?.so"
