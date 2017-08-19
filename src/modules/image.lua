@@ -11,6 +11,25 @@ function getImgPathByName(name)
 	end
 end
 
+local updateImageList_timer
+local object_list = {}
+function updateImageList()
+	image_list = {}
+	object_list = {}
+	local image_files = SYSTEM.scandir(IDE.getProjectPath()..'/assets/image')
+
+	for s, img in ipairs(image_files) do
+		if not image_info[img] then
+			image_info[img] = {
+				name=IDE.validateName(img:gsub(extname(img),'')),
+				open=false
+			}
+		end
+		table.insert(image_list, img)
+		table.insert(object_list, image_info[img].name)
+	end
+end
+
 ideImage = {
 	addImage = function(file)
 		if IDE.isProjectOpen() then
@@ -19,25 +38,18 @@ ideImage = {
 		end
 	end,
 
-	getObjectList = function() 
-		image_list = {}
-		local ret_list = {}
-		local image_files = SYSTEM.scandir(IDE.getProjectPath()..'/assets/image')
+	onOpenProject = function()
+		updateImageList()
+		updateImageList_timer = Timer()
+		updateImageList_timer:every(updateImageList, UI.getSetting('project_reload_timer').value):start()
+	end,
 
-		for s, img in ipairs(image_files) do
-			if not image_info[img] then
-				image_info[img] = {
-					name=IDE.validateName(img:gsub(extname(img),'')),
-					open=false
-				}
-			end
-			table.insert(image_list, img)
-			table.insert(ret_list, image_info[img].name)
-		end
-		return ret_list
+	getObjectList = function() 
+		return object_list
 	end,
 
 	getAssets = function()
+		updateImageList()
 		local ret_str = ''
 		for i, img in ipairs(image_list) do
 			local img_info = image_info[img]

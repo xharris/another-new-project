@@ -9,7 +9,14 @@ _FIRST_STATE = _empty_state
 local ideState = {
 	new = function()
 		local state_name = IDE.addGameType('state')
-		HELPER.run('newScript', {'state', IDE.getCurrentProject(), state_name})
+		print('add state '..state_name)
+		HELPER.copyScript(
+			SYSTEM.cwd.."/src/template/state.lua",
+			IDE.getProjectPath().."/scripts/state/"..state_name..".lua",
+			{
+				['<NAME>'] = state_name
+			}
+		)
 		table.insert(new_states, state_name)
 	end,
 
@@ -46,7 +53,7 @@ local ideState = {
 
 	onReload = function()
 		if #state_list > 0 then
-			_FIRST_STATE = state_list[1] -- change later
+			_FIRST_STATE = UI.getSetting('initial_state')
 		end
 	end,
 

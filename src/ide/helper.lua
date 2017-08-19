@@ -15,5 +15,24 @@ HELPER = {
 		if result ~= '' then
 			return loadstring(result)()
 		end
+	end,
+
+	copyScript = function(template_path, dest, replacements)
+		-- make sure project folder exists
+		SYSTEM.mkdir(dirname(dest))
+
+		-- read template file and make replacements
+		local s_template = ''
+		for line in io.lines(template_path) do
+			for r_old, r_new in pairs(replacements) do
+				s_template = s_template .. line:gsub(r_old, r_new) .. '\n'
+			end
+		end
+
+		-- write it
+		print('write to '..dest)
+		local f_output = io.open(dest, 'w')
+		f_output:write(s_template)
+		f_output:close()
 	end
 }

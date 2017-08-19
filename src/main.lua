@@ -25,7 +25,7 @@
     - scene editor
         - zooming in/out                                            (D)
         - add/remove/move layer                                     (D)
-    - closing a project
+    - closing a project                                             (C)
 
     BUGS
 
@@ -35,6 +35,7 @@
         - Poor use of canvases
     - IDE text color does not update on errors
     - replace more helper.py functions (newScript)
+    - start the scene when a new one is created
 ]]
 
 package.cpath = package.cpath .. ";/usr/local/lib/lua/5.2/?.so;/usr/local/lib/lua/5.2/?.dll;./?.dll;./?.so"

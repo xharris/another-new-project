@@ -118,7 +118,6 @@ SYSTEM = {
 	end,
 
 	execute = function(cmd)
-		print('open '..cmd)
 		SYSTEM.runCmd(
 			{
 				mac="echo "..cmd.." > blanke.command; chmod +x blanke.command; open blanke.command",

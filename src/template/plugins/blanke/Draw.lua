@@ -26,30 +26,22 @@ Draw = Class{
 		love.graphics.pop()
 		return Draw
 	end,
-
-	rect = function(...)
-		local args = {...}
+    
+    callDrawFunc = function(shape, args)
 		Draw._draw(function()
-			love.graphics.rectangle(unpack(args))
+			love.graphics[shape](unpack(args))
 		end)
 		return Draw
-	end,
-
-	circle = function(...)
-		local args = {...}
-		Draw._draw(function()
-			love.graphics.circle(unpack(args))
-		end)
-		return Draw
-	end,
-
-	polygon = function(...)
-		local args = {...}
-		Draw._draw(function()
-			love.graphics.polygon(unpack(args))
-		end)
-		return Draw
-	end,
+    end,
+    
+    point = function(...) Draw.callDrawFunc('points', {...}) end,
+    line = function(...) Draw.callDrawFunc('line', {...}) end,
+    rect = function(...) Draw.callDrawFunc('rectangle', {...}) end,
+    circle = function(...) Draw.callDrawFunc('circle', {...}) end,
+    polygon = function(...) Draw.callDrawFunc('polygon', {...}) end,
+    text = function(...) Draw.callDrawFunc('print', {...}) end,
 }
+
+love.graphics.setDefaultFilter("nearest","nearest")
 
 return Draw

@@ -2,11 +2,12 @@ local new_pj_name = 'myproject'
 local opening_project = false
 
 function updateTimeout(dt, var)
-	if IDE[var] > 0 then
-		IDE[var] = IDE[var] - dt
+	if var > 0 then
+		var = var - dt
 	else
-		IDE[var] = 0
+		var = 0
 	end
+	return var
 end
 
 IDE = {
@@ -66,11 +67,11 @@ IDE = {
 	end,
 
 	update = function(dt)
-		updateTimeout(dt, 'update_timeout')
-		updateTimeout(dt, 'watch_timeout')
-		updateTimeout(dt, 'refresh_pjlist_timeout')
+		IDE.update_timeout = updateTimeout(dt, IDE.update_timeout)
+		IDE.watch_timeout = updateTimeout(dt, IDE.watch_timeout)
+		IDE.refresh_pjlist_timeout = updateTimeout(dt, IDE.refresh_pjlist_timeout)
 
-    	if IDE.isProjectOpen() and IDE.watch_timeout == 0 then
+    	if IDE.isProjectOpen() and IDE.watch_timeout == 0 and not IDE.errd then
     		IDE.watch_timeout = UI.getSetting('project_reload_timer').value
     		
     		_watcher(IDE.getShortProjectPath(), function(file_name)
@@ -78,7 +79,7 @@ IDE = {
 			end)
 		end
 
-		if IDE._want_reload then
+		if IDE._want_reload and not IDE.errd then
 			IDE.reload()
 		end
 	end,
@@ -223,6 +224,7 @@ IDE = {
     							status, initial_state = imgui.Combo("initial state", table.find(obj_list, UI.getSetting('initial_state')), obj_list, #obj_list);
     							if status then
     								UI.setSetting('initial_state',obj_list[initial_state])
+    								--_FIRST_STATE = obj_list[initial_state]
     							end
 	        				end
 
@@ -522,10 +524,11 @@ IDE = {
 				end
 			end)
 
+			package.loaded.BlankE = nil
+			require('template.plugins.blanke.Blanke')
 			BlankE._ide_mode = true
 			if not dont_init_blanke then
-				BlankE.init(_FIRST_STATE)
-					
+				BlankE.init(UI.getSetting('initial_state'))
 			end
 
 			IDE._want_reload = false
@@ -628,8 +631,8 @@ IDE = {
 	-- gets the name for the new game object
 	addGameType = function(obj_type)
 		local obj_name = obj_type..#ifndef(game[obj_type],{})
-
-		return IDE.validateName(obj_name, game[obj_type])
+		print('try '..obj_name)
+		return IDE.validateName(obj_name, ifndef(game[obj_type], {}))
 	end,
 
 	addResource = function(file)

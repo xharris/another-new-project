@@ -1,7 +1,7 @@
 Timer = Class{
 	init = function(self, duration)
 		self._before = {}					-- when Timer.start is called
-		self._during = {}					-- every x seconds while timer is running
+		self._every = {}					-- every x seconds while timer is running
 		self._after = {}					-- when the timer is over 
 		self.time = 0						-- seconds
 		self.duration = ifndef(duration,0)	-- seconds
@@ -25,7 +25,7 @@ Timer = Class{
 	end,
 
 	every = function(self, func, interval)
-		table.insert(self._during,{
+		table.insert(self._every,{
 			func=func,
 			interval=ifndef(interval,1),
 			last_time_ran=0
@@ -57,19 +57,19 @@ Timer = Class{
 
 			self.time = love.timer.getTime() - self._start_time
 
-			-- call DURING
+			-- call EVERY
 			if self.duration == 0 or self.time <= self.duration then
 				local fl_time = math.floor(self.time)
-				for d, during in ipairs(self._during) do
-					if fl_time ~= 0 and fl_time % during.interval == 0 and during.last_time_ran ~= fl_time then
-						during.func()
-						during.last_time_ran = fl_time
-						all_called = false
+				for e, every in ipairs(self._every) do
+					if fl_time ~= 0 and fl_time % every.interval == 0 and every.last_time_ran ~= fl_time then
+						every.func()
+						every.last_time_ran = fl_time
 					end
+					all_called = false
 				end
 			end
 
-			if self.duration ~= 0 and self.time >= self.duration and self._running then
+			if #self._after > 0 and self.duration ~= 0 and self.time >= self.duration and self._running then
 				-- call AFTER
 				local calls_left = #self._after
 				for a, after in ipairs(self._after) do

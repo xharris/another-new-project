@@ -74,6 +74,7 @@ Dialog 	= blanke_require('Dialog')
 Tween 	= blanke_require('Tween')
 Scene 	= blanke_require('Scene')
 Camera 	= blanke_require('Camera') 	-- hump.camera cuz it's so brilliant
+Canvas  = blanke_require('Canvas')
 
 -- load bundled effects
 local eff_path = dirname((...):gsub('[.]','/'))..'effects'
@@ -88,7 +89,7 @@ local max_fps = 120
 local min_dt = 1/max_fps
 local next_time = love.timer.getTime()
 
-_err_state = Class{error_msg='NO GAME'}
+_err_state = Class{classname='_err_state',error_msg='NO GAME'}
 
 BlankE = {
 	_ide_mode = false,
@@ -99,6 +100,7 @@ BlankE = {
 	_callbacks_replaced = false,
 	init = function(first_state)
 		first_state = ifndef(first_state, _err_state)
+		print_r(first_state)
 		if not BlankE._callbacks_replaced then
 			BlankE._callbacks_replaced = true
 
@@ -126,7 +128,9 @@ BlankE = {
 		-- register States
 	    updateGlobals(0)
 		if first_state then
-			-- State.enter(first_state)
+			if type(first_state) == 'string' then
+				first_state = _G[first_state]
+			end
 			State.switch(first_state)
 		end
 
@@ -302,8 +306,9 @@ BlankE = {
 			scene._is_active = false
 		end)
 		
-		if BlankE._ide_mode and #game.scene == 0 and BlankE.getCurrentState() ~= '_empty_state' then
-			BlankE._drawGrid()
+        -- TODO: problematic, draws 2 grid sometimes, just remove?
+		if BlankE._ide_mode and #game.scene > 0  and BlankE.getCurrentState() ~= '_empty_state' then
+			--BlankE._drawGrid()
 		end
 
 	    local cur_time = love.timer.getTime()
