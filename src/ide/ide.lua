@@ -596,7 +596,6 @@ IDE = {
 		asset_str = asset_str.."if _REPLACE_REQUIRE then\n\trequire = oldreq\nend"
 
 		SYSTEM.mkdir(IDE.getProjectPath())
-		--HELPER.run('makeDirs', {'"'..IDE.getProjectPath()..'"'})
 		local file = io.open(IDE.getProjectPath()..'/assets.lua','w+')
 		if assert(file,"ERR: problem writing to '"..IDE.getProjectPath().."/assets.lua'") then
 			file:write(asset_str)

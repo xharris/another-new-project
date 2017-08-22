@@ -3,7 +3,13 @@ local entity_list = {}
 local ideEntity = {
 	new = function()
 		local ent_name = IDE.addGameType('entity')
-		HELPER.run('newScript', {'entity', IDE.getCurrentProject(), ent_name})
+		HELPER.copyScript(
+			SYSTEM.cwd.."/src/template/entity.lua",
+			IDE.getProjectPath().."/scripts/entity/"..ent_name..".lua",
+			{
+				['<NAME>'] = ent_name
+			}
+		)
 		table.insert(entity_list, ent_name)
 	end,
 

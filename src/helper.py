@@ -2,25 +2,6 @@ import sys,os,subprocess,shutil,zipfile
 
 BASE_FOLDER = os.path.dirname(__file__)
 
-def copyTemplate(src, dest, replacements):
-	src = os.path.normpath(src)
-	dest = os.path.normpath(dest)
-
-	if not os.path.exists(os.path.dirname(dest)):
-		os.makedirs(os.path.dirname(dest))
-
-	# read template
-	s_template = open(src,"r").read()
-
-	# make replacements
-	for r_src in replacements:
-		r_dest = replacements[r_src]
-		s_template = s_template.replace(r_src, r_dest)
-
-	# write new file
-	if not os.path.exists(dest):
-		open(dest, "w").write(s_template)
-
 def newProject(pj_folder, pj_name):
 	pj_folder = os.path.normpath(pj_folder)
 
@@ -45,21 +26,6 @@ def newProject(pj_folder, pj_name):
 		if os.path.exists(file_path):
 			os.remove(file_path)
 
-def newScript(obj_type, project_path, obj_name):
-	copyTemplate(
-		os.path.join(BASE_FOLDER,'template', obj_type+'.lua'),
-		os.path.join(project_path,'scripts',obj_type,obj_name+'.lua'),
-		{
-			'<NAME>':obj_name
-		}
-	)
-
-def editFile(path):
-	cmd = path
-	if sys.platform == "darwin":
-		cmd = "open "+path
-	subprocess.Popen([cmd], shell=True,stdin=None, stdout=None, stderr=None, close_fds=True)
-
 def copyResource(res_type, src, project_path):
 	filename = os.path.basename(src)
 	dest = os.path.join(project_path,'assets',res_type,filename)
@@ -68,21 +34,6 @@ def copyResource(res_type, src, project_path):
 		os.makedirs(os.path.dirname(dest))
 
 	shutil.copyfile(src, dest)
-
-def makeDirs(path):
-	path = os.path.normpath(path)
-	if os.path.isfile(path):
-		path = os.path.dirname(path)
-	if not os.path.exists(os.path.dirname(path)):
-		os.makedirs(os.path.dirname(path))
-
-def listFiles(path):
-	file_list = os.listdir(path)
-	print('return {'+','.join(map(lambda path: "\""+path+"\"",file_list))+'}')
-
-
-def isDirectory(path):
-	print('return '+("true" if os.path.isdir(path) else "false"))
 
 def zipDir(src, dest):
     zf = zipfile.ZipFile("%s" % (dest), "w", zipfile.ZIP_DEFLATED)
@@ -97,12 +48,12 @@ def zipDir(src, dest):
 
 functions = {
 	'newProject':newProject,
-	'newScript':newScript,
-	'editFile':editFile,			# deprecated
+	#'newScript':newScript,			# deprecated
+	#'editFile':editFile,			# deprecated
 	'copyResource':copyResource,
-	'makeDirs':makeDirs,
-	'listFiles':listFiles,			# deprecated
-	'isDirectory':isDirectory,		# unused?
+	#'makeDirs':makeDirs,			# deprecated
+	#'listFiles':listFiles,			# deprecated
+	#'isDirectory':isDirectory,		# deprecated
 	'zipDir':zipDir
 }
 

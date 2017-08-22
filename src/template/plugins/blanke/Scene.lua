@@ -384,34 +384,58 @@ Scene = Class{
 		return self
 	end,
 
-	removeTile = function(self, x, y, layer, img_name)
+	-- returns list of tile_data
+	getTile = function(self, x, y, layer, img_name)
 		x = x-(x%self._snap[1])
 		y = y-(y%self._snap[2])
 		layer = self:_checkLayerArg(layer)
-		local rm_tiles = {}
+		local ret_tiles = {}
 
-		-- find tiles that should be removed
 		local tiles = self.hash_tile:search(x, y)
 		for hash, tile in pairs(tiles) do
-			local can_remove = true
+			local can_return = true
 
 			if tile.layer ~= layer then
-				can_remove = false
+				can_return = false
 			end
 			if img_name and self._delete_similar and tile.img_name ~= img_name then
-				can_remove = false
+				can_return = false
 			end
 
-			if can_remove then
-				table.insert(rm_tiles, tile)
-				self.hash_tile:delete(x, y, tile)
+			if can_return then
+				table.insert(ret_tiles, tile)
 			end
 		end
+
+		return ret_tiles
+	end,
+
+	-- same as getTile but returns list of Image()
+	getTileImage = function(self, x, y, layer, img_name)
+		local ret_tiles = self:getTile(x,y,layer,img_name)
+		for t, tile in pairs(ret_tiles) do
+			ret_tiles[t] = self:tileToImage(tile)
+		end
+		return ret_tiles
+	end,
+
+	tileToImage = function(self, tile_data)
+		local img = self.images[tile_data.img_name]
+		local quad = love.graphics.newQuad(
+			tile_data.crop.x, 		tile_data.crop.y,
+			tile_data.crop.width,	tile_data.crop.height,
+			img.width,				img.height)
+		return img:crop(tile_data.crop.x, tile_data.crop.y, tile_data.crop.width, tile_data.crop.height)
+	end,
+
+	removeTile = function(self, x, y, layer, img_name)
+		local rm_tiles = self:getTile(x,y,layer,img_name)
 
 		-- remove them from spritebatches
 		for l_name, it_layer in pairs(self.layers) do
 			if layer == l_name then
 				for t, tile in ipairs(rm_tiles) do
+					self.hash_tile:delete(x, y, tile)
 					it_layer.tile[tile.img_name]:set(tile.id, 0, 0, 0, 0, 0)
 				end
 			end

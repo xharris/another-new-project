@@ -2,10 +2,11 @@ local _images = {}
  
 Image = Class{
 	init = function(self, name)
-		name = tostring(name)
-
-		assert(assets[name] ~= nil, "No image named '"..name.."'")
-		self.image = assets[name]()
+		if type(name) == "string" and assets[name] then
+			self.image = assets[name]()
+		else
+			self.image = love.graphics.newImage(name)
+		end
 
 		self.x = 0
 		self.y = 0
@@ -51,7 +52,23 @@ Image = Class{
 
     __call = function(self)
     	return self.image
-	end
+	end,
+
+	-- break up image into pieces
+	chop = function(self, piece_w, piece_h)
+
+	end,
+
+	crop = function(self, x, y, w, h)
+		-- draw quad to canvas (TODO: any hits to performance?)
+		local img_canvas = love.graphics.newCanvas(w, h)
+		img_canvas:renderTo(function()
+			love.graphics.draw(self.image, -x , -y)
+		end)
+
+		-- convert canvas to image
+		return Image(img_canvas:newImageData())
+	end,
 }
 
 return Image

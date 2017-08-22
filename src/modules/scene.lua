@@ -60,7 +60,6 @@ function writeSceneFiles()
 			local scene_data = scene:export(path)
 
 			SYSTEM.mkdir(dirname(scene_path))
-			--HELPER.run('makeDirs', {'"'..scene_path..'"'})
 			local file = io.open(scene_path,"w+")
 			file:write(scene_data)
 			file:close()

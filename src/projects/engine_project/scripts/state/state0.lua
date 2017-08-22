@@ -20,6 +20,8 @@ function state0:enter(previous)
     main_view = View()
     main_view:follow(main_player)                         
     --main_effect = Effect("crt") 
+
+    copy_tiles = main_scene:getTileImage(480, 96)
 end
 
 function state0:update(dt)
@@ -30,6 +32,10 @@ function state0:draw()
 	love.graphics.setColor(255,0,0,255)
 	love.graphics.print("hey how goes it", 100,100)
 	love.graphics.setColor(255,255,255,255)
+
+	for t, tile in ipairs(copy_tiles) do
+		tile:draw()
+	end
 
 	new_img:draw() 
 
