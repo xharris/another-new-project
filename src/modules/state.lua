@@ -9,7 +9,6 @@ _FIRST_STATE = _empty_state
 local ideState = {
 	new = function()
 		local state_name = IDE.addGameType('state')
-		print('add state '..state_name)
 		HELPER.copyScript(
 			SYSTEM.cwd.."/src/template/state.lua",
 			IDE.getProjectPath().."/scripts/state/"..state_name..".lua",

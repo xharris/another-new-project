@@ -120,7 +120,7 @@ Scene = Class{
 			for obj_type, objects in pairs(data) do
 				local out_layer = {}
 				for o, obj in ipairs(objects) do
-					if obj._loadedFromFile then
+					if obj._loadedFromFile and not obj._destroyed then
 						if obj_type == 'entity' then
 							local ent_data = {
 								classname=obj.classname,
@@ -323,12 +323,17 @@ Scene = Class{
 
 	addEntity = function(self, ...)
 		local args = {...}
+		local ret_ent
 		if type(args[1]) == "string" then
-			return self:_addEntityStr(unpack(args))
+			ret_ent = self:_addEntityStr(unpack(args))
 		end
 		if type(args[1]) == "table" then
-			return self:_addEntityTable(unpack(args))
+			ret_ent = self:_addEntityTable(unpack(args))
 		end
+		if ret_ent then
+			ret_ent:update(0)
+		end
+		return ret_ent
 	end,
 
 	_addEntityTable = function(self, entity, layer) 

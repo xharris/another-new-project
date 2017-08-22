@@ -180,10 +180,6 @@ Map = Class{
 	-- str name: reference name of shape
 	addShape = function(self, name, shape, args, tag, xoffset, yoffset)
 		local new_shape
-
-		--print('new ' .. tag)
-		--print_r(args)
-
 		-- args {x, y, width, height}
 		if shape == "rectangle" then
 			args[1] = args[1] + xoffset

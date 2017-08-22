@@ -20,7 +20,6 @@ local delete_similar = true
 -- hitbox placing
 local selected_hitbox = nil
 
-
 local placeable = {'entity','image','hitbox'}
 local listable = {'entity','view','effect'}
 
@@ -490,36 +489,40 @@ local ideScene = {
 									for layer, entities in pairs(obj_list) do
 										if imgui.TreeNode(string.format(layer..' (%d)###'..layer,#entities)) then
 											for e, ent in ipairs(entities) do
-												local clicked = false
-												local flags = {'OpenOnArrow'}
 
-												if selected_entity == ent.uuid then
-													table.insert(flags, 'Selected')
-												end
+												if not ent._destroyed then
+													local clicked = false
+													local flags = {'OpenOnArrow'}
 
-												inspectObj(ent, string.format('%s (%d,%d)', ifndef(ent.nickname, ent.classname), ent.x, ent.y), flags)
-
-												if imgui.IsItemHovered() then
-													ent.show_debug = true
-
-													if imgui.IsKeyReleased(10) or imgui.IsKeyReleased(11) then	
-			        									ent:destroy()
-													end
-
-												elseif selected_entity ~= ent.uuid then
-													ent.show_debug = false
-												end
-
-												--[[ camera focus/highlight on entity selection (TODO: BUGGY)
-												if imgui.IsItemClicked() then
 													if selected_entity == ent.uuid then
-														selected_entity = nil
-														curr_scene:focusEntity()
-													else
-														selected_entity = ent.uuid
-														curr_scene:focusEntity(ent)
+														table.insert(flags, 'Selected')
 													end
-												end]]
+
+													inspectObj(ent, string.format('%s (%d,%d)', ifndef(ent.nickname, ent.classname), ent.x, ent.y), flags)
+
+													if imgui.IsItemHovered() then
+														ent.show_debug = true
+
+														if imgui.IsKeyReleased(10) or imgui.IsKeyReleased(11) then	
+				        									ent:destroy()
+														end
+
+													elseif selected_entity ~= ent.uuid then
+														ent.show_debug = false
+													end
+
+													--[[ camera focus/highlight on entity selection (TODO: BUGGY)
+													if imgui.IsItemClicked() then
+														if selected_entity == ent.uuid then
+															selected_entity = nil
+															curr_scene:focusEntity()
+														else
+															selected_entity = ent.uuid
+															curr_scene:focusEntity(ent)
+														end
+													end]]
+												end
+
 											end
 											imgui.TreePop()
 										end
@@ -531,7 +534,7 @@ local ideScene = {
 
 							if obj == 'view' and imgui.TreeNode(obj) then
 								_iterateGameGroup('view', function(view, v)
-									if view.nickname ~= '_fake_view' then
+									if view.nickname ~= '_fake_view' and not view._destroyed then
 										inspectObj(view, ifndef(view.nickname, 'view'..v))
 									end
 								end)
@@ -541,7 +544,9 @@ local ideScene = {
 
 							if obj =='effect' and imgui.TreeNode(obj) then
 								_iterateGameGroup('effect', function(effect, v)
-									inspectObj(effect, ifndef(effect.name, 'effect'..v))
+									if not effect._destroyed then
+										inspectObj(effect, ifndef(effect.name, 'effect'..v))
+									end
 								end)
 
 								imgui.TreePop()

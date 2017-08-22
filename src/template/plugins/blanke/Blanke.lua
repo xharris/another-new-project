@@ -13,8 +13,11 @@ AUTO_UPDATE = true
 function _addGameObject(type, obj)
     obj.uuid = uuid()
     obj.nickname = ifndef(obj.nickname,obj.classname)
+    obj.pause = ifndef(obj.pause, false)
+    obj._destroyed = ifndef(obj._destroyed, false)
 
     if obj.update then obj.auto_update = true end
+
     obj._destroyed = false
     if not obj.destroy then
 
@@ -98,9 +101,9 @@ BlankE = {
 	_mouse_x = 0,
 	_mouse_y = 0,
 	_callbacks_replaced = false,
+	pause = false,
 	init = function(first_state)
 		first_state = ifndef(first_state, _err_state)
-		print_r(first_state)
 		if not BlankE._callbacks_replaced then
 			BlankE._callbacks_replaced = true
 
@@ -164,6 +167,7 @@ BlankE = {
 	main_cam = nil,
 	snap = {32,32},
 	initial_cam_pos = {0,0},
+
 	_drawGrid = function()
 		if not (BlankE.show_grid and BlankE._ide_mode) then return BlankE end
 
@@ -294,7 +298,12 @@ BlankE = {
 	    for i_arr, arr in pairs(game) do
 	        for i_e, e in ipairs(arr) do
 	            if e.auto_update then
-	                e:update(dt)
+	            	local old_pause = e.pause
+	            	if not BlankE.pause then 
+	            		e.pause = BlankE.pause
+	                	e:update(dt)
+	            	end
+	                e.pause = old_pause
 	            end
 	        end
 	    end

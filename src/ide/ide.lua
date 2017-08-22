@@ -263,18 +263,6 @@ IDE = {
 	        		UI.randomizeIDEColor()
 	        	end
 
-	        	-- ide font
-	        	imgui.PushItemWidth(120)
-	        	local fonts = love.filesystem.getDirectoryItems('fonts')
-	        	for f, font in ipairs(fonts) do
-	        		fonts[f] = font:gsub(extname(font),'')
-	        	end
-				status, new_font = imgui.Combo("font", table.find(fonts, UI.getSetting('font')), fonts, #fonts);
-				if status then
-					UI.setSetting('font',fonts[new_font])
-					UI.setStyling()
-				end
-
 	        	-- project reload timer
 	        	imgui.PushItemWidth(80)
 	        	local reload_timer = UI.getSetting("project_reload_timer")
@@ -328,6 +316,18 @@ IDE = {
 
 	        -- DEV
 	        if UI.titlebar.secret_stuff and beginMenu("Dev") then
+	        	-- ide font
+	        	imgui.PushItemWidth(120)
+	        	local fonts = love.filesystem.getDirectoryItems('fonts')
+	        	for f, font in ipairs(fonts) do
+	        		fonts[f] = font:gsub(extname(font),'')
+	        	end
+				status, new_font = imgui.Combo("font", table.find(fonts, UI.getSetting('font')), fonts, #fonts);
+				if status then
+					UI.setSetting('font',fonts[new_font])
+					UI.setStyling()
+				end
+
 	            if imgui.MenuItem("dev tools") then
 	            	UI.titlebar.show_dev_tools = true
 	            end
@@ -338,13 +338,24 @@ IDE = {
 	        end
 	        
 	        -- manual reload button
-	        if IDE.isProjectOpen() and UI.drawIconButton("reload", "reload game") then
-				IDE.reload()
-			end
+	        if IDE.isProjectOpen() then
+	        	if UI.drawIconButton("reload", "reload game") then
+					IDE.reload()
+				end
+				imgui.SameLine()
 
-			-- refresh just state
-	        if IDE.isProjectOpen() and UI.drawIconButton("reload", "restart state") then
-				
+				-- refresh just state
+		        --if IDE.isProjectOpen() and UI.drawIconButton("reload", "restart state") then
+					
+				--end
+
+				-- pause game
+				if not BlankE.pause and UI.drawIconButton("pause", "pause game") then
+					BlankE.pause = true 
+				elseif BlankE.pause and UI.drawIconButton("play", "resume game") then 
+					BlankE.pause = false
+				end
+				imgui.SameLine()
 			end
 
 	        imgui.EndMainMenuBar()
@@ -631,7 +642,6 @@ IDE = {
 	-- gets the name for the new game object
 	addGameType = function(obj_type)
 		local obj_name = obj_type..#ifndef(game[obj_type],{})
-		print('try '..obj_name)
 		return IDE.validateName(obj_name, ifndef(game[obj_type], {}))
 	end,
 

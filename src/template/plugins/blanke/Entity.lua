@@ -1,3 +1,7 @@
+local cos = math.cos
+local sin = math.sin
+local rad = math.rad
+
 Entity = Class{
 	x = 0,
 	y = 0,
@@ -73,7 +77,7 @@ Entity = Class{
 			self:preUpdate(dt)
 		end	
 
-		if self.sprite ~= nil and self.sprite.update ~= nil then
+		if self.sprite ~= nil and self.sprite.update ~= nil and not self.pause then
 			self.sprite:update(self.sprite_speed*dt)
 		end
 
@@ -100,18 +104,22 @@ Entity = Class{
 		-- check for collisions
 		if not self.pause then
 			-- calculate speed/direction
-			local speedx = self.speed * math.cos(math.rad(self.direction))
-			local speedy = self.speed * math.sin(math.rad(self.direction))
+			local speedx, speedy = 0,0
+			if speed ~= 0 then
+				speedx = self.speed * cos(rad(self.direction))
+				speedy = self.speed * sin(rad(self.direction))
+			end
 
 			-- calculate gravity/gravity_direction
-			local gravx = self.gravity * math.cos(math.rad(self.gravity_direction))
-			local gravy = self.gravity * math.sin(math.rad(self.gravity_direction))
-		
-			--self.hspeed = ifndef(self.hspeed, 0)
-			--self.vspeed = ifndef(self.vspeed, 0)
-
-			self.hspeed = self.hspeed + gravx
-			self.vspeed = self.vspeed + gravy
+			local gravx, gravy = 0,0
+			if self.gravity ~= 0 then
+				gravx = self.gravity * cos(rad(self.gravity_direction))
+				gravy = self.gravity * sin(rad(self.gravity_direction))
+			end
+	
+			-- add gravity to hspeed/vspeed
+			if gravx ~= 0 then self.hspeed = self.hspeed + gravx end
+			if gravy ~= 0 then self.vspeed = self.vspeed + gravy end
 
 			local dx = self.hspeed + speedx
 			local dy = self.vspeed + speedy
@@ -183,7 +191,7 @@ Entity = Class{
 			local hc_shape = self.shapes[shape_name]:getHCShape()
 			return HC.collisions(self.shapes[shape_name])
 		end
-		--return {}
+		return {}
 	end,
 
 	debugSprite = function(self)
@@ -235,6 +243,7 @@ Entity = Class{
 
 	_refreshSpriteDims = function(self)
 		self.sprite_width, self.sprite_height = self.sprite:getDimensions()
+		return self
 	end,
 
 	draw = function(self)
