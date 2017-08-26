@@ -18,8 +18,7 @@ function state0:enter(previous)
 	main_scene:addEntity(main_player)
   
     main_view = View()
-    main_view:follow(main_player)                         
-    --main_effect = Effect("crt") 
+    main_view:follow(main_player)      
 
     copy_tiles = main_scene:getTileImage(480, 96)
 end

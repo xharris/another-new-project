@@ -24,6 +24,26 @@ function SecondsToClock(seconds)
   return ''
 end
 
+local updateAudioList_timer
+local object_list = {}
+function updateAudioList()
+	audio_list = {}
+	object_list = {}
+	local audio_files = SYSTEM.scandir(IDE.getProjectPath()..'/assets/audio')
+	for s, aud in ipairs(audio_files) do
+		if not audio_info[aud] then
+			audio_info[aud] = {
+				name=IDE.validateName(aud:gsub(extname(aud),'')),
+				open=false,
+				_asset=nil,
+				type="stream"
+			}
+		end
+		table.insert(audio_list, aud)
+		table.insert(object_list, audio_info[aud].name)
+	end
+end
+
 ideAudio = {
 	addAudio = function(file)
 		if IDE.isProjectOpen() then
@@ -31,23 +51,14 @@ ideAudio = {
 		end
 	end,
 
+	onOpenProject = function()
+		updateAudioList()
+		updateAudioList_timer = Timer()
+		updateAudioList_timer:every(updateAudioList, UI.getSetting('project_reload_timer').value):start()
+	end,
+
 	getObjectList = function() 
-		audio_list = {}
-		local ret_list = {}
-		local audio_files = SYSTEM.scandir(IDE.getProjectPath()..'/assets/audio')
-		for s, aud in ipairs(audio_files) do
-			if not audio_info[aud] then
-				audio_info[aud] = {
-					name=IDE.validateName(aud:gsub(extname(aud),'')),
-					open=false,
-					_asset=nil,
-					type="stream"
-				}
-			end
-			table.insert(audio_list, aud)
-			table.insert(ret_list, audio_info[aud].name)
-		end
-		return ret_list
+		return object_list
 	end,
 
 	getAssets = function()

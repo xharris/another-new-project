@@ -74,7 +74,7 @@ UI = {
 		-- IDE
 		show_console = false,
 		show_scene_editor = true,
-		secret_stuff = true,
+		secret_stuff = false,
 
 		-- DEV
 		show_dev_tools = false,

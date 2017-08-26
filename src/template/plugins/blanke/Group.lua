@@ -12,7 +12,7 @@ Group = Class{
 		self.children[i] = nil
 	end,
 
-	func = function(self, func)
+	call = function(self, func)
 		for i_c, c in ipairs(self.children) do
 			func(c)
 		end
