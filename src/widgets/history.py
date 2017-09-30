@@ -1,5 +1,5 @@
 from Tkinter import *
-from blanke_widgets import bButton, bFrame
+from blanke_widgets import bButton, bFrame, bLabel
 
 class History:
 	def __init__(self, app):
@@ -33,12 +33,18 @@ class Entry:
 		self.fn_onClick = fn_onClick
 		self.has_arrow = True
 
+		self.history.app.font('history_arrow', {'family':'Calibri', 'size':12, 'weight':'bold'})
+
 		self.container = bFrame(self.history.app, self.history.app.frame('history'))
-		self.arrow = bButton(self.history.app, self.container, text='>')
-		self.button = bButton(self.history.app, self.container, text=label)
+		self.arrow = bLabel(self.history.app, self.container,
+			text='>',
+			font=self.history.app.font('history_arrow'),
+			fg='#263238',
+			bd=1
+		)
+		self.button = bButton(self.history.app, self.container, text=label, command=self.fn_onClick)
 
 		# button events
-		self.button.bind('<Button-1>', self.fn_onClick)
 		self.button.bind('<Button-3>', self.destroy)
 
 		self.button.pack(side=RIGHT)
@@ -49,7 +55,8 @@ class Entry:
 	def setArrow(self, value):
 		self.has_arrow = value
 		if value:
-			self.arrow.pack(side=LEFT)
+			self.arrow.pack(side=LEFT,
+			ipady=0)
 		else:
 			self.arrow.pack_forget()
 

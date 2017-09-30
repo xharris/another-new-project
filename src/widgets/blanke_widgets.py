@@ -1,4 +1,4 @@
-from Tkinter import Frame, Entry, Text, Button
+from Tkinter import Frame, Entry, Text, Button, Label
 
 def ifndef(d, key, value):
 	if not d.has_key(key): d[key] = value
@@ -52,5 +52,14 @@ class bButton(Button, object):
 			'bd': 0,
 			'highlightthickness': 1,
 			'highlightbackground': app.color('border')
+		})
+		super(self.__class__, self).__init__(frame, **kwargs)
+
+class bLabel(Label, object):
+	def __init__(self, app, frame=None, **kwargs):
+		stylize(kwargs,{
+			'bg': app.color('frame_bg'),
+			'fg': app.color('entry_text'),
+			'bd': 0,
 		})
 		super(self.__class__, self).__init__(frame, **kwargs)
