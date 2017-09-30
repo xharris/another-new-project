@@ -1,7 +1,7 @@
 Draw = Class{
 	color = {0,0,0,255},
 
-	setColor = function(r,g,b,a)
+	_parseColorArgs = function(r,g,b,a)
 		color = r
 		if (type(color) == "string") then
 			color = hex2rgb(color)
@@ -10,7 +10,16 @@ Draw = Class{
 		if (type(color) == "number") then
 			color = {r,g,b,a}
 		end
-		Draw.color = color
+		return color
+	end,
+
+	setBackgroundColor = function(r,g,b,a)
+		love.graphics.setBackgroundColor(Draw._parseColorArgs(r,g,b,a))
+		return Draw
+	end,
+
+	setColor = function(r,g,b,a)
+		Draw.color = Draw._parseColorArgs(r,g,b,a)
 		return Draw
 	end,
 
@@ -34,12 +43,12 @@ Draw = Class{
 		return Draw
     end,
     
-    point = function(...) Draw.callDrawFunc('points', {...}) end,
-    line = function(...) Draw.callDrawFunc('line', {...}) end,
-    rect = function(...) Draw.callDrawFunc('rectangle', {...}) end,
-    circle = function(...) Draw.callDrawFunc('circle', {...}) end,
-    polygon = function(...) Draw.callDrawFunc('polygon', {...}) end,
-    text = function(...) Draw.callDrawFunc('print', {...}) end,
+    point 	= function(...) return Draw.callDrawFunc('points', {...}) end,
+    line 	= function(...) return Draw.callDrawFunc('line', {...}) end,
+    rect 	= function(...) return Draw.callDrawFunc('rectangle', {...}) end,
+    circle 	= function(...) return Draw.callDrawFunc('circle', {...}) end,
+    polygon = function(...) return Draw.callDrawFunc('polygon', {...}) end,
+    text 	= function(...) return Draw.callDrawFunc('print', {...}) end,
 }
 
 love.graphics.setDefaultFilter("nearest","nearest")

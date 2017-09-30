@@ -15,11 +15,6 @@ function assets:tile_ground()
 	local new_img = love.graphics.newImage(asset_path..'assets/image/tile_ground.png')
 	return new_img
 end
-
-function assets:second_beat()
-	local new_aud = love.audio.newSource(asset_path..'assets/audio/second_beat.wav','stream')
-	return new_aud
-end
 function assets:main_scene()
 	 return asset_path.."assets/scene/main_scene.json"
 end
