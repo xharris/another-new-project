@@ -27,6 +27,11 @@ class bEntry(Entry, object):
 			'highlightcolor': app.color('entry_highlight')
 		})
 		super(self.__class__, self).__init__(frame, **kwargs)
+		
+		self.bind('<Control-a>', self.selectAll)
+
+	def selectAll(self, ev):
+		pass
 
 class bText(Text, object):
 	def __init__(self, app, frame=None, **kwargs):

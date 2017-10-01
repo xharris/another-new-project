@@ -19,6 +19,7 @@ class App:
     	self.color('entry_highlight', '#37474F')
     	self.color('frame_bg', '#37474F')
     	self.color('border', '#546E7A')
+        self.color('tooltip', '#90A4AE')
 
     	self.fonts = {}
     	self.font('editable', {'family':'Calibri', 'size':11, 'weight':'normal'})
