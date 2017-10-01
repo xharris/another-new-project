@@ -23,7 +23,7 @@ class Searchbar:
 		self.entry.pack(fill=X)
 
 		self.entry.bind('<Tab>', self.moveSelectionDown)
-		self.entry.bind('<Enter>', self.clickSelectedResult)
+		self.entry.bind('<Return>', self.clickSelectedResult)
 
 		def onselect():
 			print("hi there")
