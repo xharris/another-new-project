@@ -55,8 +55,7 @@ class Entry:
 	def setArrow(self, value):
 		self.has_arrow = value
 		if value:
-			self.arrow.pack(side=LEFT,
-			ipady=0)
+			self.arrow.pack(side=LEFT, ipady=0)
 		else:
 			self.arrow.pack_forget()
 
