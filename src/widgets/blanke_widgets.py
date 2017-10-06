@@ -33,6 +33,10 @@ class bEntry(Entry, object):
 	def selectAll(self, ev):
 		pass
 
+	def set(self, value):
+		self.delete(0, "end")
+		self.insert(0, value)
+
 class bText(Text, object):
 	def __init__(self, app, frame=None, **kwargs):
 		stylize(kwargs,{

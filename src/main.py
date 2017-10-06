@@ -1,6 +1,12 @@
+'''
+TODO:
+* frame('history') - make height 0 when empty
+'''
+
 from Tkinter import *
 from tkinter import font, ttk
 
+from event import Event
 from widgets.blanke_widgets import bFrame
 
 from widgets.searchbar import Searchbar
@@ -12,6 +18,7 @@ class App:
     	self.master = master
     	self.master.minsize(width=400, height=300)
     	self.master.title("editor")
+        self.event = Event()
 
     	self.colors = {}
     	self.color('entry_bg', '#263238')
@@ -30,9 +37,20 @@ class App:
         self.frame('history', bFrame(self, self.frame('main'), height=24, padx=4)).pack(fill=X, pady=(4,0))
         self.frame('workspace', bFrame(self, self.frame('main'), padx=4, pady=4)).pack(fill=BOTH, expand=True)
 
-        Searchbar(self)
-        History(self)
-        Code(self)
+        self.elements = {
+            'searchbar': Searchbar(self),
+            'history': History(self),
+            'code': Code(self)
+        }
+
+        self.frame('workspace').bind('<FocusIn>', self.element("searchbar").unfocus)
+
+        self.event.trigger('ide.ready')
+
+    def element(self, name, value=None):
+        if value:
+            self.elements[name] = value
+        return self.elements[name]
 
     def color(self, name, value=None):
     	if value:
@@ -54,7 +72,5 @@ class App:
     	self.frame('workspace', bFrame(self, self.frame('main'), padx=4, pady=4)).pack(fill=BOTH, expand=True)
 
 root = Tk()
-
 app = App(root)
-
 root.mainloop()

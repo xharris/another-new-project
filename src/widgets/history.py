@@ -7,9 +7,11 @@ class History:
 		self.entries = []
 		self.max_entries = 10
 
-		def anotherEntry(ev=None):
-			self.addEntry("another"+str(len(self.entries)), anotherEntry)
-		self.addEntry("test", anotherEntry)
+		self.app.event.on('ide.ready', self.addSearchKeys)
+        
+	def addSearchKeys(self):
+		el_searchbar = self.app.element('searchbar')
+		el_searchbar.addKey(text="clearHistory", category="History", onSelect=self.clear)
 
 	def addEntry(self, label, fn_onClick=None):
 		self.entries.append(Entry(self, label, fn_onClick))
@@ -25,6 +27,11 @@ class History:
 				entry.setArrow(False)
 			else:
 				entry.setArrow(True)
+
+	def clear(self):
+		for entry in self.entries:
+			entry.destroy()
+		del self.entries[:]
 
 class Entry:
 	def __init__(self, history, label, fn_onClick=None):
