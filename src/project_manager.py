@@ -16,8 +16,11 @@ class ProjectManager:
 		el_searchbar = self.app.element('searchbar')
 		el_searchbar.addKey(text="newProject", tooltip="make a new folder for a project", category="ProjectManager", onSelect=self.newProject)
 		el_searchbar.addKey(text="openProject", category="ProjectManager", onSelect=self.openProject)
-		el_searchbar.addKey(text="run", category="ProjectManager", onSelect=self.run)
+		runProject = el_searchbar.addKey(text="run", category="ProjectManager", icon="play.png", onSelect=self.run)
 		self.openProject("C:/Users/XHH/Documents/PROJECTS/blanke4/src/projects/myproject")
+
+		el_favorites = self.app.element('favorites')
+		el_favorites.addKey(runProject)
 
 	def isProjectOpen(self):
 		return (self.proj_path == "")
@@ -58,7 +61,7 @@ class ProjectManager:
 		el_searchbar = self.app.element('searchbar')
 		for root, dirs, files in walk(self.proj_path):
 			for f in ignore_folder:
-				if f != dirname(root[len(f)-1:]):
+				if not f in root:
 					for file in files:
 						# script files
 						if file.endswith(".lua"):
@@ -69,4 +72,6 @@ class ProjectManager:
 		el_code = Code(self.app).openScript(join(self.proj_path, filename))
 
 	def run(self):
-		pass
+		love2dpath = self.app.setting('love2d_path')
+		if self.app.os == "Windows":
+			self.app.execute([love2dpath,self.proj_path])

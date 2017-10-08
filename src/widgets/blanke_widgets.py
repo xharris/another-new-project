@@ -1,5 +1,5 @@
 from Tkinter import Frame, Entry, Text, Button, Label, Scrollbar
-from Tkinter import X, Y, TOP, LEFT, RIGHT, BOTTOM, HORIZONTAL
+from Tkinter import X, Y, TOP, LEFT, RIGHT, BOTTOM, HORIZONTAL, FLAT
 
 def ifndef(d, key, value):
 	if not d.has_key(key): d[key] = value
@@ -25,7 +25,10 @@ class bEntry(Entry, object):
 			'fg': app.color('entry_text'),
 			'insertbackground': app.color('entry_text'),
 			'selectbackground': app.color('entry_highlight'),
-			'highlightcolor': app.color('entry_highlight')
+			'highlightbackground': app.color('entry_bg'),
+			'highlightcolor': app.color('focus_outline'),
+			'highlightthickness': 1,
+			'relief': FLAT
 		})
 		super(self.__class__, self).__init__(frame, **kwargs)
 		
@@ -79,7 +82,8 @@ class bButton(Button, object):
 			'activeforeground': app.color('entry_text'),
 			'bd': 0,
 			'highlightthickness': 1,
-			'highlightbackground': app.color('border')
+			'highlightbackground': app.color('border'),
+			'relief': 'flat'
 		})
 		super(self.__class__, self).__init__(frame, **kwargs)
 

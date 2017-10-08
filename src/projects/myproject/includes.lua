@@ -8,19 +8,8 @@ CONF = {
 }
 
 -- engine
-if _REPLACE_REQUIRE then
-	require('template.plugins.blanke.Blanke')
-else
-	require('plugins.blanke.Blanke')
-end
+package.path = package.path .. ";..\\template\\?.lua"
+require('plugins.blanke.Blanke')
 
 -- assets
-local oldreq = require
-local require = oldreq
-if _REPLACE_REQUIRE then
-	require = function(s) return oldreq(_REPLACE_REQUIRE .. s) end
-end
-
 require 'assets'
-
-require = oldreq

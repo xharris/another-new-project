@@ -11,7 +11,7 @@ class History:
         
 	def addSearchKeys(self):
 		el_searchbar = self.app.element('searchbar')
-		el_searchbar.addKey(text="clearHistory", category="History", onSelect=self.clear)
+		clearHistory = el_searchbar.addKey(text="clearHistory", category="History", onSelect=self.clear, icon="H")
 
 	def addEntry(self, label, fn_onClick=None):
 		self.entries.append(Entry(self, label, fn_onClick))

@@ -8,7 +8,7 @@ class Searchbar:
 	def __init__(self, app):
 		self.app = app
 		self.result_container = None
-		self.results = set()
+		self.results = []
 		self.keys = []
 		self.selected_result = -1
 		self.has_focus = False
@@ -22,7 +22,7 @@ class Searchbar:
 		# create Entry input
 		self.entry = bEntry(self.app, self.app.frame('searchbar'), textvariable=change_ev)
 		self.entry.insert(0, 'Search')
-		self.entry.pack(fill=X)
+		self.entry.pack(side=LEFT, expand=True, fill=X)
 
 		self.entry.bind('<Up>', self.moveSelectionUp)
 		self.entry.bind('<Down>', self.moveSelectionDown)
@@ -66,17 +66,21 @@ class Searchbar:
 		if self.entry.get().strip() == "":
 			self.entry.set(PLACEHOLDER)
 
-	# @cooldown(0.5)
+	#@cooldown(0.5)
 	def onChange(self, ev=None):
+		self.clearResults()
 		self.submitSearch(text = ev.get())
 
 	def submitSearch(self, text):
-		self.clearResults()
+		text = text.strip()
 		if text != PLACEHOLDER and text != "":
 			for key in self.keys:
-				for tag in key.tags:
-					if text in tag:
-						self.addResult(key)
+				if text in key.text:
+					self.addResult(key)
+				else:
+					for tag in key.tags:
+						if text == tag:
+							self.addResult(key)
 
 	def addKey(self, **args):
 		new_key = Key(**args)
@@ -95,7 +99,7 @@ class Searchbar:
 	def addResult(self, key):
 		new_result = Result(self, key)
 		if not new_result in self.results: 
-			self.results.add(new_result)
+			self.results.append(new_result)
 			return new_result
 		else:
 			new_result.destroy()
@@ -104,7 +108,7 @@ class Searchbar:
 		for result in self.results:
 			result.destroy()
 
-		self.results.clear()
+		del self.results[:]
 		self.selected_result = -1
 
 		self.recreateContainer()
@@ -203,7 +207,7 @@ class Result(object):
 		return hash(self.__repr__())
 
 class Key:
-	def __init__(self, text="", tooltip="", onSelect=None, category="", onSelectArgs={}, tags=None):
+	def __init__(self, text="", tooltip="", onSelect=None, category="", onSelectArgs={}, tags=None, icon=""):
 		self.text = text
 		self.searchText = text.replace(" ","").lower()
 		self.tooltip = tooltip
@@ -212,6 +216,8 @@ class Key:
 		self.category = category
 		self.used = False
 		self.tags = [text]
+		self.icon = icon
+		
 		if tags:
 			self.tags = tags
 
