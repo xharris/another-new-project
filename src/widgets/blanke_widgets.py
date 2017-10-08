@@ -1,4 +1,5 @@
-from Tkinter import Frame, Entry, Text, Button, Label
+from Tkinter import Frame, Entry, Text, Button, Label, Scrollbar
+from Tkinter import X, Y, TOP, LEFT, RIGHT, BOTTOM, HORIZONTAL
 
 def ifndef(d, key, value):
 	if not d.has_key(key): d[key] = value
@@ -30,8 +31,9 @@ class bEntry(Entry, object):
 		
 		self.bind('<Control-a>', self.selectAll)
 
-	def selectAll(self, ev):
-		pass
+	def selectAll(self, ev=None):
+		self.select_range(0, 'end')
+		self.icursor('end')
 
 	def set(self, value):
 		self.delete(0, "end")
@@ -39,6 +41,13 @@ class bEntry(Entry, object):
 
 class bText(Text, object):
 	def __init__(self, app, frame=None, **kwargs):
+
+		self.scrollbarY = Scrollbar(app.frame('workspace'))
+		self.scrollbarY.pack(side=RIGHT, fill=Y)
+
+		self.scrollbarX = Scrollbar(app.frame('workspace'), orient=HORIZONTAL)
+		self.scrollbarX.pack(side=BOTTOM, fill=X)
+
 		stylize(kwargs,{
 			'bg': app.color('entry_bg'),
 			'font': app.font('editable'),
@@ -47,9 +56,19 @@ class bText(Text, object):
 			'fg': app.color('entry_text'),
 			'insertbackground': app.color('entry_text'),
 			'selectbackground': app.color('entry_highlight'),
-			'highlightcolor': app.color('entry_highlight')
+			'highlightcolor': app.color('entry_highlight'),
+			'yscrollcommand': self.scrollbarY.set,
+			'xscrollcommand': self.scrollbarX.set
 		})
 		super(self.__class__, self).__init__(frame, **kwargs)
+
+		self.scrollbarY.config(command=self.yview)
+		self.scrollbarX.config(command=self.xview) 
+		self.tag_config("n", background="yellow", foreground="red")
+
+	def set(self, text):
+		self.delete("1.0","end")
+		self.insert("1.0", text)
 
 class bButton(Button, object):
 	def __init__(self, app, frame=None, **kwargs):

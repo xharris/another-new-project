@@ -1,5 +1,6 @@
 from Tkinter import *
 from blanke_widgets import bEntry, bFrame, bLabel
+from cooldown import *
 
 PLACEHOLDER = "Search"
 
@@ -7,10 +8,12 @@ class Searchbar:
 	def __init__(self, app):
 		self.app = app
 		self.result_container = None
-		self.results = []
+		self.results = set()
 		self.keys = []
 		self.selected_result = -1
 		self.has_focus = False
+
+		self.app.event.on('ide.ready', self.bindEvents)
 
 		# onChange variable
 		change_ev = StringVar()
@@ -28,6 +31,9 @@ class Searchbar:
 
 		self.recreateContainer()
 
+	def bindEvents(self):
+		self.app.root.bind('<Control-r>', self.focus)
+
 	def focus(self, ev=None):
 		# remove placeholder if nec.
 		if self.entry.get() == PLACEHOLDER:
@@ -37,6 +43,8 @@ class Searchbar:
 			self.clearResults()
 			self.result_container.destroy()
 
+		self.entry.focus_set()
+		self.entry.selectAll()
 		self.has_focus = True
 		self.recreateContainer()
 
@@ -58,13 +66,17 @@ class Searchbar:
 		if self.entry.get().strip() == "":
 			self.entry.set(PLACEHOLDER)
 
-	def onChange(self, ev):
-		text = ev.get()
+	# @cooldown(0.5)
+	def onChange(self, ev=None):
+		self.submitSearch(text = ev.get())
+
+	def submitSearch(self, text):
 		self.clearResults()
 		if text != PLACEHOLDER and text != "":
 			for key in self.keys:
-				if text in key.searchText:
-					self.addResult(key)
+				for tag in key.tags:
+					if text in tag:
+						self.addResult(key)
 
 	def addKey(self, **args):
 		new_key = Key(**args)
@@ -82,14 +94,17 @@ class Searchbar:
 
 	def addResult(self, key):
 		new_result = Result(self, key)
-		self.results.append(new_result)
-		return new_result
+		if not new_result in self.results: 
+			self.results.add(new_result)
+			return new_result
+		else:
+			new_result.destroy()
 
 	def clearResults(self):
 		for result in self.results:
 			result.destroy()
-		del self.results[:]
-		self.results = []
+
+		self.results.clear()
 		self.selected_result = -1
 
 		self.recreateContainer()
@@ -122,11 +137,14 @@ class Searchbar:
 		self.moveSelection()
 
 	def clickSelectedResult(self, ev=None):
-		for r, result in enumerate(self.results):
-			result.select()
-		self.clearResults()
+		if self.has_focus:
+			self.submitSearch(self.entry.get())
+		else:
+			for r, result in enumerate(self.results):
+				result.select()
+			self.clearResults()
 
-class Result:
+class Result(object):
 	def __init__(self, searchbar, key):
 		self.searchbar = searchbar
 		self.app = self.searchbar.app
@@ -167,19 +185,35 @@ class Result:
 
 	def select(self, ev=None):
 		if self.key.fn_onSelect and self.focused:
-			self.key.fn_onSelect()
-		self.searchbar.clearResults()
+			self.key.fn_onSelect(**self.key.onSelectArgs)
+		self.searchbar.unfocus()
 
 	def destroy(self):
 		self.result_row.destroy()
 
+	def __eq__(self, other):
+		if isinstance(other, Result):
+			return (other.key.text == self.key.text)
+		return False
+
+	def __repr__(self):
+		return ("Result (%s)" % (self.key.text))
+
+	def __hash__(self):
+		return hash(self.__repr__())
+
 class Key:
-	def __init__(self, text="", tooltip="", onSelect=None, category=""):
+	def __init__(self, text="", tooltip="", onSelect=None, category="", onSelectArgs={}, tags=None):
 		self.text = text
 		self.searchText = text.replace(" ","").lower()
 		self.tooltip = tooltip
 		self.fn_onSelect = onSelect
+		self.onSelectArgs = onSelectArgs
 		self.category = category
+		self.used = False
+		self.tags = [text]
+		if tags:
+			self.tags = tags
 
 	def isCategory(self, cat):
 		return self.category == cat
