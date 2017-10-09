@@ -8,7 +8,6 @@ CONF = {
 }
 
 -- engine
-package.path = package.path .. ";..\\template\\?.lua"
 require('plugins.blanke.Blanke')
 
 -- assets

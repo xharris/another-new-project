@@ -1,6 +1,5 @@
 _FIRST_STATE = ''
 _GAME_NAME = "blanke"
-_REPLACE_REQUIRE = false
 
 require 'includes'
 

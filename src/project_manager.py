@@ -15,9 +15,8 @@ class ProjectManager:
 	def addSearchKeys(self):
 		el_searchbar = self.app.element('searchbar')
 		el_searchbar.addKey(text="newProject", tooltip="make a new folder for a project", category="ProjectManager", onSelect=self.newProject)
-		openProject = el_searchbar.addKey(text="openProject", category="ProjectManager", onSelect=self.openProject)
+		openProject = el_searchbar.addKey(text="openProject", category="ProjectManager", icon="folder.png", onSelect=self.openProject)
 		runProject = el_searchbar.addKey(text="run", category="ProjectManager", icon="play.png", onSelect=self.run)
-		self.openProject("C:/Users/XHH/Documents/PROJECTS/blanke4/src/projects/myproject")
 
 		el_favorites = self.app.element('favorites')
 		el_favorites.addKey(runProject)
@@ -74,5 +73,24 @@ class ProjectManager:
 
 	def run(self):
 		love2dpath = self.app.setting('love2d_path')
+
+		# inject package.path code
+		template_path = join(getcwd(),'src','template').replace('\\','\\\\')
+
+		s_main = ''
+		with open(join(self.proj_path,'main.lua'), 'r') as f_main:
+	   		s_main = f_main.read()
+		f_main.close()
+
+		if not 'INJECTED_CODE_START' in s_main:
+			f_main = open(join(self.proj_path,'main.lua'),'w+')
+			inject_str = ''+\
+			'--INJECTED_CODE_START'+\
+			'\npackage.path=package.path..\";'+template_path+'\\\\?.lua\"'+\
+			'\npackage.path=package.path..\";'+template_path+'\\\\?\\\\init.lua\"'+\
+			'\n--INJECTED_CODE_END\n\n'
+			f_main.write(inject_str+s_main)
+			f_main.close()
+
 		if self.app.os == "Windows":
 			self.app.execute([love2dpath,self.proj_path])

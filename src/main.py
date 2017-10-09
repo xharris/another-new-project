@@ -59,6 +59,8 @@ class App:
 
         self.event.trigger('ide.ready')
 
+        self.proj_manager.openProject("C:/Users/XHH/Documents/PROJECTS/blanke4/src/projects/myproject")
+
     def element(self, name, value=None):
         if value:
             self.elements[name] = value
