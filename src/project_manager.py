@@ -15,12 +15,13 @@ class ProjectManager:
 	def addSearchKeys(self):
 		el_searchbar = self.app.element('searchbar')
 		el_searchbar.addKey(text="newProject", tooltip="make a new folder for a project", category="ProjectManager", onSelect=self.newProject)
-		el_searchbar.addKey(text="openProject", category="ProjectManager", onSelect=self.openProject)
+		openProject = el_searchbar.addKey(text="openProject", category="ProjectManager", onSelect=self.openProject)
 		runProject = el_searchbar.addKey(text="run", category="ProjectManager", icon="play.png", onSelect=self.run)
 		self.openProject("C:/Users/XHH/Documents/PROJECTS/blanke4/src/projects/myproject")
 
 		el_favorites = self.app.element('favorites')
 		el_favorites.addKey(runProject)
+		el_favorites.addKey(openProject)
 
 	def isProjectOpen(self):
 		return (self.proj_path == "")

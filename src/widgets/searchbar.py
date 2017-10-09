@@ -173,6 +173,7 @@ class Result(object):
 		self.result_row.bind("<Enter>", self.focus)
 		self.result_row.bind("<Leave>", self.unfocus)
 		self.result_text.bind('<ButtonRelease-1>', self.select)
+		self.result_text.bind('<ButtonRelease-3>', self.favorite)
 		self.result_row.bind('<Return>', self.select)
 		self.result_tooltip.bind('<ButtonRelease-1>', self.select)
 
@@ -191,6 +192,11 @@ class Result(object):
 		if self.key.fn_onSelect and self.focused:
 			self.key.fn_onSelect(**self.key.onSelectArgs)
 		self.searchbar.unfocus()
+
+	def favorite(self, ev=None):
+		if self.key.fn_onSelect and self.focused:
+			el_favorites = self.app.element('favorites')
+			el_favorites.addKey(self.key)
 
 	def destroy(self):
 		self.result_row.destroy()
