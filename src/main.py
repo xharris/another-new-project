@@ -1,6 +1,9 @@
 '''
 TODO:
 * frame('history') - make height 0 when empty
+
+BUGS:
+(DONE) clicking a file in history does not open the built-in code editor properly
 '''
 
 from Tkinter import *
@@ -21,8 +24,11 @@ class App:
         self.root = root
     	self.master = master
         self.os = system()
+
     	self.master.minsize(width=400, height=300)
-    	self.master.title("editor")
+        self.setTitle()
+        self.root.iconbitmap(self.joinPath("blanke.ico"))
+
         self.event = Event()
         self.proj_manager = ProjectManager(self)
 
@@ -37,7 +43,7 @@ class App:
         self.color('tooltip', '#90A4AE') # dblue300
 
     	self.fonts = {}
-    	self.font('editable', {'family':'Calibri', 'size':11, 'weight':'normal'})
+    	self.font('editable', {'family':'Fixedsys', 'size':9, 'weight':'normal'})
 
     	self.frames = {}
     	self.frame('main', bFrame(self)).pack(anchor=N, fill=BOTH, expand=True, side=LEFT)
@@ -46,7 +52,7 @@ class App:
         self.frame('workspace', bFrame(self, self.frame('main'), padx=4, pady=4)).pack(fill=BOTH, expand=True)
 
         self.settings = {}
-        self.setting('use_external_editor', True)
+        self.setting('use_external_editor', False)
         self.setting('love2d_path', 'C:/Users/XHH/Documents/PROJECTS/blanke4/love2d-win32/love.exe')
 
         self.elements = {
@@ -59,7 +65,7 @@ class App:
 
         self.event.trigger('ide.ready')
 
-        self.proj_manager.openProject("C:/Users/XHH/Documents/PROJECTS/blanke4/src/projects/myproject")
+        self.proj_manager.openProject("C:/Users/XHH/Documents/PROJECTS/blanke4/src/projects/engine_project")
 
     def element(self, name, value=None):
         if value:
@@ -89,6 +95,7 @@ class App:
     def clearWorkspace(self):
     	self.frame('workspace').destroy()
     	self.frame('workspace', bFrame(self, self.frame('main'), padx=4, pady=4)).pack(fill=BOTH, expand=True)
+        return self.frame('workspace')
 
     def error(self, msg):
         print("ERR: "+msg)
@@ -107,6 +114,12 @@ class App:
 
     def joinPath(self, *args):
         return os.path.join(os.path.dirname(sys.argv[0]), *args)
+
+    def setTitle(self, value=None):
+        if not value:
+            self.master.title("BlankE")
+        else:
+            self.master.title("%s - BlankE"%(value))
 
 root = Tk()
 app = App(root)

@@ -1,5 +1,5 @@
 from Tkinter import Frame, Entry, Text, Button, Label, Scrollbar
-from Tkinter import X, Y, TOP, LEFT, RIGHT, BOTTOM, HORIZONTAL, FLAT
+from Tkinter import X, Y, TOP, LEFT, RIGHT, BOTTOM, HORIZONTAL, FLAT, END
 
 def ifndef(d, key, value):
 	if not d.has_key(key): d[key] = value
@@ -35,8 +35,9 @@ class bEntry(Entry, object):
 		self.bind('<Control-a>', self.selectAll)
 
 	def selectAll(self, ev=None):
-		self.select_range(0, 'end')
-		self.icursor('end')
+		self.select_range(0, END)
+		self.icursor(END)
+		return 'break'
 
 	def set(self, value):
 		self.delete(0, "end")
@@ -46,7 +47,7 @@ class bText(Text, object):
 	def __init__(self, app, frame=None, **kwargs):
 
 		self.scrollbarY = Scrollbar(app.frame('workspace'))
-		self.scrollbarY.pack(side=RIGHT, fill=Y)
+		self.scrollbarY.pack(side=RIGHT, fill=Y, pady=(0,18))
 
 		self.scrollbarX = Scrollbar(app.frame('workspace'), orient=HORIZONTAL)
 		self.scrollbarX.pack(side=BOTTOM, fill=X)

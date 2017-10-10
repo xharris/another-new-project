@@ -8,5 +8,5 @@ _GAME_NAME = "blanke"
 require 'includes'
 
 function love.load()
-    BlankE.init(nil)
+    BlankE.init()
 end

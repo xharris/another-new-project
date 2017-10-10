@@ -1,4 +1,4 @@
-_FIRST_STATE = ''
+_FIRST_STATE = nil
 _GAME_NAME = "blanke"
 
 require 'includes'
