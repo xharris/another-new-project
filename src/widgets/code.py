@@ -4,8 +4,8 @@ from blanke_widgets import bText
 from os.path import basename
 from pygments import lex
 from pygments.lexers import LuaLexer
-
-from pygments.lexers._lua_builtins import MODULES
+from pygments.lexer import RegexLexer, include, words
+from pygments.token import *
 
 class Code:
 	def __init__(self, app):
@@ -20,9 +20,18 @@ class Code:
 			lua_colors = {
 				"Text": self.app.color("entry_text"),
 
+				"Token.Name.Class": "#ef9a9a", # red200
+				"Token.Name.Function": "#FFCC80", # orange200
+
 				"Token.Operator": "#9CCC65",
 				"Token.Comment.Single": "#78909C",
 				"Token.Comment.Multi": "#78909C",
+
+				"Token.Literal.Number": "#80DEEA", # aqua200
+				"Token.Literal.Number.Integer": "#80DEEA",
+				"Token.Literal.Number.Float": "#80DEEA", 
+				"Token.Literal.Number.Integer.Long": "#80DEEA",
+				"Token.Keyword.Constant": "#80DEEA", 
 
 				"Token.Literal.String.Single": "#FFF59D", # yellow200
 				"Token.Literal.String.Double": "#FFF59D",
@@ -77,13 +86,24 @@ class Code:
 			else:
 				data = self.text.get(row + ".0", row + "." + str(len(self.lines[int(row) - 1])))
 
-			for token, content in lex(data, LuaLexer()):
+			for token, content in lex(data, BlankeLexer()):
 				self.text.mark_set("range_end", "range_start + %dc" % len(content))
 				self.text.tag_add(str(token), "range_start", "range_end")
 				self.text.mark_set("range_start", "range_end")
 
-				print(token, content)
-
 		self.previousContent = self.content
 		
-	    
+TOKENS = LuaLexer.tokens
+TOKENS.update({
+	'bFunction': [
+		(r'(?<=[:.])([^({ ]+?)(?=[({])', Name.Function)
+	],
+})
+TOKENS['root'].insert(0, include('bFunction'))
+
+class BlankeLexer(RegexLexer):
+	name = 'BlankeLexer'
+	aliases = ['blankelexer', 'lua']
+	filenames = ['*.lua']
+
+	tokens = TOKENS

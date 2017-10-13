@@ -43,7 +43,7 @@ class App:
         self.color('tooltip', '#90A4AE') # dblue300
 
     	self.fonts = {}
-    	self.font('editable', {'family':'Fixedsys', 'size':9, 'weight':'normal'})
+    	self.font('editable', {'family':'Lucida Console', 'size':9, 'weight':'normal'})
 
     	self.frames = {}
     	self.frame('main', bFrame(self)).pack(anchor=N, fill=BOTH, expand=True, side=LEFT)

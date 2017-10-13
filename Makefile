@@ -1,2 +1,2 @@
 run:
-	python src/main.py
+	python src/main.py > output.txt
