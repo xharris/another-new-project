@@ -20,7 +20,7 @@ class ProjectManager:
 	def ideReady(self):
 		self.game_settings = SettingManager([
             {'type':'string', 'name': 'title', 'default': self.getProjectName()},
-            {'type':'checkbox', 'name': 'show_console', 'label': 'show console', 'default': False}
+            {'type':'checkbox', 'name': 'console', 'label': 'show console', 'default': True}
         ])
 
 		el_searchbar = self.app.element('searchbar')
@@ -120,13 +120,17 @@ class ProjectManager:
 				
 	def showGameSettings(self):
 		self.app.clearWorkspace()
+		self.app.element('history').addEntry('gameSettings', self.showGameSettings)
 		the_form = bForm(self.app, self.app.frame('workspace'), self.game_settings)
 
 	def editScript(self, filepath):
 		el_code = Code(self.app).openScript(join(self.proj_path, filepath))
 
 	def run(self, ev=None):
-		love2dpath = self.app.setting('love2d_path')
+		love2dpath = self.app.joinPath(self.app.ide_settings['love2d_path'], 'love.exe')
+		str_console = ''
+		if self.game_settings['console']:
+			str_console = '--console'
 
 		# inject package.path code
 		template_path = join(getcwd(),'src','template').replace('\\','\\\\')
@@ -147,4 +151,4 @@ class ProjectManager:
 			f_main.close()
 
 		if self.app.os == "Windows":
-			self.app.execute([love2dpath,self.proj_path])
+			self.app.execute('"'+love2dpath+'" "'+self.proj_path+'"')

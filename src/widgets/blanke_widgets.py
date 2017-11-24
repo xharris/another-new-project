@@ -62,11 +62,12 @@ class bText(Text, object):
 
 		self.scrollbarX = Scrollbar(app.frame('workspace'), orient=HORIZONTAL)
 		self.scrollbarX.pack(side=BOTTOM, fill=X)
-
+		'''
 		listener = StringVar()
 		listener.trace("w", lambda name, index, mode, sv=listener: self.onCommand(listener))
 		if not 'textvariable' in kwargs:
 			kwargs['textvariable'] = listener
+		'''
 
 		stylize(kwargs,{
 			'bg': app.color('entry_bg'),

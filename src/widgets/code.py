@@ -12,7 +12,7 @@ class Code:
 		self.app = app
 		self.filepath = ''
 		self.previousContent = ''
-		if not self.app.setting('use_external_editor'):
+		if not self.app.ide_settings['use_external_editor']:
 			workspace = self.app.clearWorkspace()
 			self.text = bText(self.app, workspace, width=workspace.winfo_width(), height=workspace.winfo_height(), wrap=NONE)
 			self.text.pack(fill=BOTH, expand=True)
@@ -50,7 +50,7 @@ class Code:
 		el_history.addEntry(basename(filepath), self.app.proj_manager.editScript, {'filepath':filepath})
 
 
-		if self.app.setting('use_external_editor'):
+		if self.app.ide_settings['use_external_editor']:
 			if self.app.os == "Windows":
 				self.app.execute("start "+filepath)
 			else:

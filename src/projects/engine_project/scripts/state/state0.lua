@@ -1103,6 +1103,7 @@ function scale(point)
 end
 
 function state0:update(dt)
+	print('hi')
 	offset = 0--(mouse_y/game_height)*20
 end	
 
@@ -1137,3 +1138,4 @@ function state0:draw()
 
 	Debug.draw()
 end	
+

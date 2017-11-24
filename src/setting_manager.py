@@ -12,7 +12,7 @@ class SettingManager(object):
 
 	def __getitem__(self, key):
 		if self.settings[key]:
-			return self.settings[key]
+			return self.settings[key]['value']
 		elif key == 'default' and 'value' in self.settings:
 			return self.settings['value']
 

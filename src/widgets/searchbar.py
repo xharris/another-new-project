@@ -144,12 +144,15 @@ class Searchbar:
 		self.moveSelection()
 
 	def clickSelectedResult(self, ev=None):
-		if self.has_focus:
-			self.submitSearch(self.entry.get())
-		else:
-			for r, result in enumerate(self.results):
-				result.select()
+		result_selected = False
+		for r, result in enumerate(self.results):
+			if result.select():
+				result_selected = True
+		if result_selected:
+			print('result found')
 			self.clearResults()
+		else:
+			self.submitSearch(self.entry.get())
 
 class Result(object):
 	def __init__(self, searchbar, key):
@@ -192,10 +195,11 @@ class Result(object):
 		self.result_row.config(bg=self.app.color('frame_bg'))
 
 	def select(self, ev=None):
-		print(self.key.text)
 		if self.key.fn_onSelect and self.focused:
 			self.key.fn_onSelect(**self.key.onSelectArgs)
+			return True
 		self.searchbar.unfocus()
+		return False
 
 	def favorite(self, ev=None):
 		if self.key.fn_onSelect and self.focused:

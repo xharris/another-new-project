@@ -2,6 +2,7 @@
 TODO:
 * frame('history') - make height 0 when empty
 * project_manager.showGameSettings - show in workspace, add to history
+* 
 
 BUGS:
 (DONE) clicking a file in history does not open the built-in code editor properly
@@ -13,6 +14,7 @@ import subprocess, os
 from platform import system
 
 from event import Event
+from setting_manager import SettingManager
 from project_manager import ProjectManager
 from widgets.blanke_widgets import bFrame, bForm
 
@@ -52,9 +54,10 @@ class App:
         self.frame('history', bFrame(self, self.frame('main'), height=24, padx=4)).pack(fill=X, pady=(4,0))
         self.frame('workspace', bFrame(self, self.frame('main'), padx=4, pady=4)).pack(fill=BOTH, expand=True)
 
-        self.settings = {}
-        self.setting('use_external_editor', False)
-        self.setting('love2d_path', 'C:/Users/XHH/Documents/PROJECTS/blanke4/love2d-win32/love.exe')
+        self.ide_settings = SettingManager([
+            {'type':'checkbox', 'name':'use_external_editor', 'default':False},
+            {'type':'string', 'name':'love2d_path', 'default':'C:/Users/XHH/Documents/PROJECTS/blanke4/love2d-win32'}
+        ])
 
         self.elements = {
             'searchbar': Searchbar(self),
@@ -89,11 +92,6 @@ class App:
     	if obj_frame:
     		self.frames[name] = obj_frame
     	return self.frames[name]
-
-    def setting(self, name, value=None):
-        if value != None:
-            self.settings[name] = value
-        return self.settings[name]
 
     def clearWorkspace(self):
     	self.frame('workspace').destroy()
