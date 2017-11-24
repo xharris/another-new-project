@@ -1,6 +1,7 @@
+# app.element('favorites').addKey(key)
+
 from Tkinter import *
 from blanke_widgets import bFrame, bButton
-from PIL import ImageTk
 
 class Favorites:
 	def __init__(self, app):
@@ -33,9 +34,7 @@ class FaveItem:
 		self.key = key
 
 		if '.' in self.key.icon:
-			image = ImageTk.PhotoImage(file=self.app.joinPath("icons",self.key.icon))
-			self.button = bButton(self.app, self.favorites.frame, image=image, bd=1, command=self.onClick)
-			self.button.image = image
+			self.button = bButton(self.app, self.favorites.frame, image=self.app.joinPath("icons",self.key.icon), bd=1, command=self.onClick)
 		elif self.key.icon != '':
 			self.button = bButton(self.app, self.favorites.frame, text=self.key.icon, bd=1, command=self.onClick)
 		else:		

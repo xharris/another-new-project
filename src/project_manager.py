@@ -4,7 +4,9 @@ from shutil import copyfile
 from os import getcwd, makedirs, walk, listdir
 from os.path import isdir, join, dirname, isfile, basename
 
+from setting_manager import SettingManager
 from widgets.code import Code
+from widgets.blanke_widgets import bForm
 
 class ProjectManager:
 	def __init__(self, app):
@@ -12,17 +14,25 @@ class ProjectManager:
 		self.proj_path = ""
 		self.obj_dict = {'entity':[], 'state':[], 'image':[]}
 
+
 		self.app.event.on('ide.ready', self.ideReady)
 
 	def ideReady(self):
+		self.game_settings = SettingManager([
+            {'type':'string', 'name': 'title', 'default': self.getProjectName()},
+            {'type':'checkbox', 'name': 'show_console', 'label': 'show console', 'default': False}
+        ])
+
 		el_searchbar = self.app.element('searchbar')
 		el_searchbar.addKey(text="newProject", tooltip="make a new folder for a project", category="ProjectManager", onSelect=self.newProject)
 		openProject = el_searchbar.addKey(text="openProject", category="ProjectManager", icon="folder.png", onSelect=self.openProject)
 		runProject = el_searchbar.addKey(text="run", category="ProjectManager", icon="play.png", onSelect=self.run)
+		gameSettings = el_searchbar.addKey(text="gameSettings", category="ProjectManager", icon="gear.png", onSelect=self.showGameSettings)
 
 		el_favorites = self.app.element('favorites')
 		el_favorites.addKey(runProject)
 		el_favorites.addKey(openProject)
+		el_favorites.addKey(gameSettings)
 
 		self.app.root.bind('<Control-b>', self.run)
 
@@ -108,6 +118,9 @@ class ProjectManager:
 
 									el_searchbar.addKey(text=file[:-4], tooltip=join(file), category="Asset", tags=tags)#, onSelect=self.editScript, onSelectArgs={'filepath':join(root,file)})
 				
+	def showGameSettings(self):
+		self.app.clearWorkspace()
+		the_form = bForm(self.app, self.app.frame('workspace'), self.game_settings)
 
 	def editScript(self, filepath):
 		el_code = Code(self.app).openScript(join(self.proj_path, filepath))

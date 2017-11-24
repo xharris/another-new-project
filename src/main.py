@@ -1,6 +1,7 @@
 '''
 TODO:
 * frame('history') - make height 0 when empty
+* project_manager.showGameSettings - show in workspace, add to history
 
 BUGS:
 (DONE) clicking a file in history does not open the built-in code editor properly
@@ -13,7 +14,7 @@ from platform import system
 
 from event import Event
 from project_manager import ProjectManager
-from widgets.blanke_widgets import bFrame
+from widgets.blanke_widgets import bFrame, bForm
 
 from widgets.searchbar import Searchbar
 from widgets.history import History
@@ -63,9 +64,9 @@ class App:
 
         self.frame('workspace').bind('<FocusIn>', self.element("searchbar").unfocus)
 
+        test(self)
         self.event.trigger('ide.ready')
 
-        self.proj_manager.openProject("C:/Users/XHH/Documents/PROJECTS/blanke4/src/projects/engine_project")
 
     def element(self, name, value=None):
         if value:
@@ -80,6 +81,8 @@ class App:
     def font(self, name, options=None):
     	if options:
     		self.fonts[name] = font.Font(**options)
+        if not name in self.fonts:
+            return None
     	return self.fonts[name]
 
     def frame(self, name, obj_frame=None):
@@ -121,6 +124,12 @@ class App:
         else:
             self.master.title("%s - BlankE"%(value))
 
+ 
+def test(app):
+    app.proj_manager.openProject("C:/Users/XHH/Documents/PROJECTS/blanke4/src/projects/engine_project")
+
+
 root = Tk()
 app = App(root)
 root.mainloop()
+

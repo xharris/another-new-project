@@ -2,6 +2,9 @@ from Tkinter import *
 from blanke_widgets import bEntry, bFrame, bLabel
 from cooldown import *
 
+# app.element('searchbar').addKey(text="doSomething", tooltip, category, onSelect=self.doSomething)
+		
+
 PLACEHOLDER = "Search"
 
 class Searchbar:
@@ -182,13 +185,14 @@ class Result(object):
 	def focus(self, ev=None):
 		self.focused = True
 		self.result_row.config(bg='black')
-		self.result_row.focus_set()
+		#self.result_row.focus_set()
 
 	def unfocus(self, ev=None):
 		self.focused = False
 		self.result_row.config(bg=self.app.color('frame_bg'))
 
 	def select(self, ev=None):
+		print(self.key.text)
 		if self.key.fn_onSelect and self.focused:
 			self.key.fn_onSelect(**self.key.onSelectArgs)
 		self.searchbar.unfocus()
