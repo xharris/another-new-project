@@ -1,5 +1,4 @@
-from Tkinter import *#Frame, Entry, Text, Button, Label, Scrollbar, Spinbox, IntVar, StringVar
-#from Tkinter import X, Y, W, TOP, LEFT, RIGHT, BOTTOM, HORIZONTAL, FLAT, END
+from Tkinter import *
 from PIL import ImageTk
 
 def ifndef(d, key, value):
@@ -183,7 +182,6 @@ class bForm(object):
 
 		self.btn_save.pack(side=LEFT)
 		self.btn_reset.pack(side=LEFT)
-		self.btn_frame.place(relx=1, rely=0, anchor=NE)
 
 		if not self.app.font('form_label'):
 			self.app.font('form_label', {'family':'Lucida Console', 'size':7, 'weight':'normal'})
@@ -243,9 +241,10 @@ class bForm(object):
 				bottom_pad = 0
 
 			if new_label: new_label.pack(side=pack_side, anchor=W)
-			if new_input: new_input.pack(side=pack_side, anchor=W, pady=(0,bottom_pad), **new_input_kwargs)
+			if new_input: new_input.pack(side=pack_side, anchor=W, fill=X, pady=(0,bottom_pad), **new_input_kwargs)
 
 			new_frame.pack(anchor=W)
+			self.btn_frame.place(relx=1, rely=0, anchor=NE)
 
 			self.frame_all.pack(side=TOP, anchor=W, fill=BOTH, expand=True)
 

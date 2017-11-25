@@ -149,7 +149,6 @@ class Searchbar:
 			if result.select():
 				result_selected = True
 		if result_selected:
-			print('result found')
 			self.clearResults()
 		else:
 			self.submitSearch(self.entry.get())
@@ -197,8 +196,8 @@ class Result(object):
 	def select(self, ev=None):
 		if self.key.fn_onSelect and self.focused:
 			self.key.fn_onSelect(**self.key.onSelectArgs)
+			self.searchbar.unfocus() # TODO: unnecessary?
 			return True
-		self.searchbar.unfocus()
 		return False
 
 	def favorite(self, ev=None):
