@@ -58,6 +58,7 @@ class App:
             {'type':'checkbox', 'name':'use_external_editor', 'default':False},
             {'type':'string', 'name':'love2d_path', 'default':'C:/Users/XHH/Documents/PROJECTS/blanke4/love2d-win32'}
         ])
+        self.ide_settings.read(self.joinPath('ide.cfg'))
 
         self.elements = {
             'searchbar': Searchbar(self),
@@ -69,6 +70,9 @@ class App:
 
         test(self)
         self.event.trigger('ide.ready')
+
+        # POST-ide.ready 
+        ideSettings = self.element('searchbar').addKey(text="ideSettings", category="IDE", icon="wrench.png", onSelect=self.showIDESettings)
 
 
     def element(self, name, value=None):
@@ -121,6 +125,14 @@ class App:
             self.master.title("BlankE")
         else:
             self.master.title("%s - BlankE"%(value))
+
+    def showIDESettings(self):
+        self.clearWorkspace()
+        self.element('history').addEntry('ideSettings', self.showIDESettings)
+        the_form = bForm(self, self.frame('workspace'), self.ide_settings, self._writeIDESettings)
+
+    def _writeIDESettings(self, values):
+        self.ide_settings.write(self.joinPath('ide.cfg'))
 
  
 def test(app):

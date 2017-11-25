@@ -14,20 +14,19 @@ class ProjectManager:
 		self.proj_path = ""
 		self.obj_dict = {'entity':[], 'state':[], 'image':[]}
 
+		self.game_settings = SettingManager([
+            {'type':'string', 'name': 'title', 'default': self.getProjectName()},
+            {'type':'checkbox', 'name': 'console', 'label': 'show console (broken)', 'default': False}
+        ])
 
 		self.app.event.on('ide.ready', self.ideReady)
 
 	def ideReady(self):
-		self.game_settings = SettingManager([
-            {'type':'string', 'name': 'title', 'default': self.getProjectName()},
-            {'type':'checkbox', 'name': 'console', 'label': 'show console', 'default': True}
-        ])
-
 		el_searchbar = self.app.element('searchbar')
 		el_searchbar.addKey(text="newProject", tooltip="make a new folder for a project", category="ProjectManager", onSelect=self.newProject)
 		openProject = el_searchbar.addKey(text="openProject", category="ProjectManager", icon="folder.png", onSelect=self.openProject)
 		runProject = el_searchbar.addKey(text="run", category="ProjectManager", icon="play.png", onSelect=self.run)
-		gameSettings = el_searchbar.addKey(text="gameSettings", category="ProjectManager", icon="gear.png", onSelect=self.showGameSettings)
+		gameSettings = el_searchbar.addKey(text="gameSettings", category="ProjectManager", icon="controller.png", onSelect=self.showGameSettings)
 
 		el_favorites = self.app.element('favorites')
 		el_favorites.addKey(runProject)
@@ -66,7 +65,11 @@ class ProjectManager:
 			if file not in ignore_files:
 				copyfile(join(template_path, file), join(self.proj_path, file))
 
+		self.game_settings.reset()
 		self.refreshFileSearch()
+
+	def getConfigPath(self):
+		return join(self.proj_path, 'blanke.cfg')
 
 	# show open file dialog
 	def openProject(self, filepath=None):
@@ -77,6 +80,7 @@ class ProjectManager:
 			self.proj_path = proj_dir
 		else:
 			self.proj_path = filepath.replace("\\","/")
+		self.game_settings.read(self.getConfigPath())
 		self.refreshFileSearch()
 
 	def refreshFileSearch(self):
@@ -118,10 +122,13 @@ class ProjectManager:
 
 									el_searchbar.addKey(text=file[:-4], tooltip=join(file), category="Asset", tags=tags)#, onSelect=self.editScript, onSelectArgs={'filepath':join(root,file)})
 				
+	def _writeGameSettings(self, values):
+		self.game_settings.write(self.getConfigPath())
+
 	def showGameSettings(self):
 		self.app.clearWorkspace()
 		self.app.element('history').addEntry('gameSettings', self.showGameSettings)
-		the_form = bForm(self.app, self.app.frame('workspace'), self.game_settings)
+		the_form = bForm(self.app, self.app.frame('workspace'), self.game_settings, self._writeGameSettings)
 
 	def editScript(self, filepath):
 		el_code = Code(self.app).openScript(join(self.proj_path, filepath))
