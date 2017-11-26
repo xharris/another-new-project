@@ -78,7 +78,8 @@ class bText(Text, object):
 			'selectbackground': app.color('entry_highlight'),
 			'highlightcolor': app.color('entry_highlight'),
 			'yscrollcommand': self.scrollbarY.set,
-			'xscrollcommand': self.scrollbarX.set
+			'xscrollcommand': self.scrollbarX.set,
+			'undo': True
 		})
 		super(self.__class__, self).__init__(frame, **kwargs)
 

@@ -1126,16 +1126,23 @@ function state0:draw()
 	]]
 	margin = game_width/4
 	for x = margin, game_width-margin, 10 do
-		for y = margin, game_height-margin, 10 do
-			w = game_width-(margin*2)
+            yellow = sinusoidal(0,255,7, x/(game_width-margin))
+            Draw.setColor(yellow, yellow, 0, 255)
+        
+            for y = margin, game_height-margin, 10 do
+                w = game_width-(margin*2)
 
-			vx = x - (0.5 * y) + (w / 3);
-			vy = y
+                vx = x - (0.5 * y) + (w / 3);
+                vy = sinusoidal(y-20, y+20, 07, x/(game_width-margin))
 
-			Draw.circle('fill', vx, vy, 5)
-		end
+                Draw.circle('fill', vx, vy, 3)
+            end
 	end
 
 	Debug.draw()
 end	
+
+
+
+
 
