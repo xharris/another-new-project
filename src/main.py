@@ -1,8 +1,8 @@
 '''
 TODO:
-* frame('history') - make height 0 when empty
-* project_manager.showGameSettings - show in workspace, add to history
-* 
+* frame('history') - make height 0 when empty?
+* work on BlankeLexer (currently using LuaLexer)
+* watch project folder and refresh search on changes
 
 BUGS:
 (DONE) clicking a file in history does not open the built-in code editor properly
@@ -105,7 +105,7 @@ class App:
     def error(self, msg):
         print("ERR: "+msg)
 
-    def execute(self, stmt):
+    def execute(self, stmt):   
         try:
             retcode = subprocess.Popen(stmt, shell=True, stdin=None, stdout=None, stderr=None)
             '''

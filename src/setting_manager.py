@@ -41,6 +41,13 @@ class SettingManager(object):
 
 		return ret_dict
 
+	def getValues(self):
+		ret_dict = {}
+		for s in self.settings:
+			ret_dict[s] = self.settings[s]['value']
+
+		return ret_dict
+
 	# gets all setting data organized for bForm
 	def getInputs(self):
 		ret_array = []
@@ -49,7 +56,7 @@ class SettingManager(object):
 
 			setting = self.settings[s].copy()
 			setting['name'] = s
-			#setting['default'] = setting['value']
+			setting['value'] = self[s]
 			ret_array.append(setting)
 		
 		return ret_array
@@ -66,7 +73,7 @@ class SettingManager(object):
 		if not config.has_section(sect_name):
 			config.add_section(sect_name)
 
-		values = self.getDefaults()
+		values = self.getValues()
 		for val in values:
 			config.set(sect_name, val, values[val])
 
@@ -87,4 +94,7 @@ class SettingManager(object):
 		config.read(in_filepath)
 		
 		for s in self.settings:
-			self[s] = config.get(sect_name, s)
+			if config.has_option(sect_name, s):
+				self[s] = config.get(sect_name, s)
+			else:
+				self[s] = self.settings[s]['default']

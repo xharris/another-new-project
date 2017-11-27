@@ -1,5 +1,4 @@
 from tkinter.filedialog import askopenfilename, asksaveasfilename, askdirectory
-
 from shutil import copyfile
 from os import getcwd, makedirs, walk, listdir
 from os.path import isdir, join, dirname, isfile, basename
@@ -16,12 +15,15 @@ class ProjectManager:
 
 		self.game_settings = SettingManager([
             {'type':'string', 'name': 'title', 'default': self.getProjectName()},
-            {'type':'checkbox', 'name': 'console', 'label': 'show console (broken)', 'default': False}
+            {'type':'checkbox', 'name': 'console', 'label': 'show console (broken)', 'default': False},
+            {'type':'number', 'name': 'run_count',  'label': 'instances on run', 'default':1, 'from':1, 'to':100}
         ])
 
 		self.app.event.on('ide.ready', self.ideReady)
 
 	def ideReady(self):
+		#self.game_settings['title'] = self.getProjectName()
+
 		el_searchbar = self.app.element('searchbar')
 		el_searchbar.addKey(text="newProject", tooltip="make a new folder for a project", category="ProjectManager", onSelect=self.newProject)
 		openProject = el_searchbar.addKey(text="openProject", category="ProjectManager", icon="folder.png", onSelect=self.openProject)
@@ -157,5 +159,14 @@ class ProjectManager:
 			f_main.write(inject_str+s_main)
 			f_main.close()
 
-		if self.app.os == "Windows":
-			self.app.execute('"'+love2dpath+'" "'+self.proj_path+'"')
+		# write conf.lua
+		# TODO: finish this later lol
+		str_conf = 'function conf.lua(t)\n'
+		conf = {
+			'':['identity','version','console','accelerometerjoystick','externalstorage','gammacorrect'],
+			'window':['title','icon','width','height']
+		}
+
+        for i in range(self.game_settings['run_count']): 
+			if self.app.os == "Windows":
+				self.app.execute('"'+love2dpath+'" "'+self.proj_path+'"')

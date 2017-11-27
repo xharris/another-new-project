@@ -32,11 +32,6 @@ class bEntry(Entry, object):
 			'relief': FLAT
 		})
 		super(self.__class__, self).__init__(frame, **kwargs)
-		
-		self.onChange = None
-		if 'onChange' in kwargs:
-			self.bind('<Return>', self.onCommand)
-			self.onChange = kwargs['onChange']
 
 		self.bind('<Control-a>', self.selectAll)
 
@@ -90,6 +85,7 @@ class bText(Text, object):
 	def set(self, text):
 		self.delete("1.0","end")
 		self.insert("1.0", text)
+		self.edit_reset()
 
 	def onCommand(self, ev=None):
 		print(ev.get())
@@ -174,7 +170,6 @@ class bForm(object):
 		self.elements = []
 		self.frame_all = bFrame(app, frame, highlightthickness=1, padx=2, pady=2)
 		self.fn_onSave = onSave
-		self.default_values = setting_manager.getDefaults()
 
 		# save/cancel buttons
 		self.btn_frame = bFrame(self.app, self.frame_all)
@@ -188,15 +183,12 @@ class bForm(object):
 			self.app.font('form_label', {'family':'Lucida Console', 'size':7, 'weight':'normal'})
 
 		for i, inp in enumerate(self.inputs):
+			print(inp)
 			inp_type = inp['type']
 			new_frame = bFrame(app, self.frame_all)
 
 			# get default input value
-			inp_value = inp['default']
-			if inp['name'] in self.default_values:
-				inp_value = self.default_values[inp['name']]
-			else:
-				self.default_values[inp['name']] = inp_value
+			inp_value = inp['value']
 
 			# create label for input
 			inp_label = inp['name']
@@ -256,9 +248,9 @@ class bForm(object):
 			self.fn_onSave(self.setting_manager)
 
 	def onReset(self, ev=None):
-		self.default_values = self.setting_manager.getDefaults()
+		default_values = self.setting_manager.getDefaults()
 		for el in self.elements:
-			el.set(self.default_values[el.name])
+			el.set(default_values[el.name])
 
 	def destroy(self):
 		del self
