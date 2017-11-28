@@ -7,6 +7,7 @@ TODO:
 BUGS:
 (DONE) clicking a file in history does not open the built-in code editor properly
 '''
+import wx
 
 from Tkinter import *
 from tkinter import font, ttk
@@ -56,9 +57,11 @@ class App:
 
         self.ide_settings = SettingManager([
             {'type':'checkbox', 'name':'use_external_editor', 'default':False},
-            {'type':'string', 'name':'love2d_path', 'default':'C:/Users/XHH/Documents/PROJECTS/blanke4/love2d-win32'}
+            {'type':'string', 'name':'love2d_path', 'default':'C:/Users/XHH/Documents/PROJECTS/blanke4/love2d-win32'},
+            {'type':'string', 'name':'last_project', 'default':'', 'hidden':True}
         ])
         self.ide_settings.read(self.joinPath('ide.cfg'))
+        self.ide_settings.onSet = self._writeIDESettings
 
         self.elements = {
             'searchbar': Searchbar(self),
@@ -68,8 +71,11 @@ class App:
 
         self.frame('workspace').bind('<FocusIn>', self.element("searchbar").unfocus)
 
-        test(self)
         self.event.trigger('ide.ready')
+
+        # open last project
+        if self.ide_settings['last_project'] != '':
+            self.proj_manager.openProject(self.ide_settings['last_project'])
 
         # POST-ide.ready 
         ideSettings = self.element('searchbar').addKey(text="ideSettings", category="IDE", icon="wrench.png", onSelect=self.showIDESettings)
@@ -133,10 +139,6 @@ class App:
 
     def _writeIDESettings(self, values):
         self.ide_settings.write(self.joinPath('ide.cfg'))
-
- 
-def test(app):
-    app.proj_manager.openProject("C:/Users/XHH/Documents/PROJECTS/blanke4/src/projects/engine_project")
 
 
 root = Tk()

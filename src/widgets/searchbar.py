@@ -78,7 +78,7 @@ class Searchbar:
 		text = text.strip()
 		if text != PLACEHOLDER and text != "":
 			for key in self.keys:
-				if text in key.text:
+				if text in key.text.lower():
 					self.addResult(key)
 				else:
 					for tag in key.tags:

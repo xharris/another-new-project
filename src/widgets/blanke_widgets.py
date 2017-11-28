@@ -56,13 +56,7 @@ class bText(Text, object):
 
 		self.scrollbarX = Scrollbar(app.frame('workspace'), orient=HORIZONTAL)
 		self.scrollbarX.pack(side=BOTTOM, fill=X)
-		'''
-		listener = StringVar()
-		listener.trace("w", lambda name, index, mode, sv=listener: self.onCommand(listener))
-		if not 'textvariable' in kwargs:
-			kwargs['textvariable'] = listener
-		'''
-
+		
 		stylize(kwargs,{
 			'bg': app.color('entry_bg'),
 			'font': app.font('editable'),
@@ -86,11 +80,6 @@ class bText(Text, object):
 		self.delete("1.0","end")
 		self.insert("1.0", text)
 		self.edit_reset()
-
-	def onCommand(self, ev=None):
-		print(ev.get())
-		None
-
 
 class bButton(Button, object):
 	def __init__(self, app, frame=None, **kwargs):
@@ -183,7 +172,6 @@ class bForm(object):
 			self.app.font('form_label', {'family':'Lucida Console', 'size':7, 'weight':'normal'})
 
 		for i, inp in enumerate(self.inputs):
-			print(inp)
 			inp_type = inp['type']
 			new_frame = bFrame(app, self.frame_all)
 
@@ -242,8 +230,10 @@ class bForm(object):
 			self.frame_all.pack(side=TOP, anchor=W, fill=BOTH, expand=True)
 
 	def onSave(self, ev=None):
+		self.setting_manager.disable_onSet = True
 		for el in self.elements:
 			self.setting_manager[el.name] = el.get()
+		self.setting_manager.disable_onSet = False
 		if self.fn_onSave:
 			self.fn_onSave(self.setting_manager)
 

@@ -16,13 +16,15 @@ class ProjectManager:
 		self.game_settings = SettingManager([
             {'type':'string', 'name': 'title', 'default': self.getProjectName()},
             {'type':'checkbox', 'name': 'console', 'label': 'show console (broken)', 'default': False},
-            {'type':'number', 'name': 'run_count',  'label': 'instances on run', 'default':1, 'from':1, 'to':100}
+            {'type':'number', 'name': 'run_count',  'label': 'instances on run', 'default':1, 'from':1, 'to':100},
+            {'type':'string', 'name':'last_project', 'default':'', 'hidden':True}
         ])
 
 		self.app.event.on('ide.ready', self.ideReady)
 
 	def ideReady(self):
-		#self.game_settings['title'] = self.getProjectName()
+		# open last used project
+		self.game_settings['title'] = self.getProjectName()
 
 		el_searchbar = self.app.element('searchbar')
 		el_searchbar.addKey(text="newProject", tooltip="make a new folder for a project", category="ProjectManager", onSelect=self.newProject)
@@ -83,6 +85,8 @@ class ProjectManager:
 		else:
 			self.proj_path = filepath.replace("\\","/")
 		self.game_settings.read(self.getConfigPath())
+
+		self.app.ide_settings['last_project'] = self.proj_path
 		self.refreshFileSearch()
 
 	def refreshFileSearch(self):
@@ -137,9 +141,8 @@ class ProjectManager:
 
 	def run(self, ev=None):
 		love2dpath = self.app.joinPath(self.app.ide_settings['love2d_path'], 'love.exe')
-		str_console = ''
-		if self.game_settings['console']:
-			str_console = '--console'
+		str_console = self.game_settings['console']
+		run_count = self.game_settings['run_count']
 
 		# inject package.path code
 		template_path = join(getcwd(),'src','template').replace('\\','\\\\')
@@ -166,7 +169,9 @@ class ProjectManager:
 			'':['identity','version','console','accelerometerjoystick','externalstorage','gammacorrect'],
 			'window':['title','icon','width','height']
 		}
+		str_conf = 'end'
 
-        for i in range(self.game_settings['run_count']): 
+		for i in range(run_count): 
 			if self.app.os == "Windows":
 				self.app.execute('"'+love2dpath+'" "'+self.proj_path+'"')
+		

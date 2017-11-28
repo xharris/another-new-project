@@ -4,6 +4,8 @@ from os.path import isfile
 class SettingManager(object):
 	def __init__(self, settings=[]):
 		self.settings = {}
+		self.onSet = None
+		self.disable_onSet = False
 
 		for setting in settings:
 			self.addSetting(**setting)
@@ -16,7 +18,12 @@ class SettingManager(object):
 		self._checkValueType(name)
 
 	def _checkValueType(self, key):
-		if self.settings[key]['type'] == 'checkbox':
+		setting_type = self.settings[key]['type']
+
+		if setting_type == 'number':
+			self.settings[key]['default'] = int(self.settings[key]['default'])
+			self.settings[key]['value'] = int(self.settings[key]['value'])
+		if setting_type == 'checkbox':
 			self.settings[key]['default'] = (self.settings[key]['default'] == 'True' or self.settings[key]['default'] == True)
 			self.settings[key]['value'] = (self.settings[key]['value'] == 'True' or self.settings[key]['value'] == True)
 
@@ -32,6 +39,9 @@ class SettingManager(object):
 	def __setitem__(self, key, value):
 		self.settings[key]['value'] = value
 		self._checkValueType(key)
+
+		if self.onSet and not self.disable_onSet:
+			self.onSet(self.settings)
 
 	# gets the values of all settings in a name:value dict list
 	def getDefaults(self):
@@ -52,19 +62,22 @@ class SettingManager(object):
 	def getInputs(self):
 		ret_array = []
 		for s in self.settings:
-			self._checkValueType(s)
+			if not 'hidden' in self.settings[s]:
+				self._checkValueType(s)
 
-			setting = self.settings[s].copy()
-			setting['name'] = s
-			setting['value'] = self[s]
-			ret_array.append(setting)
+				setting = self.settings[s].copy()
+				setting['name'] = s
+				setting['value'] = self[s]
+				ret_array.append(setting)
 		
 		return ret_array
 
 	# reset values to defaults
 	def reset(self):
+		self.disable_onSet = True
 		for s in self.settings:
 			self[s] = self.settings[s]['default']
+		self.disable_onSet = False
 
 	# write settings to a file
 	def write(self, in_filepath):
