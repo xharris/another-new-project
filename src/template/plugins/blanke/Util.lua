@@ -29,7 +29,7 @@ function ifndef(var_check, default)
 	return default
 end
 
-function random_range(n1, n2)
+function randRange(n1, n2)
 	return love.math.random(n1, n2)
 end
 
@@ -101,3 +101,11 @@ end
 function table.copy(t)
 	return {unpack(t)}
 end
+
+function table.tonumber(t)
+	for i, val in ipairs(t) do
+		t[i] = tonumber(val)
+	end
+	return t
+end
+
