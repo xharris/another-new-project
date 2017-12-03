@@ -148,6 +148,7 @@ class ProjectManager:
 		template_path = join(getcwd(),'src','template').replace('\\','\\\\')
 
 		s_main = ''
+		print(join(self.proj_path,'main.lua'))
 		with open(join(self.proj_path,'main.lua'), 'r') as f_main:
 	   		s_main = f_main.read()
 		f_main.close()

@@ -50,7 +50,6 @@ class bEntry(Entry, object):
 
 class bText(Text, object):
 	def __init__(self, app, frame=None, **kwargs):
-
 		self.scrollbarY = Scrollbar(app.frame('workspace'))
 		self.scrollbarY.pack(side=RIGHT, fill=Y, pady=(0,18))
 
@@ -103,12 +102,17 @@ class bButton(Button, object):
 
 class bLabel(Label, object):
 	def __init__(self, app, frame=None, **kwargs):
+		self.string_var = StringVar()
 		stylize(kwargs,{
 			'bg': app.color('frame_bg'),
 			'fg': app.color('entry_text'),
 			'bd': 0,
+			'textvariable':self.string_var
 		})
 		super(self.__class__, self).__init__(frame, **kwargs)
+
+	def set(self, new_value):
+		self.string_var.set(new_value)
 
 class bSpinbox(Spinbox, object):
 	def __init__(self, app, frame=None, **kwargs):

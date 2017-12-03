@@ -22,6 +22,7 @@ from widgets.blanke_widgets import bFrame, bForm
 from widgets.searchbar import Searchbar
 from widgets.history import History
 from widgets.favorites import Favorites
+from widgets.statusbar import Statusbar
 
 class App:
     def __init__(self, master):
@@ -53,7 +54,8 @@ class App:
     	self.frame('main', bFrame(self)).pack(anchor=N, fill=BOTH, expand=True, side=LEFT)
         self.frame('searchbar', bFrame(self, self.frame('main'), height=26, padx=4)).pack(fill=X, pady=(4,0))
         self.frame('history', bFrame(self, self.frame('main'), height=24, padx=4)).pack(fill=X, pady=(4,0))
-        self.frame('workspace', bFrame(self, self.frame('main'), padx=4, pady=4)).pack(fill=BOTH, expand=True)
+        self.frame('workspace', bFrame(self, self.frame('main'), padx=4, pady=4)).pack(fill=BOTH, expand=True, pady=(0,28))
+        self.frame('statusbar', bFrame(self, self.frame('main'), padx=4, pady=4, height=20, highlightthickness=1)).pack(fill=X, side=BOTTOM, anchor=S)
 
         self.ide_settings = SettingManager([
             {'type':'checkbox', 'name':'use_external_editor', 'default':False},
@@ -66,7 +68,8 @@ class App:
         self.elements = {
             'searchbar': Searchbar(self),
             'history': History(self),
-            'favorites': Favorites(self)
+            'favorites': Favorites(self),
+            'statusbar': Statusbar(self, self.frame('statusbar'))
         }
 
         self.frame('workspace').bind('<FocusIn>', self.element("searchbar").unfocus)
@@ -104,8 +107,8 @@ class App:
     	return self.frames[name]
 
     def clearWorkspace(self):
-    	self.frame('workspace').destroy()
-    	self.frame('workspace', bFrame(self, self.frame('main'), padx=4, pady=4)).pack(fill=BOTH, expand=True)
+        for widget in self.frame('workspace').winfo_children():
+            widget.destroy()
         return self.frame('workspace')
 
     def error(self, msg):
@@ -131,6 +134,9 @@ class App:
             self.master.title("BlankE")
         else:
             self.master.title("%s - BlankE"%(value))
+
+    def setTooltip(self, value=''):
+        self.element('statusbar').setTooltip(value)
 
     def showIDESettings(self):
         self.clearWorkspace()

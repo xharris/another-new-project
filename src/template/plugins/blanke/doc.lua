@@ -288,3 +288,53 @@ k_left = Input('left', 'a')
 if k_left() then
 	hspeed = -125
 end
+
+--[[
+ ###    ##### ###### #   #  ###### 
+#      #      #      ##  #  #      
+ ###   #      #####  # # #  #####  
+    #  #      #      #  ##  #      
+ ###    ##### ###### #   #  ###### 
+
+Scene
+]]
+
+Scene(scene_name)							-- initialize a scene as scene_name.json
+
+-- instance methods
+addEntity(Entity)
+addTile(image_name, x, y, crop_options)		--[[
+	crop_options - {x, y, width, height}
+]]
+getTile(x, y, layer, img_name)				-- returns list of tile_data?
+getTileImage(x, y, layer, img_name)			-- same as geTTile but returns list of Image()
+removeTile(x, y, layer, img_name)
+removeHitboxAtPoint(x, y, layer)
+getList(object_type)
+draw()
+
+-- json format
+{
+	"layers": {
+		"layer0": {
+			"tile": [
+				{x, y, img_name, crop:{x, y, img_name, width, height}},
+				...
+			],
+			"hitbox": [
+				{name, points:[10,20,30,50,...]},
+				...
+			],
+			"entity": [
+				?
+			]
+		}
+	},
+	"objects": {
+		"layers": ["layer0",...],
+		"hitbox": [
+			{name, uuid, color},
+			...
+		]
+	}
+}
