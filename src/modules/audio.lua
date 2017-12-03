@@ -62,6 +62,7 @@ ideAudio = {
 	end,
 
 	getAssets = function()
+		updateAudioList()
 		local ret_str = ''
 		for i, aud in ipairs(audio_list) do
 			local aud_info = audio_info[aud]

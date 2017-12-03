@@ -295,18 +295,16 @@ BlankE = {
 	    
 	    Net.update(dt, false)
 
-	    for i_arr, arr in pairs(game) do
-	        for i_e, e in ipairs(arr) do
-	            if e.auto_update then
-	            	local old_pause = e.pause
-	            	if not BlankE.pause then 
-	            		e.pause = BlankE.pause
-	                	e:update(dt)
-	            	end
-	                e.pause = old_pause
-	            end
-	        end
-	    end
+    	if not BlankE.pause then 
+		    for i_arr, arr in pairs(game) do
+		        for i_e, e in ipairs(arr) do
+		            if e.auto_update and not e.pause then
+		                e:update(dt)
+		            end
+		        end
+		    end
+
+		end
 	end,
 
 	draw = function()

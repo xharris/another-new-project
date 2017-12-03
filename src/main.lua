@@ -41,6 +41,7 @@
 package.cpath = package.cpath .. ";/usr/local/lib/lua/5.2/?.so;/usr/local/lib/lua/5.2/?.dll;./?.dll;./?.so"
 
 require "imgui"
+lfs = require "lfs"
 require "template.plugins.blanke.extra.printr"
 require "template.plugins.blanke.Util"
 _watcher = require 'watcher'
@@ -142,10 +143,10 @@ function love.wheelmoved(x, y)
     end
 end
 
+ --[[
 local function error_printer(msg, layer)
     print((debug.traceback("Error: " .. tostring(msg), 1+(layer or 1)):gsub("\n[^\n]+$", "")))
 end
- 
 function love.errhand(msg)
     IDE.errd = true
 
@@ -219,4 +220,4 @@ function love.errhand(msg)
         if love.timer then love.timer.sleep(0.001) end
     end
  
-end
+end]]

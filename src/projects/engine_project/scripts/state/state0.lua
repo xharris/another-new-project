@@ -32,10 +32,6 @@ function state0:draw()
 	love.graphics.print("hey how goes it", 100,100)
 	love.graphics.setColor(255,255,255,255)
 
-	for t, tile in ipairs(copy_tiles) do
-		tile:draw()
-	end
-
 	new_img:draw() 
 
     main_view:draw(function()

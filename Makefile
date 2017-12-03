@@ -7,7 +7,7 @@ mac:
 
 win:
 	cls
-	"love2d-win32/love.exe" --console "src"
+	"love2d-win32/lovec.exe" --console "src"
 
 build_mac:
 	# remove old folder

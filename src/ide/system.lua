@@ -53,12 +53,14 @@ SYSTEM = {
 
 	mkdir = function(path)
 		if not SYSTEM.exists(path) then
+			lfs.mkdir(path)
+			--[[
 			SYSTEM.runCmd(
 				{
 					mac="mkdir -p \""..path.."\"",
 					win="mkdir \""..path.."\""
 				}
-			)
+			)]]
 		end
 	end,
 
@@ -83,12 +85,14 @@ SYSTEM = {
 	end,
 
 	remove = function(path)
+		lfs.rmdir(path)
+		--[[
 		SYSTEM.runCmd(
 			{
 				win='rm -r "'..path..'"',
 				mac='rm -rf "'..path..'"'
 			}
-		)
+		)]]
 	end,
 
 	getOS = function()
