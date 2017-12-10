@@ -1,5 +1,5 @@
 _FIRST_STATE = ''
-_REPLACE_REQUIRE = false
+_REPLACE_REQUIRE = nil
 game_name = "blanke"
 
 CONF = {
@@ -11,7 +11,7 @@ CONF = {
 
 -- engine
 require('plugins.blanke.Blanke')
-require 'assets'
+require('assets')
 
 function love.load()
     BlankE.init(_FIRST_STATE)
