@@ -35,9 +35,10 @@ CONSOLE = {
 	    end
 	end
 }
-
+--[[
 old_print = print
 print = function(...) 
     CONSOLE.print(...)
     old_print(...)
 end
+]]

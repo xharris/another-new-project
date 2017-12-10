@@ -131,6 +131,9 @@ BlankE = {
 		-- register States
 	    updateGlobals(0)
 		if first_state then
+			if first_state == nil or first_state == '' then
+				first_state = _empty_state
+			end
 			if type(first_state) == 'string' then
 				first_state = _G[first_state]
 			end
@@ -204,7 +207,7 @@ BlankE = {
 
 		local offset = 0
 		local function myStencilFunction() -- TODO: change to shader?
-			local conf_w, conf_h = CONF.window.width+(offset*2), CONF.window.height+(offset*2)
+			local conf_w, conf_h = game_width+(offset*2), game_height+(offset*2)
 
 			local rect_x = (game_width/2)-(conf_w/2)+offset
 			local rect_y = (game_height/2)-(conf_h/2)+offset

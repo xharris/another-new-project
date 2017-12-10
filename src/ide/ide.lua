@@ -64,6 +64,11 @@ IDE = {
 
 		-- change imgui styling
 		UI.randomizeIDEColor()
+
+		local template_path = SYSTEM.cleanPath(SYSTEM.cwd)
+		package.path=package.path..";"..template_path.."/src/template/?.lua"
+		package.path=package.path..";"..template_path.."/src/template/?/init.lua"
+		IDE.requireBlanke()
 	end,
 
 	update = function(dt)
@@ -430,7 +435,7 @@ IDE = {
 
 	-- src/myprojects
 	getProjectFolder = function()
-		return love.filesystem.getRealDirectory(IDE.project_folder)..'/'..IDE.project_folder
+		return SYSTEM.cleanPath(love.filesystem.getRealDirectory(IDE.project_folder)..'/'..IDE.project_folder)
 	end,
 
 	-- C:/blackstar/src/myprojects/theproject (absolute path)
@@ -440,18 +445,18 @@ IDE = {
 		if proj_name ~= '' then
 			if love.filesystem.getRealDirectory(IDE.project_folder..'/'..proj_name) == love.filesystem.getSaveDirectory() then
 				-- in the save directory
-				return love.filesystem.getRealDirectory(IDE.project_folder)..'/'..IDE.project_folder..'/'..proj_name
+				return SYSTEM.cleanPath(love.filesystem.getRealDirectory(IDE.project_folder)..'/'..IDE.project_folder..'/'..proj_name)
 			end
 			-- in the executable directory
-			return love.filesystem.getSource()..'/'..IDE.project_folder..'/'..proj_name
+			return SYSTEM.cleanPath(love.filesystem.getSource()..'/'..IDE.project_folder..'/'..proj_name)
 		end
 
-		return love.filesystem.getRealDirectory(IDE.project_folder)..'/'..IDE.project_folder
+		return SYSTEM.cleanPath(love.filesystem.getRealDirectory(IDE.project_folder)..'/'..IDE.project_folder)
 	end,
 
 	-- src/myprojects/theproject (relative path)
 	getShortProjectPath = function()
-		return IDE.project_folder..'/'..IDE.current_project
+		return SYSTEM.cleanPath(IDE.project_folder..'/'..IDE.current_project)
 	end,
 
 	-- theproject
@@ -467,17 +472,23 @@ IDE = {
 		if not opening_project then
 			opening_project = true
 
-			if package.loaded['BlankE'] then
-				package.loaded['BlankE'] = nil
-				_G['BlankE'] = nil
+			IDE.requireBlanke()
+
+			-- remove old project path from package.path
+			if IDE.isProjectOpen() then
+				package.path = string.gsub(package.path, IDE.getProjectPath().."/?.lua", "")
 			end
 
 			local old_path = IDE.current_project
 			IDE.current_project = basename(folder_path)
 
-			if not IDE._reload(IDE.project_folder..'/'..IDE.current_project..'/includes.lua') then
+			-- add project to package.path
+			package.path = package.path..";"..IDE.getProjectPath().."/?.lua"
+
+			if not IDE._reload(IDE.project_folder..'/'..IDE.current_project..'/assets.lua') then
 				IDE.current_project = old_path
 			end
+
 
 			IDE.iterateModules(function(m, module)
 				if module.onOpenProject then
@@ -493,6 +504,14 @@ IDE = {
 
 			opening_project = false
 		end
+	end,
+
+	requireBlanke = function() 
+		if package.loaded['BlankE'] then
+			package.loaded['BlankE'] = nil
+			_G['BlankE'] = nil
+		end
+		require('plugins.blanke.Blanke')
 	end,
 
 	_reload = function(path, dont_init_blanke)	
@@ -521,8 +540,26 @@ IDE = {
 				end
 			end)
 
+			-- replace TEMPLATE_PATH in main.lua
+			if false then --IDE.isProjectOpen() then
+				
+				local main_path = IDE.getProjectPath().."/main.lua"
+				local proj_path = IDE.getProjectPath()
+
+				f_main = assert(io.open(main_path, "r"))
+				local content = f_main:read("*all")
+				f_main:close()
+
+				content = string.gsub(content, "TEMPLATE_PATH", template_path)
+				content = string.gsub(content, "PROJECT_PATH", proj_path)
+				
+				f_main = assert(io.open(main_path, "w+"))
+				f_main:write(content)
+				f_main:close()
+			end
 			_REPLACE_REQUIRE = dirname(path):gsub('/','.')
 			if _REPLACE_REQUIRE:starts('.') then _REPLACE_REQUIRE:replaceAt(1,'') end
+
 			local result, chunk
 			result, chunk = pcall(love.filesystem.load, path)
 			if not result then print("chunk error: " .. chunk) return false end
@@ -535,8 +572,7 @@ IDE = {
 				end
 			end)
 
-			package.loaded.BlankE = nil
-			require('template.plugins.blanke.Blanke')
+			IDE.requireBlanke()
 			BlankE._ide_mode = true
 			if not dont_init_blanke then
 				BlankE.init(UI.getSetting('initial_state'))
@@ -559,21 +595,14 @@ IDE = {
 	reload = function(dont_init_blanke)
 		IDE._want_reload = true
 		if IDE.isProjectOpen() then
-			IDE._reload(IDE.getShortProjectPath()..'/includes.lua', dont_init_blanke)
+			IDE._reload(IDE.getShortProjectPath()..'/temp.lua', dont_init_blanke)
 		end
 	end,
 
 	refreshAssets = function(dont_reload)
 		if not IDE.isProjectOpen() then return end
 
-		local asset_str = 
-		"local asset_path = ''\n"..
-		"local oldreq = require\n"..
-		"if _REPLACE_REQUIRE then\n"..
-		"\tasset_path = _REPLACE_REQUIRE:gsub('%.','/')\n"..
-		"\trequire = function(s) return oldreq(_REPLACE_REQUIRE .. s) end\n"..
-		"end\n"..
-		"assets = Class{}\n"
+		local asset_str = "asset_path=''\nif _REPLACE_REQUIRE then\n\tasset_path=_REPLACE_REQUIRE:gsub('%.','/')\nend\nassets = Class{}\n"
 
 		local high_priority = {'image','audio','scene','entity','state'}
 
@@ -593,7 +622,6 @@ IDE = {
 				asset_str = asset_str .. mod.getAssets()
 			end
 		end
-		asset_str = asset_str.."if _REPLACE_REQUIRE then\n\trequire = oldreq\nend"
 
 		SYSTEM.mkdir(IDE.getProjectPath())
 		local file = io.open(IDE.getProjectPath()..'/assets.lua','w+')
@@ -603,7 +631,7 @@ IDE = {
 		end
 
 		if not dont_reload then
-			IDE._reload(IDE.getShortProjectPath()..'/assets.lua', true)
+			IDE._reload(IDE.getShortProjectPath()..'/temp.lua', true)
 		end
 	end,
 

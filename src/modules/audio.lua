@@ -52,12 +52,14 @@ ideAudio = {
 	end,
 
 	onOpenProject = function()
-		updateAudioList()
-		updateAudioList_timer = Timer()
-		updateAudioList_timer:every(updateAudioList, UI.getSetting('project_reload_timer').value):start()
 	end,
 
-	getObjectList = function() 
+	getObjectList = function()
+		if not updateAudioList_timer then
+			updateAudioList()
+			updateAudioList_timer = Timer()
+			updateAudioList_timer:every(updateAudioList, UI.getSetting('project_reload_timer').value):start()
+ 		end
 		return object_list
 	end,
 
@@ -69,7 +71,7 @@ ideAudio = {
 
 			ret_str = ret_str..""
 			.."\nfunction assets:"..aud_info.name.."()\n"
-			.."\tlocal new_aud = love.audio.newSource(asset_path..\'assets/audio/"..aud.."\',\'"..aud_info.type.."\')\n"
+			.."\tlocal new_aud = love.audio.newSource(\'assets/audio/"..aud.."\',\'"..aud_info.type.."\')\n"
 			--.."\tnew_img:setFilter('"+params.min+"', '"+params.mag+"', "+params.anisotropy+")\n"
 			--.."\t"+comment_wrap+"new_img:setWrap('"+params["[wrap]horizontal"]+"', '"+params["[wrap]vertical"]+"')\n"
 			.."\treturn new_aud\n"

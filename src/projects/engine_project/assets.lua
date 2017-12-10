@@ -1,8 +1,6 @@
-local asset_path = ''
-local oldreq = require
+asset_path=''
 if _REPLACE_REQUIRE then
-	asset_path = _REPLACE_REQUIRE:gsub('%.','/')
-	require = function(s) return oldreq(_REPLACE_REQUIRE .. s) end
+	asset_path=_REPLACE_REQUIRE:gsub('%.','/')
 end
 assets = Class{}
 
@@ -17,7 +15,7 @@ function assets:tile_ground()
 end
 
 function assets:second_beat()
-	local new_aud = love.audio.newSource(asset_path..'assets/audio/second_beat.wav','stream')
+	local new_aud = love.audio.newSource('assets/audio/second_beat.wav','stream')
 	return new_aud
 end
 function assets:main_scene()
@@ -32,6 +30,3 @@ state0 = Class{classname='state0'}
 require 'scripts.state.state0'
 _FIRST_STATE = state0
 
-if _REPLACE_REQUIRE then
-	require = oldreq
-end

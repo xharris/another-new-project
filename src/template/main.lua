@@ -1,8 +1,17 @@
 _FIRST_STATE = ''
-_GAME_NAME = "blanke"
 _REPLACE_REQUIRE = false
+game_name = "blanke"
 
-require 'includes'
+CONF = {
+    window = {
+        width = 800,
+        height = 600
+    }
+}
+
+-- engine
+require('plugins.blanke.Blanke')
+require 'assets'
 
 function love.load()
     BlankE.init(_FIRST_STATE)

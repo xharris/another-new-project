@@ -39,12 +39,14 @@ ideImage = {
 	end,
 
 	onOpenProject = function()
-		updateImageList()
-		updateImageList_timer = Timer()
-		updateImageList_timer:every(updateImageList, UI.getSetting('project_reload_timer').value):start()
 	end,
 
-	getObjectList = function() 
+	getObjectList = function()
+		if not updateImageList_timer then
+			updateImageList()
+			updateImageList_timer = Timer()
+			updateImageList_timer:every(updateImageList, UI.getSetting('project_reload_timer').value):start() 
+		end
 		return object_list
 	end,
 

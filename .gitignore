@@ -15,3 +15,4 @@ BlankE-darwin-x64
 love.*
 Makefile
 dist
+*.zip

@@ -17,6 +17,7 @@ SYSTEM = {
 
 	runCmd = function(commands, func)
 		if commands[SYSTEM.os] then
+			print(commands[SYSTEM.os])
 			local pfile = io.popen(commands[SYSTEM.os])
 		    if func then func(pfile) end
 		    pfile:close()

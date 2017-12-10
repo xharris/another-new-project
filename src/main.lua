@@ -37,6 +37,11 @@
     - replace more helper.py functions (newScript)
     - start the scene when a new one is created
 ]]
+local old_print = print
+print = function(...)
+    local debug_info = debug.getinfo(2)
+    old_print(debug_info.short_src..':'..debug_info.currentline, ...);
+end
 
 package.cpath = package.cpath .. ";/usr/local/lib/lua/5.2/?.so;/usr/local/lib/lua/5.2/?.dll;./?.dll;./?.so"
 
@@ -47,9 +52,6 @@ require "template.plugins.blanke.Util"
 _watcher = require 'watcher'
 
 _GAME_NAME = "blanke"
-_REPLACE_REQUIRE = ''
-
---require "includes"
 
 require "ide.system"
 require "ide.helper"

@@ -95,6 +95,8 @@ exporter = {
 		if imgui.MenuItem("run") then
 			if SYSTEM.os == 'mac' then
 				SYSTEM.execute(SYSTEM.cwd.."\"/love.app/Contents/MacOS/love\" \""..IDE.getProjectPath().."\"")
+			elseif SYSTEM.os == 'win' then
+				SYSTEM.execute(SYSTEM.cwd.."/love2d-win32/love.exe\" \""..IDE.getProjectPath().."\"")
 			end
 		end
 

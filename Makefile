@@ -1,5 +1,5 @@
 run:
-	make win
+	./run_win.bat
 
 mac:
 	clear
