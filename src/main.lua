@@ -37,6 +37,13 @@
     - replace more helper.py functions (newScript)
     - start the scene when a new one is created
 ]]
+ProFi = nil
+if _PROFILING then
+    ProFi = require 'profiler'
+    ProFi:setGetTimeMethod( love.timer.getTime )
+    ProFi:start()
+end
+
 local old_print = print
 print = function(...)
     local debug_info = debug.getinfo(2)
@@ -82,6 +89,10 @@ function love.quit()
     IDE.quit()
     if BlankE then BlankE.quit() end
     imgui.ShutDown();
+    if _PROFILING then
+        ProFi:stop()
+        ProFi:writeReport("profile_report.txt")
+    end
 end
 
 function love.filedropped(file)

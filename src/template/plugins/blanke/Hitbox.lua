@@ -1,10 +1,5 @@
 Hitbox = Class{
-	spatialhash = nil,
 	init = function(self, shape, args, tag, xoffset, yoffset)
-		if not Hitbox.spatialhash then
-			Hitbox.spatialhash = HC.hash()
-		end
-
 		xoffset = ifndef(xoffset, 0)
 		yoffset = ifndef(yoffset, 0)
 
@@ -43,7 +38,7 @@ Hitbox = Class{
 		self.parent = nil
 		self.args = args
 		--HC.register(self.HCShape)
-		Hitbox.spatialhash:register(self.HCShape, self.HCShape:bbox())
+		--HC:register(self.HCShape, self.HCShape:bbox())
 	end,
 
 	draw = function(self, mode)

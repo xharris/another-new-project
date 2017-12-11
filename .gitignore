@@ -16,3 +16,4 @@ love.*
 Makefile
 dist
 *.zip
+profile_report.txt

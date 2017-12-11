@@ -548,6 +548,29 @@ Scene = Class{
 			return entities
 	end,
 
+	_getMouseXY = function(self, dont_snap)
+		dont_snap = ifndef(dont_snap, _btn_no_snap())
+
+		local cam_x, cam_y
+		local place_cam = ifndef(BlankE.main_cam, self._fake_view)
+		if not place_cam.disabled then
+			cam_x, cam_y = place_cam.camera:cameraCoords(place_cam:mousePosition())
+			local cam_pos = {place_cam:position()}
+			cam_x = cam_x - ((place_cam.port_width/2) - cam_pos[1])
+			cam_y = cam_y - ((place_cam.port_height/2) - cam_pos[2])
+		else
+			cam_x, cam_y = mouse_x, mouse_y
+		end
+		local mx, my = cam_x*Scene._zoom_amt, cam_y*Scene._zoom_amt
+
+		if not dont_snap then
+			mx = mx-(mx%self._snap[1])
+			my = my-(my%self._snap[2])
+		end
+
+		return {mx, my}
+	end,
+
 	update = function(self, dt) 
 		-- update entities
 		for name, layer in pairs(self.layers) do
@@ -567,79 +590,16 @@ Scene = Class{
 				end
 			end
 		end
-	end,
 
-	_real_draw = function(self)
-		self._is_active = true
-
-		for l, name in ipairs(self.load_objects.layers) do
-			local layer = self.layers[name]
-
-			if BlankE._ide_mode and _place_layer ~= name then
-				love.graphics.push('all')
-				love.graphics.setColor(255,255,255,255/2.5)
-			end
-
-			if layer.entity then
-				for i_e, entity in ipairs(layer.entity) do
-					entity.scene_show_debug = self.show_debug
-					entity:draw()
-				end
-			end
-
-			if layer.tile then
-				for name, tile in pairs(layer.tile) do
-					love.graphics.draw(tile)
-				end
-			end
-
-			if BlankE._ide_mode and _place_layer ~= name then
-				love.graphics.pop()
-			end
-
-			if layer.hitbox and (self.draw_hitboxes or (self.show_debug and not BlankE._ide_mode)) then
-				for i_h, hitbox in ipairs(layer.hitbox) do
-					hitbox:draw()
-				end
-			end
-		end
-	end,
-
-	draw = function(self) 
-	    if BlankE._ide_mode then
-			function _getMouseXY(dont_snap)
-				dont_snap = ifndef(dont_snap, _btn_no_snap())
-
-				local cam_x, cam_y
-				local place_cam = ifndef(BlankE.main_cam, self._fake_view)
-				if not place_cam.disabled then
-					cam_x, cam_y = place_cam.camera:cameraCoords(place_cam:mousePosition())
-					local cam_pos = {place_cam:position()}
-					cam_x = cam_x - ((place_cam.port_width/2) - cam_pos[1])
-					cam_y = cam_y - ((place_cam.port_height/2) - cam_pos[2])
-				else
-					cam_x, cam_y = mouse_x, mouse_y
-				end
-				local mx, my = cam_x*Scene._zoom_amt, cam_y*Scene._zoom_amt
-
-				if not dont_snap then
-					mx = mx-(mx%self._snap[1])
-					my = my-(my%self._snap[2])
-				end
-
-				return {mx, my}
-			end
-
-	    	self._fake_view:attach()
-
-	    	-- reset hitbox vars
+		if BlankE._ide_mode then
+			-- reset hitbox vars
 	    	if _place_type ~= 'hitbox' or (_place_type == 'hitbox' and not _place_obj) then
 				hitbox_points = {}
 				hitbox_rem_point = true
 	    	end
 
 	    	-- placing object on click
-	    	local _placeXY = _getMouseXY()
+	    	local _placeXY = self:_getMouseXY()
 	    	BlankE._mouse_x, BlankE._mouse_y = unpack(_placeXY)
 	    	if _btn_place() and _place_type then
 	    		if _placeXY[1] ~= _last_place[1] or _placeXY[2] ~= _last_place[2] then
@@ -764,6 +724,49 @@ Scene = Class{
 		    	confirm_pressed = false
 		    end
 
+
+		end -- BlankE._ide_mode
+	end,
+
+	_real_draw = function(self)
+		self._is_active = true
+
+		for l, name in ipairs(self.load_objects.layers) do
+			local layer = self.layers[name]
+
+			if BlankE._ide_mode and _place_layer ~= name then
+				love.graphics.push('all')
+				love.graphics.setColor(255,255,255,255/2.5)
+			end
+
+			if layer.entity then
+				for i_e, entity in ipairs(layer.entity) do
+					entity.scene_show_debug = self.show_debug
+					entity:draw()
+				end
+			end
+
+			if layer.tile then
+				for name, tile in pairs(layer.tile) do
+					love.graphics.draw(tile)
+				end
+			end
+
+			if BlankE._ide_mode and _place_layer ~= name then
+				love.graphics.pop()
+			end
+
+			if layer.hitbox and (self.draw_hitboxes or (self.show_debug and not BlankE._ide_mode)) then
+				for i_h, hitbox in ipairs(layer.hitbox) do
+					hitbox:draw()
+				end
+			end
+		end
+	end,
+
+	draw = function(self) 
+	    if BlankE._ide_mode then
+	    	self._fake_view:attach()
 	    	self:_real_draw()
 
 	    	-- draw hitbox being placed
@@ -793,7 +796,7 @@ Scene = Class{
 			    end
 		    end
 
-			BlankE._drawGrid()
+			--BlankE._drawGrid()
 	    	self._fake_view:detach()
 	    else
 	    	self:_real_draw()

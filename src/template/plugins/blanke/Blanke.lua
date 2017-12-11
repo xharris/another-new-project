@@ -96,7 +96,7 @@ _err_state = Class{classname='_err_state',error_msg='NO GAME'}
 
 BlankE = {
 	_ide_mode = false,
-	show_grid = true,
+	show_grid = false,
 	grid_color = {255,255,255},
 	_mouse_x = 0,
 	_mouse_y = 0,
@@ -318,7 +318,7 @@ BlankE = {
 		
         -- TODO: problematic, draws 2 grid sometimes, just remove?
 		if BlankE._ide_mode and #game.scene > 0  and BlankE.getCurrentState() ~= '_empty_state' then
-			--BlankE._drawGrid()
+			BlankE._drawGrid()
 		end
 
 	    local cur_time = love.timer.getTime()

@@ -1,8 +1,6 @@
-local asset_path = ''
-local oldreq = require
+asset_path=''
 if _REPLACE_REQUIRE then
-	asset_path = _REPLACE_REQUIRE:gsub('%.','/')
-	require = function(s) return oldreq(_REPLACE_REQUIRE .. s) end
+	asset_path=_REPLACE_REQUIRE:gsub('%.','/')
 end
 assets = Class{}
 
@@ -13,6 +11,3 @@ state1 = Class{classname='state1'}
 require 'scripts.state.state1'
 _FIRST_STATE = state0
 
-if _REPLACE_REQUIRE then
-	require = oldreq
-end

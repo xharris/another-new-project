@@ -131,33 +131,37 @@ Entity = Class{
 				if self.shapes[name] ~= nil then
 					local obj_shape = self.shapes[name]:getHCShape()
 
-					local collisions = HC.collisions(obj_shape)
-					for other, separating_vector in pairs(collisions) do
-	                
-						-- collision action functions
-						self.collisionStopX = function(self)
-							for name, shape in pairs(self.shapes) do
-								shape:move(separating_vector.x, 0)
+					local collisions = HC.neighbors(obj_shape)
+					for other in pairs(collisions) do
+					    local collides, dx, dy = obj_shape:collidesWith(other)
+					    if collides then
+		                	local separating_vector = {['x']=dx, ['y']=dy}
+		                	
+							-- collision action functions
+							self.collisionStopX = function(self)
+								for name, shape in pairs(self.shapes) do
+									shape:move(separating_vector.x, 0)
+								end
+					            self.hspeed = 0
+					            dx = 0
 							end
-				            self.hspeed = 0
-				            dx = 0
-						end
 
-						self.collisionStopY = function(self)
-							for name, shape in pairs(self.shapes) do
-								shape:move(0, separating_vector.y)
+							self.collisionStopY = function(self)
+								for name, shape in pairs(self.shapes) do
+									shape:move(0, separating_vector.y)
+								end
+					            self.vspeed = 0
+					            dy = 0
 							end
-				            self.vspeed = 0
-				            dy = 0
-						end
-						
-						self.collisionStop = function(self)
-							self:collisionStopX()
-							self:collisionStopY()
-						end
+							
+							self.collisionStop = function(self)
+								self:collisionStopX()
+								self:collisionStopY()
+							end
 
-						-- call users collision callback if it exists
-						fn(other, separating_vector)
+							-- call users collision callback if it exists
+							fn(other, separating_vector)
+						end
 					end
 				end
 			end

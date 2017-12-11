@@ -15,7 +15,7 @@ function assets:tile_ground()
 end
 
 function assets:second_beat()
-	local new_aud = love.audio.newSource('assets/audio/second_beat.wav','stream')
+	local new_aud = love.audio.newSource(asset_path..'assets/audio/second_beat.wav','stream')
 	return new_aud
 end
 function assets:main_scene()
