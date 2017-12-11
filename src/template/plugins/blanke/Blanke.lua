@@ -96,8 +96,10 @@ _err_state = Class{classname='_err_state',error_msg='NO GAME'}
 
 BlankE = {
 	_ide_mode = false,
-	show_grid = false,
+	show_grid = true,
 	grid_color = {255,255,255},
+	_offx = 0,
+	_offy = 0,
 	_mouse_x = 0,
 	_mouse_y = 0,
 	_callbacks_replaced = false,
@@ -171,77 +173,68 @@ BlankE = {
 	snap = {32,32},
 	initial_cam_pos = {0,0},
 
-	_drawGrid = function()
-		if not (BlankE.show_grid and BlankE._ide_mode) then return BlankE end
+	_gridStencilFunction = function()
+		local conf_w, conf_h = game_width, game_height
 
-		local r,g,b,a = love.graphics.getBackgroundColor()
-		
-	    r = 255 - r; g = 255 - g; b = 255 - b;
-		BlankE.grid_color = {r,g,b}
-		local grid_color = BlankE.grid_color
-
-		local min_grid_draw = 8
-		local snap = ifndef(BlankE.snap, {32,32})
-		local zoom_amt = 1--ifndef(Scene._zoom_amt, 1)
-		snap[1] = snap[1] * zoom_amt
-		snap[2] = snap[2] * zoom_amt
+		local rect_x = (game_width/2)-(conf_w/2)
+		local rect_y = (game_height/2)-(conf_h/2)
 
 		local g_x, g_y
 		if BlankE.main_cam and not BlankE.main_cam.disabled then
 			g_x, g_y = BlankE.main_cam:position()
-			--g_x = g_x - ((game_width-CONF.window.width)%snap[1])
-			--g_y = g_y - ((game_height-CONF.window.height)%snap[2])
 		else
 			g_x, g_y = 0, 0
 		end
 
-		local scr_w = game_width
-		local scr_h = game_height
-		if BlankE.main_cam then
-			scr_w = BlankE.main_cam.port_width
-			scr_h = BlankE.main_cam.port_height
-		end
+	   	love.graphics.rectangle("fill", rect_x+g_x-(game_width/2), rect_y+g_y-(game_height/2), conf_w, conf_h)
+	end,
 
-		local offx = -(g_x-(g_x%snap[1]))-(scr_w/2%snap[1]) + snap[1]
-		local offy = -(g_y-(g_y%snap[2]))-(scr_h/2%snap[2]) + snap[2]
+	_gridStencilLine = function(func)	
+		local grid_color = BlankE.grid_color
 
-		local offset = 0
-		local function myStencilFunction() -- TODO: change to shader?
-			local conf_w, conf_h = game_width+(offset*2), game_height+(offset*2)
+		-- outside view line
+		love.graphics.setColor(grid_color[1], grid_color[2], grid_color[3], 15)
+		func()
 
-			local rect_x = (game_width/2)-(conf_w/2)+offset
-			local rect_y = (game_height/2)-(conf_h/2)+offset
-
-		   	love.graphics.rectangle("fill", rect_x+g_x-(game_width/2), rect_y+g_y-(game_height/2), conf_w, conf_h)
-		end
-
-		local function stencilLine(func)
-			-- outside view line
-			love.graphics.setColor(grid_color[1], grid_color[2], grid_color[3], 15)
-			func()
-
-			-- in-view lines
-			if _grid_gradient then
-				-- grid gradient
-				for o = 0,15,1 do
-					offset = -o
-		    		love.graphics.setColor(grid_color[1], grid_color[2], grid_color[3], 2)
-		    		love.graphics.stencil(myStencilFunction, "replace", 1)
-				 	love.graphics.setStencilTest("greater", 0)
-				 	func()
-		    		love.graphics.setStencilTest()
-				end
-			else 
-				-- no grid gradient
-				offset = 0
-				love.graphics.stencil(myStencilFunction, "replace", 1)
+		-- in-view lines
+		if _grid_gradient then
+			-- grid gradient
+			for o = 0,15,1 do
+				offset = -o
+	    		love.graphics.setColor(grid_color[1], grid_color[2], grid_color[3], 2)
+	    		love.graphics.stencil(BlankE._gridStencilFunction, "replace", 1)
 			 	love.graphics.setStencilTest("greater", 0)
-			 	love.graphics.setColor(grid_color[1], grid_color[2], grid_color[3], 25)
 			 	func()
-				love.graphics.setStencilTest()
+	    		love.graphics.setStencilTest()
 			end
-
+		else 
+			-- no grid gradient
+			offset = 0
+			love.graphics.stencil(BlankE._gridStencilFunction, "replace", 1)
+		 	love.graphics.setStencilTest("greater", 0)
+		 	love.graphics.setColor(grid_color[1], grid_color[2], grid_color[3], 25)
+		 	func()
+			love.graphics.setStencilTest()
 		end
+	end,
+
+	_getSnap = function() 
+		local zoom_amt = 1
+		local snap = ifndef(BlankE.snap, {32,32})
+		snap[1] = snap[1] * zoom_amt
+		snap[2] = snap[2] * zoom_amt
+		return snap
+	end,
+
+	_drawGrid = function()
+		if not (BlankE.show_grid and BlankE._ide_mode) then return BlankE end
+
+		local grid_color = BlankE.grid_color
+
+		local min_grid_draw = 8
+		local snap = BlankE._getSnap()
+		local offx = BlankE._offx
+		local offy = BlankE._offy
 
 		love.graphics.push('all')
 		love.graphics.setLineStyle("rough")
@@ -254,31 +247,30 @@ BlankE = {
 		love.graphics.line(-offx-(game_width/2)-snap[2],0,game_width,0)  -- horiz			
 		love.graphics.setLineWidth(1)
 
+		local x_arg2 = (-game_height/2)-offy
+		local x_arg4 = game_height-offy
+
 		-- vertical lines
 		if snap[1] >= min_grid_draw then
-			for x = -game_width/2,game_width,snap[1] do
-				stencilLine(function()
-					love.graphics.line(x-offx, (-game_height/2)-offy, x-offx, game_height-offy)
-				end)
+			local half_width = -game_width/2
+			for x = half_width,game_width,snap[1] do
+				love.graphics.line(x-offx, x_arg2, x-offx, x_arg4)
 			end
 		end
 
+		local y_arg1 = (-game_width/2)-offx
+		local y_arg3 = game_width-offx
+
 		-- horizontal lines
 		if snap[2] >= min_grid_draw then
-			for y = -game_height/2,game_height,snap[2] do
-				stencilLine(function()
-					love.graphics.line((-game_width/2)-offx, y-offy, game_width-offx, y-offy)
-				end)
+			local half_height = -game_height/2
+			for y = half_height,game_height,snap[2] do
+				love.graphics.line(y_arg1, y-offy, y_arg3, y-offy)
 			end
 		end
 		love.graphics.pop()
 
 		return BlankE
-	end,
-
-	drawGrid = function(snapx, snapy, camera)
-		BlankE.snap = {snapx, snapy}
-		BlankE.main_cam = camera
 	end,
 
 	setGridSnap = function(snapx, snapy)
@@ -294,6 +286,31 @@ BlankE = {
 	    dt = math.min(dt, min_dt)
 	    next_time = next_time + min_dt
 
+		-- make grid color inverse of background color
+		local r,g,b,a = love.graphics.getBackgroundColor()
+	    r = 255 - r; g = 255 - g; b = 255 - b;
+		BlankE.grid_color = {r,g,b}
+
+		-- calculate grid offset
+		local snap = BlankE._getSnap()
+
+		local g_x, g_y
+		if BlankE.main_cam and not BlankE.main_cam.disabled then
+			g_x, g_y = BlankE.main_cam:position()
+		else
+			g_x, g_y = 0, 0
+		end
+
+		local scr_w = game_width
+		local scr_h = game_height
+		if BlankE.main_cam then
+			scr_w = BlankE.main_cam.port_width
+			scr_h = BlankE.main_cam.port_height
+		end
+
+		BlankE._offx = -(g_x-(g_x%snap[1]))-(scr_w/2%snap[1]) + snap[1]
+		BlankE._offy = -(g_y-(g_y%snap[2]))-(scr_h/2%snap[2]) + snap[2]
+
 	    updateGlobals(dt)
 	    
 	    Net.update(dt, false)
@@ -306,7 +323,10 @@ BlankE = {
 		            end
 		        end
 		    end
+		end
 
+		if BlankE.main_cam and BlankE.pause then
+			BlankE.main_cam:update()
 		end
 	end,
 
@@ -316,9 +336,10 @@ BlankE = {
 			scene._is_active = false
 		end)
 		
-        -- TODO: problematic, draws 2 grid sometimes, just remove?
 		if BlankE._ide_mode and #game.scene > 0  and BlankE.getCurrentState() ~= '_empty_state' then
-			BlankE._drawGrid()
+			if BlankE.main_cam then BlankE.main_cam:attach() end
+			BlankE._gridStencilLine(BlankE._drawGrid)
+			if BlankE.main_cam then BlankE.main_cam:detach() end
 		end
 
 	    local cur_time = love.timer.getTime()

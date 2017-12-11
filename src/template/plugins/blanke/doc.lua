@@ -190,6 +190,9 @@ num shake_intensity			-- = 7
 num shake_falloff 			-- = 2.5
 str shake_type 				-- smooth, rigid
 
+bool draggable				-- drag the camera around using mouse_position
+Input drag_input			-- input that toggles whether camera is being dragged
+
 -- methods
 position()					-- returns camera position
 follow(Entity)				-- follows an Entity

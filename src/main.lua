@@ -37,6 +37,8 @@
     - replace more helper.py functions (newScript)
     - start the scene when a new one is created
 ]]
+_PROFILING = false
+
 ProFi = nil
 if _PROFILING then
     ProFi = require 'profiler'

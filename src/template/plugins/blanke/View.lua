@@ -42,6 +42,12 @@ View = Class{
         self.shake_intensity = 7
         self.shake_falloff = 2.5
         self.shake_type = 'smooth'
+
+        self.draggable = false
+        self.drag_input = nil
+        self._dragging = false
+        self._view_initial_pos = {0,0}
+		self._initial_mouse_pos = {0,0}
         
         _addGameObject('view',self)
 	end,
@@ -116,6 +122,32 @@ View = Class{
     end,
 
 	update = function(self, dt)
+		-- dragging
+		if self.draggable and self.drag_input ~= nil then
+			if self.drag_input() then
+	    		-- on down
+		    	if not self._dragging then
+		    		self._dragging = true
+		    		self._view_initial_pos = {self:position()}
+		    		self._initial_mouse_pos = {mouse_x, mouse_y}
+		    		--
+		    	end
+		    	-- on hold
+		    	if self._dragging then
+		    		local _drag_dist = {mouse_x-self._initial_mouse_pos[1], mouse_y-self._initial_mouse_pos[2]}
+		    		self:moveToPosition(
+		    			self._view_initial_pos[1] - _drag_dist[1],
+		    			self._view_initial_pos[2] - _drag_dist[2],
+		    			true
+		    		)
+		    		Scene._fake_view_start = {self:position()}
+		    	end
+		    end
+	    	-- on release
+	    	if not self.drag_input() and self._dragging then
+	    		self._dragging = false
+	    	end
+	    end
 
 		if self.follow_entity then
 			local follow_x = self.follow_entity.x

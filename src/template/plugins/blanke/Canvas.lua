@@ -23,13 +23,13 @@ Canvas = Class{
         love.graphics.setCanvas()--self._prev_canvas)
     end,
     
-    draw = function(self, func)
+    drawTo = function(self, func)
         self:start()
         func()
         self:stop()
     end,
     
-    show = function(self)
+    draw = function(self)
         love.graphics.draw(self.canvas)
     end,
 }

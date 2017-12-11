@@ -1,5 +1,4 @@
 local _btn_place
-local _btn_drag
 local _btn_remove
 local _btn_confirm
 local _btn_no_snap
@@ -10,11 +9,7 @@ local _place_type
 local _place_obj
 local _place_layer
 
-local _dragging = false
-local _view_initial_pos = {0,0}
-local _initial_mouse_pos = {0,0}
-
-local _grid_gradient = false
+local _grid_gradient = true
 
 local layer_template = {entity={},tile={},hitbox={}}
 
@@ -84,7 +79,6 @@ Scene = Class{
 
 		if BlankE._ide_mode then
 			_btn_place = Input('mouse.1')
-			_btn_drag = Input('mouse.3','space')
 			_btn_remove = Input('mouse.2')
 			_btn_confirm = Input('return','kpenter')
 			_btn_no_snap = Input('lctrl','rctrl')
@@ -99,6 +93,8 @@ Scene = Class{
 			self._fake_view.noclip = true
 			self._fake_view:moveToPosition(Scene._fake_view_start[1], Scene._fake_view_start[2])
 			self._fake_view.motion_type = 'smooth' -- (not working as intended)		
+			self._fake_view.draggable = true
+			self._fake_view.drag_input = Input('mouse.3','space')
 		end
 
 		if name and assets[name] then
@@ -663,28 +659,6 @@ Scene = Class{
 	    	if not self._fake_view.disabled then
 	    		View._disable_grid = true
 				BlankE.setGridCamera(self._fake_view)
-		    	if _btn_drag() then
-		    		-- on down
-			    	if not _dragging then
-			    		_dragging = true
-			    		_view_initial_pos = {self._fake_view:position()}
-			    		_initial_mouse_pos = {mouse_x, mouse_y}
-			    		--
-			    	end
-			    	-- on hold
-			    	if _dragging then
-			    		local _drag_dist = {mouse_x-_initial_mouse_pos[1], mouse_y-_initial_mouse_pos[2]}
-			    		self._fake_view:moveToPosition(
-			    			_view_initial_pos[1] - _drag_dist[1],
-			    			_view_initial_pos[2] - _drag_dist[2]
-			    		)
-			    		Scene._fake_view_start = {self._fake_view:position()}
-			    	end
-			    end
-		    	-- on release
-		    	if not _btn_drag() and _dragging then
-		    		_dragging = false
-		    	end
 		    else
 		    	View._disable_grid = false
 		    end
@@ -796,7 +770,6 @@ Scene = Class{
 			    end
 		    end
 
-			--BlankE._drawGrid()
 	    	self._fake_view:detach()
 	    else
 	    	self:_real_draw()
