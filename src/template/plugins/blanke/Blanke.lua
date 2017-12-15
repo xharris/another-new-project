@@ -96,16 +96,19 @@ _err_state = Class{classname='_err_state',error_msg='NO GAME'}
 
 BlankE = {
 	_ide_mode = false,
+	_first_state = nil,
 	show_grid = true,
 	grid_color = {255,255,255},
 	_offx = 0,
 	_offy = 0,
+	_stencil_offset = 0,
 	_mouse_x = 0,
 	_mouse_y = 0,
 	_callbacks_replaced = false,
 	pause = false,
 	init = function(first_state)
 		first_state = ifndef(first_state, _err_state)
+		BlankE._first_state = first_state
 		if not BlankE._callbacks_replaced then
 			BlankE._callbacks_replaced = true
 
@@ -141,11 +144,15 @@ BlankE = {
 			end
 			State.switch(first_state)
 		end
-
 	end,
 
 	reloadAssets = function()
 		require 'assets'
+	end,
+
+	restart = function()
+		BlankE.clearObjects(true)
+		State.switch(BlankE._first_state)
 	end,
 
 	getCurrentState = function()
@@ -174,7 +181,7 @@ BlankE = {
 	initial_cam_pos = {0,0},
 
 	_gridStencilFunction = function()
-		local conf_w, conf_h = game_width, game_height
+		local conf_w, conf_h = CONF.window.width, CONF.window.height --game_width, game_height
 
 		local rect_x = (game_width/2)-(conf_w/2)
 		local rect_y = (game_height/2)-(conf_h/2)
@@ -186,7 +193,12 @@ BlankE = {
 			g_x, g_y = 0, 0
 		end
 
-	   	love.graphics.rectangle("fill", rect_x+g_x-(game_width/2), rect_y+g_y-(game_height/2), conf_w, conf_h)
+	   	love.graphics.rectangle("fill",
+	   		rect_x+g_x-(game_width/2)+BlankE._stencil_offset,
+	   		rect_y+g_y-(game_height/2)+BlankE._stencil_offset,
+	   		conf_w+BlankE._stencil_offset,
+	   		conf_h+BlankE._stencil_offset
+	   	)
 	end,
 
 	_gridStencilLine = function(func)	
@@ -194,27 +206,18 @@ BlankE = {
 
 		-- outside view line
 		love.graphics.setColor(grid_color[1], grid_color[2], grid_color[3], 15)
+		
 		func()
 
 		-- in-view lines
-		if _grid_gradient then
-			-- grid gradient
-			for o = 0,15,1 do
-				offset = -o
-	    		love.graphics.setColor(grid_color[1], grid_color[2], grid_color[3], 2)
-	    		love.graphics.stencil(BlankE._gridStencilFunction, "replace", 1)
-			 	love.graphics.setStencilTest("greater", 0)
-			 	func()
-	    		love.graphics.setStencilTest()
-			end
-		else 
-			-- no grid gradient
-			offset = 0
-			love.graphics.stencil(BlankE._gridStencilFunction, "replace", 1)
+		for o = 0,2,1 do
+			BlankE._stencil_offset = -o
+
+    		love.graphics.setColor(grid_color[1], grid_color[2], grid_color[3], 1)
+    		love.graphics.stencil(BlankE._gridStencilFunction, "replace", 1)
 		 	love.graphics.setStencilTest("greater", 0)
-		 	love.graphics.setColor(grid_color[1], grid_color[2], grid_color[3], 25)
 		 	func()
-			love.graphics.setStencilTest()
+    		love.graphics.setStencilTest()
 		end
 	end,
 

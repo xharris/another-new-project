@@ -9,8 +9,6 @@ local _place_type
 local _place_obj
 local _place_layer
 
-local _grid_gradient = true
-
 local layer_template = {entity={},tile={},hitbox={}}
 
 -- hitbox placing

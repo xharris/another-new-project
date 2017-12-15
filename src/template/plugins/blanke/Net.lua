@@ -21,7 +21,7 @@ Net = {
     uuid = nil,
 
     init = function(address, port)
-        require 'plugins.lube'
+        blanke_require('extra.lube')
         Net.address = ifndef(address, "localhost") 
         Net.port = ifndef(port, Net.port) 
         Net.uuid = uuid()      

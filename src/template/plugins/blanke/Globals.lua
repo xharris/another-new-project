@@ -11,3 +11,10 @@ function updateGlobals(dt)
 	game_width = love.graphics.getWidth()
 	game_height = love.graphics.getHeight()
 end
+
+CONF = {
+    window = {
+        width = 800,
+        height = 600
+    }
+}

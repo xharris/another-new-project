@@ -4,6 +4,10 @@ function state0:leave() end
 
 -- Called every time when entering the state.
 function state0:enter(previous)
+	Net.init()
+	k_host = Input("h")
+	k_join = Input("j")
+
 	love.graphics.setBackgroundColor(255,255,255)
 	new_img = Image('penguin')
 	new_img.x = 100
@@ -24,7 +28,12 @@ function state0:enter(previous)
 end
 
 function state0:update(dt)
-
+	if k_host() then
+		Net.host()
+	end
+	if k_join() then
+		Net.join()
+	end
 end
 
 function state0:draw()

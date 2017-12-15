@@ -6,8 +6,7 @@ local love2d_binary_path = {
 }
 local engine_path = SYSTEM.cleanPath(SYSTEM.cwd.."/src/template/plugins")
 
--- folder_name: put the .love in /project/export/<folder_name>/
-function buildLove(folder_name)
+function buildSrcDir(folder_name)
 	engine_path = SYSTEM.cleanPath(SYSTEM.cwd.."/src/template/plugins")
 
 	-- make export directory
@@ -24,12 +23,18 @@ function buildLove(folder_name)
 
 	-- copy engine
 	SYSTEM.copy(engine_path, folder_name..'/src/plugins')
+	return folder_name..'/src'
+end
+
+-- folder_name: put the .love in /project/export/<folder_name>/
+function buildLove(folder_name)
+	src_dir = buildSrcDir(folder_name)
 
 	-- zip into .love
-	HELPER.run('zipDir',{folder_name..'/src', folder_name..'/'.._GAME_NAME..'.love'})
+	HELPER.run('zipDir',{src_dir, folder_name..'/'.._GAME_NAME..'.love'})
 
 	-- remove temporary src dir
-	SYSTEM.remove(folder_name..'/src')
+	SYSTEM.remove(src_dir)
 
 	return folder_name..'/'.._GAME_NAME..'.love'
 end
@@ -93,10 +98,11 @@ exporter = {
 
 	onMenuDraw = function()
 		if imgui.MenuItem("run") then
+			src_path = buildSrcDir(IDE.getProjectPath()..'/dist')
 			if SYSTEM.os == 'mac' then
-				SYSTEM.execute(SYSTEM.cwd.."\"/love.app/Contents/MacOS/love\" \""..IDE.getProjectPath().."\"")
+				SYSTEM.execute(SYSTEM.cwd.."\"/love.app/Contents/MacOS/love\" \""..src_path.."\"")
 			elseif SYSTEM.os == 'win' then
-				SYSTEM.execute(SYSTEM.cwd.."/love2d-win32/love.exe\" \""..IDE.getProjectPath().."\"")
+				SYSTEM.execute(SYSTEM.cwd.."/love2d-win32/love.exe\" \""..src_path.."\"")
 			end
 		end
 

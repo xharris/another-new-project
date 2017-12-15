@@ -2,13 +2,6 @@ _FIRST_STATE = ''
 _REPLACE_REQUIRE = nil
 game_name = "blanke"
 
-CONF = {
-    window = {
-        width = 800,
-        height = 600
-    }
-}
-
 -- engine
 require('plugins.blanke.Blanke')
 require('assets')

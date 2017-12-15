@@ -229,7 +229,6 @@ IDE = {
     							status, initial_state = imgui.Combo("initial state", table.find(obj_list, UI.getSetting('initial_state')), obj_list, #obj_list);
     							if status then
     								UI.setSetting('initial_state',obj_list[initial_state])
-    								--_FIRST_STATE = obj_list[initial_state]
     							end
 	        				end
 
@@ -345,7 +344,7 @@ IDE = {
 	        -- manual reload button
 	        if IDE.isProjectOpen() then
 	        	if UI.drawIconButton("reload", "reload game") then
-					IDE.reload()
+					BlankE.restart()
 				end
 				imgui.SameLine()
 
@@ -485,10 +484,9 @@ IDE = {
 			-- add project to package.path
 			package.path = package.path..";"..IDE.getProjectPath().."/?.lua"
 
-			if not IDE._reload(IDE.project_folder..'/'..IDE.current_project..'/assets.lua') then
+			if not IDE._reload(IDE.getShortProjectPath()..'/assets.lua', true) then
 				IDE.current_project = old_path
 			end
-
 
 			IDE.iterateModules(function(m, module)
 				if module.onOpenProject then
@@ -506,15 +504,18 @@ IDE = {
 		end
 	end,
 
-	requireBlanke = function() 
-		if package.loaded['BlankE'] then
-			package.loaded['BlankE'] = nil
+	requireBlanke = function()
+	--[[
+		if _G['BlankE'] then
 			_G['BlankE'] = nil
 		end
-		require('plugins.blanke.Blanke')
+		]]--
+		if not _G['BlankE'] then
+			require('plugins.blanke.Blanke')
+		end
 	end,
 
-	_reload = function(path, dont_init_blanke)	
+	_reload = function(path, init_blanke)	
 		if IDE.update_timeout == 0 then
 			IDE.update_timeout = 2
 
@@ -526,7 +527,6 @@ IDE = {
 				package.path = package.path .. ";"..proj..path
 			end
 ]]
-			IDE.refreshAssets(true)
 
 	        IDE.iteratePlugins(function(p, plugin)
 	        	if plugin.onReload then
@@ -540,23 +540,6 @@ IDE = {
 				end
 			end)
 
-			-- replace TEMPLATE_PATH in main.lua
-			if false then --IDE.isProjectOpen() then
-				
-				local main_path = IDE.getProjectPath().."/main.lua"
-				local proj_path = IDE.getProjectPath()
-
-				f_main = assert(io.open(main_path, "r"))
-				local content = f_main:read("*all")
-				f_main:close()
-
-				content = string.gsub(content, "TEMPLATE_PATH", template_path)
-				content = string.gsub(content, "PROJECT_PATH", proj_path)
-				
-				f_main = assert(io.open(main_path, "w+"))
-				f_main:write(content)
-				f_main:close()
-			end
 			_REPLACE_REQUIRE = dirname(path):gsub('/','.')
 			if _REPLACE_REQUIRE:starts('.') then _REPLACE_REQUIRE:replaceAt(1,'') end
 
@@ -574,14 +557,20 @@ IDE = {
 
 			IDE.requireBlanke()
 			BlankE._ide_mode = true
-			if not dont_init_blanke then
-				BlankE.init(UI.getSetting('initial_state'))
+			if init_blanke then
+				BlankE.init(_FIRST_STATE)
+			else
+				State.switch(_FIRST_STATE)
 			end
 
 			IDE._want_reload = false
 			return true
 		end
 		return false
+	end,
+
+	testFunc = function()
+		State.switch(_FIRST_STATE)
 	end,
 
 	onAddGameObject = function()
@@ -592,11 +581,12 @@ IDE = {
 		end)	
 	end,
 
-	reload = function(dont_init_blanke)
+	reload = function(init_blanke)
 		IDE._want_reload = true
 		if IDE.isProjectOpen() then
-			IDE._reload(IDE.getShortProjectPath()..'/temp.lua', dont_init_blanke)
+			IDE._reload(IDE.getShortProjectPath()..'/assets.lua', init_blanke)
 		end
+		IDE.refreshAssets(true)
 	end,
 
 	refreshAssets = function(dont_reload)
@@ -631,7 +621,7 @@ IDE = {
 		end
 
 		if not dont_reload then
-			IDE._reload(IDE.getShortProjectPath()..'/temp.lua', true)
+			IDE._reload(IDE.getShortProjectPath()..'/assets.lua', true)
 		end
 	end,
 

@@ -158,7 +158,6 @@ function love.wheelmoved(x, y)
     end
 end
 
- --[[
 local function error_printer(msg, layer)
     print((debug.traceback("Error: " .. tostring(msg), 1+(layer or 1)):gsub("\n[^\n]+$", "")))
 end
@@ -235,4 +234,4 @@ function love.errhand(msg)
         if love.timer then love.timer.sleep(0.001) end
     end
  
-end]]
+end
