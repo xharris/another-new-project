@@ -144,7 +144,7 @@ IDE = {
 	    if main_menu_bar then
 	        -- FILE
 	        if beginMenu("File") then
-	        	if imgui.Button("New") then
+	        	if imgui.Button("New") and not IDE.isProjectOpen() then
 	        		imgui.OpenPopup("new_project")
 	        	end
 
@@ -404,7 +404,26 @@ IDE = {
 	end,
 
 	newProject = function()
-		HELPER.run('newProject',{'"'..IDE.getProjectPath()..'"', new_pj_name})
+		-- make sure project dir exists
+		if not SYSTEM.exists(IDE.getProjectFolder()) then
+			SYSTEM.mkdir(IDE.getProjectFolder())
+		end
+		
+		-- make new_project directory
+		clone_count = 0
+		base_pj_path = IDE.getProjectFolder().."/"..new_pj_name
+		new_pj_path = base_pj_path
+		while SYSTEM.exists(new_pj_path) do
+			new_pj_path = base_pj_path..tostring(clone_count)
+			clone_count = clone_count + 1
+		end
+
+		-- copy template files
+		local template_files = {"conf.lua", "main.lua"}
+		for f, file in ipairs(template_files) do
+			SYSTEM.copy(IDE.getTemplatePath().."/"..file, new_pj_path.."/"..file)
+		end
+
 		IDE.refreshProjectList()
 	end,
 
@@ -463,6 +482,10 @@ IDE = {
 		return IDE.current_project-- IDE.current_project
 	end,
 
+	getTemplatePath = function()
+		return SYSTEM.cwd.."/src/template"
+	end,
+
 	isProjectOpen = function()
 		return (IDE.current_project ~= '')
 	end,
@@ -484,9 +507,7 @@ IDE = {
 			-- add project to package.path
 			package.path = package.path..";"..IDE.getProjectPath().."/?.lua"
 
-			if not IDE._reload(IDE.getShortProjectPath()..'/assets.lua', true) then
-				IDE.current_project = old_path
-			end
+			IDE.refreshAssets()
 
 			IDE.iterateModules(function(m, module)
 				if module.onOpenProject then

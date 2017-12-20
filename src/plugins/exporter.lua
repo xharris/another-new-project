@@ -4,10 +4,10 @@ local love2d_binary_path = {
 	win=SYSTEM.cwd..'/love2d-win32',
 	mac=SYSTEM.cwd..'/love.app'
 }
-local engine_path = SYSTEM.cleanPath(SYSTEM.cwd.."/src/template/plugins")
+local engine_path = SYSTEM.cleanPath(IDE.getTemplatePath().."/plugins")
 
 function buildSrcDir(folder_name)
-	engine_path = SYSTEM.cleanPath(SYSTEM.cwd.."/src/template/plugins")
+	engine_path = SYSTEM.cleanPath(IDE.getTemplatePath().."/plugins")
 
 	-- make export directory
 	SYSTEM.mkdir(folder_name)

@@ -19,7 +19,7 @@ HELPER = {
 
 	copyScript = function(template_path, dest, replacements)
 		-- make sure project folder exists
-		SYSTEM.mkdir(dirname(dest))
+		SYSTEM.copy(template_path, dest)
 
 		-- read template file and make replacements
 		local s_template = ''

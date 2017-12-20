@@ -12,7 +12,7 @@ Entity = Class{
 		self._sprites = {} 			-- is actually the animations
 		self.sprite = nil			-- currently active animation
 		self.pause = false
-		self.show_debug = false
+		self.show_debug = true
 		self.scene_show_debug = false
 
 		-- x and y coordinate of sprite

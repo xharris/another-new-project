@@ -10,7 +10,7 @@ local ideState = {
 	new = function()
 		local state_name = IDE.addGameType('state')
 		HELPER.copyScript(
-			SYSTEM.cwd.."/src/template/state.lua",
+			IDE.getTemplatePath().."/state.lua",
 			IDE.getProjectPath().."/scripts/state/"..state_name..".lua",
 			{
 				['<NAME>'] = state_name

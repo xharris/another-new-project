@@ -161,7 +161,7 @@ end
 local function error_printer(msg, layer)
     print((debug.traceback("Error: " .. tostring(msg), 1+(layer or 1)):gsub("\n[^\n]+$", "")))
 end
-function love.errhand(msg)
+function love_errhand(msg)
     IDE.errd = true
 
     local trace = debug.traceback()

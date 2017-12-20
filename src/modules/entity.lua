@@ -4,7 +4,7 @@ local ideEntity = {
 	new = function()
 		local ent_name = IDE.addGameType('entity')
 		HELPER.copyScript(
-			SYSTEM.cwd.."/src/template/entity.lua",
+			IDE.getTemplatePath().."/entity.lua",
 			IDE.getProjectPath().."/scripts/entity/"..ent_name..".lua",
 			{
 				['<NAME>'] = ent_name

@@ -59,6 +59,7 @@ Class 	= blanke_require('Class')	-- hump.class
 
 anim8 	= blanke_require('extra.anim8')
 HC 		= blanke_require('extra.HC')
+grease 	= blanke_require('extra.grease')
 
 State 	= blanke_require('State')	-- hump.gamestate
 Input 	= blanke_require('Input')
@@ -96,7 +97,6 @@ _err_state = Class{classname='_err_state',error_msg='NO GAME'}
 
 BlankE = {
 	_ide_mode = false,
-	_first_state = nil,
 	show_grid = true,
 	grid_color = {255,255,255},
 	_offx = 0,
@@ -108,7 +108,6 @@ BlankE = {
 	pause = false,
 	init = function(first_state)
 		first_state = ifndef(first_state, _err_state)
-		BlankE._first_state = first_state
 		if not BlankE._callbacks_replaced then
 			BlankE._callbacks_replaced = true
 
@@ -144,15 +143,11 @@ BlankE = {
 			end
 			State.switch(first_state)
 		end
+
 	end,
 
 	reloadAssets = function()
 		require 'assets'
-	end,
-
-	restart = function()
-		BlankE.clearObjects(true)
-		State.switch(BlankE._first_state)
 	end,
 
 	getCurrentState = function()
