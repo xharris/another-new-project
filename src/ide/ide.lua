@@ -23,7 +23,7 @@ IDE = {
 	current_project = '',
 	modules = {},
 	plugins = {},
-
+	
 	iterateModules = function(func)
 		for m, mod in pairs(IDE.modules) do
 			func(m, mod)
@@ -144,7 +144,7 @@ IDE = {
 	    if main_menu_bar then
 	        -- FILE
 	        if beginMenu("File") then
-	        	if imgui.Button("New") and not IDE.isProjectOpen() then
+	        	if not IDE.isProjectOpen() and imgui.Button("New") then
 	        		imgui.OpenPopup("new_project")
 	        	end
 

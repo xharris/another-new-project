@@ -70,7 +70,11 @@ local ideState = {
 	edit = function(name)
 		open_states[name] = true 
 		
-		SYSTEM.edit(IDE.getProjectPath()..'/scripts/state/'..name..'.lua')
+		if UI.getSetting("builtin_code_editor") then
+			IDE.plugins['code_editor'].editCode(IDE.getProjectPath()..'/scripts/state/'..name..'.lua')
+		else
+			SYSTEM.edit(IDE.getProjectPath()..'/scripts/state/'..name..'.lua')
+		end
 	end,
 
 	draw = function()

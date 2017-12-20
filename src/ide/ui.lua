@@ -92,6 +92,7 @@ UI = {
 		scene_snapy = {type='number',value=32,min=1,max=1000},
 		fullscreen = false,
 		show_game = true,
+		builtin_code_editor = false,
 	},
 
 	setStyling = function()
