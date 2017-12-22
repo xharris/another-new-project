@@ -16,6 +16,7 @@ IDE = {
 	refresh_pjlist_timeout = 0,
 	_initial_watch = true,
 	errd = false,
+	margin = 50,
 
 	project_folder = 'projects',
 	_project_folder_changed = false,
@@ -23,7 +24,19 @@ IDE = {
 	current_project = '',
 	modules = {},
 	plugins = {},
-	
+
+	title_front = love.graphics.newImage("images/title_front.png"),
+	title_back = love.graphics.newImage("images/title_back.png"),
+	title_text = love.graphics.newText(UI.title_font,"BLANKE"),
+	flash_logo = false,
+	stencil_x = 0,
+	stencil_min_x = 0,
+	stencil_max_x = 0,
+	stencil_speed = 20,
+	stencil_width = 200,--100,
+	stencil_delay = 150,
+	_stencil_delay_count = 0,
+
 	iterateModules = function(func)
 		for m, mod in pairs(IDE.modules) do
 			func(m, mod)
@@ -72,6 +85,19 @@ IDE = {
 	end,
 
 	update = function(dt)
+		-- glow effect for start screen logo
+		if not IDE.isProjectOpen() and IDE.flash_logo then	
+			if IDE._stencil_delay_count < IDE.stencil_delay then
+				IDE._stencil_delay_count = IDE._stencil_delay_count + 1
+			else
+				IDE.stencil_x = IDE.stencil_x + IDE.stencil_speed
+				if IDE.stencil_x >= IDE.stencil_max_x then
+					IDE.stencil_x = IDE.stencil_min_x
+					IDE._stencil_delay_count = 0
+				end
+			end
+		end
+
 		IDE.update_timeout = updateTimeout(dt, IDE.update_timeout)
 		IDE.watch_timeout = updateTimeout(dt, IDE.watch_timeout)
 		IDE.refresh_pjlist_timeout = updateTimeout(dt, IDE.refresh_pjlist_timeout)
@@ -122,8 +148,149 @@ IDE = {
 	end,	
 
 	draw = function()
-		love.graphics.setColor(255,255,255)
+		if not IDE.isProjectOpen() then
+			IDE.drawStartScreen()
+		else
+			IDE.drawProjectScreen()
+		end
+	end,
 
+	drawExtras = function()
+		--checkUI("titlebar.new_project", IDE.newProject)
+	    --if UI.titlebar.new_project then UI.titlebar.new_project = IDE.newProject() end
+	    if UI.titlebar.show_dev_tools then UI.titlebar.show_dev_tools = imgui.ShowTestWindow(true) end
+	    
+	    if UI.titlebar.show_style_editor then 
+	    	state, UI.titlebar.show_style_editor = imgui.Begin("Style Editor", UI.titlebar.show_style_editor, UI.flags)
+	    	imgui.ShowStyleEditor()
+	    	imgui.End()
+	    end
+	    
+		CONSOLE.draw()
+
+		imgui.PushStyleVar('GlobalAlpha',1)
+    	if BlankE and not BlankE._ide_mode then
+        	--love.graphics.clear(unpack(UI.color.background))
+        end
+
+        imgui.Render()
+	end,
+
+	drawStartLogo = function()
+		local margin = IDE.margin
+		local title_img_width = IDE.title_front:getWidth()
+		local title_img_height = IDE.title_front:getHeight()
+		local new_width = (game_width-margin-350) + (margin * 2)
+		local new_width_title_x = (new_width / 2) - (title_img_width / 2)
+		local title_x = game_width - new_width
+		local title_y = margin*1.25
+
+		local img_x = title_x + (new_width/2) - (title_img_width/2)
+		local text_x = title_x + (new_width/2) - (IDE.title_text:getWidth()/2)
+		local text_y = title_y + IDE.title_front:getHeight() + (margin/2)
+
+		local shadow_x = 8
+		local shadow_y = 8
+
+		local stencil_x = IDE.stencil_x
+		local stencil_width = IDE.stencil_width
+		IDE.stencil_min_x = img_x - title_img_width - stencil_width
+		IDE.stencil_max_x = img_x + (title_img_width*2)
+
+		function stencilLogo()
+			love.graphics.polygon("fill",{
+				stencil_x+(title_img_width/2), title_y,
+				stencil_x+stencil_width+(title_img_width/2), title_y,
+
+				stencil_x-(title_img_width/2), title_y+title_img_height,
+				stencil_x+stencil_width-(title_img_width/2), title_y+title_img_height,
+			})
+		end
+
+		-- draw logo and title USE A STENCIL TO SHOW ONLY A SLICE WHERE MOUSE Y IS 
+		love.graphics.push('all')
+
+		-- draw logo glow
+		love.graphics.setColor(0,0,0,255/2)
+		love.graphics.draw(IDE.title_back, img_x, title_y)
+
+		-- draw dark version of logo
+		love.graphics.setColor(255,255,255,255/3)
+		love.graphics.draw(IDE.title_front, img_x, title_y)
+
+		-- draw color logo
+		love.graphics.stencil(stencilLogo, "replace", 1)
+		love.graphics.setStencilTest("greater",0)
+		love.graphics.setColor(255,255,255,255)
+		love.graphics.draw(IDE.title_front, img_x, title_y)
+		love.graphics.setStencilTest()
+
+		love.graphics.setColor(0,0,0,255)
+		love.graphics.draw(IDE.title_text, text_x+shadow_x, text_y+shadow_y)
+		love.graphics.setColor(255,255,255,255)
+		love.graphics.draw(IDE.title_text, text_x, text_y)
+
+		love.graphics.pop()
+	end,
+
+	drawStartScreen = function()
+		love.graphics.setBackgroundColor(UI.getColor("background", true))
+
+		IDE.drawStartLogo()
+
+		local margin = IDE.margin
+
+		--new project
+    	imgui.PushStyleColor('WindowBg', 0,0,0,0)
+		imgui.SetNextWindowPos(margin, margin)
+		state, show_new_proj = imgui.Begin("new project", true, {"NoTitleBar", "NoResize", "NoMove", "NoCollapse"})
+
+			imgui.Text("Create a new project")
+
+			local status, new_pj_name = imgui.InputText("", new_pj_name, 300)
+			imgui.SameLine()
+			if imgui.Button("Go") then
+				IDE.newProject(new_pj_name)
+			end
+
+		imgui.End()
+
+		-- open a project
+		if IDE.refresh_pjlist_timeout == 0 then
+			IDE.refresh_pjlist_timeout = 5
+			IDE.refreshProjectList()	
+		end	
+        if #IDE.project_list > 0 then
+			imgui.SetNextWindowPos(margin, margin+100)
+			imgui.SetNextWindowSizeConstraints(200,game_height-(margin+100*2), game_width/2-margin, game_height-(margin+100*2))
+			state, show_new_proj = imgui.Begin("open project", true, {"NoTitleBar", "NoResize", "NoMove", "NoCollapse"})
+				
+			imgui.Text("Open a project")
+
+			imgui.BeginChild("project list", -1, -1, true)	                
+            for p, project in ipairs(IDE.project_list) do
+	            -- chose a project to open?
+	            if imgui.MenuItem(project) then
+	                IDE.openProject(IDE.project_folder..'/'..project)
+	            end
+
+				if imgui.IsItemHovered() then
+					imgui.BeginTooltip()
+					imgui.Text(IDE.getProjectPath(project))
+					imgui.EndTooltip()
+				end
+	        end
+	        imgui.EndChild()
+				
+			imgui.End()
+		end
+		imgui.PopStyleColor()
+
+		IDE.drawExtras()
+
+	end,
+
+	drawProjectScreen = function()
 	    -- Menu
 	    function beginMenu(title)
 	    	local g_color = {255,255,255}
@@ -378,25 +545,8 @@ IDE = {
 	    		plugin.draw()
 	    	end
 	    end)
-	   
-	    --checkUI("titlebar.new_project", IDE.newProject)
-	    --if UI.titlebar.new_project then UI.titlebar.new_project = IDE.newProject() end
-	    if UI.titlebar.show_dev_tools then UI.titlebar.show_dev_tools = imgui.ShowTestWindow(true) end
-	    
-	    if UI.titlebar.show_style_editor then 
-	    	state, UI.titlebar.show_style_editor = imgui.Begin("Style Editor", UI.titlebar.show_style_editor, UI.flags)
-	    	imgui.ShowStyleEditor()
-	    	imgui.End()
-	    end
-	    
-		CONSOLE.draw()
 
-		imgui.PushStyleVar('GlobalAlpha',1)
-    	if not BlankE or (BlankE and not BlankE._ide_mode) then
-        	love.graphics.clear(unpack(UI.color.background))
-        end
-
-        imgui.Render()
+		IDE.drawExtras()
 	end,
 
 	quit = function()

@@ -472,6 +472,10 @@ Scene = Class{
 			end
 		end
 	end,
+	--[[
+	recolorHitbox = function(self, name, color)
+		Hitbox.
+	end,]]
 
 	setHitboxInfo = function(self, name, info)
 		local found = false
@@ -630,7 +634,7 @@ Scene = Class{
 		    			table.remove(hitbox_points, #hitbox_points)
 		    			hitbox_rem_point = false
 		    		elseif #hitbox_points == 0 and hitbox_rem_point then -- added 'hitbox_rem_point' and it just happened to work here
-		    			local new_mx, new_my = unpack(_getMouseXY(true))
+		    			local new_mx, new_my = unpack(self:_getMouseXY(true))
 					    self:removeHitboxAtPoint(new_mx, new_my)
 		    		end
 	    		end

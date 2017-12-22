@@ -1,4 +1,6 @@
 Hitbox = Class{
+	_color = {},
+
 	init = function(self, shape, args, tag, xoffset, yoffset)
 		xoffset = ifndef(xoffset, 0)
 		yoffset = ifndef(yoffset, 0)
@@ -42,8 +44,10 @@ Hitbox = Class{
 	end,
 
 	draw = function(self, mode)
+		local color = ifndef(Hitbox._color[self.HCShape.tag], self.color)
+
 		love.graphics.push("all")
-			love.graphics.setColor(self.color)
+			love.graphics.setColor(color)
 			self.HCShape:draw(ifndef(mode, 'fill'))
 		love.graphics.pop()
 	end,

@@ -73,10 +73,16 @@ function string:ends(End)
 	return string.sub(self,-string.len(End))==End
 end
 function string:split(sep)
-   local sep, fields = sep or ":", {}
-   local pattern = string.format("([^%s]+)", sep)
-   self:gsub(pattern, function(c) fields[#fields+1] = c end)
-   return fields
+	if sep == nil or sep == '' then
+		local t = {}
+		for i=1, #self do t[i]=self:sub(i,i) end
+		return t
+	else
+		local sep, fields = sep or ":", {}
+		local pattern = string.format("([^%s]+)", sep)
+		self:gsub(pattern, function(c) fields[#fields+1] = c end)
+		return fields
+	end
 end
 function string:trim()
 	return self:gsub("^%s+", ""):gsub("%s+$", "")

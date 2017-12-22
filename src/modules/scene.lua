@@ -438,7 +438,7 @@ local ideScene = {
 								-- name
 								local name_status, new_name = imgui.InputText("name",hitbox.name,300)
 					            if name_status then
-					            	Scene:renameHitbox(hitbox.name, new_name)
+					            	curr_scene:renameHitbox(hitbox.name, new_name)
 					            	refreshObjectList('hitbox')
 					            end
 
@@ -446,7 +446,8 @@ local ideScene = {
 								local r, g, b = unpack(hitbox.color)
 								local color_status, r, g, b = imgui.ColorEdit3("color", r/255, g/255, b/255)
 								if color_status then
-									hitbox.color = {r*255, g*255, b*255, 255}
+									hitbox.color = {r*255, g*255, b*255, 255*(.5)}
+									Hitbox._color[hitbox.name] = hitbox.color
 								end
 
 								imgui.TreePop()

@@ -4,6 +4,7 @@ local scrollbar = {117,117,117,255}
 
 UI = {
 	_images = {},
+	title_font = love.graphics.newFont("fonts/WorkSans-Light.ttf", 36),
 	color = {
 		background = {33,33,33,255},
 		_love2d = {
@@ -155,17 +156,24 @@ UI = {
 		return new_color
 	end,
 
-	getColor = function(index, dont_divide)
+	divideColor = function(color_table)
 		local ret_color = {}
+		for c, color in ipairs(color_table) do
+			table.insert(ret_color, color/255)
+		end
+		return ret_color
+	end,
 
-		if type(index) == "string" then
-			index = UI.color[index]
+	getColor = function(index, dont_divide)
+		local ret_color = UI.color[index]
+
+		-- color table was given as arg
+		if type(index) == "table" then
+			ret_color = index
 		end
 
 		if not dont_divide then
-			for c, color in ipairs(index) do
-				table.insert(ret_color, color/255)
-			end
+			ret_color = UI.divideColor(ret_color)
 		end
 
 		return unpack(ret_color)
@@ -175,13 +183,11 @@ UI = {
 		local ret_color = {}
 
 		if type(index) == "string" then
-			index = UI.elements[index]
+			ret_color = UI.elements[index]
 		end
 
 		if not dont_divide then
-			for c, color in ipairs(index) do
-				table.insert(ret_color, color/255)
-			end
+			ret_color = UI.divideColor(ret_color)
 		end
 
 		return unpack(ret_color)

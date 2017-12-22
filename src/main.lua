@@ -26,6 +26,7 @@
         - zooming in/out                                            (D)
         - add/remove/move layer                                     (D)
     - closing a project                                             (C)
+    - file dialog for opening/saving                                (-)
 
     BUGS
 
