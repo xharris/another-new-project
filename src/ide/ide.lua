@@ -17,6 +17,7 @@ IDE = {
 	_initial_watch = true,
 	errd = false,
 	margin = 50,
+	delete_proj = nil,
 
 	project_folder = 'projects',
 	_project_folder_changed = false,
@@ -25,8 +26,8 @@ IDE = {
 	modules = {},
 	plugins = {},
 
-	title_front = love.graphics.newImage("images/title_front.png"),
-	title_back = love.graphics.newImage("images/title_back.png"),
+	title_front = UI.loadImage("images/title_front.png"),
+	title_back = UI.loadImage("images/title_back.png"),
 	title_text = love.graphics.newText(UI.title_font,"BLANKE"),
 	flash_logo = false,
 	stencil_x = 0,
@@ -50,9 +51,22 @@ IDE = {
 	end,
 
 	load = function()
-		UI.loadFont()
+		UI.loadFonts()
+
+		local plugins, modules
+		if SYSTEM.exe_mode then
+			plugins = SYSTEM.scandir(SYSTEM.cwd..'/src/plugins')
+			modules = SYSTEM.scandir(SYSTEM.cwd..'/src/modules')
+		else
+			plugins = SYSTEM.scandir(SYSTEM.cwd..'/plugins')
+			modules = SYSTEM.scandir(SYSTEM.cwd..'/modules')
+
+		end
+
 		-- load ide plugins
-		for f, file in ipairs(love.filesystem.getDirectoryItems('plugins')) do
+		print('load plugins')
+		for f, file in ipairs(plugins) do
+			print('plugin -> '..file)
 			file = file:gsub('.lua','')
 			IDE.plugins[file] = require('plugins.'..file)
 
@@ -63,24 +77,30 @@ IDE = {
 		end
 
 		-- get modules
-		for f, file in ipairs(love.filesystem.getDirectoryItems('modules')) do
+		print('load modules')
+		for f, file in ipairs(modules) do
+			print('module -> '..file)
 			file = file:gsub('.lua','')
 			IDE.modules[file] = require('modules.'..file)
+
+			if not IDE.modules[file].getObjectList then
+				IDE.modules[file].getObjectList = function() return false end
+			end
 
 			if IDE.modules[file].disabled then
 				package.loaded[file] = nil
 				_G[file] = nil
 			end
 		end
-
+		
 		IDE.setProjectFolder(IDE.project_folder)
 
 		-- change imgui styling
 		UI.randomizeIDEColor()
 
 		local template_path = SYSTEM.cleanPath(SYSTEM.cwd)
-		package.path=package.path..";"..template_path.."/src/template/?.lua"
-		package.path=package.path..";"..template_path.."/src/template/?/init.lua"
+		package.path=package.path..";"..template_path.."/template/?.lua"
+		package.path=package.path..";"..template_path.."/template/?/init.lua"
 		IDE.requireBlanke()
 	end,
 
@@ -242,15 +262,18 @@ IDE = {
 
 		--new project
     	imgui.PushStyleColor('WindowBg', 0,0,0,0)
+
 		imgui.SetNextWindowPos(margin, margin)
 		state, show_new_proj = imgui.Begin("new project", true, {"NoTitleBar", "NoResize", "NoMove", "NoCollapse"})
 
 			imgui.Text("Create a new project")
 
-			local status, new_pj_name = imgui.InputText("", new_pj_name, 300)
+			local status, input_pj_name = imgui.InputText("", new_pj_name, 300)
+			if status then new_pj_name = input_pj_name end
 			imgui.SameLine()
 			if imgui.Button("Go") then
 				IDE.newProject(new_pj_name)
+				IDE.openProject(IDE.project_folder..'/'..new_pj_name)
 			end
 
 		imgui.End()
@@ -278,10 +301,33 @@ IDE = {
 					imgui.BeginTooltip()
 					imgui.Text(IDE.getProjectPath(project))
 					imgui.EndTooltip()
+
+					if imgui.IsMouseReleased(1) then
+						IDE.delete_proj = project
+						imgui.OpenPopup("delete_project")
+					end
 				end
 	        end
 	        imgui.EndChild()
-				
+
+        	-- delete project
+			if imgui.BeginPopupModal("delete_project", nil, {"AlwaysAutoResize"}) then
+				imgui.Text("Are you sure you want to delete \""..IDE.delete_proj.."\"")
+
+				if imgui.Button("Ok") then
+					IDE.deleteProject(IDE.delete_proj)
+					IDE.delete_proj = nil
+					imgui.CloseCurrentPopup()
+				end
+				imgui.SameLine()
+				if imgui.Button("Cancel") then
+					IDE.delete_proj = nil
+					imgui.CloseCurrentPopup()
+				end
+
+				imgui.EndPopup()
+			end
+
 			imgui.End()
 		end
 		imgui.PopStyleColor()
@@ -383,14 +429,13 @@ IDE = {
 	        if IDE.isProjectOpen() and beginMenu("Library") then
 	        	IDE.iterateModules(function(m, mod)
 	        		if mod.getObjectList then
-	        			if imgui.BeginMenu(m) then
+	        			local obj_list = mod.getObjectList()
+	        			if obj_list ~= false and imgui.BeginMenu(m) then
 	        				-- new object button
 	        				if mod.new and imgui.MenuItem("add "..m) then
 	        					mod.new()
 	        					IDE.refreshAssets()
 	        				end
-
-	        				local obj_list = mod.getObjectList()
 
 	        				if m == 'state' and #obj_list > 0 then
     							status, initial_state = imgui.Combo("initial state", table.find(obj_list, UI.getSetting('initial_state')), obj_list, #obj_list);
@@ -489,7 +534,7 @@ IDE = {
 	        if UI.titlebar.secret_stuff and beginMenu("Dev") then
 	        	-- ide font
 	        	imgui.PushItemWidth(120)
-	        	local fonts = love.filesystem.getDirectoryItems('fonts')
+	        	local fonts = SYSTEM.scandir(SYSTEM.cwd..'src/fonts')
 	        	for f, font in ipairs(fonts) do
 	        		fonts[f] = font:gsub(extname(font),'')
 	        	end
@@ -553,6 +598,10 @@ IDE = {
 		IDE.refreshAssets(true)
 	end,
 
+	deleteProject = function(project)
+		SYSTEM.remove(IDE.project_folder..'/'..project)
+	end,
+
 	newProject = function()
 		-- make sure project dir exists
 		if not SYSTEM.exists(IDE.getProjectFolder()) then
@@ -578,8 +627,8 @@ IDE = {
 	end,
 
 	setProjectFolder = function(new_folder)
-		if not love.filesystem.isDirectory(new_folder) then
-			if love.filesystem.createDirectory(new_folder) then
+		if not SYSTEM.exists(new_folder) then
+			if SYSTEM.mkdir(new_folder) then
 				IDE.project_folder = new_folder
 				IDE.refreshProjectList()
 			end
@@ -603,23 +652,14 @@ IDE = {
 
 	-- src/myprojects
 	getProjectFolder = function()
-		return SYSTEM.cleanPath(love.filesystem.getRealDirectory(IDE.project_folder)..'/'..IDE.project_folder)
+		return SYSTEM.cleanPath(SYSTEM.cwd..'/'..IDE.project_folder)
 	end,
 
 	-- C:/blackstar/src/myprojects/theproject (absolute path)
 	getProjectPath = function(proj_name)
 		proj_name = ifndef(proj_name,IDE.current_project)
 
-		if proj_name ~= '' then
-			if love.filesystem.getRealDirectory(IDE.project_folder..'/'..proj_name) == love.filesystem.getSaveDirectory() then
-				-- in the save directory
-				return SYSTEM.cleanPath(love.filesystem.getRealDirectory(IDE.project_folder)..'/'..IDE.project_folder..'/'..proj_name)
-			end
-			-- in the executable directory
-			return SYSTEM.cleanPath(love.filesystem.getSource()..'/'..IDE.project_folder..'/'..proj_name)
-		end
-
-		return SYSTEM.cleanPath(love.filesystem.getRealDirectory(IDE.project_folder)..'/'..IDE.project_folder)
+		return SYSTEM.cleanPath(SYSTEM.cwd..'/'..IDE.project_folder..'/'..proj_name)
 	end,
 
 	-- src/myprojects/theproject (relative path)
@@ -654,6 +694,11 @@ IDE = {
 			local old_path = IDE.current_project
 			IDE.current_project = basename(folder_path)
 
+			print(love.filesystem.getSourceBaseDirectory().."/"..IDE.getShortProjectPath())
+			if SYSTEM.exe_mode then
+				--love.filesystem.mount(SYSTEM.cwd.."\\projects\\"..IDE.current_project, IDE.current_project)
+			end
+
 			-- add project to package.path
 			package.path = package.path..";"..IDE.getProjectPath().."/?.lua"
 
@@ -683,6 +728,7 @@ IDE = {
 		]]--
 		if not _G['BlankE'] then
 			require('plugins.blanke.Blanke')
+			print("BlankE is "..tostring(type(BlankE)))
 		end
 	end,
 
@@ -691,13 +737,15 @@ IDE = {
 			IDE.update_timeout = 2
 
 			IDE.errd = false
---[[
+
+			--[[
 			local proj = 'projects/project1/'
 			local paths = {"?/?.lua","?.lua","?/init.lua"}
 			for p, path in ipairs(paths) do
 				package.path = package.path .. ";"..proj..path
 			end
-]]
+			]]
+
 
 	        IDE.iteratePlugins(function(p, plugin)
 	        	if plugin.onReload then
@@ -714,11 +762,16 @@ IDE = {
 			_REPLACE_REQUIRE = dirname(path):gsub('/','.')
 			if _REPLACE_REQUIRE:starts('.') then _REPLACE_REQUIRE:replaceAt(1,'') end
 
+			--[[
 			local result, chunk
 			result, chunk = pcall(love.filesystem.load, path)
 			if not result then print("chunk error: " .. chunk) return false end
 			result, chunk = pcall(chunk)
 			if not result then print("exec. error: " .. chunk) return false end
+			]]
+			local chunk = love.filesystem.load(path)
+			local result = chunk()
+			print("result: "..tostring(result))
 
 			IDE.iterateModules(function(m, mod)
 				if mod.postReload then

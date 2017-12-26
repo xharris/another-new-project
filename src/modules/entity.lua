@@ -1,5 +1,15 @@
 local entity_list = {}
 
+local updateListTimer
+function updateEntityList()
+	entity_list = {}
+	local entity_files = SYSTEM.scandir(IDE.getProjectPath()..'/scripts/entity')
+	for s, entity in ipairs(entity_files) do
+		local entity_name = string.gsub(entity,'.lua','')
+		table.insert(entity_list, entity_name)
+	end
+end
+
 local ideEntity = {
 	new = function()
 		local ent_name = IDE.addGameType('entity')
@@ -14,11 +24,10 @@ local ideEntity = {
 	end,
 
 	getObjectList = function()
-		entity_list = {}
-		local entity_files = love.filesystem.getDirectoryItems(IDE.getShortProjectPath()..'/scripts/entity')
-		for s, entity in ipairs(entity_files) do
-			local entity_name = string.gsub(entity,'.lua','')
-			table.insert(entity_list, entity_name)
+		if not updateListTimer then
+			updateEntityList()
+			updateListTimer = Timer()
+			updateListTimer:every(updateEntityList, UI.getSetting('project_reload_timer').value):start() 
 		end
 		return entity_list
 	end,

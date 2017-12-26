@@ -1,3 +1,4 @@
+
 --  GOALS
 --[[
 (C) complete, usable, good enough
@@ -53,6 +54,16 @@ print = function(...)
     old_print(debug_info.short_src..':'..debug_info.currentline, ...);
 end
 
+require "ide.system"
+
+local dir = love.filesystem.getSource()
+if SYSTEM.exe_mode then
+    dir = SYSTEM.cwd --love.filesystem.getSourceBaseDirectory()
+    --love.filesystem.mount(dir.."\\src\\", "")
+    --love.filesystem.mount(dir.."\\projects\\", "projects")
+    --package.path = package.path .. ";"..dir.."/src/?.lua;"..dir.."/src/?/init.lua"
+end 
+
 package.cpath = package.cpath .. ";/usr/local/lib/lua/5.2/?.so;/usr/local/lib/lua/5.2/?.dll;./?.dll;./?.so"
 
 require "imgui"
@@ -63,14 +74,12 @@ _watcher = require 'watcher'
 
 _GAME_NAME = "blanke"
 
-require "ide.system"
 require "ide.helper"
 require "ide.ui"
 require "ide.ide"
 require "ide.console"
 
 function love.load()
-    IDE.setProjectFolder(IDE.project_folder)
     IDE.load()
 end
 

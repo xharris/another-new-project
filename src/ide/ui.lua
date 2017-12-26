@@ -110,8 +110,8 @@ UI = {
 		end
 	end,
 
-	loadFont = function()
-		local font_files = love.filesystem.getDirectoryItems('fonts')
+	loadFonts = function()
+		local font_files = SYSTEM.scandir('fonts')
 		local font_filename = ''
 		local sel_font = UI.getSetting('font')
 		for f, file in ipairs(font_files) do

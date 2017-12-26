@@ -1,6 +1,7 @@
 local hitbox_list = {}
 
 ideHitbox = {
+	--[[
 	getObjectList = function() 
 		local ret_list = {}
 		for h, hitbox in ipairs(Scene.hitbox) do
@@ -8,6 +9,7 @@ ideHitbox = {
 		end
 		return ret_list
 	end,
+	]]--
 }
 
 return ideHitbox

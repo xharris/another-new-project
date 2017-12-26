@@ -6,6 +6,16 @@ _empty_state = {classname='_empty_state'}
 require ('empty_state')
 _FIRST_STATE = _empty_state
 
+local updateListTimer
+function updateStateList()
+	state_list = {}
+	local state_files = SYSTEM.scandir(IDE.getProjectPath()..'/scripts/state')
+	for s, state in ipairs(state_files) do
+		local state_name = string.gsub(state,'.lua','')
+		table.insert(state_list, state_name)
+	end
+end
+
 local ideState = {
 	new = function()
 		local state_name = IDE.addGameType('state')
@@ -20,11 +30,10 @@ local ideState = {
 	end,
 
 	getObjectList = function()
-		state_list = {}
-		local state_files = love.filesystem.getDirectoryItems(IDE.getShortProjectPath()..'/scripts/state')
-		for s, state in ipairs(state_files) do
-			local state_name = string.gsub(state,'.lua','')
-			table.insert(state_list, state_name)
+		if not updateListTimer then
+			updateStateList()
+			updateListTimer = Timer()
+			updateListTimer:every(updateStateList, UI.getSetting('project_reload_timer').value):start() 
 		end
 		return state_list
 	end,

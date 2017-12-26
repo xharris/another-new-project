@@ -1,6 +1,8 @@
 SYSTEM = {
 	os = '',
 	cwd = '',
+	exe_mode = false,
+	src = '', 		-- turns into src/ if in exe_mode
 	os_names = {
 		NT='win',
 		Darwin='mac'
@@ -44,6 +46,10 @@ SYSTEM = {
 	    )
 
 	    return t
+	end,
+
+	loveScandir = function(directory)
+		return love.filesystem.getDirectoryItems(directory)
 	end,
 
 	exists = function(path)
@@ -136,10 +142,11 @@ SYSTEM = {
 
 print('OS: '..SYSTEM.getOS())
 
-SYSTEM.runCmd({
-	mac='pwd',
-	win='echo %cd%'
-},function(pfile)
-	SYSTEM.cwd = pfile:read'*l'
-	print('CWD',SYSTEM.cwd)
-end)
+SYSTEM.cwd = love.filesystem.getSource()
+if string.sub(SYSTEM.cwd,-string.len(".exe"))==".exe" then
+	SYSTEM.exe_mode = true
+	SYSTEM.cwd = love.filesystem.getSourceBaseDirectory()
+	SYSTEM.src = 'src/'
+end
+print("CWD: "..SYSTEM.cwd)
+print("EXE_MODE: "..tostring(SYSTEM.exe_mode))
