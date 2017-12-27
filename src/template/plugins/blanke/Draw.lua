@@ -35,6 +35,10 @@ Draw = Class{
 	end,
 
 	setColor = function(r,g,b,a)
+		if r == nil then BlankE.errhand("invalid color: {"..tostring(r)..", "..tostring(g)..", "..tostring(b)..", "..tostring(a).."}"); return false end
+		if (type(r) == "table") then
+			r, g, b, a = unpack(r)
+		end
 		Draw.color = Draw._parseColorArgs(r,g,b,a)
 		return Draw
 	end,

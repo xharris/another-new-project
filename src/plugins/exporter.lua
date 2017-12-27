@@ -1,7 +1,7 @@
 local os_list = {'love','win','mac'}--,'web','android','ios'}
 
 local love2d_binary_path = {
-	win=SYSTEM.cwd..'/love2d-win32',
+	win=SYSTEM.cwd..'/love2d',
 	mac=SYSTEM.cwd..'/love.app'
 }
 local engine_path = SYSTEM.cleanPath(IDE.getTemplatePath().."/plugins")

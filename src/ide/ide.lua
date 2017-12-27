@@ -758,7 +758,6 @@ IDE = {
 					mod.onReload()
 				end
 			end)
-			print("reloading")
 
 			_REPLACE_REQUIRE = dirname(path):gsub('/','.')
 			if _REPLACE_REQUIRE:starts('.') then _REPLACE_REQUIRE:replaceAt(1,'') end
@@ -803,7 +802,7 @@ IDE = {
 	try = function(func, ...) 
 		local result, chunk
 		result, chunk = pcall(func, ...)
-		if not result then print("error: " .. chunk); IDE.errd = true; BlankE.errhand(chunk) end
+		if not result then IDE.errd = true; BlankE.errhand(chunk) end
 		return result, chunk
 	end,
 

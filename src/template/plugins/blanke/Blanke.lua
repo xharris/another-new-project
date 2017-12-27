@@ -391,6 +391,8 @@ BlankE = {
 	end,
 
 	errhand = function(msg)
+		print("error: " .. ifndef(chunk, 'error unknown')); 
+		IDE.errd = true; 
 		local trace = debug.traceback()
 	 
 	    local err = {} 

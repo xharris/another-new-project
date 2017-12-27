@@ -18,6 +18,7 @@ Debug = {
             love.graphics.print(line, Debug.margin, y+Debug.margin)
             love.graphics.pop()
         end
+        love.graphics.setColor(255,255,255,255)
         return Debug
     end,
 

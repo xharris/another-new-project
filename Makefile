@@ -7,7 +7,19 @@ mac:
 
 win:
 	cls
-	"love2d-win32/lovec.exe" --console "src"
+	"love2d/lovec.exe" --console "src"
+
+update_folder:
+	rm -R -i -f releases/win/src/$(D)
+	cp -r src/$(D) releases/win/src/$(D)
+
+update_release:
+	make update_folder D="modules"
+	make update_folder D="template"
+	make update_folder D="plugins"
+	make update_folder D="icons"
+	make update_folder D="ide"
+	make update_folder D="images"
 
 build_mac:
 	# remove old folder
@@ -29,7 +41,7 @@ export_src_folder:
 	cp -r src/$(F) releases/win/$(F)
 
 export_dll:
-	cp love2d-win32/$(D) releases/win/$(D)
+	cp love2d/$(D) releases/win/$(D)
 
 # requires Powershell (run: Set-ExecutionPolicy RemoteSigned)
 build_win:
@@ -52,7 +64,7 @@ build_win:
 	#make export_src_folder F="template"
 
 	# copy dlls
-	cp -r love2d-win32 releases/win/love2d
+	cp -r love2d releases/win/love2d
 	cp imgui.dll releases/win/imgui.dll
 	cp lfs.dll releases/win/lfs.dll
 	cp BlankE.exe releases/win/BlankE.exe

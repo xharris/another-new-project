@@ -86,14 +86,14 @@ end
 
 function love.update(dt)
     imgui.NewFrame()
-    if BlankE and not IDE.errd then BlankE.update(dt) end
+    if BlankE and not IDE.errd then IDE.try(BlankE.update, dt) end
     IDE.update(dt)
 end
 
 function love.draw()
     if BlankE and UI.getSetting('show_game') then
-        BlankE.draw()
-        State.draw()
+        IDE.try(BlankE.draw)
+        --State.draw()
     end
     IDE.draw()
 end
