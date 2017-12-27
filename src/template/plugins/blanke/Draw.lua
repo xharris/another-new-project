@@ -1,5 +1,21 @@
 Draw = Class{
 	color = {0,0,0,255},
+	reset_color = {255,255,255,255},
+
+	red = {244,67,54,255},
+	pink = {233,30,99,255},
+	purple = {103,58,183,255},
+	indigo = {63,81,181,255},
+	blue = {33,150,243,255},
+	green = {76,175,80,255},
+	yellow = {255,235,59,255},
+	orange = {255,193,7,255},
+	brown = {121,85,72,255},
+	grey = {158,158,158,255},
+	black = {0,0,0,255},
+	white = {255,255,255,255},
+	black2 = {33,33,33,255},	-- but not actually black
+	white2 = {245,245,245,255},	-- but not actually white
 
 	_parseColorArgs = function(r,g,b,a)
 		color = r
@@ -24,7 +40,7 @@ Draw = Class{
 	end,
 
 	resetColor = function()
-		Draw.color = {0,0,0,255}
+		Draw.color = Draw.reset_color
 		return Draw
 	end,
 
@@ -43,7 +59,8 @@ Draw = Class{
 		return Draw
     end,
     
-    point 	= function(...) return Draw.callDrawFunc('points', {...}) end,
+    point   = function(...) return Draw.callDrawFunc('points', {...}) end,
+    points 	= function(...) return Draw.callDrawFunc('points', {...}) end,
     line 	= function(...) return Draw.callDrawFunc('line', {...}) end,
     rect 	= function(...) return Draw.callDrawFunc('rectangle', {...}) end,
     circle 	= function(...) return Draw.callDrawFunc('circle', {...}) end,

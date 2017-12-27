@@ -1,5 +1,5 @@
 do:
-	./run_win.bat
+	make win
 
 mac:
 	clear
@@ -26,7 +26,7 @@ build_mac:
 	open releases/mac/BlankE.app
 
 export_src_folder:
-	cp -r src/$(F) releases/win/src/$(F)
+	cp -r src/$(F) releases/win/$(F)
 
 export_dll:
 	cp love2d-win32/$(D) releases/win/$(D)
@@ -35,31 +35,29 @@ export_dll:
 build_win:
 	# remove old folder
 	rm -R -i -f releases/win
+	mkdir -p releases/win
 
 	# make .zip
-	mkdir -p releases/win
-	powershell.exe -nologo -noprofile -command "& {Set-ExecutionPolicy RemoteSigned -Scope CurrentUser}"
-	powershell.exe . .\ziplove.ps1
+	#powershell.exe -nologo -noprofile -command "& {Set-ExecutionPolicy RemoteSigned -Scope CurrentUser}"
+	#powershell.exe . .\ziplove.ps1
+
+	# mv releases/win/blanke.zip releases/win/blanke.pak
+	cp -r src releases/win/src
 
 	# copy other folders to zip folder
-	mkdir -p releases/win/src
-	cp -r src/projects releases/win/projects
-	make export_src_folder F="modules"
-	make export_src_folder F="plugins"
-	make export_src_folder F="template"
+	#mkdir -p releases/win/src
+	#cp -r src/projects releases/win/projects
+	#make export_src_folder F="modules"
+	#make export_src_folder F="plugins"
+	#make export_src_folder F="template"
 
 	# copy dlls
-	make export_dll D="love.dll"
-	make export_dll D="lua51.dll"
-	make export_dll D="mpg123.dll"
-	make export_dll D="msvcp120.dll"
-	make export_dll D="msvcr120.dll"
-	make export_dll D="OpenAL32.dll"
-	make export_dll D="SDL2.dll"
+	cp -r love2d-win32 releases/win/love2d
 	cp imgui.dll releases/win/imgui.dll
 	cp lfs.dll releases/win/lfs.dll
+	cp BlankE.exe releases/win/BlankE.exe
 
 	# create exe
-	cmd /k love2exe.bat
+	# cmd /k love2exe.bat
 
-	./releases/win/BlankE.exe
+	#./releases/win/BlankE.exe

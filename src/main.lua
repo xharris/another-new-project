@@ -38,6 +38,7 @@
     - IDE text color does not update on errors
     - replace more helper.py functions (newScript)
     - start the scene when a new one is created
+    - replace all cmd line calling in system.lua
 ]]
 _PROFILING = false
 
@@ -57,9 +58,9 @@ end
 require "ide.system"
 
 local dir = love.filesystem.getSource()
-if SYSTEM.exe_mode then
+if SYSTEM.exists('blanke.pak') then
     dir = SYSTEM.cwd --love.filesystem.getSourceBaseDirectory()
-    --love.filesystem.mount(dir.."\\src\\", "")
+    love.filesystem.mount(dir.."/blanke.pak", "")
     --love.filesystem.mount(dir.."\\projects\\", "projects")
     --package.path = package.path .. ";"..dir.."/src/?.lua;"..dir.."/src/?/init.lua"
 end 
@@ -90,7 +91,7 @@ function love.update(dt)
 end
 
 function love.draw()
-    if BlankE and not IDE.errd and UI.getSetting('show_game') then
+    if BlankE and UI.getSetting('show_game') then
         BlankE.draw()
         State.draw()
     end
@@ -166,82 +167,4 @@ function love.wheelmoved(x, y)
         -- Pass event to the game
         if BlankE then BlankE.wheelmoved(x,y) end
     end
-end
-
-local function error_printer(msg, layer)
-    print((debug.traceback("Error: " .. tostring(msg), 1+(layer or 1)):gsub("\n[^\n]+$", "")))
-end
-function love_errhand(msg)
-    IDE.errd = true
-
-    local trace = debug.traceback()
-    local err = {}
- 
-    table.insert(err, "Error\n")
-    table.insert(err, msg.."\n\n")
- 
-    for l in string.gmatch(trace, "(.-)\n") do
-        if not string.match(l, "boot.lua") then
-            l = string.gsub(l, "stack traceback:", "Traceback\n")
-            table.insert(err, l)
-        end
-    end
- 
-    local p = table.concat(err, "\n")
- 
-    p = string.gsub(p, "\t", "")
-    p = string.gsub(p, "%[string \"(.-)\"%]", "%1")
- 
-    if love.math then
-        love.math.setRandomSeed(os.time())
-    end
- 
-    if love.load then love.load(arg) end
- 
-    -- We don't want the first frame's dt to include time taken by love.load.
-    if love.timer then love.timer.step() end
- 
-    local dt = 0
- 
-    -- Main loop time.
-    while true do
-        -- Process events.
-        if love.event then
-            love.event.pump()
-            for name, a,b,c,d,e,f in love.event.poll() do
-                if name == "quit" then
-                    if not love.quit or not love.quit() then
-                        return a
-                    end
-                end
-                love.handlers[name](a,b,c,d,e,f)
-            end
-        end
- 
-        -- Update dt, as we'll be passing it to update
-        if love.timer then
-            love.timer.step()
-            dt = love.timer.getDelta()
-        end
- 
-        -- Call update and draw
-        if love.update then love.update(dt) end -- will pass 0 if love.timer is disabled
- 
-        if love.graphics and love.graphics.isActive() then
-            love.graphics.clear(love.graphics.getBackgroundColor())
-            love.graphics.origin()
-            
-            if IDE.errd then
-                BlankE.errhand(p)
-                IDE.draw()
-            else
-                love.draw()
-            end
-
-            love.graphics.present()
-        end
- 
-        if love.timer then love.timer.sleep(0.001) end
-    end
- 
 end

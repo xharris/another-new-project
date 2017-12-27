@@ -341,3 +341,25 @@ draw()
 		]
 	}
 }
+
+--[[
+Draw
+]]
+
+-- class properties
+num[4] color 						-- {r, g, b, a} used for ALL Draw operations
+num[4] reset_color					-- {255, 255, 255, 255} (white) : used in resetColor()
+
+-- class methods
+setBackgroundColor(r, g, b, a)
+setColor(r, g, b, a)				
+resetColor()						-- color = reset_color
+-- shapes
+point(x, y, ...)					-- also takes in a table							
+points								-- the same as point()
+line(x1, y1, x2, y2)				
+rect(mode, x, y, width, height)		-- mode = "line"/"fill"
+circle(mode, x, y, radius)
+polygon(mode, x1, y2, x2, y2, ...)
+text(text, x, y, rotation, scale_x, scale_y, offset_x, offset_y)
+									-- rotation in radians

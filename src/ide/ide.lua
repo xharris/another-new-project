@@ -122,7 +122,7 @@ IDE = {
 		IDE.watch_timeout = updateTimeout(dt, IDE.watch_timeout)
 		IDE.refresh_pjlist_timeout = updateTimeout(dt, IDE.refresh_pjlist_timeout)
 
-    	if IDE.isProjectOpen() and IDE.watch_timeout == 0 and not IDE.errd then
+    	if IDE.isProjectOpen() and IDE.watch_timeout == 0 then
     		IDE.watch_timeout = UI.getSetting('project_reload_timer').value
     		
     		_watcher(IDE.getShortProjectPath(), function(file_name)
@@ -130,7 +130,7 @@ IDE = {
 			end)
 		end
 
-		if IDE._want_reload and not IDE.errd then
+		if IDE._want_reload then
 			IDE.reload()
 		end
 	end,
@@ -556,7 +556,8 @@ IDE = {
 	        -- manual reload button
 	        if IDE.isProjectOpen() then
 	        	if UI.drawIconButton("reload", "reload game") then
-					BlankE.restart()
+					IDE.refreshAssets(false)
+					--IDE.reload(true)--BlankE.restart()
 				end
 				imgui.SameLine()
 
@@ -728,7 +729,6 @@ IDE = {
 		]]--
 		if not _G['BlankE'] then
 			require('plugins.blanke.Blanke')
-			print("BlankE is "..tostring(type(BlankE)))
 		end
 	end,
 
@@ -758,20 +758,24 @@ IDE = {
 					mod.onReload()
 				end
 			end)
+			print("reloading")
 
 			_REPLACE_REQUIRE = dirname(path):gsub('/','.')
 			if _REPLACE_REQUIRE:starts('.') then _REPLACE_REQUIRE:replaceAt(1,'') end
 
-			--[[
 			local result, chunk
-			result, chunk = pcall(love.filesystem.load, path)
-			if not result then print("chunk error: " .. chunk) return false end
-			result, chunk = pcall(chunk)
-			if not result then print("exec. error: " .. chunk) return false end
-			]]
+			result, chunk = IDE.try(love.filesystem.load, path)
+			if result then 
+				result, chunk = IDE.try(chunk)
+			else
+				return false
+			end
+
+			--[[
 			local chunk = love.filesystem.load(path)
 			local result = chunk()
 			print("result: "..tostring(result))
+			]]
 
 			IDE.iterateModules(function(m, mod)
 				if mod.postReload then
@@ -781,10 +785,13 @@ IDE = {
 
 			IDE.requireBlanke()
 			BlankE._ide_mode = true
+
 			if init_blanke then
-				BlankE.init(_FIRST_STATE)
+				result, chunk = IDE.try(BlankE.init, _FIRST_STATE)
+				if not result then return false end
 			else
-				State.switch(_FIRST_STATE)
+				result, chunk = IDE.try(State.switch, _FIRST_STATE)
+				if not result then return false end
 			end
 
 			IDE._want_reload = false
@@ -793,8 +800,11 @@ IDE = {
 		return false
 	end,
 
-	testFunc = function()
-		State.switch(_FIRST_STATE)
+	try = function(func, ...) 
+		local result, chunk
+		result, chunk = pcall(func, ...)
+		if not result then print("error: " .. chunk); IDE.errd = true; BlankE.errhand(chunk) end
+		return result, chunk
 	end,
 
 	onAddGameObject = function()

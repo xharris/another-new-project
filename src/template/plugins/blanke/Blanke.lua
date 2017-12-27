@@ -143,7 +143,10 @@ BlankE = {
 			end
 			State.switch(first_state)
 		end
+	end,
 
+	restart = function()
+		-- restart game I guess?
 	end,
 
 	reloadAssets = function()
@@ -388,9 +391,28 @@ BlankE = {
 	end,
 
 	errhand = function(msg)
+		local trace = debug.traceback()
+	 
+	    local err = {} 
+	 
+	    table.insert(err, "Error\n")
+	    table.insert(err, msg.."\n\n")
+	 
+	    for l in string.gmatch(trace, "(.-)\n") do
+	        if not string.match(l, "boot.lua") then
+	            l = string.gsub(l, "stack traceback:", "Traceback\n")
+	            table.insert(err, l)
+	        end
+	    end
+	 
+	    local p = table.concat(err, "\n")
+	 
+	    p = string.gsub(p, "\t", "")
+	    msg = string.gsub(p, "%[string \"(.-)\"%]", "%1")
+
 		BlankE.clearObjects(true)
 		_err_state.error_msg = msg
-		_err_state.draw()
+		State.switch(_err_state)
 	end,
 }
 

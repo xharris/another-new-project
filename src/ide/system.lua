@@ -29,7 +29,15 @@ SYSTEM = {
 	scandir = function(directory, remove_dot_files) 
 	    local i, t = 0, {}
 	    remove_dot_files = ifndef(remove_dot_files, true)
-
+--[[
+	    for file in lfs.dir(directory) do
+    		if not remove_dot_files or (remove_dot_files and not file:starts('.')) then
+			    table.insert(t, file)
+			end
+		end
+		print(unpack(t))
+]]
+		--
 	    SYSTEM.runCmd(
 		    {
 		    	win='dir "'..directory..'" /b',
@@ -60,19 +68,39 @@ SYSTEM = {
 
 	mkdir = function(path)
 		if not SYSTEM.exists(path) then
-			--lfs.mkdir(path)
-			
-			SYSTEM.runCmd(
-				{
-					mac="mkdir -p \""..path.."\"",
-					win="mkdir \""..path.."\""
-				}
-			)
+			if not SYSTEM.exists(path) then
+				--lfs.mkdir(path)
+				
+				SYSTEM.runCmd(
+					{
+						mac="mkdir -p \""..path.."\"",
+						win="mkdir \""..path.."\""
+					}
+				)
+			end
+			--[[
+			path = lfs.normalize(path)
+			if lfs.exists(path) then
+				return true
+			end
+			if lfs.dirname(path) == path then
+				-- We're being asked to create the root directory!
+				return nil,"mkdir: unable to create root directory"
+			end
+			local r,err = lfs.rmkdir(lfs.dirname(path))
+			if not r then
+				return nil,err.." (creating "..path..")"
+			end
+			return lfs.mkdir(path)
+			]]
 		end
 	end,
 
 	copy = function(src, dest)
 		SYSTEM.mkdir(dirname(dest))
+		
+		--local path_parts = string.match(src, "(.-)([^\\]-([^%.]+))$")
+		
 		SYSTEM.runCmd(
 			{
 				win='cp -R "'..src..'" "'..dest..'"',
@@ -134,7 +162,7 @@ SYSTEM = {
 		SYSTEM.runCmd(
 			{
 				mac="echo "..cmd.." > blanke.command; chmod +x blanke.command; open blanke.command",
-				win='start \"\" \"'..cmd..'\"'
+				win='start /b \"\" \"'..cmd..'\"'
 			}
 		)
 	end,
