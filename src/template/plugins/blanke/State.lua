@@ -95,7 +95,15 @@ function GS.registerEvents(callbacks)
 		registry[f] = love[f] or __NULL__
 		love[f] = function(...)
 			registry[f](...)
-			return GS[f](...)
+			new_func = function(...)
+				local result, chunk
+				if BlankE._ide_mode then
+					result, chunk = IDE.try(GS[f], ...)
+				else
+					chunk = GS[f](...)
+				end
+			end
+			return new_func(...)
 		end
 	end
 end

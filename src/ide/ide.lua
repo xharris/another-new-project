@@ -66,30 +66,36 @@ IDE = {
 		-- load ide plugins
 		print('load plugins')
 		for f, file in ipairs(plugins) do
-			print('plugin -> '..file)
-			file = file:gsub('.lua','')
-			IDE.plugins[file] = require('plugins.'..file)
+			-- no folders
+			if lfs.attributes(SYSTEM.cwd.."/plugins/"..file).mode ~= "directory" then
+				print('plugin -> '..file)
+				file = file:gsub('.lua','')
+				IDE.plugins[file] = require('plugins.'..file)
 
-			if IDE.plugins[file].disabled then
-				package.loaded[file] = nil
-				_G[file] = nil
+				if IDE.plugins[file].disabled then
+					package.loaded[file] = nil
+					_G[file] = nil
+				end
 			end
 		end
 
 		-- get modules
 		print('load modules')
 		for f, file in ipairs(modules) do
-			print('module -> '..file)
-			file = file:gsub('.lua','')
-			IDE.modules[file] = require('modules.'..file)
+			-- NO POMEGRANATES
+			if lfs.attributes(SYSTEM.cwd.."/modules/"..file).mode ~= "directory" then
+				print('module -> '..file)
+				file = file:gsub('.lua','')
+				IDE.modules[file] = require('modules.'..file)
 
-			if not IDE.modules[file].getObjectList then
-				IDE.modules[file].getObjectList = function() return false end
-			end
+				if not IDE.modules[file].getObjectList then
+					IDE.modules[file].getObjectList = function() return false end
+				end
 
-			if IDE.modules[file].disabled then
-				package.loaded[file] = nil
-				_G[file] = nil
+				if IDE.modules[file].disabled then
+					package.loaded[file] = nil
+					_G[file] = nil
+				end
 			end
 		end
 		
@@ -674,7 +680,7 @@ IDE = {
 	end,
 
 	getTemplatePath = function()
-		return SYSTEM.cwd.."/src/template"
+		return SYSTEM.cwd.."/template"
 	end,
 
 	isProjectOpen = function()

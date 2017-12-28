@@ -1,7 +1,7 @@
 local os_list = {'love','win','mac'}--,'web','android','ios'}
 
 local love2d_binary_path = {
-	win=SYSTEM.cwd..'/love2d',
+	win=dirname(SYSTEM.cwd)..'/love2d',
 	mac=SYSTEM.cwd..'/love.app'
 }
 local engine_path = SYSTEM.cleanPath(IDE.getTemplatePath().."/plugins")
@@ -22,6 +22,7 @@ function buildSrcDir(folder_name)
 	end
 
 	-- copy engine
+	print(engine_path)
 	SYSTEM.copy(engine_path, folder_name..'/src/plugins')
 	return folder_name..'/src'
 end
@@ -31,7 +32,7 @@ function buildLove(folder_name)
 	src_dir = buildSrcDir(folder_name)
 
 	-- zip into .love
-	HELPER.run('zipDir',{src_dir, folder_name..'/'.._GAME_NAME..'.love'})
+	SYSTEM.zip(src_dir, folder_name..'/'.._GAME_NAME..'.love')
 
 	-- remove temporary src dir
 	SYSTEM.remove(src_dir)
@@ -46,6 +47,12 @@ function export(target_os, open_dir)
 
 	-- remove old dir if it exists
 	SYSTEM.remove(output_dir)
+
+
+	if target_os == 'love' then
+		buildLove(output_dir)
+		return false
+	end
 
 	-- build .love
 	local love_path = buildLove(output_dir)
@@ -71,6 +78,7 @@ function export(target_os, open_dir)
 
 		-- remove .love
 		SYSTEM.remove(love_path)
+		SYSTEM.remove(output_dir.."/src")
 
 		-- copy dlls
 		local extra_files = {"SDL2.dll", "OpenAL32.dll", "license.txt", "love.dll", "lua51.dll", "mpg123.dll", "msvcp120.dll", "msvcr120.dll"}

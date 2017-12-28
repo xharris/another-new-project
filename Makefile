@@ -20,6 +20,7 @@ update_release:
 	make update_folder D="icons"
 	make update_folder D="ide"
 	make update_folder D="images"
+	cp src/helper.exe releases/win/src/helper.exe
 
 build_mac:
 	# remove old folder

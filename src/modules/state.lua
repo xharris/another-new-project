@@ -71,7 +71,7 @@ local ideState = {
 
 			local curr_state = BlankE.getCurrentState()
 			if string.match(file_name, curr_state) then
-				State.switch(_G[curr_state])
+				IDE.try(State.switch, _G[curr_state])
 			end
 		end
 	end,

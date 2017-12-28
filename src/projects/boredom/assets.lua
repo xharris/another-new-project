@@ -7,5 +7,5 @@ assets = Class{}
 
 level1 = Class{classname='level1'}
 require 'scripts.state.level1'
-_FIRST_STATE = state0
+_FIRST_STATE = level1
 

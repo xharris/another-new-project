@@ -120,16 +120,16 @@ SYSTEM = {
 	end,
 
 	remove = function(path)
-		if not lfs.rmdir(path) then
-			os.remove(path)
-		end	
 		--[[
+		if not lfs.rmdir(path) then -- can't delete non-empty dir
+			os.remove(path)
+		end	]]
 		SYSTEM.runCmd(
 			{
 				win='rm -r "'..path..'"',
 				mac='rm -rf "'..path..'"'
 			}
-		)]]
+		)
 	end,
 
 	getOS = function()
@@ -166,6 +166,16 @@ SYSTEM = {
 			}
 		)
 	end,
+
+	-- TODO: untested
+	zip = function(src, dest)
+		SYSTEM.runCmd(
+			{
+				mac="cd \""..src.."\"; zip -9 -r \""..dest.."\" .",
+				win=SYSTEM.cwd.."/helper.exe \""..src.."\" \""..dest.."\""
+			}
+		)
+	end
 }
 
 print('OS: '..SYSTEM.getOS())
