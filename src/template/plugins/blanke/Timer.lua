@@ -59,8 +59,8 @@ Timer = Class{
 
 			-- call EVERY
 			if self.duration == 0 or self.time <= self.duration then
-				local fl_time = math.floor(self.time)
 				for e, every in ipairs(self._every) do
+					local fl_time = math.round(self.time, decimal_places(every.interval))
 					if fl_time ~= 0 and fl_time % every.interval == 0 and every.last_time_ran ~= fl_time then
 						every.func()
 						every.last_time_ran = fl_time

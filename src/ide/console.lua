@@ -8,7 +8,13 @@ CONSOLE = {
 			print_str = print_str..tostring(argument)..' '
 		end
 
-		local info = debug.getinfo(3)
+		local info_num = 1
+		local info = debug.getinfo(info_num)
+		while info.short_src:contains("console.lua") or info.short_src:contains("Debug.lua") do
+			info_num = info_num + 1
+			info = debug.getinfo(info_num)
+		end
+
 		if print_str == CONSOLE._last_print and #CONSOLE.log > 0 then
 			CONSOLE._repeat_print_count = CONSOLE._repeat_print_count + 1
 			CONSOLE.log[1] = print_str..' ('..basename(info.short_src)..':'..info.currentline..') ('..CONSOLE._repeat_print_count..')'
@@ -33,6 +39,12 @@ CONSOLE = {
 
 	    	imgui.End()
 	    end
+	end,
+
+	clear = function() 
+		CONSOLE.log = {}
+		CONSOLE._last_print = nil
+		CONSOLE._repeat_print_count = 1
 	end
 }
 

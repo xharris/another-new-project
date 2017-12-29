@@ -61,6 +61,12 @@ function extname(str)
 	return str:match("^.+(%..+)$")
 end
 
+--[[
+
+	STRING
+
+]]
+
 function string:replaceAt(pos, r) 
 	return table.concat{self:sub(1,pos-1),r,self:sub(pos+1)}
 end
@@ -84,10 +90,18 @@ function string:split(sep)
 		return fields
 	end
 end
+function string:contains(str)
+	return string.match(self, str)
+end
 function string:trim()
 	return self:gsub("^%s+", ""):gsub("%s+$", "")
 end
 
+--[[
+
+	TABLE
+
+]]
 function table.find(t, value)
 	for v, val in pairs(t) do
 		if val == value then
@@ -115,3 +129,29 @@ function table.tonumber(t)
 	return t
 end
 
+--[[
+
+	MATH
+
+]]
+--[[--http://lua-users.org/wiki/SimpleRound
+function math.sign(v)
+	return (v >= 0 and 1) or -1
+end
+function math.round(v, bracket) -- example: math.round(120.68, 0.1) = 120.7
+	bracket = bracket or 1
+	return math.floor(v/bracket + math.sign(v) * 0.5) * bracket
+end
+]]
+function math.round(num, numDecimalPlaces)
+    local mult = 10^(numDecimalPlaces or 0)
+    if num >= 0 then return math.floor(num * mult + 0.5) / mult
+    else return math.ceil(num * mult - 0.5) / mult end
+end
+function decimal_places(num)
+	after_dec = tostring(num):split(".")
+	if #after_dec == 2 then
+		return after_dec[2]:len()	
+	end
+	return 0
+end

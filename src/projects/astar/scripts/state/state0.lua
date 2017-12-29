@@ -26,7 +26,6 @@ local open_stack, started, done, step_timer
 
 function state0:enter(previous)
 	Debug.clear()
-
 	map = {
 		1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 		3, 1, 0, 0, 0, 0, 1, 0, 0, 0,
@@ -48,7 +47,7 @@ function state0:enter(previous)
 	step_timer = Timer()
 	step_timer:every(function()
 		if not BlankE.pause then aStarStep() end
-	end, 0.1):start()
+	end, .1):start()
 
 	-- find start point
 	for x = 0, squares-1 do
@@ -63,9 +62,6 @@ function state0:enter(previous)
 			end
 		end
 	end
-
-	Debug.log(game_width)
-	Debug.log(game_height)
 end
 
 
@@ -105,7 +101,6 @@ function checkNeighbors(x, y, g)
 	for i, value in ipairs(f_values) do
 		if value[3] <= f_min then
 			table.insert(open_stack, value)
-			Debug.log(tostring(value[1]).." "..tostring(value[2]).." "..tostring(value[3]))
 		end
 	end
 
@@ -118,7 +113,6 @@ function aStarStep()
 	end
 
 	if #open_stack > 0 and not done then
-		Debug.log("step")
 		local curr_index = #open_stack
 		local path_x, path_y, path_g = unpack(open_stack[curr_index])
 		if getMap(path_x, path_y) == END then
@@ -157,6 +151,5 @@ function state0:draw()
 	        )
 	    end
     end
-    --Debug.draw()
 end	
  

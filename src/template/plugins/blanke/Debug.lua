@@ -55,6 +55,7 @@ Debug = {
     end,
 
     clear = function()
+        if BlankE._ide_mode then CONSOLE.clear() end
         Debug.lines = {}
         return Debug
     end

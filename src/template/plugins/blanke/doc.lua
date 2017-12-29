@@ -300,6 +300,9 @@ end
  ###    ##### ###### #   #  ###### 
 
 Scene
+	To create a Scene in the IDE just type 
+		my_scene = Scene("mylevel")
+	as if it already existed. A blank scene will be created.
 ]]
 
 Scene(scene_name)							-- initialize a scene as scene_name.json
