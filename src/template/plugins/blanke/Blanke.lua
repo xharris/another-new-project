@@ -343,6 +343,8 @@ BlankE = {
 			if BlankE.main_cam then BlankE.main_cam:detach() end
 		end
 
+        State.draw()
+
 	    local cur_time = love.timer.getTime()
 	    if next_time <= cur_time then
 	        next_time = cur_time
@@ -391,7 +393,6 @@ BlankE = {
 	end,
 
 	errhand = function(msg)
-		print("error: " .. ifndef(chunk, 'error unknown')); 
 		IDE.errd = true; 
 		local trace = debug.traceback()
 	 
@@ -418,21 +419,30 @@ BlankE = {
 	end,
 }
 
-local _offset=0
+local _t = 0
 function _err_state:draw()
 	love.graphics.setBackgroundColor(0,0,0,255)
+	game_width = love.graphics.getWidth()
+	game_height = love.graphics.getHeight()
+	
+	local max_size = math.max(game_width, game_height, 500)
 
-	local _max_size = math.max(game_width, game_height)
-	_offset = _offset + 1
-	if _offset >= _max_size then _offset = 0 end
+	_t = _t + 1
+	if _t >= max_size then _t = 0 end -- don't let _t iterate into infinity
+
 
 	love.graphics.push('all')
-	for _c = 0,_max_size*2,10 do
-		local _new_radius = _c-_offset
-		local opacity = (_new_radius/_max_size)*300
-		love.graphics.setColor(0,(_new_radius)/_max_size*255,0,opacity)
-		love.graphics.circle("line", game_width/2, game_height/2, _new_radius)
+
+	for i = -max_size, max_size, 10 do
+		local radius = max_size - _t + i
+		if radius > 20 and radius < max_size then
+			local opacity = (radius / max_size) * (255*0.8)
+			love.graphics.setColor(0,255,0,opacity)
+			love.graphics.circle("line", game_width/2, game_height/2, radius)
+		end
 	end
+
+	-- draw error message
 	local posx = 0
 	local posy = game_height/2
 	local align = "center"
@@ -443,6 +453,7 @@ function _err_state:draw()
 	end
 	love.graphics.setColor(255,255,255,sinusoidal(150,255,0.5))
 	love.graphics.printf(_err_state.error_msg,posx,posy,game_width,align)
-	love.graphics.pop()
+
+	love.graphics.pop('all')
 end	
 

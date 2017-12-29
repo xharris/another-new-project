@@ -22,7 +22,6 @@ function buildSrcDir(folder_name)
 	end
 
 	-- copy engine
-	print(engine_path)
 	SYSTEM.copy(engine_path, folder_name..'/src/plugins')
 	return folder_name..'/src'
 end

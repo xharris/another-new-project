@@ -19,7 +19,6 @@ SYSTEM = {
 
 	runCmd = function(commands, func)
 		if commands[SYSTEM.os] then
-			print(commands[SYSTEM.os])
 			local pfile = io.popen(commands[SYSTEM.os])
 		    if func then func(pfile) end
 		    pfile:close()
@@ -178,13 +177,13 @@ SYSTEM = {
 	end
 }
 
-print('OS: '..SYSTEM.getOS())
 
+SYSTEM.getOS()
+--print('OS: '..SYSTEM.os)
 SYSTEM.cwd = love.filesystem.getSource()
 if string.sub(SYSTEM.cwd,-string.len(".exe"))==".exe" then
 	SYSTEM.exe_mode = true
 	SYSTEM.cwd = love.filesystem.getSourceBaseDirectory()
 	SYSTEM.src = 'src/'
 end
-print("CWD: "..SYSTEM.cwd)
-print("EXE_MODE: "..tostring(SYSTEM.exe_mode))
+--print("CWD: "..SYSTEM.cwd)

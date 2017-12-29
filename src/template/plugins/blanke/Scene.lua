@@ -160,6 +160,11 @@ Scene = Class{
 	end,
 
 	load = function(self, path, compressed)
+		-- scene doesn't exist. just create an empty one.
+		if not love.filesystem.exists(path) then
+			self:export(path)
+		end
+
 		scene_string = love.filesystem.read(path)
 		scene_data = json.decode(scene_string)
 

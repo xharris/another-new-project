@@ -64,11 +64,9 @@ IDE = {
 		end
 
 		-- load ide plugins
-		print('load plugins')
 		for f, file in ipairs(plugins) do
 			-- no folders
 			if lfs.attributes(SYSTEM.cwd.."/plugins/"..file).mode ~= "directory" then
-				print('plugin -> '..file)
 				file = file:gsub('.lua','')
 				IDE.plugins[file] = require('plugins.'..file)
 
@@ -80,11 +78,9 @@ IDE = {
 		end
 
 		-- get modules
-		print('load modules')
 		for f, file in ipairs(modules) do
 			-- NO POMEGRANATES
 			if lfs.attributes(SYSTEM.cwd.."/modules/"..file).mode ~= "directory" then
-				print('module -> '..file)
 				file = file:gsub('.lua','')
 				IDE.modules[file] = require('modules.'..file)
 
@@ -701,7 +697,6 @@ IDE = {
 			local old_path = IDE.current_project
 			IDE.current_project = basename(folder_path)
 
-			print(love.filesystem.getSourceBaseDirectory().."/"..IDE.getShortProjectPath())
 			if SYSTEM.exe_mode then
 				--love.filesystem.mount(SYSTEM.cwd.."\\projects\\"..IDE.current_project, IDE.current_project)
 			end
@@ -775,13 +770,7 @@ IDE = {
 			else
 				return false
 			end
-
-			--[[
-			local chunk = love.filesystem.load(path)
-			local result = chunk()
-			print("result: "..tostring(result))
-			]]
-
+			
 			IDE.iterateModules(function(m, mod)
 				if mod.postReload then
 					mod.postReload()
