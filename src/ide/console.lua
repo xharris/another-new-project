@@ -19,7 +19,7 @@ CONSOLE = {
 	end,
 
 	draw = function()
-	    if UI.titlebar.show_console then
+	    if UI.titlebar.show_console and IDE.isProjectOpen() then
 	    	local margin = 10
 	    	local height = UI.getSetting("console_height").value
 

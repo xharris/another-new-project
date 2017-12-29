@@ -203,6 +203,7 @@ BlankE = {
 		local grid_color = BlankE.grid_color
 
 		-- outside view line
+		love.graphics.push('all')
 		love.graphics.setColor(grid_color[1], grid_color[2], grid_color[3], 15)
 		
 		func()
@@ -217,6 +218,7 @@ BlankE = {
 		 	func()
     		love.graphics.setStencilTest()
 		end
+		love.graphics.pop()
 	end,
 
 	_getSnap = function() 
@@ -332,18 +334,22 @@ BlankE = {
 	end,
 
 	draw = function()
-		local fake_view = nil
+        State.draw()
+
+        -- disable any scenes that aren't being actively drawn
+        local active_scenes = 0
 		_iterateGameGroup('scene', function(scene)
-			scene._is_active = false
+			if scene._is_active > 0 then 
+				active_scenes = active_scenes + 1
+				scene._is_active = scene._is_active - 1
+			end
 		end)
 		
-		if BlankE._ide_mode and #game.scene > 0  and BlankE.getCurrentState() ~= '_empty_state' then
+		if BlankE._ide_mode and active_scenes > 0 and BlankE.getCurrentState() ~= '_empty_state' then
 			if BlankE.main_cam then BlankE.main_cam:attach() end
 			BlankE._gridStencilLine(BlankE._drawGrid)
 			if BlankE.main_cam then BlankE.main_cam:detach() end
 		end
-
-        State.draw()
 
 	    local cur_time = love.timer.getTime()
 	    if next_time <= cur_time then

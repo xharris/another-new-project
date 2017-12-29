@@ -92,7 +92,7 @@ end
 
 function love.draw()
     if BlankE and UI.getSetting('show_game') then
-        IDE.try(BlankE.draw)
+       IDE.try(BlankE.draw)
     end
     IDE.draw()
 end

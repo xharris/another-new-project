@@ -11,5 +11,5 @@ function level1:update(dt)
 end
 
 function level1:draw()
-	--main_scene:draw()
+	main_scene:draw()
 end	

@@ -133,7 +133,7 @@ local ideScene = {
 			-- remove inactive states
 			local scene_names = {}
 			_iterateGameGroup('scene', function(scene)
-				if scene._is_active then
+				if scene._is_active > 0 then
 					table.insert(scene_list, scene)
 					table.insert(scene_names, scene.name)
 				end

@@ -66,12 +66,13 @@ Scene = Class{
 	_zoom_amt = 1,
 	_fake_view_start = {game_width/2, game_height/2},
 	init = function(self, name)
-		self.load_objects = {}
+		self.load_objects = {layers={},objects={hitbox={}}}
 		self.layers = {}
 		self.images = {}
 		self.name = name
 		self._snap = {32,32}
 		self._delete_similar = true
+		self._is_active = 2
 
 		self.hash_tile = Scenetable()
 
@@ -97,6 +98,10 @@ Scene = Class{
 
 		if name and assets[name] then
 			self:load(assets[name]())
+		end
+
+		if #self.load_objects.layers == 0 then
+			self:addLayer()
 		end
 
 		self.draw_hitboxes = false
@@ -160,16 +165,11 @@ Scene = Class{
 	end,
 
 	load = function(self, path, compressed)
-		-- scene doesn't exist. just create an empty one.
-		if not love.filesystem.exists(path) then
-			self:export(path)
-		end
-
 		scene_string = love.filesystem.read(path)
 		scene_data = json.decode(scene_string)
 
-		self.load_objects = scene_data["objects"]
-		Scene.hitbox = self.load_objects.hitbox
+		self.load_objects = scene_data
+		Scene.hitbox = self.load_objects.objects.hitbox
 
 		for l, layer in ipairs(self.load_objects.layers) do
 			layer = self:_checkLayerArg(layer)
@@ -710,7 +710,7 @@ Scene = Class{
 	end,
 
 	_real_draw = function(self)
-		self._is_active = true
+		self._is_active = 2
 
 		for l, name in ipairs(self.load_objects.layers) do
 			local layer = self.layers[name]
