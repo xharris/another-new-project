@@ -19,6 +19,7 @@ Timer = Class{
 		table.insert(self._before,{
 			func=func,
 			delay=ifndef(delay,0),
+			decimal_places=decimal_places(ifndef(delay,0)),
 			called=false,
 		})
 		return self
@@ -28,6 +29,7 @@ Timer = Class{
 		table.insert(self._every,{
 			func=func,
 			interval=ifndef(interval,1),
+			decimal_places=decimal_places(ifndef(interval,0)),
 			last_time_ran=0
 		})
 		return self
@@ -37,6 +39,7 @@ Timer = Class{
 		table.insert(self._after,{
 			func=func,
 			delay=ifndef(delay,0),
+			decimal_places=decimal_places(ifndef(delay,0)),
 			called=false
 		})
 		return self
@@ -60,7 +63,7 @@ Timer = Class{
 			-- call EVERY
 			if self.duration == 0 or self.time <= self.duration then
 				for e, every in ipairs(self._every) do
-					local fl_time = math.round(self.time, decimal_places(every.interval))
+					local fl_time = math.round(self.time, every.decimal_places)
 					if fl_time ~= 0 and fl_time % every.interval == 0 and every.last_time_ran ~= fl_time then
 						every.func()
 						every.last_time_ran = fl_time
