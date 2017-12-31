@@ -100,8 +100,8 @@ setSpriteIndex(str index)
 addAnimation{...}					--[[
 	name = str
 	image = str 					-- name of asset (ex. bob_stand, bob_walk)
-	frames = {...}
-	frame_size = {width, height}
+	frames = {...}					-- {'1-2', 1} means columns 1-2 and row 1
+	frame_size = {width, height}	-- {32,32} means each frame is 32 by 32
 	speed = float					
 ]]
 addShape(...)						--[[

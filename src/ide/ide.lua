@@ -748,7 +748,6 @@ IDE = {
 		if IDE.update_timeout == 0 then
 			IDE.update_timeout = 2
 
-			IDE.errd = false
 
 			--[[
 			local proj = 'projects/project1/'
@@ -788,7 +787,8 @@ IDE = {
 				end
 			end)
 
-			if init_blanke then
+			if init_blanke or IDE.errd then
+				IDE.errd = false
 				IDE.requireBlanke()
 				BlankE._ide_mode = true
 				result, chunk = IDE.try(BlankE.init, _FIRST_STATE)
@@ -798,6 +798,7 @@ IDE = {
 				-- if not result then return false end
 			end
 
+			IDE.errd = false
 			IDE._want_reload = false
 			return true
 		end
@@ -920,7 +921,7 @@ IDE = {
 				end
 			end
 
-			IDE.refreshAssets()
+			IDE.refreshAssets(true)
 		end
 	end,
 }

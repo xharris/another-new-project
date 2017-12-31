@@ -12,7 +12,7 @@ Entity = Class{
 		self._sprites = {} 			-- is actually the animations
 		self.sprite = nil			-- currently active animation
 		self.pause = false
-		self.show_debug = true
+		self.show_debug = false
 		self.scene_show_debug = false
 
 		-- x and y coordinate of sprite
@@ -292,8 +292,7 @@ Entity = Class{
 		-- main args
 		local ani_name = args.name
 		local name = args.image
-		local frames = args.frames
-		local frame_size = args.frame_size
+		local frames = ifndef(args.frames, {1,1})
 		-- other args
 		local left = ifndef(args.left, 0)
 		local border = ifndef(args.border, 0)
@@ -301,6 +300,7 @@ Entity = Class{
 
 		if Image.exists(name) then
 			local image = Image(name)
+			local frame_size = ifndef(args.frame_size, {image.width, image.height})
 		    local grid = anim8.newGrid(frame_size[1], frame_size[2], image.width, image.height)
 			local sprite = anim8.newAnimation(grid(unpack(frames)), speed)
 
