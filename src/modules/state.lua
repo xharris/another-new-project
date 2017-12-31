@@ -8,6 +8,11 @@ _FIRST_STATE = _empty_state
 
 local updateListTimer
 function updateStateList()
+	if not updateListTimer then
+		updateListTimer = Timer()
+		updateListTimer:every(updateStateList, UI.getSetting('project_reload_timer').value):start() 
+	end
+
 	state_list = {}
 	local state_files = SYSTEM.scandir(IDE.getProjectPath()..'/scripts/state')
 	for s, state in ipairs(state_files) do
@@ -29,12 +34,12 @@ local ideState = {
 		table.insert(new_states, state_name)
 	end,
 
+	onOpenProject = function()
+		updateStateList()
+	end,
+
 	getObjectList = function()
-		if not updateListTimer then
-			updateStateList()
-			updateListTimer = Timer()
-			updateListTimer:every(updateStateList, UI.getSetting('project_reload_timer').value):start() 
-		end
+		if not updateListTimer then updateStateList() end
 		return state_list
 	end,
 
@@ -55,7 +60,7 @@ local ideState = {
 		if first_state ~= '' then
 			ret_str = ret_str .. '_FIRST_STATE = '..first_state..'\n'
 		end
-		state_list = {}
+		--state_list = {}
 		return ret_str..'\n'
 	end,
 

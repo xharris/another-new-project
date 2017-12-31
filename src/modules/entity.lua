@@ -2,6 +2,11 @@ local entity_list = {}
 
 local updateListTimer
 function updateEntityList()
+	if not updateListTimer then
+		updateListTimer = Timer()
+		updateListTimer:every(updateEntityList, UI.getSetting('project_reload_timer').value):start() 
+	end
+
 	entity_list = {}
 	local entity_files = SYSTEM.scandir(IDE.getProjectPath()..'/scripts/entity')
 	for s, entity in ipairs(entity_files) do
@@ -23,12 +28,12 @@ local ideEntity = {
 		table.insert(entity_list, ent_name)
 	end,
 
+	onOpenProject = function()
+		updateEntityList()
+	end,
+
 	getObjectList = function()
-		if not updateListTimer then
-			updateEntityList()
-			updateListTimer = Timer()
-			updateListTimer:every(updateEntityList, UI.getSetting('project_reload_timer').value):start() 
-		end
+		if not updateListTimer then updateEntityList() end
 		return entity_list
 	end,
 
@@ -39,13 +44,13 @@ local ideEntity = {
 				entity.." = Class{__includes=Entity,classname=\'"..entity.."\'}\n"..
 				"require \'scripts.entity."..entity.."\'\n"
 		end
-		entity_list = {}
+		--entity_list = {}
 		return ret_str..'\n'
 	end,
 
 	fileChange = function(file_name)
 		if string.match(file_name, "entity/") then
-			IDE._reload(file_name, true)
+			IDE._reload(file_name, false)
 		end
 	end,
 

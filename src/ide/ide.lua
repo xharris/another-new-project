@@ -419,10 +419,21 @@ IDE = {
 	                imgui.EndChild()
 	            end
 
-	            -- close project
-	            if IDE.isProjectOpen() and imgui.MenuItem("close project") then
-	            	love.event.quit( "restart" )
-	            end
+	            if IDE.isProjectOpen() then
+	            	if imgui.MenuItem("open project folder") then
+	            		SYSTEM.explore(IDE.getProjectPath())
+	            	end
+
+	           		-- show BlankE/doc.lua
+	            	if imgui.MenuItem("view BlankE reference") then
+	            		SYSTEM.edit(IDE.getTemplatePath().."/plugins/blanke/doc.lua")
+	            	end
+
+		            -- close project
+		            if imgui.MenuItem("close project") then
+		            	love.event.quit( "restart" )
+		            end
+		        end
 
 	            imgui.EndMenu()
 	        end
@@ -558,8 +569,8 @@ IDE = {
 	        -- manual reload button
 	        if IDE.isProjectOpen() then
 	        	if UI.drawIconButton("reload", "reload game") then
-					IDE.refreshAssets(false)
-					--IDE.reload(true)--BlankE.restart()
+					IDE.refreshAssets(true)
+					-- IDE.reload(true)-- BlankE.restart()
 				end
 				imgui.SameLine()
 
@@ -777,15 +788,14 @@ IDE = {
 				end
 			end)
 
-			IDE.requireBlanke()
-			BlankE._ide_mode = true
-
 			if init_blanke then
+				IDE.requireBlanke()
+				BlankE._ide_mode = true
 				result, chunk = IDE.try(BlankE.init, _FIRST_STATE)
 				if not result then return false end
 			else
-				result, chunk = IDE.try(State.switch, _FIRST_STATE)
-				if not result then return false end
+				-- result, chunk = IDE.try(State.switch, _FIRST_STATE)
+				-- if not result then return false end
 			end
 
 			IDE._want_reload = false
@@ -814,7 +824,7 @@ IDE = {
 		if IDE.isProjectOpen() then
 			IDE._reload(IDE.getShortProjectPath()..'/assets.lua', init_blanke)
 		end
-		IDE.refreshAssets(true)
+		--IDE.refreshAssets()
 	end,
 
 	refreshAssets = function(dont_reload)
