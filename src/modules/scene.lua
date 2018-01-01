@@ -30,12 +30,12 @@ function refreshObjectList(only_cat) -- haha cats
 	for c, cat in ipairs(placeable) do
 		objects[cat] = {}
 
-		if IDE.modules[cat] then
+		if IDE.modules[cat] and IDE.modules[cat].getObjectList then
 			objects[cat] = IDE.modules[cat].getObjectList()
-
-			if cat == 'hitbox' or #objects[cat] > 0 then
-				table.insert(category_names, cat)
-			end
+		end
+		
+		if cat == 'hitbox' or #objects[cat] > 0 then
+			table.insert(category_names, cat)
 		end
 	end
 end

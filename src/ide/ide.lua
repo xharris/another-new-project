@@ -441,7 +441,7 @@ IDE = {
 	        -- ADD/EDIT OBJECT
 	        if IDE.isProjectOpen() and beginMenu("Library") then
 	        	IDE.iterateModules(function(m, mod)
-	        		if mod.getObjectList then
+	        		if mod.getObjectList and not mod.notInList then
 	        			local obj_list = mod.getObjectList()
 	        			if obj_list ~= false and imgui.BeginMenu(m) then
 	        				-- new object button

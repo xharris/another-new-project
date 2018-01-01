@@ -66,8 +66,8 @@ Scene = Class{
 	_zoom_amt = 1,
 	_fake_view_start = {game_width/2, game_height/2},
 	init = function(self, name)
-		self.load_objects = {layers={},objects={hitbox={}}}
-		self.layers = {}
+		self.layer_data = {}			-- load_objct
+		self.layer_order = {}			-- layers
 		self.images = {}
 		self.name = name
 		self._snap = {32,32}
@@ -100,7 +100,7 @@ Scene = Class{
 			self:load(assets[name]())
 		end
 
-		if #self.load_objects.layers == 0 then
+		if #self.layer_order == 0 then
 			self:addLayer()
 		end
 
@@ -111,13 +111,18 @@ Scene = Class{
 
 	-- returns json
 	export = function(self, path)
-		local output = {layers={},objects={}}
+		local output = {order=self.layer_order,data={}}
 
-		for layer, data in pairs(self.layers) do
-			output.layers[layer] = {}
+		-- iterate LAYERS
+		for l, layer in ipairs(self.layer_order) do
+			local data = self.layer_data[layer]
+			output.data[layer] = {}
 
+			-- iterate OBJECT TYPES
 			for obj_type, objects in pairs(data) do
 				local out_layer = {}
+
+				-- iterate OBJECTS
 				for o, obj in ipairs(objects) do
 					if obj._loadedFromFile and not obj._destroyed then
 						if obj_type == 'entity' then
@@ -138,7 +143,7 @@ Scene = Class{
 						end
 					end
 				end
-				output.layers[layer][obj_type] = out_layer
+				output.data[layer][obj_type] = out_layer
 			end
 		end
 
@@ -146,8 +151,8 @@ Scene = Class{
 		local tiles = self.hash_tile:exportList()
 
 		for t, tile in pairs(tiles) do
-			output.layers[tile.layer] = ifndef(output.layers[tile.layer],{})
-			output.layers[tile.layer]['tile'] = ifndef(output.layers[tile.layer]['tile'],{})
+			output.data[tile.layer] = ifndef(output.data[tile.layer],{})
+			output.data[tile.layer]['tile'] = ifndef(output.data[tile.layer]['tile'],{})
 			local img_data = {
 				x=tile.x,
 				y=tile.y,
@@ -158,8 +163,8 @@ Scene = Class{
 		end
 
 		-- save hitboxes
-		output.objects['hitbox'] = Scene.hitbox
-		output.objects['layers'] = self.load_objects.layers
+		output.data['hitbox'] = Scene.hitbox
+		--output.objects['layers'] = self.load_objects.layers
 
 		return json.encode(output)
 	end,
@@ -168,17 +173,16 @@ Scene = Class{
 		scene_string = love.filesystem.read(path)
 		scene_data = json.decode(scene_string)
 
-		self.load_objects = scene_data
-		Scene.hitbox = self.load_objects.objects.hitbox
+		self.layer_data = {}
+		self.layer_order = scene_data.order
+		Scene.hitbox = ifndef(scene_data.data.hitbox, {})
 
-		for l, layer in ipairs(self.load_objects.layers) do
-			layer = self:_checkLayerArg(layer)
-			local data = scene_data.layers[layer]
-			
+		-- iterate LAYERS
+		for layer, data in pairs(scene_data.data) do
 			if not _place_layer then
 				self:setPlaceLayer(layer)
 			end
-			self.layers[layer] = table.copy(layer_template)
+			self.layer_data[layer] = table.copy(layer_template)
 
 			if data["entity"] then
 				for i_e, entity in ipairs(data["entity"]) do
@@ -203,10 +207,6 @@ Scene = Class{
 
 			if data["hitbox"] then
 				for i_h, hitbox in ipairs(data["hitbox"]) do
-
-					-- turn points into array
-					--hitbox.points = hitbox.points:split(',')
-
 					local new_hitbox = self:addHitbox(hitbox.name, {points=hitbox.points}, layer)
 					new_hitbox._loadedFromFile = true
 				end
@@ -221,12 +221,7 @@ Scene = Class{
 		end
 		if type(layer) == "number" then
 			layer = "layer"..tostring(layer)
-			self.layers[layer] = ifndef(self.layers[layer],table.copy(layer_template))
-		end
-
-		self.load_objects.layers = ifndef(self.load_objects.layers,{})
-		if not table.has_value(self.load_objects.layers, layer) then
-			table.insert(self.load_objects.layers, layer)
+			self.layer_data[layer] = ifndef(self.layer_data[layer],table.copy(layer_template))
 		end
 
 		return layer
@@ -235,9 +230,11 @@ Scene = Class{
 	getList = function(self, obj_type) 
 		local obj_list = {}
 		if obj_type == 'layer' then
-			return ifndef(self.load_objects.layers,{})
+			return ifndef(self.layer_order,{})
+		elseif obj_type == 'hitbox' then
+			return Scene.hitbox
 		else
-			for layer, data in pairs(self.layers) do
+			for layer, data in pairs(self.layer_data) do
 				obj_list[layer] = data[obj_type]
 			end
 		end
@@ -245,7 +242,7 @@ Scene = Class{
 	end,
 
 	addLayer = function(self)
-		local layer_list = self.load_objects.layers
+		local layer_list = self.layer_order
 		local layer_num = #layer_list
 		local valid_name = false
 		local layer_name = 'layer'..layer_num
@@ -261,17 +258,16 @@ Scene = Class{
 			end
 		end
 
-		self.load_objects['layers'] = ifndef(layer_list, {})
-		table.insert(self.load_objects.layers, layer_name)
-		self.layers[layer_name] = table.copy(layer_template)
+		table.insert(self.layer_order, layer_name)
+		self.layer_data[layer_name] = table.copy(layer_template)
 		self:setPlaceLayer(layer_name)
 	end,
 
 	removeLayer = function(self)
-		local layer_index = table.find(self.load_objects.layers, _place_layer)
-		local layer_name = self.load_objects.layers[layer_index]
-		self.layers[layer_name] = nil
-		table.remove(self.load_objects.layers, layer_index)
+		local layer_index = table.find(self.layer_order, _place_layer)
+		local layer_name = self.layers[layer_index]
+		self.layer_data[layer_name] = nil
+		table.remove(self.layer_order, layer_index)
 	end,
 
 	getPlaceLayer = function(self)
@@ -285,7 +281,7 @@ Scene = Class{
 	moveLayerUp = function(self)
 		-- get position of current layer
 		local curr_layer_pos = 1
-		for l, layer in ipairs(self.load_objects.layers) do
+		for l, layer in ipairs(self.layer_order) do
 			if layer == _place_layer then
 				curr_layer_pos = l
 			end
@@ -294,29 +290,29 @@ Scene = Class{
 		-- able to move the layer up anymore?
 		if curr_layer_pos > 1 then
 			-- switch their contents
-			local prev_layer = self.load_objects.layers[curr_layer_pos-1]
-			local curr_layer = self.load_objects.layers[curr_layer_pos]
-			self.load_objects.layers[curr_layer_pos] = prev_layer
-			self.load_objects.layers[curr_layer_pos-1] = curr_layer
+			local prev_layer = self.layer_order[curr_layer_pos-1]
+			local curr_layer = self.layer_order[curr_layer_pos]
+			self.layer_order[curr_layer_pos] = prev_layer
+			self.layer_order[curr_layer_pos-1] = curr_layer
 		end
 	end,
 
 	moveLayerDown = function(self)
 		-- get position of current layer
 		local curr_layer_pos = 1
-		for l, layer in ipairs(self.load_objects.layers) do
+		for l, layer in ipairs(self.layer_order) do
 			if layer == _place_layer then
 				curr_layer_pos = l
 			end
 		end
 
 		-- able to move the layer up anymore?
-		if curr_layer_pos < #self.load_objects.layers then
+		if curr_layer_pos < #self.layer_order then
 			-- switch their contents
-			local prev_layer = self.load_objects.layers[curr_layer_pos+1]
-			local curr_layer = self.load_objects.layers[curr_layer_pos]
-			self.load_objects.layers[curr_layer_pos] = prev_layer
-			self.load_objects.layers[curr_layer_pos+1] = curr_layer
+			local prev_layer = self.layer_order[curr_layer_pos+1]
+			local curr_layer = self.layer_order[curr_layer_pos]
+			self.layer_order[curr_layer_pos] = prev_layer
+			self.layer_order[curr_layer_pos+1] = curr_layer
 		end
 	end,
 
@@ -338,8 +334,8 @@ Scene = Class{
 	_addEntityTable = function(self, entity, layer) 
 		layer = self:_checkLayerArg(layer)
 
-		self.layers[layer]["entity"] = ifndef(self.layers[layer]["entity"], {})
-		table.insert(self.layers[layer].entity, entity)
+		self.layer_data[layer]["entity"] = ifndef(self.layer_data[layer]["entity"], {})
+		table.insert(self.layer_data[layer].entity, entity)
 	end,
 
 	_addEntityStr = function(self, ent_name, x, y, layer, width, height)
@@ -360,12 +356,12 @@ Scene = Class{
 
 		--if Image.exists(img_name) then
 			-- check if the spritebatch exists yet
-			self.layers[layer]["tile"] = ifndef(self.layers[layer]["tile"], {})
+			self.layer_data[layer]["tile"] = ifndef(self.layer_data[layer]["tile"], {})
 			self.images[img_name] = ifndef(self.images[img_name], Image(img_name))
-			self.layers[layer].tile[img_name] = ifndef(self.layers[layer].tile[img_name], love.graphics.newSpriteBatch(self.images[img_name]()))
+			self.layer_data[layer].tile[img_name] = ifndef(self.layer_data[layer].tile[img_name], love.graphics.newSpriteBatch(self.images[img_name]()))
 
 			-- add tile to batch
-			local spritebatch = self.layers[layer].tile[img_name]
+			local spritebatch = self.layer_data[layer].tile[img_name]
 			local sb_id = spritebatch:add(love.graphics.newQuad(img_info.x, img_info.y, img_info.width, img_info.height, self.images[img_name].width, self.images[img_name].height), x, y)
 
 			-- add tile info to "hashtable"
@@ -427,15 +423,15 @@ Scene = Class{
 		return img:crop(tile_data.crop.x, tile_data.crop.y, tile_data.crop.width, tile_data.crop.height)
 	end,
 
-	removeTile = function(self, x, y, layer, img_name)
-		local rm_tiles = self:getTile(x,y,layer,img_name)
+	removeTile = function(self, x, y, layer_name, img_name)
+		local rm_tiles = self:getTile(x,y,layer_name,img_name)
 
 		-- remove them from spritebatches
-		for l_name, it_layer in pairs(self.layers) do
-			if layer == l_name then
+		for layer, data in pairs(self.layer_data) do
+			if layer_name == layer then
 				for t, tile in ipairs(rm_tiles) do
 					self.hash_tile:delete(x, y, tile)
-					it_layer.tile[tile.img_name]:set(tile.id, 0, 0, 0, 0, 0)
+					data.tile[tile.img_name]:set(tile.id, 0, 0, 0, 0, 0)
 				end
 			end
 		end
@@ -511,11 +507,11 @@ Scene = Class{
 			hitbox_info = self:getHitboxType(hit_name)
 		end
 
-		self.layers[layer]["hitbox"] = ifndef(self.layers[layer]["hitbox"], {})
+		self.layer_data[layer]["hitbox"] = ifndef(self.layer_data[layer]["hitbox"], {})
 		local new_hitbox = Hitbox("polygon", hit_info.points, hit_name)
 		new_hitbox:setColor(hitbox_info.color)
 		new_hitbox.hitbox_uuid = hit_info.uuid
-		table.insert(self.layers[layer].hitbox, new_hitbox)
+		table.insert(self.layer_data[layer].hitbox, new_hitbox)
 
 		return new_hitbox
 	end,
@@ -523,11 +519,11 @@ Scene = Class{
 	removeHitboxAtPoint = function(self, x, y, in_layer)
 		in_layer = self:_checkLayerArg(in_layer)
 
-	    for l_name, layer in pairs(self.layers) do
-	    	for h, hitbox in ipairs(layer.hitbox) do
-				if l_name == in_layer and hitbox:pointTest(x, y) then
+	    for layer, data in pairs(self.layer_data) do
+	    	for h, hitbox in ipairs(data.hitbox) do
+				if layer == in_layer and hitbox:pointTest(x, y) then
 					hitbox:destroy()
-					table.remove(self.layers[in_layer].hitbox, h)
+					table.remove(self.layer_data[layer].hitbox, h)
 				end
 			end
 		end
@@ -535,9 +531,9 @@ Scene = Class{
 
 	getEntity = function(self, in_entity, in_layer)
 		local entities = {}
-		for name, layer in pairs(self.layers) do
+		for layer, data in pairs(self.layer_data) do
 			if in_layer == nil or in_layer == layer then
-				for i_e, entity in ipairs(layer.entity) do
+				for i_e, entity in ipairs(data.entity) do
 					if entity.classname == in_entity then
 						table.insert(entities, entity)
 					end
@@ -576,19 +572,19 @@ Scene = Class{
 
 	update = function(self, dt) 
 		-- update entities
-		for name, layer in pairs(self.layers) do
-			if layer.entity then
-				for i_e, entity in ipairs(layer.entity) do
+		for layer, data in pairs(self.layer_data) do
+			if data.entity then
+				for i_e, entity in ipairs(data.entity) do
 					if entity._destroyed then
-						table.remove(layer.entity, i_e)
+						table.remove(data.entity, i_e)
 					else
 						entity:update(dt)
 					end
 				end
 			end
 
-			if layer.hitbox then
-				for i_h, hitbox in ipairs(layer.hitbox) do
+			if data.hitbox then
+				for i_h, hitbox in ipairs(data.hitbox) do
 					-- nothing at the moment
 				end
 			end
@@ -712,33 +708,33 @@ Scene = Class{
 	_real_draw = function(self)
 		self._is_active = 2
 
-		for l, name in ipairs(self.load_objects.layers) do
-			local layer = self.layers[name]
+		for l, layer in ipairs(self.layer_order) do
+			local data = self.layer_data[layer]
 
-			if BlankE._ide_mode and _place_layer ~= name then
+			if BlankE._ide_mode and _place_layer ~= layer then
 				love.graphics.push('all')
 				love.graphics.setColor(255,255,255,255/2.5)
 			end
 
-			if layer.entity then
-				for i_e, entity in ipairs(layer.entity) do
+			if data.entity then
+				for i_e, entity in ipairs(data.entity) do
 					entity.scene_show_debug = self.show_debug
 					entity:draw()
 				end
 			end
 
-			if layer.tile then
-				for name, tile in pairs(layer.tile) do
+			if data.tile then
+				for name, tile in pairs(data.tile) do
 					love.graphics.draw(tile)
 				end
 			end
 
-			if BlankE._ide_mode and _place_layer ~= name then
+			if BlankE._ide_mode and _place_layer ~= layer then
 				love.graphics.pop()
 			end
 
-			if layer.hitbox and (self.draw_hitboxes or (self.show_debug and not BlankE._ide_mode)) then
-				for i_h, hitbox in ipairs(layer.hitbox) do
+			if data.hitbox and (self.draw_hitboxes or (self.show_debug and not BlankE._ide_mode)) then
+				for i_h, hitbox in ipairs(data.hitbox) do
 					hitbox:draw()
 				end
 			end
@@ -769,9 +765,9 @@ Scene = Class{
 		    end
 
 		    -- draw hitboxes
-		    for l_name, layer in pairs(self.layers) do
-		    	if layer.hitbox then
-			    	for h, hitbox in ipairs(layer.hitbox) do
+		    for layer, data in pairs(self.layer_data) do
+		    	if data.hitbox then
+			    	for h, hitbox in ipairs(data.hitbox) do
 			    		hitbox:draw()
 			    	end
 			    end
