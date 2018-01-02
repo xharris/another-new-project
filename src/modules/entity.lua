@@ -40,9 +40,7 @@ local ideEntity = {
 	getAssets = function()
 		local ret_str = ''
 		for s, entity in ipairs(entity_list) do
-			ret_str = ret_str..
-				entity.." = Class{__includes=Entity,classname=\'"..entity.."\'}\n"..
-				"require \'scripts.entity."..entity.."\'\n"
+			ret_str = ret_str.."require \'scripts.entity."..entity.."\'\n"
 		end
 		--entity_list = {}
 		return ret_str..'\n'

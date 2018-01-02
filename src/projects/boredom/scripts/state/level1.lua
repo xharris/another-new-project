@@ -1,3 +1,4 @@
+level1 = Class{classname='level1'}
 -- other functions: load(), leave()
 
 -- Called every time when entering the state.

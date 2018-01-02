@@ -321,7 +321,7 @@ draw()
 
 -- json format
 {
-	"layers": {
+	"data": {
 		"layer0": {
 			"tile": [
 				{x, y, img_name, crop:{x, y, img_name, width, height}},
@@ -336,12 +336,8 @@ draw()
 			]
 		}
 	},
-	"objects": {
-		"layers": ["layer0",...],
-		"hitbox": [
-			{name, uuid, color},
-			...
-		]
+	"order": {
+		"layers": ["layer0","layer1"...],
 	}
 }
 

@@ -162,10 +162,10 @@ IDE = {
 		IDE.iterateModules(function(m, mod)
 			if mod.onRename then
 				mod.onRename(old_path, new_path)
-				IDE.refreshAssets()
 				return true
 			end
 		end)
+		IDE.refreshAssets()	
 		return false
 	end,	
 

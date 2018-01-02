@@ -1,3 +1,6 @@
+<NAME> = Class{__includes=Entity,classname='<NAME>'}
+
+
 function <NAME>:init()
 	Entity.init(self, '<NAME>')
 	

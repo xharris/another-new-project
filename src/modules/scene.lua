@@ -123,6 +123,14 @@ local ideScene = {
 		end
 	end,
 
+	onRename = function(old_path, new_path)
+		if string.match(old_path, "entity/") then
+			old_name = basename(old_path):split(".")[1]
+			new_name = basename(new_path):split(".")[1]
+			Scene._renames[old_name] = new_name
+		end
+	end,
+
 	draw = function()
 		if UI.titlebar.show_scene_editor and game and #(ifndef(game.scene,{})) > 0 then
 			local scene_list = {}

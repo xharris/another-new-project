@@ -1,3 +1,4 @@
+<NAME> = Class{classname='<NAME>'}
 -- other functions: load(), leave()
 
 -- Called every time when entering the state.

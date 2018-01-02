@@ -47,9 +47,7 @@ local ideState = {
 		local ret_str = ''
 		local first_state = UI.getSetting('initial_state')
 		for s, state_name in ipairs(state_list) do
-			ret_str = ret_str..
-				state_name.." = Class{classname=\'"..state_name.."\'}\n"..
-				"require \'scripts.state."..state_name.."\'\n"
+			ret_str = ret_str.."require \'scripts.state."..state_name.."\'\n"
 
 			if first_state == '' then
 				first_state = state_name

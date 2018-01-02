@@ -65,6 +65,7 @@ Scene = Class{
 	hitbox = {},
 	_zoom_amt = 1,
 	_fake_view_start = {game_width/2, game_height/2},
+	_renames = {},
 	init = function(self, name)
 		self.layer_data = {}			-- load_objct
 		self.layer_order = {}			-- layers
@@ -126,8 +127,14 @@ Scene = Class{
 				for o, obj in ipairs(objects) do
 					if obj._loadedFromFile and not obj._destroyed then
 						if obj_type == 'entity' then
+							-- if entity was renamed, replace it here
+							local classname = obj.classname
+							if Scene._renames[classname] then
+								classname = Scene._renames[classname]
+							end
+
 							local ent_data = {
-								classname=obj.classname,
+								classname=classname,
 								x=obj.xstart,
 								y=obj.ystart
 							}
