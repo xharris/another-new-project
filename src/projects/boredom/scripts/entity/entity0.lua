@@ -1,8 +1,6 @@
-entity0 = Class{__includes=Entity,classname='entity0'}
-
+BlankE.addClassType("entity0", "Entity")
 
 function entity0:init()
-	Entity.init(self, 'entity0')
 	
 	self:addAnimation{
 		name = 'stand',

@@ -1,8 +1,7 @@
-<NAME> = Class{__includes=Entity,classname='<NAME>'}
+BlankE.addClassType("<NAME>", "Entity")
 
 
 function <NAME>:init()
-	Entity.init(self, '<NAME>')
 	
 end
 

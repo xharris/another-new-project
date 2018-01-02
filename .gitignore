@@ -17,3 +17,4 @@ Makefile
 dist
 *.zip
 profile_report.txt
+*.pyc

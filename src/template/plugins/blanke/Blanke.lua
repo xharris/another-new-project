@@ -145,6 +145,18 @@ BlankE = {
 		end
 	end,
 
+	addClassType = function(in_name, in_type)
+		if not _G[in_name] then
+			if in_type == 'State' then
+				_G[in_name] = Class{classname=in_name}
+			end
+
+			if in_type == 'Entity' then			
+				_G[in_name] = Class{__includes=Entity,classname=in_name}
+			end
+		end
+	end,
+
 	restart = function()
 		-- restart game I guess?
 	end,
@@ -442,7 +454,7 @@ function _err_state:draw()
 	for i = -max_size, max_size, 10 do
 		local radius = max_size - _t + i
 		if radius > 20 and radius < max_size then
-			local opacity = (radius / max_size) * (255*0.8)
+			local opacity = (radius / max_size) * (255*0.6)
 			love.graphics.setColor(0,255,0,opacity)
 			love.graphics.circle("line", game_width/2, game_height/2, radius)
 		end

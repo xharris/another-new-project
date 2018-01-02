@@ -29,13 +29,13 @@ IDE = {
 	title_front = UI.loadImage("images/title_front.png"),
 	title_back = UI.loadImage("images/title_back.png"),
 	title_text = love.graphics.newText(UI.title_font,"BLANKE"),
-	flash_logo = false,
+	flash_logo = true,
 	stencil_x = 0,
 	stencil_min_x = 0,
 	stencil_max_x = 0,
 	stencil_speed = 20,
-	stencil_width = 200,--100,
-	stencil_delay = 150,
+	stencil_width = 150,--100,
+	stencil_delay = 250,
 	_stencil_delay_count = 0,
 
 	iterateModules = function(func)

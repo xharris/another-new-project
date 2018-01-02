@@ -1,4 +1,4 @@
-level1 = Class{classname='level1'}
+BlankE.addClassType("level1", "State")
 -- other functions: load(), leave()
 
 -- Called every time when entering the state.

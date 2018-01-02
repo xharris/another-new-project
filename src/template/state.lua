@@ -1,4 +1,4 @@
-<NAME> = Class{classname='<NAME>'}
+BlankE.addClassType("<NAME>", "State")
 -- other functions: load(), leave()
 
 -- Called every time when entering the state.
