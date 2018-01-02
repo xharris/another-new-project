@@ -7,8 +7,6 @@ TODO:
 BUGS:
 (DONE) clicking a file in history does not open the built-in code editor properly
 '''
-import wx
-
 from Tkinter import *
 from tkinter import font, ttk
 import subprocess, os

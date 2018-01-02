@@ -1,2 +1,6 @@
 notprojects
 *.pyc
+releases
+love2d
+dist
+*.zip
