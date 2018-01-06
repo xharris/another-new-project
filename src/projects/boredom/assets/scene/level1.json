@@ -1,1 +1,1 @@
-{"order":["layer0"],"data":{"layer0":{"entity":[{"y":0,"x":0,"classname":0}],"hitbox":[{"name":"hitbox0","points":[0,128,96,128,96,160,0,160]}]},"hitbox":[{"name":"hitbox0","uuid":"6ea834b7-7e20-41bc-c1a1-00ea22a03f39","color":[255,255,0,85]}]}}
+{"order":["layer0"],"data":{"layer0":{"entity":[{"y":0,"x":0,"classname":"entity0"}],"hitbox":[{"name":"hitbox0","points":[0,128,96,128,96,160,0,160]}]},"hitbox":[{"uuid":"6ea834b7-7e20-41bc-c1a1-00ea22a03f39","name":"hitbox0","color":[255,255,0,85]}]}}
