@@ -71,7 +71,6 @@ Effect = Class{
 		love.graphics.draw(canvas, 0 ,0)
 		love.graphics.setBlendMode(curr_blend)
 		love.graphics.setShader(curr_shader)
-		BlankE._drawGrid()
 	end,
 
 	applyParams = function(self)

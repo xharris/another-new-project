@@ -4,6 +4,8 @@ if _REPLACE_REQUIRE then
 end
 assets = Class{}
 
+require 'scripts.entity.entity0'
 
+require 'scripts.state.state0'
 _FIRST_STATE = state0
 
