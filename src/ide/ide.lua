@@ -258,7 +258,7 @@ IDE = {
 	drawStartScreen = function()
 		love.graphics.setBackgroundColor(UI.getColor("background", true))
 
-		IDE.drawStartLogo()
+		--IDE.drawStartLogo()
 
 		local margin = IDE.margin
 
@@ -569,8 +569,8 @@ IDE = {
 	        -- manual reload button
 	        if IDE.isProjectOpen() then
 	        	if UI.drawIconButton("reload", "reload game") then
-					IDE.refreshAssets(true)
-					-- IDE.reload(true)-- BlankE.restart()
+					IDE.refreshAssets(false)
+					
 				end
 				imgui.SameLine()
 

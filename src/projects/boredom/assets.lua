@@ -4,8 +4,23 @@ if _REPLACE_REQUIRE then
 end
 assets = Class{}
 
+function assets:ground()
+	local new_img = love.graphics.newImage(asset_path..'assets/image/ground.png')
+	return new_img
+end
+
+function assets:ness_noscale()
+	local new_img = love.graphics.newImage(asset_path..'assets/image/ness-noscale.jpg')
+	return new_img
+end
+
 function assets:player_stand()
 	local new_img = love.graphics.newImage(asset_path..'assets/image/player_stand.png')
+	return new_img
+end
+
+function assets:player_walk()
+	local new_img = love.graphics.newImage(asset_path..'assets/image/player_walk.png')
 	return new_img
 end
 function assets:level1()

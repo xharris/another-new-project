@@ -166,7 +166,7 @@ Scene = Class{
 				img_name=tile.img_name,
 				crop=tile.crop,
 			}
-			table.insert(output.layers[tile.layer].tile, img_data)
+			table.insert(output.data[tile.layer].tile, img_data)
 		end
 
 		-- save hitboxes

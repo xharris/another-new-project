@@ -10,6 +10,10 @@ WIP
 variable - value (arg)
 variable = value (keyword arg)
 aMethod(arg, [optional_arg])
+
+When to click 'Reload' button
+* init() method of object has been modified
+* asset has been added
 ]]
 
 --- INITIALIZE BLANKE ENGINE

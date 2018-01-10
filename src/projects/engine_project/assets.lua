@@ -23,10 +23,8 @@ function assets:main_scene()
 end
 
 
-entity0 = Class{__includes=Entity,classname='entity0'}
 require 'scripts.entity.entity0'
 
-state0 = Class{classname='state0'}
 require 'scripts.state.state0'
 _FIRST_STATE = state0
 

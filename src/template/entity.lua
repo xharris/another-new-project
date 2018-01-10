@@ -5,10 +5,4 @@ function <NAME>:init()
 	
 end
 
-function <NAME>:postUpdate(dt)
-
-end	
-
-function <NAME>:postDraw()
-
-end
+function <NAME>:update(dt)

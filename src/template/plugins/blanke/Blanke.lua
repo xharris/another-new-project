@@ -1,4 +1,4 @@
-local blanke_path = (...):match("(.-)[^%.]+$")
+blanke_path = (...):match("(.-)[^%.]+$")
 function blanke_require(import)
 	return require(blanke_path..import)
 end
@@ -16,7 +16,7 @@ function _addGameObject(type, obj)
     obj.pause = ifndef(obj.pause, false)
     obj._destroyed = ifndef(obj._destroyed, false)
 
-    if obj.update then obj.auto_update = true end
+    if obj._update or obj.update then obj.auto_update = true end
 
     obj._destroyed = false
     if not obj.destroy then
@@ -98,6 +98,7 @@ _err_state = Class{classname='_err_state',error_msg='NO GAME'}
 BlankE = {
 	_ide_mode = false,
 	show_grid = true,
+	snap = {32, 32},
 	grid_color = {255,255,255},
 	_offx = 0,
 	_offy = 0,
@@ -297,14 +298,18 @@ BlankE = {
 		BlankE.initial_cam_pos = camera:position()
 	end,
 
+	updateGridColor = function()
+		-- make grid color inverse of background color
+		local r,g,b,a = love.graphics.getBackgroundColor()
+	    r = 255 - r; g = 255 - g; b = 255 - b;
+		BlankE.grid_color = {r,g,b}		
+	end,
+
 	update = function(dt)
 	    dt = math.min(dt, min_dt)
 	    next_time = next_time + min_dt
 
-		-- make grid color inverse of background color
-		local r,g,b,a = love.graphics.getBackgroundColor()
-	    r = 255 - r; g = 255 - g; b = 255 - b;
-		BlankE.grid_color = {r,g,b}
+	    BlankE.updateGridColor()
 
 		-- calculate grid offset
 		local snap = BlankE._getSnap()
@@ -334,7 +339,11 @@ BlankE = {
 		    for i_arr, arr in pairs(game) do
 		        for i_e, e in ipairs(arr) do
 		            if e.auto_update and not e.pause then
-		                e:update(dt)
+		                if e._update then
+		                	e:_update(dt)
+		                else
+			                e:update(dt)
+			            end
 		            end
 		        end
 		    end
@@ -440,6 +449,7 @@ BlankE = {
 local _t = 0
 function _err_state:draw()
 	love.graphics.setBackgroundColor(0,0,0,255)
+	BlankE.updateGridColor()
 	game_width = love.graphics.getWidth()
 	game_height = love.graphics.getHeight()
 	

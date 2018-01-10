@@ -64,7 +64,7 @@ Entity = Class{
     	_addGameObject('entity', self)
     end,
     
-    update = function(self, dt)
+    _update = function(self, dt)
     	if self._destroyed then return end
 
 		-- bootstrap sprite:goToFrame()
@@ -73,8 +73,8 @@ Entity = Class{
 			self.sprite.gotoFrame = function() end
 		end
 
-		if self.preUpdate then
-			self:preUpdate(dt)
+		if self.update then
+			self:update(dt)
 		end	
 
 		if self.sprite ~= nil and self.sprite.update ~= nil and not self.pause then
@@ -183,10 +183,6 @@ Entity = Class{
 				self.speed = self.speed - (self.speed * self.friction)*dt
 			end
 		end
-
-		if self.postUpdate then
-			self:postUpdate(dt)
-		end	
 		return self
 	end,
 
@@ -199,8 +195,8 @@ Entity = Class{
 	end,
 
 	debugSprite = function(self)
-		local sx = self.sprite_xoffset
-		local sy = self.sprite_yoffset
+		local sx = -self.sprite_xoffset
+		local sy = -self.sprite_yoffset
 
 		love.graphics.push("all")
 		love.graphics.translate(self.x, self.y)
@@ -228,7 +224,7 @@ Entity = Class{
 	end,
 
 	setSpriteIndex = function(self, index)
-		if index == '' then
+		if index == '' or index == nil then
 			self.sprite_index = ''
 			self.sprite = nil
 		else
@@ -267,9 +263,9 @@ Entity = Class{
 			
 			-- is it an Animation or an Image
 			if self.sprite.update ~= nil then
-				self.sprite:draw(img(), self.x, self.y, math.rad(self.sprite_angle), self.sprite_xscale, self.sprite_yscale, self.sprite_xoffset, self.sprite_yoffset, self.sprite_xshear, self.sprite_yshear)
+				self.sprite:draw(img(), self.x, self.y, math.rad(self.sprite_angle), self.sprite_xscale, self.sprite_yscale, -self.sprite_xoffset, -self.sprite_yoffset, self.sprite_xshear, self.sprite_yshear)
 			elseif img then
-				love.graphics.draw(img(), self.x, self.y, math.rad(self.sprite_angle), self.sprite_xscale, self.sprite_yscale, self.sprite_xoffset, self.sprite_yoffset, self.sprite_xshear, self.sprite_yshear)
+				love.graphics.draw(img(), self.x, self.y, math.rad(self.sprite_angle), self.sprite_xscale, self.sprite_yscale, -self.sprite_xoffset, -self.sprite_yoffset, self.sprite_xshear, self.sprite_yshear)
 			end
 			love.graphics.pop()
 		else
@@ -294,19 +290,20 @@ Entity = Class{
 		local name = args.image
 		local frames = ifndef(args.frames, {1,1})
 		-- other args
-		local left = ifndef(args.left, 0)
+		local offset = ifndef(args.offset, {0,0})
+		local left = offset[1]
+		local top = offset[2]
 		local border = ifndef(args.border, 0)
 		local speed = ifndef(args.speed, 0.1)
 
 		if Image.exists(name) then
 			local image = Image(name)
 			local frame_size = ifndef(args.frame_size, {image.width, image.height})
-		    local grid = anim8.newGrid(frame_size[1], frame_size[2], image.width, image.height)
+		    local grid = anim8.newGrid(frame_size[1], frame_size[2], image.width, image.height, left, top, border)
 			local sprite = anim8.newAnimation(grid(unpack(frames)), speed)
 
 			self._images[ani_name] = image
-			self._sprites[ani_name] = sprite
-		
+			self._sprites[ani_name] = sprite	
 		end
 		return self
 	end,

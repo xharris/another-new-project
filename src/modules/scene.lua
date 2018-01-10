@@ -153,7 +153,7 @@ local ideScene = {
 				local _scene = scene_list[curr_scene_index] -- check if nil when using this var
 
 				imgui.SetNextWindowPos(game_width-scene_editor_width-window_margin, window_margin, {"Once"})
-				imgui.SetNextWindowSize(scene_editor_width,game_height-(titlebar_height+window_margin), {"Once"})
+				imgui.SetNextWindowSize(scene_editor_width,game_height-UI.getSetting("console_height").value-(titlebar_height+window_margin), {"Once"})
 				local cam_zoom = ifndef(Scene._zoom_amt,1)*100
 				scene_status, UI.titlebar.show_scene_editor = imgui.Begin(string.format("scene editor (%d,%d) %d,%d %d%%###scene editor", BlankE._mouse_x, BlankE._mouse_y, mouse_x, mouse_y, cam_zoom), true)
 
