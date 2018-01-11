@@ -527,6 +527,7 @@ Scene = Class{
 		in_layer = self:_checkLayerArg(in_layer)
 
 	    for layer, data in pairs(self.layer_data) do
+	    	print_r(data)
 	    	for h, hitbox in ipairs(data.hitbox) do
 				if layer == in_layer and hitbox:pointTest(x, y) then
 					hitbox:destroy()

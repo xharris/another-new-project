@@ -431,7 +431,8 @@ IDE = {
 
 		            -- close project
 		            if imgui.MenuItem("close project") then
-		            	love.event.quit( "restart" )
+		            	IDE.closeProject()
+		            	-- love.event.quit( "restart" )
 		            end
 		        end
 
@@ -700,11 +701,6 @@ IDE = {
 
 			IDE.requireBlanke()
 
-			-- remove old project path from package.path
-			if IDE.isProjectOpen() then
-				package.path = string.gsub(package.path, IDE.getProjectPath().."/?.lua", "")
-			end
-
 			local old_path = IDE.current_project
 			IDE.current_project = basename(folder_path)
 
@@ -733,15 +729,24 @@ IDE = {
 		end
 	end,
 
+	closeProject = function()
+		IDE.quit() 				-- call quit event
+		if BlankE then BlankE.quit() end
+
+		-- remove old project path
+		package.path = string.gsub(package.path, IDE.getProjectPath().."/?.lua", "")
+		IDE.current_project = ''
+	end,
+
 	requireBlanke = function()
 	--[[
 		if _G['BlankE'] then
 			_G['BlankE'] = nil
 		end
 		]]--
-		if not _G['BlankE'] then
+		--if not _G['BlankE'] then
 			require('plugins.blanke.Blanke')
-		end
+		--end
 	end,
 
 	_reload = function(path, init_blanke)	

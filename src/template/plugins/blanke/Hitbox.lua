@@ -39,8 +39,8 @@ Hitbox = Class{
 		self.color = {255,0,0,255*(.5)}
 		self.parent = nil
 		self.args = args
-		--HC.register(self.HCShape)
-		--HC:register(self.HCShape, self.HCShape:bbox())
+		self.auto_update = false
+		_addGameObject('hitbox', self)
 	end,
 
 	draw = function(self, mode)

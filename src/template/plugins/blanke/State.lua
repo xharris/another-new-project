@@ -1,124 +1,95 @@
---[[
-Copyright (c) 2010-2013 Matthias Richter
+StateManager = {
+	_stack = {},
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+	iterateStateStack = function(func, ...)
+		for s, state in ipairs(StateManager._stack) do
+			if state[func] then state[func](...) end
+		end
+	end,
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
+	clearStack = function()
+		for s, state in ipairs(StateManager._stack) do
+			state:_leave()
+		end
+		StateManager._stack = {}
+	end,
 
-Except as contained in this notice, the name(s) of the above copyright holders
-shall not be used in advertising or otherwise to promote the sale, use or
-other dealings in this Software without prior written authorization.
+	push = function(new_state)
+		new_state = StateManager.verifyState(new_state)
+		table.insert(StateManager._stack, new_state)
+		if new_state.load and not new_state._loaded then
+			new_state:load()
+			new_state._loaded = true
+		end
+		if new_state.enter then new_state:enter() end
+	end,
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-]]--
+	pop = function()
+		StateManager._stack[#StateManager._stack]:_leave()
+		table.remove(StateManager._stack)
+	end,
 
-local function __NULL__() end
+	verifyState = function(state)
+		local obj_state = state
+		if type(state) == 'string' then 
+			if _G[state] then obj_state = _G[state] else
+				error('State \"'..state..'\" does not exist')
+			end
+		end
+		return state
+	end,
 
- -- default State produces error on every callback
-local state_init = setmetatable({leave = __NULL__},
-		{__index = function() error("State not initialized. Use State.switch()") end})
-local stack = {state_init}
-local initialized_states = setmetatable({}, {__mode = "k"})
-local state_is_dirty = true
+	switch = function(name)
+		-- verify state name
+		local new_state = StateManager.verifyState(name)
 
-local GS = {}
-function GS.new(t) return t or {} end -- constructor - deprecated!
+		-- add to state stack
+		StateManager.clearStack()
+		table.insert(StateManager._stack, new_state)
+		if new_state.load and not new_state._loaded then
+			new_state:load()
+			new_state._loaded = true
+		end
+		if new_state.enter then new_state:enter() end
+	end,
 
-local function change_state(stack_offset, to, ...)
-	local pre = stack[#stack]
+	current = function()
+		return StateManager._stack[#StateManager._stack]
+	end,
 
-	-- initialize only on first call
-	;(initialized_states[to] or to.load or __NULL__)(to)
-	initialized_states[to] = __NULL__
-
-	stack[#stack+stack_offset] = to
-	state_is_dirty = true
-	return (to.enter or __NULL__)(to, pre, ...)
-end
-
-function GS.switch(to, ...)
-	assert(to, "Missing argument: State to switch to")
-	assert(to ~= GS, "Can't call switch with colon operator")
-	BlankE.clearObjects()
-	;(stack[#stack].leave or __NULL__)(stack[#stack]) 
-	return change_state(0, to, ...)
-end
-
-function GS.restart()
-	local curr_state = GS.current()
-	if curr_state ~= nil then
-		GS.switch(curr_state)
-	end
-end
-
-function GS.push(to, ...)
-	assert(to, "Missing argument: State to switch to")
-	assert(to ~= GS, "Can't call push with colon operator")
-	return change_state(1, to, ...)
-end
-
-function GS.pop(...)
-	assert(#stack > 1, "No more states to pop!")
-	local pre, to = stack[#stack], stack[#stack-1]
-	stack[#stack] = nil
-	;(pre.leave or __NULL__)(pre)
-	state_is_dirty = true
-	return (to.resume or __NULL__)(to, pre, ...)
-end
-
-function GS.current()
-	return stack[#stack]
-end
-
--- fetch event callbacks from love.handlers
-local all_callbacks = { 'draw', 'errhand', 'update' }
-for k in pairs(love.handlers) do
-	all_callbacks[#all_callbacks+1] = k
-end
-
-function GS.registerEvents(callbacks)
-	local registry = {}
-	callbacks = callbacks or all_callbacks
-	for _, f in ipairs(callbacks) do
-		registry[f] = love[f] or __NULL__
-		love[f] = function(...)
-			registry[f](...)
-			new_func = function(...)
-				local result, chunk
-				if BlankE._ide_mode then
-					result, chunk = IDE.try(GS[f], ...)
-				else
-					chunk = GS[f](...)
+	injectCallbacks = function()
+		for fn_name, fn in pairs(love) do
+			if BlankE[fn_name] then
+				local old_fn = BlankE[fn_name]
+				BlankE[fn_name] = function(...)
+					StateManager.iterateStateStack(fn_name, ...)
+					return old_fn(...)
 				end
 			end
-			return new_func(...)
-		end
+		end	
 	end
-end
+}
 
--- forward any undefined functions
-setmetatable(GS, {__index = function(_, func)
-	-- call function only if at least one 'update' was called beforehand
-	-- (see issue #46)
-	if not state_is_dirty or func == 'update' then
-		state_is_dirty = false
-		return function(...)
-			return (stack[#stack][func] or __NULL__)(stack[#stack], ...)
-		end
+State = Class{
+	_loaded = false,
+
+	init = function(self)
+		self.auto_update = false
+		_addGameObject('state', self)
+	end,
+
+	switch = function(name)
+		StateManager.switch(name)
+	end,
+
+	current = function()
+		return StateManager.current()
+	end,
+
+	_leave = function(self)
+		if self.leave then self:leave() end
+		BlankE.clearObjects()
 	end
-	return __NULL__
-end})
+}
 
-return GS
+return State

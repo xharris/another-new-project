@@ -61,7 +61,7 @@ anim8 	= blanke_require('extra.anim8')
 HC 		= blanke_require('extra.HC')
 grease 	= blanke_require('extra.grease')
 
-State 	= blanke_require('State')	-- hump.gamestate
+State	= blanke_require('State')
 Input 	= blanke_require('Input')
 Timer 	= blanke_require('Timer')
 Signal	= blanke_require('Signal')
@@ -93,8 +93,6 @@ local max_fps = 120
 local min_dt = 1/max_fps
 local next_time = love.timer.getTime()
 
-_err_state = Class{classname='_err_state',error_msg='NO GAME'}
-
 BlankE = {
 	_ide_mode = false,
 	show_grid = true,
@@ -106,34 +104,28 @@ BlankE = {
 	_mouse_x = 0,
 	_mouse_y = 0,
 	_callbacks_replaced = false,
+	old_love = {},
 	pause = false,
 	init = function(first_state)
 		first_state = ifndef(first_state, _err_state)
+
 		if not BlankE._callbacks_replaced then
 			BlankE._callbacks_replaced = true
 
 			if not BlankE._ide_mode then
-				old_love = {}
-				for fn_name, func in pairs(BlankE) do
-					if type(func) == 'function' and fn_name ~= 'init' then
-						old_love[fn_name] = love[fn_name]
-						love[fn_name] = function(...)
-							if old_love[fn_name] then old_love[fn_name](...) end
-							return func(...)
-						end
-					end
-				end
+				BlankE.injectCallbacks()
 			end
 			
 			if BlankE._ide_mode then
-	    		State.registerEvents({'update'})
+	    		--State.registerEvents({'update'})
 	    	else
-	    		State.registerEvents()
+	    		--State.registerEvents()
 	    	end
 		end
 	    uuid.randomseed(love.timer.getTime()*10000)
 	    
 		-- register States
+		StateManager.injectCallbacks()
 	    updateGlobals(0)
 		if first_state then
 			if first_state == nil or first_state == '' then
@@ -146,10 +138,32 @@ BlankE = {
 		end
 	end,
 
+	injectCallbacks = function()
+		BlankE.old_love = {}
+		for fn_name, func in pairs(BlankE) do
+			if type(func) == 'function' and fn_name ~= 'init' then
+				-- save old love function
+				BlankE.old_love[fn_name] = love[fn_name]
+				-- inject BlankE callback
+				love[fn_name] = function(...)
+					if BlankE.old_love[fn_name] then BlankE.old_love[fn_name](...) end
+					return func(...)
+				end
+			end
+		end
+	end,
+
+	restoreCallbacks = function()
+		for fn_name, func in pairs(BlankE.old_love) do
+			love[fn_name] = func
+		end
+	end,
+
 	addClassType = function(in_name, in_type)
 		if not _G[in_name] then
 			if in_type == 'State' then
-				_G[in_name] = Class{classname=in_name}
+				local new_state = Class{__includes=State,classname=in_name}
+				_G[in_name] = new_state()
 			end
 
 			if in_type == 'Entity' then			
@@ -355,8 +369,6 @@ BlankE = {
 	end,
 
 	draw = function()
-        State.draw()
-
         -- disable any scenes that aren't being actively drawn
         local active_scenes = 0
 		_iterateGameGroup('scene', function(scene)
@@ -417,6 +429,13 @@ BlankE = {
 	quit = function()
 	    Net.disconnect()
 	    BlankE.clearObjects(true)
+	    BlankE.restoreCallbacks()
+
+	    -- remove globals
+	    local globals = {}--'BlankE'}
+	    for g, global in ipairs(globals) do
+	    	if _G[global] then _G[global] = nil end
+	    end
 	end,
 
 	errhand = function(msg)
@@ -445,6 +464,9 @@ BlankE = {
 		State.switch(_err_state)
 	end,
 }
+
+BlankE.addClassType('_err_state', 'State')
+_err_state.error_msg = 'NO GAME'
 
 local _t = 0
 function _err_state:draw()
