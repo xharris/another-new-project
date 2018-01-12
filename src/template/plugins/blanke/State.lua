@@ -3,19 +3,24 @@ StateManager = {
 
 	iterateStateStack = function(func, ...)
 		for s, state in ipairs(StateManager._stack) do
-			if state[func] then state[func](...) end
+			if state[func] ~= nil and not state._off then
+				state[func](...)
+			end
 		end
 	end,
 
 	clearStack = function()
-		for s, state in ipairs(StateManager._stack) do
+		for s, state in pairs(StateManager._stack) do
 			state:_leave()
+			StateManager._stack[s] = nil
 		end
 		StateManager._stack = {}
+		print_r(StateManager._stack)
 	end,
 
 	push = function(new_state)
 		new_state = StateManager.verifyState(new_state)
+		new_state._off = false
 		table.insert(StateManager._stack, new_state)
 		if new_state.load and not new_state._loaded then
 			new_state:load()
@@ -25,7 +30,9 @@ StateManager = {
 	end,
 
 	pop = function()
-		StateManager._stack[#StateManager._stack]:_leave()
+		local state = StateManager._stack[#StateManager._stack]
+		state:_leave()
+
 		table.remove(StateManager._stack)
 	end,
 
@@ -50,7 +57,7 @@ StateManager = {
 			new_state:load()
 			new_state._loaded = true
 		end
-		if new_state.enter then new_state:enter() end
+		new_state:_enter()
 	end,
 
 	current = function()
@@ -71,11 +78,11 @@ StateManager = {
 }
 
 State = Class{
-	_loaded = false,
-
 	init = function(self)
 		self.auto_update = false
-		_addGameObject('state', self)
+		self._loaded = false
+		self._off = true
+		--_addGameObject('state', self)
 	end,
 
 	switch = function(name)
@@ -86,9 +93,15 @@ State = Class{
 		return StateManager.current()
 	end,
 
+	_enter = function(self)
+		if self.enter then self:enter() end
+		self._off = false
+	end,
+
 	_leave = function(self)
 		if self.leave then self:leave() end
 		BlankE.clearObjects()
+		self._off = true
 	end
 }
 

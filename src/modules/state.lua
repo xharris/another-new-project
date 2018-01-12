@@ -2,9 +2,11 @@ local new_states = {}
 local state_list = {}
 local open_states = {} -- probably don't need this anymore
 
+--[[
 _empty_state = {classname='_empty_state'}
 require ('empty_state')
 _FIRST_STATE = _empty_state
+]]
 
 local updateListTimer
 function updateStateList()
@@ -19,7 +21,18 @@ function updateStateList()
 		local state_name = string.gsub(state,'.lua','')
 		table.insert(state_list, state_name)
 	end
+	checkFirstState()
 end
+
+function checkFirstState()
+	local first_state = UI.getSetting('initial_state')
+	for s, state_name in ipairs(state_list) do
+		if first_state == '' or first_state == nil then
+			first_state = state_name
+			UI.setSetting('initial_state', first_state)
+		end
+	end
+end	
 
 local ideState = {
 	new = function()
@@ -35,6 +48,7 @@ local ideState = {
 	end,
 
 	onOpenProject = function()
+		UI.setSetting("initial_state", '')
 		updateStateList()
 	end,
 
@@ -45,32 +59,22 @@ local ideState = {
 
 	getAssets = function()
 		local ret_str = ''
+		checkFirstState()
 		local first_state = UI.getSetting('initial_state')
 		for s, state_name in ipairs(state_list) do
 			ret_str = ret_str.."require \'scripts.state."..state_name.."\'\n"
-
-			if first_state == '' then
-				first_state = state_name
-				UI.setSetting('initial_state', first_state)
-			end
 		end
-
-		if first_state ~= '' then
-			ret_str = ret_str .. '_FIRST_STATE = '..first_state..'\n'
-		end
-		--state_list = {}
 		return ret_str..'\n'
 	end,
 
 	onReload = function()
-		if #state_list > 0 then
-			_FIRST_STATE = UI.getSetting('initial_state')
-		end
+
 	end,
 
 	fileChange = function(file_name)
 		if string.match(file_name, "state/") then
-			IDE._reload(file_name, not string.match(file_name, ifndef(_FIRST_STATE.classname, _FIRST_STATE)))
+			local first_state = UI.getSetting('initial_state')
+			IDE._reload(file_name, not string.match(file_name, ifndef(first_state.classname, first_state)))
 
 			local curr_state = BlankE.getCurrentState()
 			if string.match(file_name, curr_state) then

@@ -31,5 +31,4 @@ end
 require 'scripts.entity.entity0'
 
 require 'scripts.state.level1'
-_FIRST_STATE = level1
 

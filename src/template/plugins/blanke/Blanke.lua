@@ -20,7 +20,6 @@ function _addGameObject(type, obj)
 
     obj._destroyed = false
     if not obj.destroy then
-
     	obj.destroy = function(self)
 	    	_destroyGameObject(type,self)
 	    	self = nil
@@ -106,8 +105,8 @@ BlankE = {
 	_callbacks_replaced = false,
 	old_love = {},
 	pause = false,
-	init = function(first_state)
-		first_state = ifndef(first_state, _err_state)
+	init = function(first_state, ide_mode)
+		BlankE._ide_mode = ifndef(ide_mode, BlankE._ide_mode)
 
 		if not BlankE._callbacks_replaced then
 			BlankE._callbacks_replaced = true
@@ -115,27 +114,21 @@ BlankE = {
 			if not BlankE._ide_mode then
 				BlankE.injectCallbacks()
 			end
-			
-			if BlankE._ide_mode then
-	    		--State.registerEvents({'update'})
-	    	else
-	    		--State.registerEvents()
-	    	end
 		end
 	    uuid.randomseed(love.timer.getTime()*10000)
 	    
-		-- register States
+		-- register State events
 		StateManager.injectCallbacks()
 	    updateGlobals(0)
-		if first_state then
-			if first_state == nil or first_state == '' then
-				first_state = _empty_state
-			end
-			if type(first_state) == 'string' then
-				first_state = _G[first_state]
-			end
-			State.switch(first_state)
+
+		if first_state == nil or first_state == '' then
+			first_state = _empty_state
 		end
+		if type(first_state) == 'string' then
+			first_state = _G[first_state]
+		end
+		State.switch(first_state)
+		
 	end,
 
 	injectCallbacks = function()
@@ -429,10 +422,11 @@ BlankE = {
 	quit = function()
 	    Net.disconnect()
 	    BlankE.clearObjects(true)
+	    StateManager.clearStack()
 	    BlankE.restoreCallbacks()
 
 	    -- remove globals
-	    local globals = {}--'BlankE'}
+	    local globals = {'BlankE'}
 	    for g, global in ipairs(globals) do
 	    	if _G[global] then _G[global] = nil end
 	    end
@@ -507,3 +501,37 @@ function _err_state:draw()
 	love.graphics.pop('all')
 end	
 
+BlankE.addClassType('_empty_state', 'State')
+
+-- Called once, and only once, before entering the state the first time.
+function _empty_state:init() end
+function _empty_state:leave() end 
+
+-- Called every time when entering the state.
+function _empty_state:enter(previous)
+
+end
+
+function _empty_state:update(dt)
+
+end
+
+local _offset=0
+function _empty_state:draw()
+	local _max_size = math.max(game_width, game_height)
+	_offset = _offset + 1
+	if _offset >= _max_size then _offset = 0 end
+
+	love.graphics.push('all')
+	for _c = 0,_max_size*2,10 do
+		local _new_radius = _c-_offset
+		local opacity = (_new_radius/_max_size)*300
+		love.graphics.setColor(0,(_new_radius)/_max_size*255,0,opacity)
+		love.graphics.circle("line", game_width/2, game_height/2, _new_radius)
+	end
+	love.graphics.setColor(255,255,255,sinusoidal(150,255,0.5))
+	love.graphics.printf("NO GAME",0,game_height/2,game_width,"center")
+	love.graphics.pop()
+end	
+
+return BlankE

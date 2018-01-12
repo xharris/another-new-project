@@ -10,5 +10,4 @@ end
 
 
 require 'scripts.state.state0'
-_FIRST_STATE = level1
 

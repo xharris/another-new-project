@@ -25,6 +25,7 @@ IDE = {
 	current_project = '',
 	modules = {},
 	plugins = {},
+	orig_package_path = '',
 
 	title_front = UI.loadImage("images/title_front.png"),
 	title_back = UI.loadImage("images/title_back.png"),
@@ -37,6 +38,14 @@ IDE = {
 	stencil_width = 150,--100,
 	stencil_delay = 250,
 	_stencil_delay_count = 0,
+
+	setTitle = function(name)
+		if not name or name == '' then
+			love.window.setTitle("BlankE")
+		else
+			love.window.setTitle("BlankE - "..name)
+		end
+	end,
 
 	iterateModules = function(func)
 		for m, mod in pairs(IDE.modules) do
@@ -454,7 +463,7 @@ IDE = {
 	        				if m == 'state' and #obj_list > 0 then
     							status, initial_state = imgui.Combo("initial state", table.find(obj_list, UI.getSetting('initial_state')), obj_list, #obj_list);
     							if status then
-    								UI.setSetting('initial_state',obj_list[initial_state])
+    								--UI.setSetting('initial_state',obj_list[initial_state])
     							end
 	        				end
 
@@ -703,15 +712,16 @@ IDE = {
 
 			local old_path = IDE.current_project
 			IDE.current_project = basename(folder_path)
+			IDE.setTitle(IDE.current_project)
 
 			if SYSTEM.exe_mode then
 				--love.filesystem.mount(SYSTEM.cwd.."\\projects\\"..IDE.current_project, IDE.current_project)
 			end
 
 			-- add project to package.path
+			IDE.orig_package_path = package.path
 			package.path = package.path..";"..IDE.getProjectPath().."/?.lua"
 
-			IDE.refreshAssets()
 
 			IDE.iterateModules(function(m, module)
 				if module.onOpenProject then
@@ -725,43 +735,31 @@ IDE = {
 				end
 			end)
 
+			IDE.refreshAssets()
+
 			opening_project = false
 		end
 	end,
 
 	closeProject = function()
+		-- remove old project path
+		package.path = IDE.orig_package_path;
+
+		UI.reset()
 		IDE.quit() 				-- call quit event
 		if BlankE then BlankE.quit() end
 
-		-- remove old project path
-		package.path = string.gsub(package.path, IDE.getProjectPath().."/?.lua", "")
 		IDE.current_project = ''
+		IDE.setTitle()
 	end,
 
 	requireBlanke = function()
-	--[[
-		if _G['BlankE'] then
-			_G['BlankE'] = nil
-		end
-		]]--
-		--if not _G['BlankE'] then
-			require('plugins.blanke.Blanke')
-		--end
+		BlankE = require('plugins.blanke.Blanke')
 	end,
 
 	_reload = function(path, init_blanke)	
 		if IDE.update_timeout == 0 then
 			IDE.update_timeout = 2
-
-
-			--[[
-			local proj = 'projects/project1/'
-			local paths = {"?/?.lua","?.lua","?/init.lua"}
-			for p, path in ipairs(paths) do
-				package.path = package.path .. ";"..proj..path
-			end
-			]]
-
 
 	        IDE.iteratePlugins(function(p, plugin)
 	        	if plugin.onReload then
@@ -795,8 +793,7 @@ IDE = {
 			if init_blanke or IDE.errd then
 				IDE.errd = false
 				IDE.requireBlanke()
-				BlankE._ide_mode = true
-				result, chunk = IDE.try(BlankE.init, _FIRST_STATE)
+				result, chunk = IDE.try(BlankE.init, UI.getSetting('initial_state'), true)
 				if not result then return false end
 			else
 				-- result, chunk = IDE.try(State.switch, _FIRST_STATE)
@@ -928,5 +925,5 @@ IDE = {
 
 			IDE.refreshAssets(true)
 		end
-	end,
+	end
 }

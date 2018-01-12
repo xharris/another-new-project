@@ -96,6 +96,10 @@ UI = {
 		builtin_code_editor = false,
 	},
 
+	reset = function()
+		--UI.setting.initial_state = ''
+	end,
+
 	setStyling = function()
 		imgui.PushStyleVar('WindowRounding', 6)
 		imgui.PushStyleVar('ScrollbarSize', 2)
@@ -212,6 +216,7 @@ UI = {
 		else
 			UI.setting[index] = value
 		end
+		--print(index,value)
 	end,
 
 	loadImage = function(img_path)

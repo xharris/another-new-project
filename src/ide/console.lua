@@ -47,9 +47,10 @@ CONSOLE = {
 		CONSOLE._repeat_print_count = 1
 	end
 }
-
+--[[
 old_print = print
 print = function(...) 
     CONSOLE.print(...)
     old_print(...)
 end
+]]--
