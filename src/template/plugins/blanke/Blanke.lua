@@ -45,6 +45,9 @@ function _destroyGameObject(type, del_obj)
 	_iterateGameGroup(type, function(obj, i)
 		if obj.uuid == del_obj.uuid then
 			del_obj._destroyed = true
+			for var_name, value in pairs(del_obj) do
+				del_obj[var_name] = nil
+			end
 			table.remove(game[type],i)
 		end
 	end)
@@ -128,7 +131,6 @@ BlankE = {
 			first_state = _G[first_state]
 		end
 		State.switch(first_state)
-		
 	end,
 
 	injectCallbacks = function()
@@ -155,8 +157,13 @@ BlankE = {
 	addClassType = function(in_name, in_type)
 		if not _G[in_name] then
 			if in_type == 'State' then
-				local new_state = Class{__includes=State,classname=in_name}
-				_G[in_name] = new_state()
+				local new_state = Class{__includes=State,
+					classname=in_name,
+					auto_update = false,
+					_loaded = false,
+					_off = true
+				}
+				_G[in_name] = new_state
 			end
 
 			if in_type == 'Entity' then			
@@ -185,13 +192,21 @@ BlankE = {
 	end,
 
 	clearObjects = function(include_persistent)
+		print('clear em')
+		local new_game_array = {}
 		for key, objects in pairs(game) do
 			for o, obj in ipairs(objects) do
 				if include_persistent or not obj.persistent then
+					--if obj.classname then print('destroy '..obj.classname) end
 					obj:destroy()
+					game[key][o] = nil
+				else
+					new_game_array[key] = ifndef(new_game_array[key], {})
+					table.insert(new_game_array[key], obj)
 				end
 			end
 		end
+		game = new_game_array
 	end,
 
 	main_cam = nil,
@@ -421,9 +436,10 @@ BlankE = {
 
 	quit = function()
 	    Net.disconnect()
-	    BlankE.clearObjects(true)
 	    StateManager.clearStack()
+	    BlankE.clearObjects(true)
 	    BlankE.restoreCallbacks()
+	    HC.resetHash()
 
 	    -- remove globals
 	    local globals = {'BlankE'}

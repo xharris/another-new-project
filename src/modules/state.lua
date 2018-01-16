@@ -12,6 +12,7 @@ local updateListTimer
 function updateStateList()
 	if not updateListTimer then
 		updateListTimer = Timer()
+		updateListTimer.persistent = true
 		updateListTimer:every(updateStateList, UI.getSetting('project_reload_timer').value):start() 
 	end
 

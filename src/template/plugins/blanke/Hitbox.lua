@@ -36,7 +36,7 @@ Hitbox = Class{
 		self.HCShape.tag = tag
 
 		self._enabled = true
-		self.color = {255,0,0,255*(.5)}
+		self.color = {255,0,0,255/3}
 		self.parent = nil
 		self.args = args
 		self.auto_update = false
@@ -45,6 +45,7 @@ Hitbox = Class{
 
 	draw = function(self, mode)
 		local color = ifndef(Hitbox._color[self.HCShape.tag], self.color)
+		color[4] = 255/3
 
 		love.graphics.push("all")
 			love.graphics.setColor(color)

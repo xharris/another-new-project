@@ -426,7 +426,7 @@ local ideScene = {
 						local sel_color_copy = {UI.getElement('Text')}
 						if selected_hitbox then
 							sel_color_copy = table.copy(selected_hitbox.color)
-							sel_color_copy = {sel_color_copy[1]/255, sel_color_copy[2]/255, sel_color_copy[3]/255, 1}
+							sel_color_copy = {sel_color_copy[1]/255, sel_color_copy[2]/255, sel_color_copy[3]/255, 255/3}
 							hitbox_name = selected_hitbox.name
 						end
 						imgui.Text("Selected: ")
@@ -455,7 +455,7 @@ local ideScene = {
 								local r, g, b = unpack(hitbox.color)
 								local color_status, r, g, b = imgui.ColorEdit3("color", r/255, g/255, b/255)
 								if color_status then
-									hitbox.color = {r*255, g*255, b*255, 255*(.5)}
+									hitbox.color = {r*255, g*255, b*255, 255/3}
 									Hitbox._color[hitbox.name] = hitbox.color
 								end
 

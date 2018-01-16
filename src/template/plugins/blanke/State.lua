@@ -15,7 +15,6 @@ StateManager = {
 			StateManager._stack[s] = nil
 		end
 		StateManager._stack = {}
-		print_r(StateManager._stack)
 	end,
 
 	push = function(new_state)
@@ -78,13 +77,6 @@ StateManager = {
 }
 
 State = Class{
-	init = function(self)
-		self.auto_update = false
-		self._loaded = false
-		self._off = true
-		--_addGameObject('state', self)
-	end,
-
 	switch = function(name)
 		StateManager.switch(name)
 	end,

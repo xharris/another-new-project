@@ -107,6 +107,7 @@ Scene = Class{
 
 		self.draw_hitboxes = false
 		self.show_debug = false
+		self.classname = name
 		_addGameObject('scene',self)
 	end,
 
@@ -527,11 +528,12 @@ Scene = Class{
 		in_layer = self:_checkLayerArg(in_layer)
 
 	    for layer, data in pairs(self.layer_data) do
-	    	print_r(data)
-	    	for h, hitbox in ipairs(data.hitbox) do
-				if layer == in_layer and hitbox:pointTest(x, y) then
-					hitbox:destroy()
-					table.remove(self.layer_data[layer].hitbox, h)
+	    	if data.hitbox then
+		    	for h, hitbox in ipairs(data.hitbox) do
+					if layer == in_layer and hitbox:pointTest(x, y) then
+						hitbox:destroy()
+						table.remove(self.layer_data[layer].hitbox, h)
+					end
 				end
 			end
 		end
@@ -741,7 +743,7 @@ Scene = Class{
 				love.graphics.pop()
 			end
 
-			if data.hitbox and (self.draw_hitboxes or (self.show_debug and not BlankE._ide_mode)) then
+			if data.hitbox and (self.draw_hitboxes or self.show_debug) and not BlankE._ide_mode then
 				for i_h, hitbox in ipairs(data.hitbox) do
 					hitbox:draw()
 				end

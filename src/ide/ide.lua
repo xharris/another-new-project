@@ -112,6 +112,7 @@ IDE = {
 		local template_path = SYSTEM.cleanPath(SYSTEM.cwd)
 		package.path=package.path..";"..template_path.."/template/?.lua"
 		package.path=package.path..";"..template_path.."/template/?/init.lua"
+		IDE.orig_package_path = package.path
 		IDE.requireBlanke()
 	end,
 
@@ -719,7 +720,6 @@ IDE = {
 			end
 
 			-- add project to package.path
-			IDE.orig_package_path = package.path
 			package.path = package.path..";"..IDE.getProjectPath().."/?.lua"
 
 
@@ -754,6 +754,9 @@ IDE = {
 	end,
 
 	requireBlanke = function()
+		if BlankE then
+			BlankE.quit()
+		end
 		BlankE = require('plugins.blanke.Blanke')
 	end,
 
