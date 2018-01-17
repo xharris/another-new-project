@@ -54,7 +54,11 @@ View = Class{
 
 	-- return camera position
 	position = function(self)
-		return self.camera:position()
+		if self.camera then
+			return self.camera:position()
+		else
+			return 0, 0
+		end
 	end,
 
 	follow = function(self, entity)
@@ -87,7 +91,9 @@ View = Class{
 	end,
 
 	snapToPosition = function(self, x, y)
-		self.camera:lookAt(x, y)
+		if self.camera then
+			self.camera:lookAt(x, y)
+		end
 	end,
 
 	rotateTo = function(self, angle)
@@ -104,7 +110,11 @@ View = Class{
 	end,
     
     mousePosition = function(self)
-        return self.camera:mousePosition()
+    	if self.camera then
+	        return self.camera:mousePosition()
+	    else
+	    	return 0, 0
+	    end
     end,
     
     shake = function(self, x, y)
@@ -122,6 +132,8 @@ View = Class{
     end,
 
 	update = function(self, dt)
+		if not self.camera then return end
+
 		-- dragging
 		if self.draggable and self.drag_input ~= nil then
 			if self.drag_input() then
@@ -232,7 +244,7 @@ View = Class{
 	end,
 
 	attach = function(self)  
-		if not (self.disabled or View._disable_grid) or (self.nickname == '_fake_view' and not self.disabled) then 
+		if self.camera and not (self.disabled or View._disable_grid) or (self.nickname == '_fake_view' and not self.disabled) then 
         	self.camera:attach(self.port_x, self.port_y, self.port_width, self.port_height, self.noclip)
 			--[[local cx, cy = self.port_x+self.port_width/2, self.port_y+self.port_height/2
 
@@ -249,7 +261,7 @@ View = Class{
     end,
 
 	detach = function(self)
-		if not (self.disabled or View._disable_grid) or (self.nickname == '_fake_view' and not self.disabled) then
+		if self.camera and not (self.disabled or View._disable_grid) or (self.nickname == '_fake_view' and not self.disabled) then
 			self.camera:detach()
 			--love.graphics.pop()
 			--love.graphics.setScissor(self._sx,self._sy,self._sw,self._sh)

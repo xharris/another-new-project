@@ -1,5 +1,6 @@
 StateManager = {
 	_stack = {},
+	_callbacks = {'update','draw'},
 
 	iterateStateStack = function(func, ...)
 		for s, state in ipairs(StateManager._stack) do
@@ -51,28 +52,18 @@ StateManager = {
 
 		-- add to state stack
 		StateManager.clearStack()
-		table.insert(StateManager._stack, new_state)
-		if new_state.load and not new_state._loaded then
-			new_state:load()
-			new_state._loaded = true
+		if new_state then
+			table.insert(StateManager._stack, new_state)
+			if new_state.load and not new_state._loaded then
+				new_state:load()
+				new_state._loaded = true
+			end
+			new_state:_enter()
 		end
-		new_state:_enter()
 	end,
 
 	current = function()
 		return StateManager._stack[#StateManager._stack]
-	end,
-
-	injectCallbacks = function()
-		for fn_name, fn in pairs(love) do
-			if BlankE[fn_name] then
-				local old_fn = BlankE[fn_name]
-				BlankE[fn_name] = function(...)
-					StateManager.iterateStateStack(fn_name, ...)
-					return old_fn(...)
-				end
-			end
-		end	
 	end
 }
 

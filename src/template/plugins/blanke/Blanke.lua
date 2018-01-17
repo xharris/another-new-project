@@ -96,6 +96,7 @@ local min_dt = 1/max_fps
 local next_time = love.timer.getTime()
 
 BlankE = {
+	_is_init = false,
 	_ide_mode = false,
 	show_grid = true,
 	snap = {32, 32},
@@ -121,7 +122,7 @@ BlankE = {
 	    uuid.randomseed(love.timer.getTime()*10000)
 	    
 		-- register State events
-		StateManager.injectCallbacks()
+		--StateManager.injectCallbacks()
 	    updateGlobals(0)
 
 		if first_state == nil or first_state == '' then
@@ -131,6 +132,7 @@ BlankE = {
 			first_state = _G[first_state]
 		end
 		State.switch(first_state)
+		BlankE._is_init = true
 	end,
 
 	injectCallbacks = function()
@@ -141,7 +143,7 @@ BlankE = {
 				BlankE.old_love[fn_name] = love[fn_name]
 				-- inject BlankE callback
 				love[fn_name] = function(...)
-					if BlankE.old_love[fn_name] then BlankE.old_love[fn_name](...) end
+					if BlankE.old_love[fn_name] then BlankE.old_love[fn_name](...) end			
 					return func(...)
 				end
 			end
@@ -192,7 +194,6 @@ BlankE = {
 	end,
 
 	clearObjects = function(include_persistent)
-		print('clear em')
 		local new_game_array = {}
 		for key, objects in pairs(game) do
 			for o, obj in ipairs(objects) do
@@ -349,15 +350,19 @@ BlankE = {
 			scr_w = BlankE.main_cam.port_width
 			scr_h = BlankE.main_cam.port_height
 		end
-
-		BlankE._offx = -(g_x-(g_x%snap[1]))-(scr_w/2%snap[1]) + snap[1]
-		BlankE._offy = -(g_y-(g_y%snap[2]))-(scr_h/2%snap[2]) + snap[2]
+		if scr_w ~= nil and scr_h ~= nil then
+			BlankE._offx = -(g_x-(g_x%snap[1]))-(scr_w/2%snap[1]) + snap[1]
+			BlankE._offy = -(g_y-(g_y%snap[2]))-(scr_h/2%snap[2]) + snap[2]
+		end
 
 	    updateGlobals(dt)
 	    
+	    if not BlankE._is_init then return end
 	    Net.update(dt, false)
-
-    	if not BlankE.pause then 
+				
+    	if not BlankE.pause then
+			StateManager.iterateStateStack('update', dt)
+			
 		    for i_arr, arr in pairs(game) do
 		        for i_e, e in ipairs(arr) do
 		            if e.auto_update and not e.pause then
@@ -377,6 +382,8 @@ BlankE = {
 	end,
 
 	draw = function()
+		StateManager.iterateStateStack('draw')
+
         -- disable any scenes that aren't being actively drawn
         local active_scenes = 0
 		_iterateGameGroup('scene', function(scene)
@@ -436,13 +443,13 @@ BlankE = {
 
 	quit = function()
 	    Net.disconnect()
-	    StateManager.clearStack()
+	    State.switch()
 	    BlankE.clearObjects(true)
-	    BlankE.restoreCallbacks()
 	    HC.resetHash()
+	    BlankE.restoreCallbacks()
 
 	    -- remove globals
-	    local globals = {'BlankE'}
+	    local globals = {}--'BlankE'}
 	    for g, global in ipairs(globals) do
 	    	if _G[global] then _G[global] = nil end
 	    end

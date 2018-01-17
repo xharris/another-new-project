@@ -758,6 +758,7 @@ IDE = {
 			BlankE.quit()
 		end
 		BlankE = require('plugins.blanke.Blanke')
+		
 	end,
 
 	_reload = function(path, init_blanke)	
