@@ -369,66 +369,6 @@ IDE = {
 	    if main_menu_bar then
 	        -- FILE
 	        if beginMenu("File") then
-	        	if not IDE.isProjectOpen() and imgui.Button("New") then
-	        		imgui.OpenPopup("new_project")
-	        	end
-
-	        	-- new project
-				if imgui.BeginPopupModal("new_project", nil, {"AlwaysAutoResize"}) then
-					new_status, new_pj_name = imgui.InputText("name", new_pj_name,300)
-
-					if imgui.Button("Ok") then
-						IDE.newProject(new_pj_name)
-						imgui.CloseCurrentPopup()
-					end
-					imgui.SameLine()
-					if imgui.Button("Cancel") then
-						imgui.CloseCurrentPopup()
-					end
-
-					imgui.EndPopup()
-				end
-
-	            -- project directory
-	            if UI.titlebar.secret_stuff then
-		            status, new_folder = imgui.InputText("",IDE.project_folder,300)
-		            if status and new_folder ~= IDE.project_folder then
-		                IDE.setProjectFolder(new_folder)
-		            end
-		            if imgui.IsItemHovered() then
-						imgui.BeginTooltip()
-						imgui.Text(IDE.getProjectFolder())
-						imgui.EndTooltip()
-					end
-					imgui.SameLine()
-					if imgui.Button("Open") then
-						love.system.openURL("file://"..IDE.getProjectPath())
-					end
-				end
-
-	            -- available projects in dir
-				if IDE.refresh_pjlist_timeout == 0 then
-					IDE.refresh_pjlist_timeout = 5
-					IDE.refreshProjectList()	
-				end	
-	            if #IDE.project_list > 0 and not IDE.isProjectOpen() then
-
-	                imgui.BeginChild("project list", 220, 60, true)
-	                for p, project in ipairs(IDE.project_list) do
-	                    -- chose a project to open?
-	                    if imgui.MenuItem(project) then
-	                        IDE.openProject(IDE.project_folder..'/'..project)
-	                    end
-
-						if imgui.IsItemHovered() then
-							imgui.BeginTooltip()
-							imgui.Text(IDE.getProjectPath(project))
-							imgui.EndTooltip()
-						end
-	                end
-	                imgui.EndChild()
-	            end
-
 	            if IDE.isProjectOpen() then
 	            	if imgui.MenuItem("open project folder") then
 	            		SYSTEM.explore(IDE.getProjectPath())
@@ -498,11 +438,6 @@ IDE = {
 	            	UI.titlebar.show_console = not UI.titlebar.show_console
 	            end
 
-	            -- color randomization
-	        	if imgui.MenuItem("randomize IDE color") then
-	        		UI.randomizeIDEColor()
-	        	end
-
 	        	-- project reload timer
 	        	imgui.PushItemWidth(80)
 	        	local reload_timer = UI.getSetting("project_reload_timer")
@@ -558,16 +493,6 @@ IDE = {
 	        if UI.titlebar.secret_stuff and beginMenu("Dev") then
 	        	-- ide font
 	        	imgui.PushItemWidth(120)
-	        	local fonts = SYSTEM.scandir(SYSTEM.cwd..'src/fonts')
-	        	for f, font in ipairs(fonts) do
-	        		fonts[f] = font:gsub(extname(font),'')
-	        	end
-				status, new_font = imgui.Combo("font", table.find(fonts, UI.getSetting('font')), fonts, #fonts);
-				if status then
-					UI.setSetting('font',fonts[new_font])
-					UI.setStyling()
-				end
-
 	            if imgui.MenuItem("dev tools") then
 	            	UI.titlebar.show_dev_tools = true
 	            end

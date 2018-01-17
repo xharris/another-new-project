@@ -20,6 +20,9 @@ update_release:
 	make update_folder D="icons"
 	make update_folder D="ide"
 	make update_folder D="images"
+	make update_folder D="main.lua"
+	make update_folder D="watcher.lua"
+	make update_folder D="logo.ico"
 	cp src/helper.exe releases/win/src/helper.exe
 
 build_mac:
