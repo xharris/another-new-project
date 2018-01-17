@@ -109,6 +109,7 @@ BlankE = {
 	_callbacks_replaced = false,
 	old_love = {},
 	pause = false,
+	first_state = '_empty_state',
 	init = function(first_state, ide_mode)
 		BlankE._ide_mode = ifndef(ide_mode, BlankE._ide_mode)
 
@@ -125,6 +126,10 @@ BlankE = {
 		--StateManager.injectCallbacks()
 	    updateGlobals(0)
 
+	    -- figure out the first state to run
+	    if BlankE.first_state and not first_state then
+	    	first_state = BlankE.first_state
+	    end
 		if first_state == nil or first_state == '' then
 			first_state = _empty_state
 		end

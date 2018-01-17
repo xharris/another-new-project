@@ -65,6 +65,7 @@ local ideState = {
 		for s, state_name in ipairs(state_list) do
 			ret_str = ret_str.."require \'scripts.state."..state_name.."\'\n"
 		end
+		ret_str = ret_str.."BlankE.first_state = \""..ifndef(first_state.classname, first_state).."\"\n"
 		return ret_str..'\n'
 	end,
 

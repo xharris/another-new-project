@@ -109,7 +109,7 @@ exporter = {
 			if SYSTEM.os == 'mac' then
 				SYSTEM.execute(SYSTEM.cwd.."\"/love.app/Contents/MacOS/love\" \""..src_path.."\"")
 			elseif SYSTEM.os == 'win' then
-				SYSTEM.execute(SYSTEM.cwd.."/love2d-win32/love.exe\" \""..src_path.."\"")
+				SYSTEM.execute(love2d_binary_path['win'].."/love.exe\" \""..src_path.."\"")
 			end
 		end
 
