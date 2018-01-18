@@ -10,4 +10,5 @@ end
 
 
 require 'scripts.state.state0'
+BlankE.first_state = "state0"
 

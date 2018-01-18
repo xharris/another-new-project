@@ -39,6 +39,11 @@ Image = Class{
 		return self
 	end,
 
+	setSize = function(self, width, height)
+		self.setWidth(width)
+		self.setHeight(height)
+	end,
+
 	draw = function(self)
 		self.width = self.orig_width * self.xscale
 		self.height = self.orig_height * self.yscale

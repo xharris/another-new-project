@@ -238,6 +238,9 @@ num width, height 			-- width/height including scaling
 
 -- methods
 draw()
+setWidth(width)
+setHeight(height)
+setSize(width, height)
 chop(width, height)			-- chops image into smaller images of width/height
 crop(x, y, w, h)			-- obvious
 

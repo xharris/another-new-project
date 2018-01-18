@@ -87,7 +87,7 @@ local eff_path = dirname((...):gsub('[.]','/'))..'effects'
 local eff_files = love.filesystem.getDirectoryItems(eff_path)
 
 for i_e, effect in pairs(eff_files) do
-	EffectManager.load(eff_path..'/'..effect)
+	--EffectManager.load(eff_path..'/'..effect)
 end
 
 -- prevents updating while window is being moved (would mess up collisions)
@@ -413,7 +413,9 @@ BlankE = {
 	end,
 
 	resize = function(w,h)
-
+		_iterateGameGroup("effect", function(effect)
+			effect:resizeCanvas(w, h)
+		end)
 	end,
 
 	keypressed = function(key)

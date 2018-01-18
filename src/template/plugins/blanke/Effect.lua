@@ -6,11 +6,16 @@ completely working effects:
 ]]
 local _effects = {}
 Effect = Class{
+	_mouse_offx = 0,
+	_mouse_offy = 0,
 	init = function (self, name)
 		self._shader = nil
 		self._effect_data = nil
 		self.name = name
-		self.canvas = {love.graphics.newCanvas(love.window.getDesktopDimensions())}
+		self.canvas = love.graphics.newCanvas(game_width, game_height)
+		self._canvas_sx = 1
+		self._canvas_sy = 1
+		self._appliedParams = {}
 
 		-- load stored effect
 		assert(_effects[name]~=nil, "Effect '"..name.."' not found")
@@ -38,6 +43,10 @@ Effect = Class{
 	end,
 
 	update = function(self, dt)
+		-- compensates for when window is resized
+		Effect._mouse_offx = -((game_width/2) - (self.canvas:getWidth()/2))
+		Effect._mouse_offy = -((game_height/2) - (self.canvas:getHeight()/2))
+
 		if self.time then self.time = self.time + dt end
 		if self.dt then self.dt = self.dt + dt end
 		if self.screen_size then self.screen_size = {game_width, game_height} end
@@ -45,18 +54,28 @@ Effect = Class{
 		return self
 	end,
 
+	resizeCanvas = function(self, w, h)
+		self.canvas = love.graphics.newCanvas(game_width, game_height)
+	end,
+
 	applyCanvas = function(self, func, canvas)
 		local curr_canvas = love.graphics.getCanvas()
 
 		love.graphics.setCanvas(canvas)
 		love.graphics.clear(255,255,255,0)
+		love.graphics.push()
+		love.graphics.translate(
+			-((game_width/2) - (canvas:getWidth()/2)),
+			-((game_height/2) - (canvas:getHeight()/2))
+		)
 		func()
+		love.graphics.pop()
 		love.graphics.setCanvas(curr_canvas)
 	end,
 
 	applyShader = function(self, func, shader, canvas)
 		shader = ifndef(shader, self._shader)
-		canvas = ifndef(canvas, self.canvas[1])
+		canvas = ifndef(canvas, self.canvas)
 
 		local curr_shader = love.graphics.getShader()
 		local curr_color = {love.graphics.getColor()}
@@ -68,7 +87,10 @@ Effect = Class{
 		love.graphics.setShader(shader)
 		love.graphics.setBlendMode('alpha', 'premultiplied')
 
-		love.graphics.draw(canvas, 0 ,0)
+		love.graphics.draw(canvas,
+			(game_width/2) - (canvas:getWidth()/2),
+			(game_height/2) - (canvas:getHeight()/2),
+		 0)
 		love.graphics.setBlendMode(curr_blend)
 		love.graphics.setShader(curr_shader)
 	end,
@@ -79,21 +101,24 @@ Effect = Class{
 			local var_name = p
 			local var_value = default
 
-			if self[p] ~= nil then
+			if self[p] ~= nil and not self._appliedParams[var_name] then
 				var_value = self[p]
 				self:send(var_name, var_value)
 			end
 		end
+		self._appliedParams = {}
 	end,
 
 	draw = function (self, func)
 		if self.pause then
+			Effect._mouse_offx = 0
+			Effect._mouse_offy = 0
 			func()
 		elseif not self._effect_data.extra_draw then
 			self:applyParams()
 
 			if func then
-				self:applyShader(func, self._shader, self.canvas[1])
+				self:applyShader(func, self._shader, self.canvas)
 			end
 
 
@@ -109,6 +134,7 @@ Effect = Class{
 			if value then value = 1 
 			else value = 0 end
 		end
+		self._appliedParams[name] = true
 		self._shader:send(name, value)
 		return self
 	end
@@ -139,6 +165,29 @@ EffectManager = Class{
 		new_eff.string = ifndef(options.shader,'')
 		new_eff.params = options.params
 		new_eff.extra_draw = options.draw
+		new_eff.warp_effect = ifndef(options.warp_effect, false)
+
+		local pre_warp = ''
+		local post_warp = ''
+		if new_eff.warp_effect then
+			pre_warp = 
+[[
+		vec2 coord =  texCoord * texSize;
+]]
+			post_warp = 
+[[
+		gl_FragColor = texture2D(texture, coord / texSize);
+		vec2 clampedCoord = clamp(coord, vec2(0.0), texSize);
+		if (coord != clampedCoord) {
+			gl_FragColor.a *= max(0.0, 1.0 - length(coord - clampedCoord));
+		}
+]]
+		end
+
+		-- automatically include texSize as param
+		if not new_eff.params['texSize'] then
+			new_eff.params['texSize'] = {game_width, game_height}
+		end
 
 		-- add helper funcs
 		if new_eff.string == '' then
@@ -171,8 +220,10 @@ float random(vec2 scale, vec2 gl_FragCoord, float seed) {
 	vec4 effect(vec4 in_color, Image texture, vec2 texCoord, vec2 screen_coords){
 		vec4 pixel = Texel(texture, texCoord);
 ]]
-..ifndef(options.effect, '')..
-[[
+..pre_warp
+..ifndef(options.effect, '')
+..post_warp
+..[[
 		return pixel * in_color;
 	}
 #endif
@@ -204,7 +255,7 @@ float random(vec2 scale, vec2 gl_FragCoord, float seed) {
 }
 
 -- global shader vals: https://www.love2d.org/wiki/Shader_Variables
-
+-- TODO: update template (see zoom_blur)
 EffectManager.new{
 	name = 'template',
 	params = {['myNum']=1},
@@ -281,23 +332,16 @@ vec4 effect(vec4 colour, Image tex, vec2 tc, vec2 sc)
 EffectManager.new{
 	name = 'chroma shift',
 	params = {['angle']=0,['radius']=4,['direction']={0,0}},--['strength'] = {1, 1}, ['size'] = {20, 20}},
-	shader = [[ 
-		#ifdef PIXEL
-		extern vec2 direction;
-
-		vec4 effect(vec4 color, Image texture, vec2 tc, vec2 _)
-		{
-			return color * vec4(
-				Texel(texture, tc - direction).r,
-				Texel(texture, tc).g,
-				Texel(texture, tc + direction).b,
-				1.0);
-		}
-		#endif
+	effect = [[
+pixel = vec4(
+		Texel(texture, texCoord - direction).r,
+		Texel(texture, texCoord).g,
+		Texel(texture, texCoord + direction).b,
+		1.0);
 	]],
 	draw = function(self, draw) 
-		local dx = math.cos(self.angle) * self.radius / love.graphics.getWidth()
-		local dy = math.sin(self.angle) * self.radius / love.graphics.getHeight()
+		local dx = math.cos(math.rad(self.angle)) * self.radius / love.graphics.getWidth()
+		local dy = math.sin(math.rad(self.angle)) * self.radius / love.graphics.getHeight()
 		self:send("direction", {dx,dy})
 		
 		self:applyShader(draw)
@@ -305,10 +349,9 @@ EffectManager.new{
 }
 
 EffectManager.new{
-	name = 'zoom_blur',
+	name = 'zoom blur',
 	params = {
-	['center']={0,0},['strength']=0.3,
-	['texSize']={game_width,game_height}, 
+	['center']={0,0}, ['strength']=0.3 
 	},
 	effect =
 [[
@@ -335,6 +378,28 @@ EffectManager.new{
 	    
 	    /* switch back from pre-multiplied alpha */
 	    gl_FragColor.rgb /= gl_FragColor.a + 0.00001;
+]]
+	}
+
+EffectManager.new{
+	name = 'warp sphere',
+	params = {
+	['radius']=50, ['strength']=-2, ['center']={20, 20}
+	},
+	warp_effect=true,
+	effect =
+[[
+        coord -= center;
+        float distance = length(coord);
+        if (distance < radius) {
+            float percent = distance / radius;
+            if (strength > 0.0) {
+                coord *= mix(1.0, smoothstep(0.0, radius / distance, percent), strength * 0.75);
+            } else {
+                coord *= mix(1.0, pow(percent, 1.0 + strength * 0.75) * radius / distance, 1.0 - percent);
+            }
+        }
+        coord += center;
 ]]
 	}
 

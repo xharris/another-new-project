@@ -141,12 +141,12 @@ View = Class{
 		    	if not self._dragging then
 		    		self._dragging = true
 		    		self._view_initial_pos = {self:position()}
-		    		self._initial_mouse_pos = {mouse_x, mouse_y}
+		    		self._initial_mouse_pos = {love.mouse.getX(), love.mouse.getY()}
 		    		--
 		    	end
 		    	-- on hold
 		    	if self._dragging then
-		    		local _drag_dist = {mouse_x-self._initial_mouse_pos[1], mouse_y-self._initial_mouse_pos[2]}
+		    		local _drag_dist = {love.mouse.getX()-self._initial_mouse_pos[1], love.mouse.getY()-self._initial_mouse_pos[2]}
 		    		self:moveToPosition(
 		    			self._view_initial_pos[1] - _drag_dist[1],
 		    			self._view_initial_pos[2] - _drag_dist[2],

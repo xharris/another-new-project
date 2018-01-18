@@ -26,4 +26,5 @@ end
 require 'scripts.entity.entity0'
 
 require 'scripts.state.state0'
+BlankE.first_state = "state0"
 

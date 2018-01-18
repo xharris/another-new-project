@@ -39,6 +39,8 @@
     - replace more helper.py functions (newScript)
     - start the scene when a new one is created
     - replace all cmd line calling in system.lua
+    - resizing the window while and Effect is active, crops the effect canvas.
+      reloading the window fixes this, but why??
 ]]
 _PROFILING = false
 
@@ -111,6 +113,10 @@ function love.filedropped(file)
     IDE.addResource(file)
 end
 
+function love.resize(w, h)
+    IDE.try(BlankE.resize, w, h)
+end
+
 --
 -- User inputs
 --
@@ -125,7 +131,7 @@ function love.keypressed(key)
     imgui.KeyPressed(key)
     if not imgui.GetWantCaptureKeyboard() then
         -- Pass event to the game
-        if BlankE then BlankE.keypressed(key) end
+        IDE.try(BlankE.keypressed, key)
     end
 end
 
@@ -133,7 +139,7 @@ function love.keyreleased(key)
     imgui.KeyReleased(key)
     if not imgui.GetWantCaptureKeyboard() then
         -- Pass event to the game
-        if BlankE then BlankE.keyreleased(key) end
+        IDE.try(BlankE.keyreleased, key)
     end
 end
 
@@ -148,7 +154,7 @@ function love.mousepressed(x, y, button)
     imgui.MousePressed(button)
     if not imgui.GetWantCaptureMouse() then
         -- Pass event to the game
-        if BlankE then BlankE.mousepressed(x,y,button) end
+        IDE.try(BlankE.mousepressed, x, y, button)
     end
 end
 
@@ -156,7 +162,7 @@ function love.mousereleased(x, y, button)
     imgui.MouseReleased(button)
     if not imgui.GetWantCaptureMouse() then
         -- Pass event to the game
-        if BlankE then BlankE.mousereleased(x,y,button) end
+        IDE.try(BlankE.mousereleased, x, y, button)
     end
 end
 
@@ -164,6 +170,6 @@ function love.wheelmoved(x, y)
     imgui.WheelMoved(y)
     if not imgui.GetWantCaptureMouse() then
         -- Pass event to the game
-        if BlankE then BlankE.wheelmoved(x,y) end
+        IDE.try(BlankE.wheelmoved, x, y)
     end
 end

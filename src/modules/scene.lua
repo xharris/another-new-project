@@ -155,7 +155,8 @@ local ideScene = {
 				imgui.SetNextWindowPos(game_width-scene_editor_width-window_margin, window_margin, {"Once"})
 				imgui.SetNextWindowSize(scene_editor_width,game_height-UI.getSetting("console_height").value-(titlebar_height+window_margin), {"Once"})
 				local cam_zoom = ifndef(Scene._zoom_amt,1)*100
-				scene_status, UI.titlebar.show_scene_editor = imgui.Begin(string.format("scene editor (%d,%d) %d,%d %d%%###scene editor", BlankE._mouse_x, BlankE._mouse_y, mouse_x, mouse_y, cam_zoom), true)
+				local cam_mouse_x, cam_mouse_y = BlankE.main_cam:mousePosition()
+				scene_status, UI.titlebar.show_scene_editor = imgui.Begin(string.format("scene editor (%d,%d) %d,%d %d%%###scene editor", BlankE._mouse_x, BlankE._mouse_y, cam_mouse_x, cam_mouse_y, cam_zoom), true)
 
 				-- enable/disable dragging camera
 				if _scene then
@@ -399,14 +400,14 @@ local ideScene = {
 						if imgui.IsItemHovered() then
 							imgui.BeginTooltip()
 
-							local mouse_x, mouse_y = _getMouseDragPos()
+							local _mouse_x, _mouse_y = _getMouseDragPos()
 
 							-- not allowed to be below 0
-							if mouse_x < 0 then mouse_x = 0 end
-							if mouse_y < 0 then mouse_y = 0 end
+							if _mouse_x < 0 then _mouse_x = 0 end
+							if _mouse_y < 0 then _mouse_y = 0 end
 
-							mouse_x = mouse_x - (mouse_x%_img_snap[1])
-							mouse_y = mouse_y - (mouse_y%_img_snap[2])
+							_mouse_x = _mouse_x - (_mouse_x%_img_snap[1])
+							_mouse_y = _mouse_y - (_mouse_y%_img_snap[2])
 
 							local img, img_width, img_height = UI.loadImage(img_path) 
 							imgui.Image(img, drag_width, drag_height, drag_x/img_width, drag_y/img_width, (drag_x+drag_width)/img_width, (drag_y+drag_height)/img_height, 255, 255, 255, 255, UI.getColor('love2d'))

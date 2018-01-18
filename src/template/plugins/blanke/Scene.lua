@@ -568,7 +568,7 @@ Scene = Class{
 			cam_x = cam_x - ((place_cam.port_width/2) - cam_pos[1])
 			cam_y = cam_y - ((place_cam.port_height/2) - cam_pos[2])
 		else
-			cam_x, cam_y = mouse_x, mouse_y
+			cam_x, cam_y = love.mouse.getX(), love.mouse.getY()
 		end
 		local mx, my = cam_x*Scene._zoom_amt, cam_y*Scene._zoom_amt
 
@@ -754,6 +754,7 @@ Scene = Class{
 	draw = function(self) 
 	    if BlankE._ide_mode then
 	    	self._fake_view:attach()
+	    	
 	    	self:_real_draw()
 
 	    	-- draw hitbox being placed

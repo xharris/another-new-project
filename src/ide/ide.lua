@@ -737,10 +737,12 @@ IDE = {
 	end,
 
 	try = function(func, ...) 
-		local result, chunk
-		result, chunk = pcall(func, ...)
-		if not result then IDE.errd = true; BlankE.errhand(chunk) end
-		return result, chunk
+		if func then
+			local result, chunk
+			result, chunk = pcall(func, ...)
+			if not result then IDE.errd = true; BlankE.errhand(chunk) end
+			return result, chunk
+		end
 	end,
 
 	onAddGameObject = function()
