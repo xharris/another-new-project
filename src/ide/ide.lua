@@ -505,8 +505,8 @@ IDE = {
 	        -- manual reload button
 	        if IDE.isProjectOpen() then
 	        	if UI.drawIconButton("reload", "reload game") then
-					IDE.refreshAssets(false)
-					
+	        		IDE.update_timeout = 0
+					IDE.refreshAssets()
 				end
 				imgui.SameLine()
 

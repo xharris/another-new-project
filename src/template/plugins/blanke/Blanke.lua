@@ -121,9 +121,6 @@ BlankE = {
 			end
 		end
 	    uuid.randomseed(love.timer.getTime()*10000)
-	    
-		-- register State events
-		--StateManager.injectCallbacks()
 	    updateGlobals(0)
 
 	    -- figure out the first state to run

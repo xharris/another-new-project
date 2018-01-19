@@ -1,6 +1,9 @@
 BlankE.addClassType("entity0", "Entity")
 
 function entity0:init()
+	self.walk_speed = 180
+	self.gravity = 30
+
 	-- ANIMATION
 	self:addAnimation{
 		name = 'stand',
@@ -11,11 +14,12 @@ function entity0:init()
 		image = 'player_walk',
 		offset = {0, 1},
 		frames = {'1-2', 1},
-		frame_size = {34/2,33}
+		frame_size = {34/2,33},
+		speed = .05
 	}
+	self.sprite_index = 'walk'
 
 	-- HITBOX	self.sprite_index = 'stand'
-
 	self:addShape(
 		"main",
 		"rectangle",
@@ -30,7 +34,11 @@ end
 
 function entity0:update(dt)
 	self.onCollision['main'] = function(other, sep_vector)
-		--if other.tag
+		if other.tag == "ground" then
+			if sep_vector.y > 0 and self.vspeed < 0 then
+				self:collisionStopY()
+			end
+		end
 	end
 
 	self.sprite_xoffset = -self.sprite_width/2
@@ -38,12 +46,12 @@ function entity0:update(dt)
 
 	-- left/right movement
 	if self.k_left() and not self.k_right() then
-		self.hspeed = -125
+		self.hspeed = -self.walk_speed
 		self.sprite_index = 'walk'
 		self.sprite_xscale = -1
 	end
 	if self.k_right() and not self.k_left() then
-		self.hspeed = 125
+		self.hspeed = self.walk_speed
 		self.sprite_index = 'walk'
 		self.sprite_xscale = 1
 	end

@@ -85,7 +85,7 @@ UI = {
 
 	setting = {
 		initial_state = '',
-		project_reload_timer = {type='number',value=5,min=0.5,max=60*5},
+		project_reload_timer = {type='number',value=1,min=0.5,max=60*5},
 		console_height = {type='number',value=100,min=0,max=love.graphics.getHeight()/2},
 		font = "ProggySquare",
 		font_size = {type='number',value=11,min=1,max=100},

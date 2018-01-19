@@ -16,6 +16,7 @@ Entity = Class{
 		self.scene_show_debug = false
 
 		-- x and y coordinate of sprite
+		print('put it at')
 		self.x = Entity.x
 		self.y = Entity.y
 
@@ -40,7 +41,7 @@ Entity = Class{
 		self.direction = 0
 		self.friction = 0
 		self.gravity = 0
-		self.gravity_direction = 0
+		self.gravity_direction = 90
 		self.hspeed = 0
 		self.vspeed = 0
 		self.speed = 0

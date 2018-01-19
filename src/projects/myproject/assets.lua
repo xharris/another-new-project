@@ -7,5 +7,5 @@ assets = Class{}
 require 'scripts.entity.entity0'
 
 require 'scripts.state.state0'
-_FIRST_STATE = state0
-print(_FIRST_STATE.classname)
+BlankE.first_state = "state0"
+

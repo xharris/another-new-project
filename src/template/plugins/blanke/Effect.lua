@@ -10,24 +10,29 @@ Effect = Class{
 	_mouse_offy = 0,
 	init = function (self, name)
 		self._shader = nil
-		self._effect_data = nil
+		self.effect_data = nil
 		self.name = name
 		self.canvas = love.graphics.newCanvas(game_width, game_height)
 		self._canvas_sx = 1
 		self._canvas_sy = 1
+		self.params = {}
 		self._appliedParams = {}
 
 		-- load stored effect
 		assert(_effects[name]~=nil, "Effect '"..name.."' not found")
 		
 		if _effects[name] then
-			self._effect_data = _effects[name]
+			self.effect_data = _effects[name]
 
 			-- turn options into member variables
 			_effects[name].params = ifndef(_effects[name].params, {})
+
+			if not (_effects[name].params["textureSize"] or _effects[name].params["texSize"]) then
+				_effects[name].params["texSize"] = {game_width, game_height}
+			end
+
 			for p, default in pairs(_effects[name].params) do
 				self[p] = default
-
 				if p == "textureSize" or p == "texSize" then
 					self[p] = {game_width, game_height}
 				end
@@ -97,12 +102,13 @@ Effect = Class{
 
 	applyParams = function(self)
 		-- send variables
-		for p, default in pairs(self._effect_data.params) do
+		for p, default in pairs(self.effect_data.params) do
 			local var_name = p
 			local var_value = default
 
 			if self[p] ~= nil and not self._appliedParams[var_name] then
 				var_value = self[p]
+				self.params[var_name] = var_value
 				self:send(var_name, var_value)
 			end
 		end
@@ -114,7 +120,7 @@ Effect = Class{
 			Effect._mouse_offx = 0
 			Effect._mouse_offy = 0
 			func()
-		elseif not self._effect_data.extra_draw then
+		elseif not self.effect_data.extra_draw then
 			self:applyParams()
 
 			if func then
@@ -124,9 +130,15 @@ Effect = Class{
 
 		-- call extra draw function
 		else
-			self._effect_data.extra_draw(self, func)
+			self.effect_data.extra_draw(self, func)
 		end
 		return self
+	end,
+
+	getParam = function(self, name)
+		if self.params[name] then
+			return self.params[name]
+		end
 	end,
 
 	send = function (self, name, value)
@@ -134,6 +146,7 @@ Effect = Class{
 			if value then value = 1 
 			else value = 0 end
 		end
+		self.params[name] = value
 		self._appliedParams[name] = true
 		self._shader:send(name, value)
 		return self
@@ -143,9 +156,9 @@ Effect = Class{
 	__newindex = function (self, key, value)
 		print_r(self)
 		print(key, value)
-		if self._effect_data.params[key] ~= nil then
+		if self.effect_data.params[key] ~= nil then
 			print(key, value)
-			self._effect_data.params[key] = value
+			self.effect_data.params[key] = value
 		else return self[key] end
 	end
 	]]
@@ -157,7 +170,7 @@ local _love_replacements = {
 	["uniform"] = "extern",
 	["texture2D"] = "Texel",
 	["gl_FragColor"] = "pixel",
-	["gl_FragCoord.xy"] = "screen_coords"
+	["gl_FragCoord"] = "screen_coords"
 }
 EffectManager = Class{
 	new = function (options)
@@ -167,6 +180,7 @@ EffectManager = Class{
 		new_eff.extra_draw = options.draw
 		new_eff.warp_effect = ifndef(options.warp_effect, false)
 
+		local var_filler = '' -- avoids error if var is not used in code
 		local pre_warp = ''
 		local post_warp = ''
 		if new_eff.warp_effect then
@@ -185,13 +199,14 @@ EffectManager = Class{
 		end
 
 		-- automatically include texSize as param
-		if not new_eff.params['texSize'] then
+		if not (new_eff.params["textureSize"] or new_eff.params["texSize"]) then
 			new_eff.params['texSize'] = {game_width, game_height}
 		end
 
 		-- add helper funcs
 		if new_eff.string == '' then
 			for var_name, value in pairs(options.params) do
+				var_filler = var_filler .. var_name .. ';'
 				if type(value) == 'table' then
 					new_eff.string = new_eff.string .. "uniform vec"..tostring(#value).." "..var_name..";\n"
 				end
@@ -202,9 +217,13 @@ EffectManager = Class{
 			new_eff.string = new_eff.string.. 
 [[
 /* From glfx.js : https://github.com/evanw/glfx.js */
-float random(vec2 scale, vec2 gl_FragCoord, float seed) {
+float random(vec3 scale, vec2 gl_FragCoord, float seed) {
 	/* use the fragment position for a different seed per-pixel */
-	return fract(sin(dot(gl_FragCoord + seed, scale)) * 43758.5453 + seed);
+	return fract(sin(dot(vec3(gl_FragCoord.xy, 0.0) + seed, scale)) * 43758.5453 + seed);
+}
+
+float random(vec2 scale, vec2 gl_FragCoord, float seed) {
+	return random(vec3(scale.xy, 0), gl_FragCoord, seed);
 }
 
 #ifdef VERTEX
@@ -220,6 +239,7 @@ float random(vec2 scale, vec2 gl_FragCoord, float seed) {
 	vec4 effect(vec4 in_color, Image texture, vec2 texCoord, vec2 screen_coords){
 		vec4 pixel = Texel(texture, texCoord);
 ]]
+..var_filler..'\n'
 ..pre_warp
 ..ifndef(options.effect, '')
 ..post_warp
@@ -234,6 +254,7 @@ float random(vec2 scale, vec2 gl_FragCoord, float seed) {
 				new_eff.string, r = new_eff.string:gsub(old, new)
 			end
 		end
+		--print(new_eff.string)
 		_effects[options.name] = new_eff
 		--return Effect(options.name)
 	end,
@@ -384,7 +405,7 @@ EffectManager.new{
 EffectManager.new{
 	name = 'warp sphere',
 	params = {
-	['radius']=50, ['strength']=-2, ['center']={20, 20}
+	['radius']=50, ['strength']=2, ['center']={0, 0}
 	},
 	warp_effect=true,
 	effect =
@@ -401,6 +422,72 @@ EffectManager.new{
         }
         coord += center;
 ]]
-	}
+}
+
+-- BROKEN
+EffectManager.new{
+	name = 'grayscale',
+	params = {['factor']=1},
+	effect =
+[[
+number average = (pixel.r + pixel.b + pixel.g)/3.0;
+
+pixel.r = pixel.r + (average-pixel.r) * factor;
+pixel.g = pixel.g + (average-pixel.g) * factor;
+pixel.b = pixel.b + (average-pixel.b) * factor;
+]]
+}
+
+EffectManager.new{
+	name = 'tilt shift',
+	params = {['location']={0,0,0,0}, ['strength']=15, ['distance']=200, ['start']={0,0}, ['end']={0,0}, ['delta']={0,0}},
+	effect =
+[[
+	vec4 color = vec4(0.0);
+    float total = 0.0;
+    
+    /* randomize the lookup values to hide the fixed number of samples */
+    float offset = random(vec3(12.9898, 78.233, 151.7182), gl_FragCoord, 0.0);
+    
+    vec2 normal = normalize(vec2(start.y - end.y, end.x - start.x));
+    float radius = smoothstep(0.0, 1.0, abs(dot(texCoord * texSize - start, normal)) / distance) * strength;
+    for (float t = -30.0; t <= 30.0; t++) {
+        float percent = (t + offset - 0.5) / 30.0;
+        float weight = 1.0 - abs(percent);
+        vec4 sample = texture2D(texture, texCoord + delta / texSize * percent * radius);
+        
+        /* switch to pre-multiplied alpha to correctly blur transparent images */
+        sample.rgb *= sample.a;
+        
+        color += sample * weight;
+        total += weight;
+    }
+    
+    gl_FragColor = color / total;
+    
+    /* switch back from pre-multiplied alpha */
+    gl_FragColor.rgb /= gl_FragColor.a + 0.00001;
+]],
+	draw = function(self, draw)
+		local location = self:getParam('location')
+
+		local dx = location[3] - location[1]
+		local dy = location[4] - location[2]
+		local d = math.sqrt(dx * dx + dy * dy);
+
+		self:send('start', {location[1], location[2]})
+		self:send('end', {location[3], location[4]})
+		self:send('delta', {dx / d, dy / d})
+
+    	self:applyShader(draw)
+
+    	self:send('start', {location[1], location[2]})
+		self:send('end', {location[3], location[4]})
+		self:send('delta', {-dx / d, dy / d})
+
+		self:applyShader(draw)
+	end
+}
+
 
 return Effect

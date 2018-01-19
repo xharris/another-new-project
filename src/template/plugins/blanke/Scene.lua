@@ -655,27 +655,6 @@ Scene = Class{
 	    		end
 	    	end
 
-	    	-- zooming in and out
-	    	if _btn_zoom_in() then
-	    		Scene._zoom_amt = clamp(Scene._zoom_amt - 0.1, 0, 3)
-	    	end
-
-	    	if _btn_zoom_out() then
-	    		Scene._zoom_amt = clamp(Scene._zoom_amt + 0.1, 0, 3)
-	    	end
-	    	self._fake_view:zoom(Scene._zoom_amt)
-	    	self._fake_view.port_width = game_width
-	    	self._fake_view.port_height = game_height
-	    	
-	    	-- dragging the view/grid around
-	    	BlankE.setGridSnap(self._snap[1], self._snap[2])
-	    	if not self._fake_view.disabled then
-	    		View._disable_grid = true
-				BlankE.setGridCamera(self._fake_view)
-		    else
-		    	View._disable_grid = false
-		    end
-
 		    -- confirm button
 		    if _btn_confirm() and not confirm_pressed then
 		    	confirm_pressed = true
@@ -753,6 +732,27 @@ Scene = Class{
 
 	draw = function(self) 
 	    if BlankE._ide_mode then
+	    	-- zooming in and out
+	    	if _btn_zoom_in() then
+	    		Scene._zoom_amt = clamp(Scene._zoom_amt - 0.1, 0, 3)
+	    	end
+
+	    	if _btn_zoom_out() then
+	    		Scene._zoom_amt = clamp(Scene._zoom_amt + 0.1, 0, 3)
+	    	end
+	    	self._fake_view:zoom(Scene._zoom_amt)
+	    	self._fake_view.port_width = game_width
+	    	self._fake_view.port_height = game_height
+	    	
+	    	-- dragging the view/grid around
+	    	BlankE.setGridSnap(self._snap[1], self._snap[2])
+	    	if not self._fake_view.disabled then
+	    		View._disable_grid = true
+				BlankE.setGridCamera(self._fake_view)
+		    else
+		    	View._disable_grid = false
+		    end
+		    
 	    	self._fake_view:attach()
 	    	
 	    	self:_real_draw()
