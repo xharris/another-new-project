@@ -1,4 +1,4 @@
-local cos = math.cos
+       local cos = math.cos
 local sin = math.sin
 local rad = math.rad
 
@@ -16,7 +16,6 @@ Entity = Class{
 		self.scene_show_debug = false
 
 		-- x and y coordinate of sprite
-		print('put it at')
 		self.x = Entity.x
 		self.y = Entity.y
 

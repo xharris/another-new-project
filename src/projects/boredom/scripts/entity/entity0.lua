@@ -1,8 +1,10 @@
 BlankE.addClassType("entity0", "Entity")
 
 function entity0:init()
+	self.show_debug = true
 	self.walk_speed = 180
 	self.gravity = 30
+	self.can_jump = true
 
 	-- ANIMATION
 	self:addAnimation{
@@ -20,11 +22,8 @@ function entity0:init()
 	self.sprite_index = 'walk'
 
 	-- HITBOX	self.sprite_index = 'stand'
-	self:addShape(
-		"main",
-		"rectangle",
-		{0,0,21,32}
-	)
+	self:addShape("main", "rectangle", {0,0,21,32})
+	self:addShape("jump_box", "rectangle", {4, 30, 24, 2})
 
 	-- INPUT
 	self.k_left = Input('left', 'a')
@@ -33,16 +32,33 @@ function entity0:init()
 end
 
 function entity0:update(dt)
-	self.onCollision['main'] = function(other, sep_vector)
+	self.gravity = 30
+	self.onCollision["main"] = function(other, sep_vector)	
 		if other.tag == "ground" then
-			if sep_vector.y > 0 and self.vspeed < 0 then
-				self:collisionStopY()
-			end
+			-- ceiling collision
+            if sep_vector.y > 0 and self.vspeed < 0 then
+                self:collisionStopY()
+            end
+            -- horizontal collision
+            if math.abs(sep_vector.x) > 0 then
+                self:collisionStopX() 
+            end
 		end
 	end
 
+	self.onCollision["jump_box"] = function(other, sep_vector)
+        if other.tag == "ground" and sep_vector.y < 0 then
+                -- floor collision
+            if not self.can_jump then
+                --Signal.emit('jump')
+            end
+            self.can_jump = true 
+        	self:collisionStopY()
+        end 
+    end
+
 	self.sprite_xoffset = -self.sprite_width/2
-	self.sprite_yoffset = -self.sprite_height/2
+	self.sprite_yoffset = -self.sprite_height
 
 	-- left/right movement
 	if self.k_left() and not self.k_right() then

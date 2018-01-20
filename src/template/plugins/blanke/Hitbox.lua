@@ -107,7 +107,7 @@ Hitbox = Class{
 		else
 			self.color = new_color
 		end
-		self.color[4] = 255/3
+		self.color[4] = 255/2.5
 	end,
 
 	setParent = function(self, parent)

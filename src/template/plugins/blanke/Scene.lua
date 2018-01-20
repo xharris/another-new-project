@@ -69,6 +69,7 @@ Scene = Class{
 	init = function(self, name)
 		self.layer_data = {}			-- load_objct
 		self.layer_order = {}			-- layers
+		self.layer_settings = {}		-- grid snap and tile snap
 		self.images = {}
 		self.name = name
 		self._snap = {32,32}
@@ -113,7 +114,7 @@ Scene = Class{
 
 	-- returns json
 	export = function(self, path)
-		local output = {order=self.layer_order,data={}}
+		local output = {order=self.layer_order,data={},settings=self.layer_settings}
 
 		-- iterate LAYERS
 		for l, layer in ipairs(self.layer_order) do
@@ -183,6 +184,7 @@ Scene = Class{
 
 		self.layer_data = {}
 		self.layer_order = scene_data.order
+		self.layer_settings = scene_data.settings
 		Scene.hitbox = ifndef(scene_data.data.hitbox, {})
 
 		-- iterate LAYERS
@@ -473,7 +475,17 @@ Scene = Class{
 		return new_name
 	end,
 
-	renameHitbox = function(self, old_name, new_name) 
+	renameHitbox = function(self, old_name, new_name)
+		for layer, data in pairs(self.layer_data) do 
+			if data.hitbox then
+				for h, hitbox in ipairs(data.hitbox) do
+					if hitbox.HCShape.tag == old_name then
+						hitbox.HCShape.tag = new_name
+					end
+				end
+			end
+		end
+
 		for h, hitbox in pairs(Scene.hitbox) do
 			if hitbox.name == old_name then
 				hitbox.name = self:validateHitboxName(new_name)
@@ -580,6 +592,22 @@ Scene = Class{
 		return {mx, my}
 	end,
 
+	setSetting = function(self, prop, value) 
+		-- store settting
+		local layer = self:getPlaceLayer()
+		self.layer_settings[layer] = ifndef(self.layer_settings[layer], {})
+		self.layer_settings[layer][prop] = value
+	end,
+
+	getSetting = function(self, prop, default_val)
+		local layer = self:getPlaceLayer()
+		-- set default value
+		if not self.layer_settings[layer] or not self.layer_settings[layer][prop] then
+			self:setSetting(prop, default_val)
+		end
+		return self.layer_settings[layer][prop]
+	end,
+
 	update = function(self, dt) 
 		-- update entities
 		for layer, data in pairs(self.layer_data) do
@@ -601,6 +629,7 @@ Scene = Class{
 		end
 
 		if BlankE._ide_mode then
+
 			-- reset hitbox vars
 	    	if _place_type ~= 'hitbox' or (_place_type == 'hitbox' and not _place_obj) then
 				hitbox_points = {}
@@ -761,11 +790,14 @@ Scene = Class{
 	    	if _place_type == 'hitbox' and _place_obj and #hitbox_points > 0 then
 		    	love.graphics.push('all')
 		    	local color_copy = table.copy(_place_obj.color)
-	    		color_copy[4] = 255/2
+	    		color_copy[4] = 255
 		    	for h=1,#hitbox_points,2 do
 		    		love.graphics.setColor(unpack(color_copy))
 		    		love.graphics.circle('fill', hitbox_points[h], hitbox_points[h+1], 2)
+		    		love.graphics.setColor(0,0,0,255/2)
+		    		love.graphics.circle('line', hitbox_points[h], hitbox_points[h+1], 3)
 		    	end
+	    		color_copy[4] = 255/2
 	    		love.graphics.setColor(unpack(color_copy))
 	    		if #hitbox_points == 4 then
 	    			love.graphics.line(unpack(hitbox_points))

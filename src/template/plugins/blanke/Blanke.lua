@@ -133,7 +133,7 @@ BlankE = {
 		if type(first_state) == 'string' then
 			first_state = _G[first_state]
 		end
-		State.switch(first_state)
+		State.switch(first_state)       
 		BlankE._is_init = true
 	end,
 

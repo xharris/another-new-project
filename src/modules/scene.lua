@@ -183,7 +183,13 @@ local ideScene = {
 					curr_scene_index = new_scene_index
 				end
 				curr_scene = scene_list[curr_scene_index]
-				curr_scene._snap = {UI.getSetting("scene_snapx").value,UI.getSetting("scene_snapy").value}
+
+				local ide_snapx = UI.getSetting("scene_snap_x")
+				local ide_snapy = UI.getSetting("scene_snap_y")
+
+				local scene_snapx = curr_scene:getSetting('snap_x', ide_snapx.value)
+				local scene_snapy = curr_scene:getSetting('snap_y', ide_snapy.value)
+				curr_scene._snap = {scene_snapx, scene_snapy}
 
 				if imgui.CollapsingHeader("Place") then
 
@@ -192,23 +198,24 @@ local ideScene = {
 			        	imgui.Text("snap")
 			            imgui.SameLine()
 						imgui.PushItemWidth(80)
-			        	local scene_snapx = UI.getSetting("scene_snapx")
-			            status_snapx, new_snapx = imgui.DragInt("###scene_snapx",scene_snapx.value,1,scene_snapx.min,scene_snapx.max,"x: %.0f")
+			            status_snapx, new_snapx = imgui.DragInt("###scene_snapx",scene_snapx,1,ide_snapx.min,ide_snapx.max,"x: %.0f")
 			            if status_snapx then
 			            	curr_scene._snap[1] = new_snapx
-			                UI.setSetting("scene_snapx", new_snapx)
+			                curr_scene:setSetting("snap_x", new_snapx)
+			                _img_snap[1] = new_snapx
 			            end
 			            imgui.SameLine()
-			        	local scene_snapy = UI.getSetting("scene_snapy")
-			            status_snapy, new_snapy = imgui.DragInt("###scene_snapy",scene_snapy.value,1,scene_snapy.min,scene_snapy.max,"y: %.0f")
+			            status_snapy, new_snapy = imgui.DragInt("###scene_snapy",scene_snapy,1,ide_snapy.min,ide_snapy.max,"y: %.0f")
 			            if status_snapy then
 			            	curr_scene._snap[2] = new_snapx
-			                UI.setSetting("scene_snapy", new_snapy)
+			                curr_scene:setSetting("snap_y", new_snapy)
+			                _img_snap[2] = new_snapy
 			            end
 			            imgui.PopItemWidth()
 			            imgui.TreePop()
 			        end
 
+					imgui.Separator()
 
 					-- layer selection
 					if UI.drawIconButton("arrow-up", "move layer up (farther)") then
@@ -220,8 +227,8 @@ local ideScene = {
 					end
 					imgui.SameLine();
 
-					local layer_list = curr_scene:getList('layer')
 					local curr_layer = curr_scene:getPlaceLayer()
+					local layer_list = curr_scene:getList('layer')
 					local curr_layer_index = 1
 					for l, layer in ipairs(layer_list) do
 						if layer == curr_layer then

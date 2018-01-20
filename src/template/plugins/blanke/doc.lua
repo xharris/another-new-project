@@ -88,6 +88,7 @@ num hspeed, vspeed
 num speed 							-- best used with 'direction'
 num xprevious, yprevious			-- location during last update loop
 num xstart, ystart					-- location when object is first created. not always 0,0
+bool show_debug
 
 -- overridable methods
 preUpdate(dt)
@@ -98,8 +99,8 @@ draw()								-- caution: controls sprite, animation
 postDraw()
 
 -- regular methods
-debugSprite()						-- call during drawing (ex. state:draw)
-debugCollision()					-- shows hitboxes
+debugSprite()						-- green: call during drawing (ex. state:draw)
+debugCollision()					-- red: shows hitboxes
 setSpriteIndex(str index)			
 addAnimation{...}					--[[
 	name = str
