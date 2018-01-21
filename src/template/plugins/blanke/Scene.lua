@@ -17,11 +17,12 @@ local hitbox_rem_point = true
 
 -- special type of hashtable that groups objects with similar coordinates
 local Scenetable = Class{
-	init = function(self)
+	init = function(self, mod_val)
+		self.mod_val = ifndef(mod_val, 32)
 		self.data = {}
 	end,
 	hash = function(self, x, y)
-		return tostring(x)..','..tostring(y)
+		return tostring(x - (x % self.mod_val))..','..tostring(y - (y % self.mod_val))
 	end,
 	hash2 = function(self, obj)
 		return tostring(obj)
@@ -608,28 +609,29 @@ Scene = Class{
 		return self.layer_settings[layer][prop]
 	end,
 
-	update = function(self, dt) 
-		-- update entities
-		for layer, data in pairs(self.layer_data) do
-			if data.entity then
-				for i_e, entity in ipairs(data.entity) do
-					if entity._destroyed then
-						table.remove(data.entity, i_e)
-					else
-						entity:update(dt)
+	update = function(self, dt)
+		if not BlankE.pause then 
+			-- update entities
+			for layer, data in pairs(self.layer_data) do
+				if data.entity then
+					for i_e, entity in ipairs(data.entity) do
+						if entity._destroyed then
+							table.remove(data.entity, i_e)
+						else
+							entity:update(dt)
+						end
 					end
 				end
-			end
 
-			if data.hitbox then
-				for i_h, hitbox in ipairs(data.hitbox) do
-					-- nothing at the moment
+				if data.hitbox then
+					for i_h, hitbox in ipairs(data.hitbox) do
+						-- nothing at the moment
+					end
 				end
 			end
 		end
 
 		if BlankE._ide_mode then
-
 			-- reset hitbox vars
 	    	if _place_type ~= 'hitbox' or (_place_type == 'hitbox' and not _place_obj) then
 				hitbox_points = {}

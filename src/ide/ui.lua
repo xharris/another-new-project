@@ -74,6 +74,7 @@ UI = {
 		new_project = false,
 
 		-- IDE
+		auto_save = true,
 		show_console = true,
 		show_scene_editor = true,
 		secret_stuff = false,
@@ -198,7 +199,10 @@ UI = {
 	end,
 
 	getSetting = function(index)
-		local setting = UI.setting[index]
+		local setting = nil
+
+		if UI.setting[index] then setting = UI.setting[index] end
+		if UI.titlebar[index] then setting = UI.titlebar[index] end
 
 		return setting
 	end,

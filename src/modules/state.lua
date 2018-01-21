@@ -70,7 +70,7 @@ local ideState = {
 	end,
 
 	onReload = function()
-
+		updateStateList()
 	end,
 
 	fileChange = function(file_name)

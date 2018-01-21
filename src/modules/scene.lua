@@ -53,7 +53,7 @@ function writeSceneFiles()
 			"end\n\n"
 	end
 
-	if BlankE and not IDE.errd then
+	if BlankE and not IDE.errd and UI.getSetting("auto_save") then
 		_iterateGameGroup('scene', function(scene, s)
 			local scene_name = scene.name
 			local scene_path = IDE.getProjectPath()..'/assets/scene/'..scene_name..'.json'
@@ -151,6 +151,7 @@ local ideScene = {
 			-- only show editor if at least one scene is ACTIVE
 			if #scene_names > 0 then
 				local _scene = scene_list[curr_scene_index] -- check if nil when using this var
+				curr_scene = scene_list[curr_scene_index]
 
 				imgui.SetNextWindowPos(game_width-scene_editor_width-window_margin, window_margin, {"Once"})
 				imgui.SetNextWindowSize(scene_editor_width,game_height-UI.getSetting("console_height").value-(titlebar_height+window_margin), {"Once"})
@@ -170,11 +171,12 @@ local ideScene = {
 						BlankE.show_grid = new_grid
 					end
 
-					local debug_status, new_obj_debug = imgui.Checkbox("show object debugs", show_obj_debug)
+					local debug_status, new_obj_debug = imgui.Checkbox("show object debugs", curr_scene:getSetting("show_obj_debug", show_obj_debug))
 					if debug_status then
+						curr_scene:setSetting("show_obj_debug", new_obj_debug)
 						show_obj_debug = new_obj_debug
 					end
-					_scene.show_debug = show_obj_debug
+					_scene.show_debug = curr_scene:getSetting("show_obj_debug", show_obj_debug)
 				end
 
 				-- scene selection
@@ -182,7 +184,6 @@ local ideScene = {
 				if status then
 					curr_scene_index = new_scene_index
 				end
-				curr_scene = scene_list[curr_scene_index]
 
 				local ide_snapx = UI.getSetting("scene_snap_x")
 				local ide_snapy = UI.getSetting("scene_snap_y")
@@ -299,7 +300,8 @@ local ideScene = {
 							drag_width = img_width; drag_height = img_height
 							setImgPlacer()
 						end
-
+						
+						_img_snap = {curr_scene:getSetting(curr_object.."_x", scene_snapx), curr_scene:getSetting(curr_object.."_y", scene_snapy)}
 						if imgui.TreeNode('tile settings') then
 
 							imgui.BeginGroup()
@@ -308,13 +310,15 @@ local ideScene = {
 							imgui.PushItemWidth(80)
 
 							-- tile size (even though I named the vars snap)
-				            status_img_snapx, new_img_snapx = imgui.DragInt("###img_tilew",_img_snap[1],1,1,img_width,"w: %.0f")
+							status_img_snapx, new_img_snapx = imgui.DragInt("###img_tilew",_img_snap[1],1,1,img_width,"w: %.0f")
 				            if status_img_snapx then
+				            	curr_scene:setSetting(curr_object.."_x", new_img_snapx)
 				            	_img_snap[1] = new_img_snapx
 				            end
 				            imgui.SameLine()
 				            status_img_snapy, new_img_snapy = imgui.DragInt("###img_tileh",_img_snap[2],1,1,img_height,"h: %.0f")
 				            if status_img_snapy then
+				            	curr_scene:setSetting(curr_object.."_y", new_img_snapy)
 				            	_img_snap[2] = new_img_snapy
 				            end
 
@@ -349,7 +353,11 @@ local ideScene = {
 							setImgPlacer()
 						end
 
-						imgui.Text(string.format('x:%d y:%d, w:%d h:%d', drag_x, drag_y, drag_width, drag_height))
+						if drag_x == 0 and drag_y == 0 and drag_width == 0 and drag_height == 0 then
+							imgui.TextColored(244/255,67/255,54/255,255/255, "no tiles selected")
+						else
+							imgui.Text(string.format('x:%d y:%d, w:%d h:%d', drag_x, drag_y, drag_width, drag_height))
+						end
 
 						UI.drawImageButton(img_path, 0, 0, 1, 1, 0, 255, 255, 255, 255)
 

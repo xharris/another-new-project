@@ -130,8 +130,15 @@ func collisionStopY()
 
 -- platformer collisions example
 function entity0:init()
+	self.gravity = 30
+	self.can_jump = true
+	self.k_left = Input('left', 'a')
+	self.k_right = Input('right', 'd')
+	self.k_jump = Input('up', 'w')
+
 	self:addShape("main", "rectangle", {0, 0, 32, 32})		-- rectangle of whole players body
 	self:addShape("jump_box", "rectangle", {4, 30, 24, 2})	-- rectangle at players feet
+	self:setMainShape("main")								-- dont forget this! Used to figure out where to place the sprite
 end
 
 function entity0:update(dt)
@@ -150,14 +157,26 @@ function entity0:update(dt)
 
 	self.onCollision["jump_box"] = function(other, sep_vector)
         if other.tag == "ground" and sep_vector.y < 0 then
-                -- floor collision
-            if not self.can_jump and self.nickname == 'player' then
-                Signal.emit('jump')
-            end
+            -- floor collision
             self.can_jump = true 
         	self:collisionStopY()
         end 
     end
+
+    if self.k_right() and not self.k_left() then
+    	self.hspeed = 180
+    end
+
+    if self.k_left() and not self.k_right() then
+    	self.hspeed = 180
+    end
+end
+
+function entity0:jump()
+	if self.can_jump then
+        self.vspeed = -700
+        self.can_jump = false
+    end	
 end
 
 --[[

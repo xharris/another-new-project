@@ -370,6 +370,16 @@ IDE = {
 	        -- FILE
 	        if beginMenu("File") then
 	            if IDE.isProjectOpen() then
+	            	if imgui.MenuItem("save") then
+	            		IDE.save()
+	            	end
+
+	            	if imgui.MenuItem("auto save", nil, UI.titlebar.auto_save) then
+	            		UI.titlebar.auto_save = not UI.titlebar.auto_save
+	            	end
+
+					imgui.Separator()
+
 	            	if imgui.MenuItem("open project folder") then
 	            		SYSTEM.explore(IDE.getProjectPath())
 	            	end
@@ -542,6 +552,13 @@ IDE = {
 	    end)
 
 		IDE.drawExtras()
+	end,
+
+	save = function()
+		local auto_save = UI.titlebar.auto_save
+		UI.titlebar.auto_save = true
+		IDE.refreshAssets(true)
+		UI.titlebar.auto_save = auto_save
 	end,
 
 	quit = function()

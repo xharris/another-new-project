@@ -365,7 +365,7 @@ BlankE = {
     	if not BlankE.pause then
 			StateManager.iterateStateStack('update', dt)
 			
-		    for i_arr, arr in pairs(game) do
+		    for group, arr in pairs(game) do
 		        for i_e, e in ipairs(arr) do
 		            if e.auto_update and not e.pause then
 		                if e._update then
@@ -375,6 +375,20 @@ BlankE = {
 			            end
 		            end
 		        end
+		    end
+		elseif BlankE._ide_mode then
+		    for group, arr in pairs(game) do
+		    	if table.has_value({'scene', 'input'}, group) then
+			        for i_e, e in ipairs(arr) do
+			            if e.auto_update and not e.pause then
+			                if e._update then
+			                	e:_update(dt)
+			                else
+				                e:update(dt)
+				            end
+			            end
+			        end
+			    end
 		    end
 		end
 

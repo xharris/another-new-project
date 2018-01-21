@@ -89,15 +89,6 @@ Entity = Class{
 			self.ystart = self.y
 		end
 
-		-- move shapes if the x/y is different
-		if not self.pause and (self.xprevious ~= self.x or self.yprevious ~= self.y) then
-			for s, shape in pairs(self.shapes) do
-				-- account for x/y offset?
-				shape:moveTo(self.x, self.y)
-			end
-            if not self.is_net_entity then Net.updateEntities() end
-		end
-
 		self.xprevious = self.x
 		self.yprevious = self.y
 
@@ -120,9 +111,6 @@ Entity = Class{
 			-- add gravity to hspeed/vspeed
 			if gravx ~= 0 then self.hspeed = self.hspeed + gravx end
 			if gravy ~= 0 then self.vspeed = self.vspeed + gravy end
-
-			local dx = self.hspeed + speedx
-			local dy = self.vspeed + speedy
 
 			local _main_shape = self.shapes[self._main_shape]
 			
@@ -165,7 +153,19 @@ Entity = Class{
 					end
 				end
 			end
+
+			-- move shapes if the x/y is different
+			if not self.pause and (self.xprevious ~= self.x or self.yprevious ~= self.y) then
+				for s, shape in pairs(self.shapes) do
+					-- account for x/y offset?
+					shape:moveTo(self.x, self.y)
+				end
+	            if not self.is_net_entity then Net.updateEntities() end
+			end
         
+			local dx = self.hspeed + speedx
+			local dy = self.vspeed + speedy
+
 			-- move all shapes
 			for s, shape in pairs(self.shapes) do
 				shape:move(dx*dt, dy*dt)
@@ -246,13 +246,7 @@ Entity = Class{
 		return self
 	end,
 
-	draw = function(self)
-		if self._destroyed then return end
-
-		if self.preDraw then
-			self:preDraw()
-		end
-
+	drawSprite = function(self)
 		self:setSpriteIndex(self.sprite_index)
 
 		if self.sprite ~= nil then
@@ -272,6 +266,16 @@ Entity = Class{
 			self.sprite_width = 0
 			self.sprite_height = 0
 		end
+	end,
+
+	draw = function(self)
+		if self._destroyed then return end
+
+		if self.preDraw then
+			self:preDraw()
+		end
+
+		self:drawSprite()
 
 		if self.show_debug or self.scene_show_debug then
 			self:debugSprite()
