@@ -121,6 +121,23 @@ Entity = Class{
 			if gravx ~= 0 then self.hspeed = self.hspeed + gravx end
 			if gravy ~= 0 then self.vspeed = self.vspeed + gravy end
 
+			-- move shapes if the x/y is different
+			if not self.pause and (self.xprevious ~= self.x or self.yprevious ~= self.y) then
+				for s, shape in pairs(self.shapes) do
+					-- account for x/y offset?
+					shape:moveTo(self.x, self.y)
+				end
+	            if not self.is_net_entity then Net.updateEntities() end
+			end
+        
+			local dx = self.hspeed + speedx
+			local dy = self.vspeed + speedy
+
+			-- move all shapes
+			for s, shape in pairs(self.shapes) do
+				shape:move(dx*dt, dy*dt)
+			end
+
 			local _main_shape = self.shapes[self._main_shape]
 			
 			for name, fn in pairs(self.onCollision) do
@@ -140,6 +157,7 @@ Entity = Class{
 									shape:move(separating_vector.x, 0)
 								end
 					            self.hspeed = 0
+					            speedx = 0
 					            dx = 0
 							end
 
@@ -148,6 +166,7 @@ Entity = Class{
 									shape:move(0, separating_vector.y)
 								end
 					            self.vspeed = 0
+					            speedy = 0
 					            dy = 0
 							end
 							
@@ -163,22 +182,7 @@ Entity = Class{
 				end
 			end
 
-			-- move shapes if the x/y is different
-			if not self.pause and (self.xprevious ~= self.x or self.yprevious ~= self.y) then
-				for s, shape in pairs(self.shapes) do
-					-- account for x/y offset?
-					shape:moveTo(self.x, self.y)
-				end
-	            if not self.is_net_entity then Net.updateEntities() end
-			end
-        
-			local dx = self.hspeed + speedx
-			local dy = self.vspeed + speedy
 
-			-- move all shapes
-			for s, shape in pairs(self.shapes) do
-				shape:move(dx*dt, dy*dt)
-			end
 
 			-- set position of sprite
 			if self.shapes[self._main_shape] ~= nil then
