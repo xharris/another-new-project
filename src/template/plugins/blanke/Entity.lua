@@ -1,4 +1,4 @@
-       local cos = math.cos
+local cos = math.cos
 local sin = math.sin
 local rad = math.rad
 
@@ -16,10 +16,11 @@ Entity = Class{
 		self.scene_show_debug = false
 
 		-- x and y coordinate of sprite
-		self.x = Entity.x
-		self.y = Entity.y
+		self.x = 0--Entity.x
+		self.y = 0--sEntity.y
 
 		-- sprite/animation variables
+		self._call_sprite_update = {}
 		self._sprite_prev = '' 		-- previously used sprite
 		self.sprite_index = ''		-- string index of the current sprite
 		self.sprite_width = 0		-- readonly
@@ -31,7 +32,7 @@ Entity = Class{
 		self.sprite_yoffset = 0
 		self.sprite_xshear = 0
 		self.sprite_yshear = 0
-		self.sprite_color = {['r']=255,['g']=255,['b']=255}
+		self.sprite_color = {255,255,255}
 		self.sprite_alpha = 255
 		self.sprite_speed = 1
 		self.sprite_frame = 0
@@ -63,7 +64,7 @@ Entity = Class{
 		self.onCollision = {["*"] = function() end}
     	_addGameObject('entity', self)
     end,
-    
+
     _update = function(self, dt)
     	if self._destroyed then return end
 
@@ -77,8 +78,16 @@ Entity = Class{
 			self:update(dt)
 		end	
 
-		if self.sprite ~= nil and self.sprite.update ~= nil and not self.pause then
-			self.sprite:update(self.sprite_speed*dt)
+		if not self.pause then
+			if self.sprite ~= nil and self.sprite.update ~= nil then
+				self.sprite:update(self.sprite_speed*dt)
+			end
+			
+			-- clear sprite update call list
+			for sprite_name, val in pairs(self._call_sprite_update) do
+				self._sprites[sprite_name]:update(self.sprite_speed*dt)
+				self._call_sprite_update[sprite_name] = nil
+			end
 		end
 
 		-- x/y extra coordinates
@@ -194,7 +203,7 @@ Entity = Class{
 		return {}
 	end,
 
-	debugSprite = function(self)
+	debugSprite = function(self, sprite_index)
 		local sx = -self.sprite_xoffset
 		local sy = -self.sprite_yoffset
 
@@ -206,8 +215,10 @@ Entity = Class{
 
 		-- draw sprite outline
 		love.graphics.setColor(0,255,0,255*(2/3))
-		love.graphics.rectangle("line", -sx, -sy, self.sprite_width, self.sprite_height)
-
+		if self._sprites[sprite_index] then
+			local sprite_width, sprite_height = self:getSpriteDims(sprite_index)
+			love.graphics.rectangle("line", -sx, -sy, sprite_width, sprite_height)
+		end
 		-- draw origin point
 		love.graphics.circle("line", 0, 0, 2)
 
@@ -234,34 +245,40 @@ Entity = Class{
 			self.sprite = self._sprites[self.sprite_index]
 
 			if self._sprite_prev ~= self.sprite_index then
-				self:_refreshSpriteDims()
+				self.sprite_width, self.sprite_height = self:getSpriteDims(self.sprite_index)
 				self._sprite_prev = self.sprite_index
 			end
 		end
 		return self
 	end,
 
-	_refreshSpriteDims = function(self)
-		self.sprite_width, self.sprite_height = self.sprite:getDimensions()
-		return self
+	getSpriteDims = function(self, sprite_index)
+		return self._sprites[sprite_index]:getDimensions()
 	end,
 
-	drawSprite = function(self)
-		self:setSpriteIndex(self.sprite_index)
+	drawSprite = function(self, sprite_index)
+		sprite_index = ifndef(sprite_index, self.sprite_index)
+		sprite = self._sprites[sprite_index]
 
-		if self.sprite ~= nil then
+		if self.show_debug or self.scene_show_debug then self:debugCollision() end
+
+		if sprite ~= nil then
+			self._call_sprite_update[sprite_index] = true
 			-- draw current sprite (image, x,y, angle, sx, sy, ox, oy, kx, ky) s=scale, o=origin, k=shear
-			local img = self._images[self.sprite_index]
-			love.graphics.push()
-			love.graphics.setColor(self.sprite_color.r, self.sprite_color.g, self.sprite_color.b, self.sprite_alpha)
+			local img = self._images[sprite_index]
+			Draw.push('all')
+
+			if self.show_debug or self.scene_show_debug then self:debugSprite(self.sprite_index) end
+
+			love.graphics.setColor(self.sprite_color[1], self.sprite_color[2], self.sprite_color[3], ifndef(self.sprite_color[4], self.sprite_alpha))
 			
 			-- is it an Animation or an Image
-			if self.sprite.update ~= nil then
-				self.sprite:draw(img(), self.x, self.y, math.rad(self.sprite_angle), self.sprite_xscale, self.sprite_yscale, -self.sprite_xoffset, -self.sprite_yoffset, self.sprite_xshear, self.sprite_yshear)
+			if sprite.update ~= nil then
+				sprite:draw(img(), self.x, self.y, math.rad(self.sprite_angle), self.sprite_xscale, self.sprite_yscale, -self.sprite_xoffset, -self.sprite_yoffset, self.sprite_xshear, self.sprite_yshear)
 			elseif img then
 				love.graphics.draw(img(), self.x, self.y, math.rad(self.sprite_angle), self.sprite_xscale, self.sprite_yscale, -self.sprite_xoffset, -self.sprite_yoffset, self.sprite_xshear, self.sprite_yshear)
 			end
-			love.graphics.pop()
+			Draw.pop()
 		else
 			self.sprite_width = 0
 			self.sprite_height = 0
@@ -276,11 +293,6 @@ Entity = Class{
 		end
 
 		self:drawSprite()
-
-		if self.show_debug or self.scene_show_debug then
-			self:debugSprite()
-			self:debugCollision()
-		end
 
 		if self.postDraw then
 			self:postDraw()

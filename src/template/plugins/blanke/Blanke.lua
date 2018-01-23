@@ -21,8 +21,8 @@ function _addGameObject(type, obj)
     obj._destroyed = false
     if not obj.destroy then
     	obj.destroy = function(self)
+	    	self._destroyed = true
 	    	_destroyGameObject(type,self)
-	    	self = nil
 	    end
     end
 
@@ -44,10 +44,6 @@ end
 function _destroyGameObject(type, del_obj)
 	_iterateGameGroup(type, function(obj, i)
 		if obj.uuid == del_obj.uuid then
-			del_obj._destroyed = true
-			for var_name, value in pairs(del_obj) do
-				del_obj[var_name] = nil
-			end
 			table.remove(game[type],i)
 		end
 	end)
@@ -109,7 +105,8 @@ BlankE = {
 	_callbacks_replaced = false,
 	old_love = {},
 	pause = false,
-	first_state = '_empty_state',
+	first_state = '',
+	_class_type = {},
 	init = function(first_state, ide_mode)
 		BlankE._ide_mode = ifndef(ide_mode, BlankE._ide_mode)
 
@@ -158,9 +155,15 @@ BlankE = {
 		end
 	end,
 
+	getClassList = function(in_type)
+		return ifndef(BlankE._class_type[in_type], {})
+	end,
+
 	addClassType = function(in_name, in_type)
 		if not _G[in_name] then
+			BlankE._class_type[in_type] = ifndef(BlankE._class_type[in_type], {})
 			if in_type == 'State' then
+				table.insert(BlankE._class_type[in_type], in_name)
 				local new_state = Class{__includes=State,
 					classname=in_name,
 					auto_update = false,
@@ -170,7 +173,8 @@ BlankE = {
 				_G[in_name] = new_state
 			end
 
-			if in_type == 'Entity' then			
+			if in_type == 'Entity' then	
+				table.insert(BlankE._class_type[in_type], in_name)
 				_G[in_name] = Class{__includes=Entity,classname=in_name}
 			end
 		end
@@ -319,8 +323,10 @@ BlankE = {
 	end,
 
 	setGridCamera = function(camera)
-		BlankE.main_cam = camera
-		BlankE.initial_cam_pos = camera:position()
+		if BlankE._ide_mode then
+			BlankE.main_cam = camera
+			BlankE.initial_cam_pos = camera:position()
+		end
 	end,
 
 	updateGridColor = function()
@@ -474,7 +480,7 @@ BlankE = {
 	end,
 
 	errhand = function(msg)
-		IDE.errd = true; 
+		if BlankE._ide_mode then IDE.errd = true; end
 		local trace = debug.traceback()
 	 
 	    local err = {} 
@@ -504,8 +510,10 @@ BlankE.addClassType('_err_state', 'State')
 _err_state.error_msg = 'NO GAME'
 
 local _t = 0
-function _err_state:draw()
+function _err_state:enter(prev)
 	love.graphics.setBackgroundColor(0,0,0,255)
+end
+function _err_state:draw()
 	BlankE.updateGridColor()
 	game_width = love.graphics.getWidth()
 	game_height = love.graphics.getHeight()

@@ -74,6 +74,7 @@ end
 function string:starts(Start)
     return string.sub(self,1,string.len(Start))==Start
 end
+string.startsWith = string.starts
 
 function string:ends(End)
 	return string.sub(self,-string.len(End))==End

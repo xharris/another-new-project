@@ -10,6 +10,7 @@ function buildSrcDir(folder_name)
 	engine_path = SYSTEM.cleanPath(IDE.getTemplatePath().."/plugins")
 
 	-- make export directory
+	SYSTEM.remove(folder_name)
 	SYSTEM.mkdir(folder_name)
 
 	-- copy all files/folders except export folder

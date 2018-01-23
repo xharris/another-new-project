@@ -19,10 +19,12 @@ Draw = Class{
 
 	_parseColorArgs = function(r,g,b,a)
 		color = r
-		if (type(color) == "string") then
-			color = hex2rgb(color)
-		end
 
+		if (type(color) == "string") and color:startsWith("#") then
+			color = hex2rgb(color)
+		elseif (type(color) == "string") then
+			color = Draw[color]
+		end
 		if (type(color) == "number") then
 			color = {r,g,b,a}
 		end
@@ -36,9 +38,7 @@ Draw = Class{
 
 	setColor = function(r,g,b,a)
 		if r == nil then BlankE.errhand("invalid color: {"..tostring(r)..", "..tostring(g)..", "..tostring(b)..", "..tostring(a).."}"); return false end
-		if (type(r) == "string") then
-			r = Draw[r]
-		end
+
 		if (type(r) == "table") then
 			r, g, b, a = unpack(r)
 		end
@@ -64,6 +64,14 @@ Draw = Class{
 			love.graphics[shape](unpack(args))
 		end)
 		return Draw
+    end,
+
+    push = function(...)
+    	love.graphics.push(...)
+    end,
+
+    pop = function()
+    	love.graphics.pop()
     end,
     
     point   = function(...) return Draw.callDrawFunc('points', {...}) end,

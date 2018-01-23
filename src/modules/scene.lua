@@ -33,6 +33,10 @@ function refreshObjectList(only_cat) -- haha cats
 		if IDE.modules[cat] and IDE.modules[cat].getObjectList then
 			objects[cat] = IDE.modules[cat].getObjectList()
 		end
+
+		if cat == 'entity' then
+			objects[cat] = BlankE.getClassList('Entity')
+		end
 		
 		if cat == 'hitbox' or #objects[cat] > 0 then
 			table.insert(category_names, cat)

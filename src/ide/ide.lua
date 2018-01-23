@@ -414,7 +414,7 @@ IDE = {
 	        				if m == 'state' and #obj_list > 0 then
     							status, initial_state = imgui.Combo("initial state", table.find(obj_list, UI.getSetting('initial_state')), obj_list, #obj_list);
     							if status then
-    								--UI.setSetting('initial_state',obj_list[initial_state])
+    								UI.setSetting('initial_state',obj_list[initial_state])
     							end
 	        				end
 
@@ -446,6 +446,10 @@ IDE = {
 	        	-- console
 	            if imgui.MenuItem("console", nil, UI.titlebar.show_console) then
 	            	UI.titlebar.show_console = not UI.titlebar.show_console
+	            end
+
+	            if imgui.MenuItem("clear console") then
+	            	CONSOLE.clear()
 	            end
 
 	        	-- project reload timer
@@ -707,6 +711,10 @@ IDE = {
 		if IDE.update_timeout == 0 then
 			IDE.update_timeout = 2
 
+			if init_blanke or IDE.errd then
+				IDE.requireBlanke()
+			end
+
 	        IDE.iteratePlugins(function(p, plugin)
 	        	if plugin.onReload then
 	        		plugin.onReload()
@@ -737,8 +745,6 @@ IDE = {
 			end)
 
 			if init_blanke or IDE.errd then
-				IDE.errd = false
-				IDE.requireBlanke()
 				result, chunk = IDE.try(BlankE.init, UI.getSetting('initial_state'), true)
 				if not result then return false end
 			else
@@ -809,7 +815,7 @@ IDE = {
 			file:close()
 		end
 
-		if not dont_reload then
+		if IDE.errd or not dont_reload then
 			IDE._reload(IDE.getShortProjectPath()..'/assets.lua', true)
 		end
 	end,

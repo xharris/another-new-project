@@ -2,6 +2,7 @@ Net = {
     entity_update_rate = 0, -- m/s
     
     is_init = false,
+    is_connected = false,
     client = nil,
     server = nil,
     
@@ -89,8 +90,17 @@ Net = {
         
         Net.client:setPing()
         Net.client:connect(Net.address, Net.port)
+        Net.is_connected = true
         Debug.log("joining")
 
+        return Net
+    end,
+
+    disconnect = function()
+        if Net.client then Net.client:disconnect() end
+        Net.is_init = false
+        Net.is_connected = false
+        Net.client = nil
         return Net
     end,
     
@@ -223,11 +233,6 @@ Net = {
         data = json.encode(in_data)
         if Net.server then Net.server:send(data) end
         if Net.client then Net.client:send(data) end
-        return Net
-    end,
-
-    disconnect = function()
-        if Net.client then Net.client:disconnect() end
         return Net
     end,
 

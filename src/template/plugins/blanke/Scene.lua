@@ -624,9 +624,9 @@ Scene = Class{
 				end
 
 				if data.hitbox then
-					for i_h, hitbox in ipairs(data.hitbox) do
+					--for i_h, hitbox in ipairs(data.hitbox) do
 						-- nothing at the moment
-					end
+					--end
 				end
 			end
 		end
@@ -722,7 +722,9 @@ Scene = Class{
 		    end
 
 
-		end -- BlankE._ide_mode
+		else -- BlankE._ide_mode
+			if self._fake_view then self._fake_view.disabled = true end
+		end
 	end,
 
 	_real_draw = function(self)

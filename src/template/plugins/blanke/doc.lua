@@ -75,7 +75,7 @@ num sprite_angle					-- in degrees
 num sprite_xscale, sprite_yscale	-- 1 = normal scaling, -1 = flip
 num sprite_xoffset, sprite_yoffset
 num sprite_xshear, sprite_yshear
-num sprite_color{r, g, b}			-- blend color for sprite. default = 255(white)
+num sprite_color[r, g, b]			-- blend color for sprite. default = 255(white)
 num sprite_alpha					-- default = 255
 num sprite_speed					-- default = 1
 num sprite_frame
@@ -169,6 +169,10 @@ function entity0:update(dt)
 
     if self.k_left() and not self.k_right() then
     	self.hspeed = 180
+    end
+
+    if self.k_up() then
+    	self:jump()
     end
 end
 

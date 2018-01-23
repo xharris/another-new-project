@@ -6,3 +6,5 @@ function <NAME>:init()
 end
 
 function <NAME>:update(dt)
+
+end
