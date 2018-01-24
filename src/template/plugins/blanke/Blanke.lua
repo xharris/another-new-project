@@ -37,7 +37,8 @@ end
 function _iterateGameGroup(group, func)
 	game[group] = ifndef(game[group], {})
     for i, obj in ipairs(game[group]) do
-        func(obj, i)
+        ret_val = func(obj, i)
+        if ret_val ~= nil then return ret_val end
     end
 end
 
@@ -214,6 +215,14 @@ BlankE = {
 			end
 		end
 		game = new_game_array
+	end,
+
+	getByUUID = function(type, obj_uuid)
+		return _iterateGameGroup(type, function(obj, i)
+			if obj.uuid == obj_uuid then
+				return game[type][i]
+			end
+		end)
 	end,
 
 	main_cam = nil,
@@ -500,7 +509,9 @@ BlankE = {
 	    p = string.gsub(p, "\t", "")
 	    msg = string.gsub(p, "%[string \"(.-)\"%]", "%1")
 
+	    Net.disconnect()
 		BlankE.clearObjects(true)
+	    HC.resetHash()
 		_err_state.error_msg = msg
 		State.switch(_err_state)
 	end,

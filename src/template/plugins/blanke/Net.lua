@@ -1,10 +1,8 @@
 Net = {
-    entity_update_rate = 0, -- m/s
+    obj_update_rate = 0, -- m/s
     
     is_init = false,
-    is_connected = false,
     client = nil,
-    server = nil,
     
     onReceive = nil,    
     onConnect = nil,    
@@ -13,18 +11,18 @@ Net = {
     address = "localhost",
     port = 12345,
 
-    _client_entities = {},      -- entities added by this client
-    _server_entities = {},      -- entities added by other clients
+    _objects = {},          -- objects sync from other clients _objects = {'client12' = {object1, object2, ...}}
+    _local_objects = {},    -- objects added by this client
 
-    _entity_property_excludes = {'^_images$','^_sprites$','^sprite$','previous$','start$','^shapes$','^collision','^onCollision$','^is_net_entity$'},
-    
-    _timer = 0,
     id = nil,
+    _timer = 0,
 
     init = function(address, port)
         Net.address = ifndef(address, "localhost") 
         Net.port = ifndef(port, Net.port)     
         Net.is_init = true
+
+        Net._timer = Timer():every(Net.updateObjects, 2):start()
 
         Debug.log("networking initialized")
         return Net
@@ -42,42 +40,12 @@ Net = {
                     Net._onReceive(data)
                 end
             end
-
-            Net._timer = Net._timer + 1
-            if override or Net._timer % Net.entity_update_rate == 0 then
-                Net.updateEntities()
-            end
         end
-        return Net
-    end,
-
-    -- returns "Server" object
-    host = function()
-        if Net.server then return end
-        if Net.client then return end
-        if not Net.is_init then
-            Net.init(Net.address, Net.port)
-        end   
-        Net.server = grease.udpServer()
-        Net.server:setPing()
-        Net.server:listen(Net.port)
-        
-        Net.server.callbacks.connect = Net._onConnect
-        Net.server.callbacks.disconnect = Net._onDisconnect
-        Net.server.callbacks.recv = Net._onReceive
-
-        Net.server.handshake = "blanke_net"
-        Debug.log("hosting")
-
-        --Net.server:startserver(Net.port)
-        -- room_create() -- default room
-
         return Net
     end,
     
     -- returns "Client" object
     join = function(address, port) 
-        if Net.server then return end
         if Net.client then return end
         if not Net.is_init then
             Net.init(address, port)
@@ -101,7 +69,28 @@ Net = {
         Net.is_init = false
         Net.is_connected = false
         Net.client = nil
+
+        for clientid, objects in pairs(Net._objects) do
+            for o, object in ipairs(objects) do
+                if not object.keep_on_disconnect then
+                    obj:destroy()
+                end
+            end
+        end
+
         return Net
+    end,
+
+    _onReady = function()
+        if Net.onReady then Net.onReady() end
+
+        Net.send({
+            type="netevent",
+            event="object.sync",
+            info={
+                new_client=clientid
+            }
+        })
     end,
     
     _onConnect = function(clientid) 
@@ -111,16 +100,18 @@ Net = {
     _onDisconnect = function(clientid) 
         Debug.log('- '..clientid)
         if Net.onDisconnect then Net.onDisconnect(clientid) end
-        for ent_class, entities in pairs(Net._server_entities) do
-            for ent_uuid, entity in pairs(entities) do
-                if entity._client_id == data then
-                    Net._server_entities[ent_class][ent_uuid] = nil
-                end
+        
+        -- remove that client's object
+        for o, object in ipairs(Net._objects[clientid]) do
+            if not object.keep_on_disconnect then
+                obj:destroy()
             end
         end
+        Net._objects[clientid] = nil
     end,
     
     _onReceive = function(data, id)
+        local raw_data = data
         if data:starts('{') then
             data = json.decode(data)
 
@@ -140,89 +131,56 @@ Net = {
             Net._onConnect(data:sub(1,-2))
             return
         end
-        Debug.log(data.event)
-
-        function addEntity(info)
-            local classname = info.classname
-
-            -- is entity this instance?
-            --if info._client_id == Net.id then return false end
-
-            -- if entity is not already added
-            if Net._server_entities[classname] ~= nil and
-               Net._server_entities[classname][info.net_uuid] ~= nil then return false end
-
-            -- set properties
-            local new_entity = _G[classname]()
-            for key, val in pairs(info) do
-                new_entity[key] = val
-            end
-            --new_entity._client_id = info._client_id
-            new_entity.is_net_entity = true
-
-            Net._server_entities[classname] = ifndef(Net._server_entities[classname], {})
-            Net._server_entities[classname][info.net_uuid] = new_entity
-            return true
-        end
 
         if data.type and data.type == 'netevent' then
-            Debug.log(data.event)
+            --Debug.log(data.event)
+
             -- get assigned client id
             if data.event == 'getID' then
                 Net.id = data.info
+                Net._onReady()
+            end
+
+            if data.event == 'client.connect' then
+                Net._onConnect(data.info)
+            end
+
+            if data.event == 'client.disconnect' then
+                Net._onDisconnect(data.info)
             end
             
-            -- new entity added
-            if data.event == 'entity.add' then
-                if addEntity(Net._getEntityInfo(data.info)) then
-                    Debug.log("added "..data.info.net_uuid)
+            -- new object added from diff client
+            if data.event == 'object.add' and data.info.clientid ~= Net.id then
+                local obj = data.info.object
+
+                Debug.log("added "..obj.classname)
+                Net._objects[data.info.clientid] = ifndef(Net._objects[data.info.clientid], {})
+                if not Net._objects[data.info.clientid][obj.net_uuid] then
+                    Net._objects[data.info.clientid][obj.net_uuid] = _G[obj.classname]()
+                    Net._objects[data.info.clientid][obj.net_uuid].net_object = true
                 end
             end
 
             -- update net entity
-            if data.event == 'entity.update' then
-                local info = data.info
-
-                if Net._server_entities[info.classname] ~= nil then
-                    for net_uuid, entity in pairs(Net._server_entities[info.classname]) do
-                        if entity.net_uuid == info.net_uuid then
-                            for key, val in pairs(info) do
-                                entity[key] = val
-                            end
+            if data.event == 'object.update' and data.info.clientid ~= Net.id then
+                if Net._objects[data.info.clientid] then
+                    local obj = Net._objects[data.info.clientid][data.info.net_uuid]
+                    if obj then
+                        for var, val in pairs(data.info.values) do
+                            obj[var] = val
                         end
                     end
                 end
             end
 
-            -- synchronize entities on server
-            if data.event == 'entity.sync' then
-                for i, info in ipairs(data.info) do
-                    if addEntity(info) then
-                        Debug.log("added "..info._client_id)
-                    end
-                end
-            end
-
-            -- new person has joined network
-            if data.event == 'join' then
-                --[[
-                Net.send({
-                    type="netevent",
-                    event="entity.sync",
-                    info={
-                        exclude_uuid=data.info.id
-                    }
-                })
-                ]]--
+            -- send net object data to other clients
+            if data.event == 'object.sync' and data.info.new_client ~= Net.id then
+                Net.sendSyncObjects()
             end
 
             -- send to all clients
             if data.event == 'broadcast' then
-                Net.send({
-                    type='netevent',
-                    event='broadcast',
-                    info=data.info
-                })
+                print('ALL:',data.info)
             end
         end
 
@@ -231,64 +189,60 @@ Net = {
 
     send = function(in_data) 
         data = json.encode(in_data)
-        if Net.server then Net.server:send(data) end
         if Net.client then Net.client:send(data) end
         return Net
     end,
 
-    _getEntityInfo = function(entity) 
-        local entity_info = {}
+    addObject = function(obj)
+        if obj.net_object then return end
 
-        -- get properties needed for syncing
-        for property, value in pairs(entity) do
-            add = true
-            if type(value) == 'function' then add = false end
-            for i_e, exclude in ipairs(Net._entity_property_excludes) do
-                if string.match(property, exclude) then
-                    add = false
-                end
-            end
-
-            if add then
-                entity_info[property] = value
-            end
-        end
-        entity_info.classname = entity.classname
-        entity_info.x = entity.x
-        entity_info.y = entity.y
-        entity_info._client_id = Net.id
-
-        return entity_info
-    end,
-
-    addEntity = function(entity)
-        Net._client_entities[entity.net_uuid] = entity
-
+        obj.net_uuid = uuid()
         --notify the other server clients
         Net.send({
             type='netevent',
-            event='entity.add',
-            info=Net._getEntityInfo(entity)
+            event='object.add',
+            info={
+                clientid = Net.id,
+                object = {net_uuid=obj.net_uuid, classname=obj.classname}
+            }
         })
-        return Net
-    end,
-
-    updateEntities = function()
-        for net_uuid, entity in pairs(Net._client_entities) do
-            Debug.log("updating "..net_uuid)
-            Net.send({
-                type='netevent',
-                event='entity.update',
-                info=Net._getEntityInfo(entity)
-            })
+        table.insert(Net._local_objects, obj)
+        if obj.netSync then
+            obj:netSync()
         end
         return Net
     end,
 
-    draw = function(obj_name)
-        if Net._server_entities[obj_name] then
-            for net_uuid, obj in pairs(Net._server_entities[obj_name]) do
-                obj:draw()
+    sendSyncObjects = function()
+        for o, obj in ipairs(Net._local_objects) do
+            Net.send({
+                type='netevent',
+                event='object.add',
+                info={
+                    clientid = Net.id,
+                    object = {net_uuid=obj.net_uuid, classname=obj.classname}
+                }
+            })
+            obj:netSync()
+        end
+    end,
+
+    updateObjects = function()
+        for o, obj in ipairs(Net._local_objects) do
+            obj:netSync()
+        end
+    end,
+
+    draw = function(classname)
+        for clientid, objects in pairs(Net._objects) do
+            for o, obj in pairs(objects) do
+                if classname then
+                    if obj.classname == classname then
+                        obj:draw()
+                    end
+                else
+                    obj:draw()
+                end
             end
         end
         return Net

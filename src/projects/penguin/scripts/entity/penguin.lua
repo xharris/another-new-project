@@ -2,6 +2,8 @@ BlankE.addClassType("Penguin", "Entity")
 
 local k_right, k_left, k_up
 
+Penguin.net_sync_vars = {'x','y','color'}
+
 function Penguin:init()
 	self:addAnimation{
 		name = 'stand',
@@ -31,7 +33,9 @@ function Penguin:init()
 
 	self.gravity = 30
 	self.can_jump = true
-	self.color = Draw.red
+	self.color = Draw.randomColor()
+	self.sprite_yoffset = -16
+	self.sprite_xoffset = -16
 
 	self:addShape("main", "rectangle", {0, 0, 32, 32})		-- rectangle of whole players body
 	self:addShape("jump_box", "rectangle", {4, 30, 24, 2})	-- rectangle at players feet
@@ -60,36 +64,34 @@ function Penguin:update(dt)
         end 
     end
 
+
 	-- left/right movement
-	if k_right() then
-		self.hspeed = 180
-		self.sprite_xscale = 1
-	end
-	if k_left() then
-		self.hspeed = -180
-		self.sprite_xscale = -1
-	end
-	if not k_right() and not k_left() then
-		self.hspeed = 0
-	end
+	if not self.net_object then
+		if k_right() then
+			self.hspeed = 180
+			self.sprite_xscale = 1
+			self:netSync('hspeed', 'sprite_xscale')
+		end
+		if k_left() then
+			self.hspeed = -180
+			self.sprite_xscale = -1
+			self:netSync('hspeed', 'sprite_xscale')
+		end
+		if not k_right() and not k_left() then
+			self.hspeed = 0
+			self:netSync('hspeed')
+		end
 
-	if k_up() then
-		self:jump()
-	end
-
-	-- flip sprite
-	self.sprite_yoffset = -16
-	if self.sprite_xscale == 1 then
-		self.sprite_xoffset = -16
-	end
-	if self.sprite_xscale == -1 then
-		self.sprite_xoffset = -16
+		if k_up() then
+			self:jump()
+		end
 	end
 end
 
 function Penguin:jump()
 	if self.can_jump then
 		self.vspeed = -700
+		self:netSync('vspeed')
 		self.can_jump = false
 	end
 end

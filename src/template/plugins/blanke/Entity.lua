@@ -5,6 +5,8 @@ local rad = math.rad
 Entity = Class{
 	x = 0,
 	y = 0,
+	net_sync_vars = {'x', 'y'},
+	net_excludes = {'^_images$','^_sprites$','^sprite$','previous$','start$','^shapes$','^collision','^onCollision$','^is_net_entity$'},
     _init = function(self)    
     	self.classname = ifndef(self.classname, 'Entity')
     	self._destroyed = false
@@ -57,12 +59,43 @@ Entity = Class{
 		self.collisionStopX = nil
 		self.collisionStopY = nil	
 
-		-- networking
-		self.is_net_entity = false
-		self.net_uuid = uuid()
-
 		self.onCollision = {["*"] = function() end}
     	_addGameObject('entity', self)
+    end,
+
+    netSync = function(self, ...)
+    	vars = {...}
+
+    	update_values = {}
+    	if not self.net_object then
+    		-- update specific vars
+    		for v, var in ipairs(vars) do
+		    	if var and self[var] then
+		    		if Net.is_connected then
+		    			update_values[var] = self[var]
+		    		end
+		    	end
+	    	end
+
+	    	-- update all
+	    	if #vars == 0 then
+	    		for v, var in ipairs(self.net_sync_vars) do
+	    			update_values[var] = self[var]
+	    		end
+	    	end
+	    	-- send collected vars
+	    	if Net.is_connected then
+	    		Net.send{
+					type="netevent",
+					event="object.update",
+					info={
+						clientid=Net.id,
+						net_uuid=self.net_uuid,
+						values=update_values
+	    			}
+	    		}
+	    	end
+	    end
     end,
 
     _update = function(self, dt)
@@ -98,9 +131,6 @@ Entity = Class{
 			self.ystart = self.y
 		end
 
-		self.xprevious = self.x
-		self.yprevious = self.y
-
 		-- check for collisions
 		if not self.pause then
 			-- calculate speed/direction
@@ -122,14 +152,16 @@ Entity = Class{
 			if gravy ~= 0 then self.vspeed = self.vspeed + gravy end
 
 			-- move shapes if the x/y is different
-			if not self.pause and (self.xprevious ~= self.x or self.yprevious ~= self.y) then
+			if self.xprevious ~= self.x or self.yprevious ~= self.y then
 				for s, shape in pairs(self.shapes) do
 					-- account for x/y offset?
 					shape:moveTo(self.x, self.y)
 				end
-	            if not self.is_net_entity then Net.updateEntities() end
 			end
         
+			self.xprevious = self.x
+			self.yprevious = self.y
+
 			local dx = self.hspeed + speedx
 			local dy = self.vspeed + speedy
 
@@ -183,7 +215,6 @@ Entity = Class{
 			end
 
 
-
 			-- set position of sprite
 			if self.shapes[self._main_shape] ~= nil then
 				self.x, self.y = self.shapes[self._main_shape]:center()
@@ -196,6 +227,7 @@ Entity = Class{
 				self.speed = self.speed - (self.speed * self.friction)*dt
 			end
 		end
+
 		return self
 	end,
 

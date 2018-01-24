@@ -450,6 +450,7 @@ IDE = {
 
 	            if imgui.MenuItem("clear console") then
 	            	CONSOLE.clear()
+	            	if Debug then Debug.clear() end
 	            end
 
 	        	-- project reload timer
@@ -468,15 +469,15 @@ IDE = {
 	                UI.setSetting("console_height", new_height)
 	            end
 
-	            -- show blanke dev stuff
-	            if imgui.MenuItem("secret stuff", nil, UI.titlebar.secret_stuff) then
-	            	UI.titlebar.secret_stuff = not UI.titlebar.secret_stuff
-	            end
-
 	            local fullscreen = UI.getSetting("fullscreen")
 	            if imgui.MenuItem("fullscreen", nil, fullscreen) then
 	            	UI.setSetting("fullscreen", not fullscreen)
 	            	love.window.setFullscreen(not fullscreen)
+	            end
+
+	            -- show blanke dev stuff
+	            if imgui.MenuItem("secret stuff", nil, UI.titlebar.secret_stuff) then
+	            	UI.titlebar.secret_stuff = not UI.titlebar.secret_stuff
 	            end
 
 	        	imgui.EndMenu()

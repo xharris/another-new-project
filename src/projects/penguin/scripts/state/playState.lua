@@ -12,21 +12,24 @@ function playState:enter(previous)
 	k_join = Input('j')
 end
 
+function Net:onReady()
+	-- add player's penguin
+	new_penguin = Penguin()
+	test_scene:addEntity(new_penguin)
+	Net.addObject(new_penguin)
+	-- create camera
+	main_view:follow(new_penguin)
+end
+
 function playState:update(dt)
 	if k_join() and not Net.is_connected then
 		Net.join()
-		-- add player's penguin
-		new_penguin = Penguin()
-		test_scene:addEntity(new_penguin)
-		Net.addEntity(new_penguin)
-		-- create camera
-		main_view:follow(new_penguin)
 	end
 end
 
 function playState:draw()
-	Net.draw()
 	main_view:draw(function()
+		Net.draw('Penguin')
 		test_scene:draw()
 	end)
 	Debug.draw()

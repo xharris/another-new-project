@@ -36,6 +36,10 @@ Draw = Class{
 		return Draw
 	end,
 
+	randomColor = function(alpha)
+		return {randRange(0,255), randRange(0,255), randRange(0,255), ifndef(alpha, 255)}
+	end,
+
 	setColor = function(r,g,b,a)
 		if r == nil then BlankE.errhand("invalid color: {"..tostring(r)..", "..tostring(g)..", "..tostring(b)..", "..tostring(a).."}"); return false end
 
