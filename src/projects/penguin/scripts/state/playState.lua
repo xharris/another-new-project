@@ -23,6 +23,8 @@ end
 
 function playState:update(dt)
 	if k_join() and not Net.is_connected then
+		--new_penguin = Penguin()
+		--test_scene:addEntity(new_penguin)
 		Net.join()
 	end
 end

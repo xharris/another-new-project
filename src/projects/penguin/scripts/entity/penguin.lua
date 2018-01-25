@@ -77,7 +77,7 @@ function Penguin:update(dt)
 			self.sprite_xscale = -1
 			self:netSync('hspeed', 'sprite_xscale')
 		end
-		if not k_right() and not k_left() then
+		if self.hspeed ~= 0 and not k_right() and not k_left() then
 			self.hspeed = 0
 			self:netSync('hspeed')
 		end

@@ -22,7 +22,7 @@ Net = {
         Net.port = ifndef(port, Net.port)     
         Net.is_init = true
 
-        Net._timer = Timer():every(Net.updateObjects, 2):start()
+        Net._timer = Timer():every(Net.updateObjects, 1):start()
 
         Debug.log("networking initialized")
         return Net
@@ -197,6 +197,7 @@ Net = {
         if obj.net_object then return end
 
         obj.net_uuid = uuid()
+        obj.net_var_old = {}
         --notify the other server clients
         Net.send({
             type='netevent',
@@ -207,9 +208,58 @@ Net = {
             }
         })
         table.insert(Net._local_objects, obj)
-        if obj.netSync then
-            obj:netSync()
+
+        obj.netSync = function(self, ...)
+            vars = {...}
+
+            update_values = {}
+            if not self.net_object then
+                function hasVarChanged(var_name)
+                    if self.net_var_old[var_name] and
+                       self.net_var_old[var_name] == self[var_name]
+                    then
+                        return false
+                    end
+                    self.net_var_old[var_name] = self[var_name]
+                    return true
+                end
+
+                -- update specific vars
+                for v, var in ipairs(vars) do
+                    if var and self[var] then
+                        if Net.is_connected then
+                            if hasVarChanged(var) then
+                                update_values[var] = self[var]
+                            end
+                        end
+                    end
+                end
+
+                -- update all
+                if #vars == 0 then
+                    for v, var in ipairs(self.net_sync_vars) do
+                        if hasVarChanged(var) then 
+                            update_values[var] = self[var]
+                        end
+                    end
+                end
+                -- send collected vars
+                if Net.is_connected and table.len(update_values) > 0 then
+                    Net.send{
+                        type="netevent",
+                        event="object.update",
+                        info={
+                            clientid=Net.id,
+                            net_uuid=self.net_uuid,
+                            values=update_values
+                        }
+                    }
+                end
+            end
         end
+
+        obj:netSync()
+
         return Net
     end,
 

@@ -130,6 +130,12 @@ function table.tonumber(t)
 	return t
 end
 
+function table.len(t)
+	local count = 0
+	for _ in pairs(t) do count = count + 1 end
+	return count
+end
+
 --[[
 
 	MATH

@@ -63,41 +63,6 @@ Entity = Class{
     	_addGameObject('entity', self)
     end,
 
-    netSync = function(self, ...)
-    	vars = {...}
-
-    	update_values = {}
-    	if not self.net_object then
-    		-- update specific vars
-    		for v, var in ipairs(vars) do
-		    	if var and self[var] then
-		    		if Net.is_connected then
-		    			update_values[var] = self[var]
-		    		end
-		    	end
-	    	end
-
-	    	-- update all
-	    	if #vars == 0 then
-	    		for v, var in ipairs(self.net_sync_vars) do
-	    			update_values[var] = self[var]
-	    		end
-	    	end
-	    	-- send collected vars
-	    	if Net.is_connected then
-	    		Net.send{
-					type="netevent",
-					event="object.update",
-					info={
-						clientid=Net.id,
-						net_uuid=self.net_uuid,
-						values=update_values
-	    			}
-	    		}
-	    	end
-	    end
-    end,
-
     _update = function(self, dt)
     	if self._destroyed then return end
 
