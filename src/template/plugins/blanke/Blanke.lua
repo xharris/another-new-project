@@ -308,8 +308,20 @@ BlankE = {
 		local snap = BlankE._getSnap()
 		local grid_color = BlankE.grid_color
 
+		local conf_w = CONF.window.width
+		local conf_h = CONF.window.height
+
+		local diff_w = ((game_width) - (conf_w))
+		local diff_h = ((game_height) - (conf_h))
+
 		local half_height = height/2
 		local half_width = width/2
+
+		-- resizing the window offset
+		x = x - math.abs(diff_w)
+		y = y - math.abs(diff_h)
+		width = width + math.abs(diff_w*2)
+		height = height + math.abs(diff_h*2)
 
 		local x_offset = -((x-half_width) % snap[1])
 		local y_offset = -((y-half_height) % snap[2])
