@@ -18,12 +18,16 @@ function _addGameObject(type, obj)
 
     if obj._update or obj.update then obj.auto_update = true end
 
+    -- inject functions xD
     obj._destroyed = false
     if not obj.destroy then
     	obj.destroy = function(self)
 	    	self._destroyed = true
 	    	_destroyGameObject(type,self)
 	    end
+    end
+    if not obj.netSync then
+    	obj.netSync = function(self) end
     end
 
     game[type] = ifndef(game[type],{})
@@ -131,7 +135,7 @@ BlankE = {
 		if type(first_state) == 'string' then
 			first_state = _G[first_state]
 		end
-		State.switch(first_state)       
+		State.switch(first_state)   
 		BlankE._is_init = true
 	end,
 
@@ -223,6 +227,17 @@ BlankE = {
 				return game[type][i]
 			end
 		end)
+	end,
+
+	getInstances = function(type)
+		local classname = _G[type].classname
+		local ret_instances = {}
+		_iterateGameGroup(type, function(obj, i)
+			if obj.classname == classname then
+				table.insert(ret_instances, obj)
+			end
+		end)
+		return ret_instances
 	end,
 
 	main_cam = nil,

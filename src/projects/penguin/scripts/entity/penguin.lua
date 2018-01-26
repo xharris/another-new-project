@@ -2,7 +2,7 @@ BlankE.addClassType("Penguin", "Entity")
 
 local k_right, k_left, k_up
 
-Penguin.net_sync_vars = {'x','y','color'}
+Penguin.net_sync_vars = {'x','y','color','hspeed','vspeed','sprite_xscale'}
 
 function Penguin:init()
 	self:addAnimation{
@@ -43,8 +43,9 @@ function Penguin:init()
 end
 
 function Penguin:update(dt)
+	print(wall_x)
 	self.onCollision["main"] = function(other, sep_vector)	-- other: other hitbox in collision
-		if other.tag == "ground" then
+		if self.x > wall_x and other.tag == "ground" then
 			-- ceiling collision
             if sep_vector.y > 0 and self.vspeed < 0 then
                 self:collisionStopY()
@@ -57,29 +58,25 @@ function Penguin:update(dt)
 	end
 
 	self.onCollision["jump_box"] = function(other, sep_vector)
-        if other.tag == "ground" and sep_vector.y < 0 then
+        if self.x > wall_x and other.tag == "ground" and sep_vector.y < 0 then
             -- floor collision
             self.can_jump = true 
         	self:collisionStopY()
         end 
     end
 
-
 	-- left/right movement
 	if not self.net_object then
 		if k_right() then
 			self.hspeed = 180
 			self.sprite_xscale = 1
-			self:netSync('hspeed', 'sprite_xscale')
 		end
 		if k_left() then
 			self.hspeed = -180
 			self.sprite_xscale = -1
-			self:netSync('hspeed', 'sprite_xscale')
 		end
 		if self.hspeed ~= 0 and not k_right() and not k_left() then
 			self.hspeed = 0
-			self:netSync('hspeed')
 		end
 
 		if k_up() then
@@ -91,7 +88,6 @@ end
 function Penguin:jump()
 	if self.can_jump then
 		self.vspeed = -700
-		self:netSync('vspeed')
 		self.can_jump = false
 	end
 end

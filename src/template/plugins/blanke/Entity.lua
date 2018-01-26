@@ -19,7 +19,7 @@ Entity = Class{
 
 		-- x and y coordinate of sprite
 		self.x = 0--Entity.x
-		self.y = 0--sEntity.y
+		self.y = 0--Entity.y
 
 		-- sprite/animation variables
 		self._call_sprite_update = {}
@@ -61,6 +61,16 @@ Entity = Class{
 
 		self.onCollision = {["*"] = function() end}
     	_addGameObject('entity', self)
+    end,
+
+    destroy = function(self)
+    	-- destroy hitboxes
+    	for s, shape in pairs(self.shapes) do
+    		shape:destroy()
+    	end
+
+    	self._destroyed = true
+    	_destroyGameObject('entity', self)
     end,
 
     _update = function(self, dt)
@@ -179,7 +189,6 @@ Entity = Class{
 				end
 			end
 
-
 			-- set position of sprite
 			if self.shapes[self._main_shape] ~= nil then
 				self.x, self.y = self.shapes[self._main_shape]:center()
@@ -192,6 +201,8 @@ Entity = Class{
 				self.speed = self.speed - (self.speed * self.friction)*dt
 			end
 		end
+
+		self:netSync()
 
 		return self
 	end,
@@ -330,8 +341,9 @@ Entity = Class{
 	-- str name: reference name of shape
 	addShape = function(self, name, shape, args, tag)
 		tag = ifndef(tag, self.classname..'.'..name)
-		local new_hitbox = Hitbox(shape, args, tag, self.x, self.y)
+		local new_hitbox = Hitbox(shape, args, tag, 0, 0)
 		new_hitbox:setParent(self)
+		new_hitbox:moveTo(self.x, self.y)
 		self.shapes[name] = new_hitbox
 		return self
 	end,

@@ -88,6 +88,8 @@ num hspeed, vspeed
 num speed 							-- best used with 'direction'
 num xprevious, yprevious			-- location during last update loop
 num xstart, ystart					-- location when object is first created. not always 0,0
+
+{} net_sync_vars					-- variables to be synced by the Net library
 bool show_debug
 
 -- overridable methods

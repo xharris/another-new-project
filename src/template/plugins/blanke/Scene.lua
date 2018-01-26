@@ -97,6 +97,7 @@ Scene = Class{
 			self._fake_view.motion_type = 'smooth' -- (not working as intended)		
 			self._fake_view.draggable = true
 			self._fake_view.drag_input = Input('mouse.3','space')
+			
 		end
 
 		if name and assets[name] then
@@ -198,12 +199,12 @@ Scene = Class{
 			if data["entity"] then
 				for i_e, entity in ipairs(data["entity"]) do
 					if _G[entity.classname] then
-						Entity.x = entity.x
-						Entity.y = entity.y
-						local new_entity = _G[entity.classname](entity.x, entity.y)
+						local new_entity = _G[entity.classname]()
 						new_entity._loadedFromFile = true
-						Entity.x = 0
-						Entity.y = 0
+						new_entity.x = entity.x
+						new_entity.y = entity.y
+						new_entity.xstart = entity.x
+						new_entity.ystart = entity.y
 
 						self:addEntity(new_entity, layer)
 					end
@@ -222,7 +223,8 @@ Scene = Class{
 					new_hitbox._loadedFromFile = true
 				end
 			end
-		end
+		end   
+		
 		return self
 	end,
 
@@ -350,13 +352,13 @@ Scene = Class{
 	end,
 
 	_addEntityStr = function(self, ent_name, x, y, layer, width, height)
-		Entity.x = x
-		Entity.y = y
 		local new_entity = _G[ent_name](x, y, width, height)
-		Entity.x = 0
-		Entity.y = 0
-		--new_entity.x = x
-		--new_entity.y = y
+		if new_entity.x == 0 and new_entity.y == 0 then
+			new_entity.x = x
+			new_entity.y = y
+			new_entity.xstart = x
+			new_entity.ystart = y
+		end
 		self:_addEntityTable(new_entity, layer)
 
 		return new_entity

@@ -152,12 +152,19 @@ Net = {
             -- new object added from diff client
             if data.event == 'object.add' and data.info.clientid ~= Net.id then
                 local obj = data.info.object
+                local clientid = data.info.clientid
 
                 Debug.log("added "..obj.classname)
-                Net._objects[data.info.clientid] = ifndef(Net._objects[data.info.clientid], {})
-                if not Net._objects[data.info.clientid][obj.net_uuid] then
-                    Net._objects[data.info.clientid][obj.net_uuid] = _G[obj.classname]()
-                    Net._objects[data.info.clientid][obj.net_uuid].net_object = true
+                Net._objects[clientid] = ifndef(Net._objects[clientid], {})
+                if not Net._objects[clientid][obj.net_uuid] then
+                    Net._objects[clientid][obj.net_uuid] = _G[obj.classname]()
+                    Net._objects[clientid][obj.net_uuid].net_object = true
+                    
+                    if obj.values then
+                        for var, val in pairs(obj.values) do
+                            Net._objects[clientid][obj.net_uuid][var] = val
+                        end
+                    end
                 end
             end
 
@@ -270,7 +277,7 @@ Net = {
                 event='object.add',
                 info={
                     clientid = Net.id,
-                    object = {net_uuid=obj.net_uuid, classname=obj.classname}
+                    object = {net_uuid=obj.net_uuid, classname=obj.classname, values=obj.net_var_old}
                 }
             })
             obj:netSync()

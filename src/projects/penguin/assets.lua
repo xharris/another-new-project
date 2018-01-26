@@ -23,6 +23,7 @@ function assets:test()
 end
 
 
+require 'scripts.entity.ground'
 require 'scripts.entity.penguin'
 
 require 'scripts.state.playState'

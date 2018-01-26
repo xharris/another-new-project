@@ -1,36 +1,36 @@
 Hitbox = Class{
 	_color = {},
 
-	init = function(self, shape, args, tag, xoffset, yoffset)
-		xoffset = ifndef(xoffset, 0)
-		yoffset = ifndef(yoffset, 0)
+	init = function(self, shape, args, tag)
+		self.xoffset = 0
+		self.yoffset = 0
 
 		self.HCShape = nil
 		if shape == "rectangle" then
-			args[1] = args[1] + xoffset
-			args[2] = args[2] + yoffset
+			args[1] = args[1]
+			args[2] = args[2]
 			self.HCShape = HC.rectangle(unpack(args))
 		elseif shape == "polygon" then
 			for a = 1, #args, 2 do
-				args[a] = args[a] + xoffset
-				args[a+1] = args[a+1] + yoffset
+				args[a] = args[a]
+				args[a+1] = args[a+1]
 			end
 			self.HCShape = HC.polygon(unpack(args))
 		elseif shape == "circle" then
-			args[1] = args[1] + xoffset
-			args[2] = args[2] + yoffset
+			args[1] = args[1]
+			args[2] = args[2]
 			self.HCShape = HC.circle(unpack(args))
 		elseif shape == "point" then
-			args[1] = args[1] + xoffset
-			args[2] = args[2] + yoffset
+			args[1] = args[1] 
+			args[2] = args[2] 
 			self.HCShape = HC.point(unpack(args))
 		end
 
 		self.HCShape.xoffset = 0--xoffset
 		self.HCShape.yoffset = 0--yoffset
 		if shape ~= "polygon" then
-			self.HCShape.xoffset = (args[1] - xoffset) / 2
-			self.HCShape.yoffset = (args[2] - yoffset) / 2
+			self.HCShape.xoffset = (args[1]) / 2
+			self.HCShape.yoffset = (args[2]) / 2
 		end
 
 		self.HCShape.tag = tag
@@ -74,7 +74,8 @@ Hitbox = Class{
 	end,
 
 	center = function(self)
-		return self.HCShape:center()
+		x, y = self.HCShape:center()
+		return x-self.HCShape.xoffset, y-self.HCShape.yoffset
 	end,	
 
 	pointTest = function(self, x, y)
