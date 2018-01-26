@@ -136,6 +136,15 @@ function table.len(t)
 	return count
 end
 
+function table.forEach(t, func)
+	local table_len = #t
+	if table_len == 0 then table_len = table.len(t) end
+	
+	for i=1,table_len do
+		func(i,t[i])
+	end
+end
+
 --[[
 
 	MATH

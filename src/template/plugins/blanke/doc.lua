@@ -25,6 +25,21 @@ function love.load()
 	BlankE.init()
 end
 
+--- THINGS TO KNOW
+
+-- 1) do NOT create objects outside of functions
+-- WRONG:
+main_camera = View()
+function state0:enter()
+
+end
+
+-- BETTER:
+main_camera = nil
+function state0:enter()
+	main_camera = View()
+end
+
 -- possible init options
 Blanke.init(first_state) -- first_state: can be string or object
 
@@ -352,6 +367,7 @@ getTileImage(x, y, layer, img_name)			-- same as geTTile but returns list of Ima
 removeTile(x, y, layer, img_name)
 removeHitboxAtPoint(x, y, layer)
 getList(object_type)						-- object_type: 'entity', 'tile', 'hitbox'
+getEntity(classname, [layer_name])
 draw()
 
 -- json format

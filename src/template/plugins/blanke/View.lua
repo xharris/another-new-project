@@ -14,6 +14,9 @@ View = Class{
 		self.drag_offset_x = 0
 		self.drag_offset_y = 0 
 
+		self.top = 0
+		self.bottom = 0
+
 		self.motion_type = 'none' -- linear, smooth
 		self.speed = 1 
 		self.max_distance = 0
@@ -48,7 +51,9 @@ View = Class{
         self._view_initial_pos = {0,0}
 		self._initial_mouse_pos = {0,0}
 		self._enable_grid = BlankE._ide_mode
-        
+        self._is_a_fake = false
+        self._is_drawing = 0
+
         if BlankE._ide_mode then
         	self.drag_input = Input('mouse.3','space')
 	    end
@@ -142,12 +147,6 @@ View = Class{
 
 	update = function(self, dt)
 		if not self.camera then return end
-
-		if self.noclip or (mouse_x > self.port_x and mouse_y > self.port_y and
-		   mouse_x < self.port_x+self.port_width and mouse_y < self.port_y+self.port_height) then
-			BlankE._mouse_x, BlankE._mouse_y = self:mousePosition()
-			BlankE._mouse_updated = true
-		end
 
 		-- dragging
 		if BlankE._ide_mode and self.drag_input == nil then
@@ -255,6 +254,9 @@ View = Class{
         end
 
     	end
+
+    	self.top = self.follow_y - (self.port_height/2)
+    	self.bottom = self.follow_y + (self.port_height/2)
         
 		-- move the camera
 		local wx = love.graphics.getWidth()/2
@@ -264,12 +266,29 @@ View = Class{
 			drag_offx, drag_offy = self.drag_offset_x, self.drag_offset_y
 		end
 
+		if self.noclip or (mouse_x > self.port_x and mouse_y > self.port_y and
+		   mouse_x < self.port_x+self.port_width and mouse_y < self.port_y+self.port_height) then
+			BlankE._mouse_x, BlankE._mouse_y = self:mousePosition()
+			if self.follow_entity then
+				BlankE._mouse_x = BlankE._mouse_x
+				BlankE._mouse_y = BlankE._mouse_y
+			else
+				BlankE._mouse_x = BlankE._mouse_x - self.follow_x + (self.port_width/2)
+				BlankE._mouse_y = BlankE._mouse_y - self.follow_y + (self.port_height/2)
+			end
+			BlankE._mouse_updated = true
+		end
+
 		self.camera:lockWindow(self.follow_x + self.offset_x + drag_offx + shake_x, self.follow_y + self.offset_y + drag_offy + shake_y, wx-self.max_distance, wx+self.max_distance,  wy-self.max_distance, wy+self.max_distance, self._smoother)
+		if self._is_drawing > 0 then 
+			self._is_drawing = self._is_drawing - 1
+		end
 	end,
 
-	attach = function(self)  
-		if self.camera and not self.disabled then 
-        	self.camera:attach(self.port_x, self.port_y, self.port_width, self.port_height, self.noclip)
+	attach = function(self) 
+		if self.camera and not self.disabled then  	 
+	        self._is_drawing = 2
+	        self.camera:attach(self.port_x, self.port_y, self.port_width, self.port_height, self.noclip)
 		end
 
         if (BlankE._ide_mode or self._enable_grid) and not self.disabled then

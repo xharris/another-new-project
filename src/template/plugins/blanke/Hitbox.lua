@@ -44,13 +44,15 @@ Hitbox = Class{
 	end,
 
 	draw = function(self, mode)
-		local color = ifndef(Hitbox._color[self.HCShape.tag], self.color)
-		color[4] = 255/3
+		if self._enabled then
+			local color = ifndef(Hitbox._color[self.HCShape.tag], self.color)
+			color[4] = 255/3
 
-		love.graphics.push("all")
-			love.graphics.setColor(color)
-			self.HCShape:draw(ifndef(mode, 'fill'))
-		love.graphics.pop()
+			love.graphics.push("all")
+				love.graphics.setColor(color)
+				self.HCShape:draw(ifndef(mode, 'fill'))
+			love.graphics.pop()
+		end
 	end,
 
 	setTag = function(self, new_tag)
@@ -66,11 +68,15 @@ Hitbox = Class{
 	end,
 
 	move = function(self, x, y)
-		self.HCShape:move(x, y)
+		if self._enabled then
+			self.HCShape:move(x, y)
+		end
 	end,
 
 	moveTo = function(self, x, y)
-		self.HCShape:moveTo(x+self.HCShape.xoffset, y+self.HCShape.yoffset)
+		if self._enabled then
+			self.HCShape:moveTo(x+self.HCShape.xoffset, y+self.HCShape.yoffset)
+		end
 	end,
 
 	center = function(self)

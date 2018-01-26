@@ -7,7 +7,7 @@ Entity = Class{
 	y = 0,
 	net_sync_vars = {'x', 'y'},
 	net_excludes = {'^_images$','^_sprites$','^sprite$','previous$','start$','^shapes$','^collision','^onCollision$','^is_net_entity$'},
-    _init = function(self)    
+    _init = function(self, parent)    
     	self.classname = ifndef(self.classname, 'Entity')
     	self._destroyed = false
 	    self._images = {}		
@@ -18,8 +18,12 @@ Entity = Class{
 		self.scene_show_debug = false
 
 		-- x and y coordinate of sprite
-		self.x = 0--Entity.x
-		self.y = 0--Entity.y
+		self.x = Entity.x
+		self.y = Entity.y
+		self.parent = parent
+
+		Entity.x = 0
+		Entity.y = 0
 
 		-- sprite/animation variables
 		self._call_sprite_update = {}
@@ -49,8 +53,8 @@ Entity = Class{
 		self.speed = 0
 		self.xprevious = 0
 		self.yprevious = 0
-		self.xstart = 0
-		self.ystart = 0
+		self.xstart = self.x
+		self.ystart = self.y
 
 		-- collision
 		self.shapes = {}
@@ -85,6 +89,7 @@ Entity = Class{
 		if self.update then
 			self:update(dt)
 		end	
+    	if self._destroyed then return end -- call again in case entity is destroyed during update
 
 		if not self.pause then
 			if self.sprite ~= nil and self.sprite.update ~= nil then
@@ -149,7 +154,7 @@ Entity = Class{
 			
 			for name, fn in pairs(self.onCollision) do
 				-- make sure it actually exists
-				if self.shapes[name] ~= nil then
+				if self.shapes[name] ~= nil and self.shapes[name]._enabled then
 					local obj_shape = self.shapes[name]:getHCShape()
 
 					local collisions = HC.neighbors(obj_shape)
@@ -190,7 +195,7 @@ Entity = Class{
 			end
 
 			-- set position of sprite
-			if self.shapes[self._main_shape] ~= nil then
+			if self.shapes[self._main_shape] ~= nil and self.shapes[self._main_shape]._enabled then
 				self.x, self.y = self.shapes[self._main_shape]:center()
 			else
 				self.x = self.x + dx*dt
@@ -351,7 +356,7 @@ Entity = Class{
 	-- remove a collision shape
 	removeShape = function(self, name)
 		if self.shapes[name] ~= nil then
-			self.shapes:disable()
+			self.shapes[name]:disable()
 		end
 		return self
 	end,

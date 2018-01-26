@@ -562,7 +562,7 @@ local ideScene = {
 
 							if obj == 'view' and imgui.TreeNode(obj) then
 								_iterateGameGroup('view', function(view, v)
-									if view.nickname ~= '_fake_view' and not view._destroyed then
+									if view.nickname ~= '_fake_view' and not view._destroyed and not view._is_fake_view then
 										inspectObj(view, ifndef(view.nickname, 'view'..v))
 									end
 								end)

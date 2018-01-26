@@ -67,6 +67,7 @@ Scene = Class{
 	_zoom_amt = 1,
 	_fake_view_start = {CONF.window.width/2, CONF.window.height/2},
 	_renames = {},
+	_fake_view = nil,
 	init = function(self, name)
 		self.layer_data = {}			-- load_objct
 		self.layer_order = {}			-- layers
@@ -85,13 +86,7 @@ Scene = Class{
 			_btn_confirm = Input('return','kpenter')
 			_btn_no_snap = Input('lctrl','rctrl')
 			_btn_zoom_in = Input('wheel.up')
-			_btn_zoom_out = Input('wheel.down')
-
-			self._fake_view = View()
-
-			self._fake_view.drag_offset_x = Scene._fake_view_start[1]
-			self._fake_view.drag_offset_y = Scene._fake_view_start[2]
-			self._fake_view._is_a_fake = true -- lol			
+			_btn_zoom_out = Input('wheel.down')		
 		end
 
 		if name and assets[name] then
@@ -101,6 +96,10 @@ Scene = Class{
 		if #self.layer_order == 0 then
 			self:addLayer()
 		end
+
+		Scene._fake_view.drag_offset_x = Scene._fake_view_start[1]
+		Scene._fake_view.drag_offset_y = Scene._fake_view_start[2]
+		Scene._fake_view._is_a_fake = true
 
 		self.draw_hitboxes = false
 		self.show_debug = false
@@ -193,12 +192,10 @@ Scene = Class{
 			if data["entity"] then
 				for i_e, entity in ipairs(data["entity"]) do
 					if _G[entity.classname] then
-						local new_entity = _G[entity.classname]()
+						Entity.x = entity.x
+						Entity.y = entity.y
+						local new_entity = _G[entity.classname](self)
 						new_entity._loadedFromFile = true
-						new_entity.x = entity.x
-						new_entity.y = entity.y
-						new_entity.xstart = entity.x
-						new_entity.ystart = entity.y
 
 						self:addEntity(new_entity, layer)
 					end
@@ -390,7 +387,9 @@ Scene = Class{
 	getTile = function(self, x, y, layer, img_name)
 		x = x-(x%self._snap[1])
 		y = y-(y%self._snap[2])
-		layer = self:_checkLayerArg(layer)
+		if layer ~= nil then
+			layer = self:_checkLayerArg(layer)
+		end
 		local ret_tiles = {}
 
 		local tiles = self.hash_tile:search(x, y)
@@ -399,6 +398,9 @@ Scene = Class{
 
 			if tile.layer ~= layer then
 				can_return = false
+			end
+			if layer == nil then
+				can_return = true
 			end
 			if img_name and self._delete_similar and tile.img_name ~= img_name then
 				can_return = false
@@ -415,8 +417,11 @@ Scene = Class{
 	-- same as getTile but returns list of Image()
 	getTileImage = function(self, x, y, layer, img_name)
 		local ret_tiles = self:getTile(x,y,layer,img_name)
-		for t, tile in pairs(ret_tiles) do
+		for t, tile in ipairs(ret_tiles) do
 			ret_tiles[t] = self:tileToImage(tile)
+		end
+		if #ret_tiles == 1 then
+			return ret_tiles[1]
 		end
 		return ret_tiles
 	end,
@@ -430,15 +435,17 @@ Scene = Class{
 		return img:crop(tile_data.crop.x, tile_data.crop.y, tile_data.crop.width, tile_data.crop.height)
 	end,
 
-	removeTile = function(self, x, y, layer_name, img_name)
+	removeTile = function(self, x, y, layer_name, img_name, permanent)
 		local rm_tiles = self:getTile(x,y,layer_name,img_name)
 
 		-- remove them from spritebatches
 		for layer, data in pairs(self.layer_data) do
-			if layer_name == layer then
-				for t, tile in ipairs(rm_tiles) do
-					self.hash_tile:delete(x, y, tile)
-					data.tile[tile.img_name]:set(tile.id, 0, 0, 0, 0, 0)
+			if layer_name == nil or layer_name == layer then
+				for t, tile in ipairs(ifndef(rm_tiles, {})) do
+					if permanent then self.hash_tile:delete(x, y, tile) end
+					if data.tile then
+						data.tile[tile.img_name]:set(tile.id, 0, 0, 0, 0, 0)
+					end
 				end
 			end
 		end
@@ -528,6 +535,7 @@ Scene = Class{
 		local new_hitbox = Hitbox("polygon", hit_info.points, hit_name)
 		new_hitbox:setColor(hitbox_info.color)
 		new_hitbox.hitbox_uuid = hit_info.uuid
+		new_hitbox.parent = self
 		table.insert(self.layer_data[layer].hitbox, new_hitbox)
 
 		return new_hitbox
@@ -552,7 +560,7 @@ Scene = Class{
 		local entities = {}
 		for layer, data in pairs(self.layer_data) do
 			if in_layer == nil or in_layer == layer then
-				for i_e, entity in ipairs(data.entity) do
+				for i_e, entity in ipairs(ifndef(data.entity,{})) do
 					if entity.classname == in_entity then
 						table.insert(entities, entity)
 					end
@@ -656,7 +664,7 @@ Scene = Class{
 	    	if _btn_remove() and _place_type then
 				_last_place = {nil,nil}
 	    		if _place_type == 'image' then
-	    			self:removeTile(_placeXY[1], _placeXY[2], _place_layer, _place_obj.img_name)
+	    			self:removeTile(_placeXY[1], _placeXY[2], _place_layer, _place_obj.img_name, true)
 	    		end
 
 	    		if _place_type == 'hitbox' then
@@ -713,14 +721,14 @@ Scene = Class{
 		    -- only use fake view if no other view is being used
 	    	local total = 0
 	    	_iterateGameGroup('view', function(view)
-	    		if not (view.disabled and not view._is_a_fake) then
+	    		if view._is_drawing > 0 and not view._is_a_fake then
 		    		total = total + 1
 		    	end
 	    	end)
-	    	if total > 1 then
-		    	self._fake_view.disabled = true
+	    	if total > 0 then
+		    	Scene._fake_view.disabled = true
 		    else
-		    	self._fake_view.disabled = false
+		    	Scene._fake_view.disabled = false
 		    end
 		end
 	end,
@@ -775,7 +783,7 @@ Scene = Class{
 	    	-- dragging the view/grid around
 	    	BlankE.setGridSnap(self._snap[1], self._snap[2])
 
-	    	self._fake_view:attach()
+	    	Scene._fake_view:attach()
 	    	
 	    	self:_real_draw()
 
@@ -809,29 +817,29 @@ Scene = Class{
 			    end
 		    end
 
-	    	self._fake_view:detach()
+	    	Scene._fake_view:detach()
 	    else
 	    	self:_real_draw()
 	    end
 	end,
 
 	focusEntity = function(self, ent)
-		if self._fake_view then
+		if Scene._fake_view then
 			-- removing followed entity
-			if ent == nil and self._fake_view.follow_entity then
-				self._fake_view.follow_entity.show_debug = false
-				self._fake_view.offset_x = 0
-				self._fake_view.offset_y = 0
+			if ent == nil and Scene._fake_view.follow_entity then
+				Scene._fake_view.follow_entity.show_debug = false
+				Scene._fake_view.offset_x = 0
+				Scene._fake_view.offset_y = 0
 			end
 			-- following entity
 			if ent then
 				-- TODO: offset not working as intended
-				self._fake_view.offset_x = self._fake_view.port_width - game_width 
-				self._fake_view.offset_y = self._fake_view.port_height - game_height
+				Scene._fake_view.offset_x = Scene._fake_view.port_width - game_width 
+				Scene._fake_view.offset_y = Scene._fake_view.port_height - game_height
 				ent.show_debug = true
 			end
 
-			self._fake_view:follow(ent)
+			Scene._fake_view:follow(ent)
 		end
 	end,
 

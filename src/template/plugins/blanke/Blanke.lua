@@ -47,7 +47,7 @@ function _iterateGameGroup(group, func)
 end
 
 function _destroyGameObject(type, del_obj)
-	_iterateGameGroup(type, function(obj, i)
+	_iterateGameGroup(type, function(obj, i) 
 		if obj.uuid == del_obj.uuid then
 			table.remove(game[type],i)
 		end
@@ -125,6 +125,7 @@ BlankE = {
 				BlankE.injectCallbacks()
 			end
 		end
+		Scene._fake_view = View()
 	    uuid.randomseed(love.timer.getTime()*10000)
 	    updateGlobals(0)
 
@@ -212,7 +213,6 @@ BlankE = {
 		for key, objects in pairs(game) do
 			for o, obj in ipairs(objects) do
 				if include_persistent or not obj.persistent then
-					--if obj.classname then print('destroy '..obj.classname) end
 					obj:destroy()
 					game[key][o] = nil
 				else

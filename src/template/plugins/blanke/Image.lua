@@ -2,12 +2,16 @@ local _images = {}
  
 Image = Class{
 	init = function(self, name)
+		self.name = name 
+
 		if type(name) == "string" and assets[name] then
 			self.image = assets[name]()
 		else
 			self.image = love.graphics.newImage(name)
 		end
+		self.image:setWrap("clampzero","clampzero")
 
+		self.quad = nil
 		self.x = 0
 		self.y = 0
 		self.angle = 0
@@ -50,7 +54,11 @@ Image = Class{
 
 		love.graphics.push()
 		love.graphics.setColor(self.color.r, self.color.g, self.color.b, self.alpha)	
-		love.graphics.draw(self.image, self.x, self.y, math.rad(self.angle), self.xscale, self.yscale, self.xoffset, self.yoffset, self.xshear, self.yshear)
+		if self.quad then
+			love.graphics.draw(self.image, self.quad, self.x, self.y, math.rad(self.angle), self.xscale, self.yscale, self.xoffset, self.yoffset, self.xshear, self.yshear)
+		else
+			love.graphics.draw(self.image, self.x, self.y, math.rad(self.angle), self.xscale, self.yscale, self.xoffset, self.yoffset, self.xshear, self.yshear)
+		end
 		love.graphics.pop()
 		return self
 	end,
@@ -61,18 +69,30 @@ Image = Class{
 
 	-- break up image into pieces
 	chop = function(self, piece_w, piece_h)
+		piece_w = math.ceil(piece_w)
+		piece_h = math.ceil(piece_h)
 
+		local img_list = {}
+		local new_quad = love.graphics.newQuad(0,0,piece_w,piece_h, self.image:getDimensions())
+		for x=0, self.orig_width, piece_w do
+			for y=0, self.orig_height, piece_h do
+				if x < self.orig_width or y < self.orig_height then
+					local new_image = self:crop(x,y,piece_w,piece_h)
+					new_image.x = self.x + x
+					new_image.y = self.y + y
+					table.insert(img_list, new_image)
+				end
+			end
+		end
+		return img_list
 	end,
 
 	crop = function(self, x, y, w, h)
-		-- draw quad to canvas (TODO: any hits to performance?)
-		local img_canvas = love.graphics.newCanvas(w, h)
-		img_canvas:renderTo(function()
-			love.graphics.draw(self.image, -x , -y)
-		end)
+		local src_image_data = self.image:getData()
+		local dest_image_data = love.image.newImageData(w,h)
+		dest_image_data:paste(src_image_data, 0, 0, x, y, w, h)
 
-		-- convert canvas to image
-		return Image(img_canvas:newImageData())
+		return Image(dest_image_data)
 	end,
 }
 
