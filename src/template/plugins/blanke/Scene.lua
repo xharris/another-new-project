@@ -65,7 +65,7 @@ local Scenetable = Class{
 Scene = Class{
 	hitbox = {},
 	_zoom_amt = 1,
-	_fake_view_start = {game_width/2, game_height/2},
+	_fake_view_start = {CONF.window.width/2, CONF.window.height/2},
 	_renames = {},
 	init = function(self, name)
 		self.layer_data = {}			-- load_objct
@@ -88,16 +88,10 @@ Scene = Class{
 			_btn_zoom_out = Input('wheel.down')
 
 			self._fake_view = View()
-			self._fake_view.nickname = '_fake_view'
-			BlankE.setGridCamera(self._fake_view)
-			BlankE.initial_cam_pos = {0,0}
-			--self._fake_view.port_width, self._fake_view.port_height = love.window.getDesktopDimensions()
-			self._fake_view.noclip = true
-			self._fake_view:moveToPosition(Scene._fake_view_start[1], Scene._fake_view_start[2])
-			self._fake_view.motion_type = 'smooth' -- (not working as intended)		
-			self._fake_view.draggable = true
-			self._fake_view.drag_input = Input('mouse.3','space')
-			
+
+			self._fake_view.drag_offset_x = Scene._fake_view_start[1]
+			self._fake_view.drag_offset_y = Scene._fake_view_start[2]
+			self._fake_view._is_a_fake = true -- lol			
 		end
 
 		if name and assets[name] then
@@ -575,16 +569,9 @@ Scene = Class{
 	_getMouseXY = function(self, dont_snap)
 		dont_snap = ifndef(dont_snap, _btn_no_snap())
 
-		local cam_x, cam_y
-		local place_cam = ifndef(BlankE.main_cam, self._fake_view)
-		if not place_cam.disabled then
-			cam_x, cam_y = place_cam.camera:cameraCoords(place_cam:mousePosition())
-			local cam_pos = {place_cam:position()}
-			cam_x = cam_x - ((place_cam.port_width/2) - cam_pos[1])
-			cam_y = cam_y - ((place_cam.port_height/2) - cam_pos[2])
-		else
-			cam_x, cam_y = love.mouse.getX(), love.mouse.getY()
-		end
+		local cam_x, cam_y = BlankE._mouse_x, BlankE._mouse_y
+		--cam_x = cam_x - (place_cam.port_width/2)
+		--cam_y = cam_y - (place_cam.port_height/2)
 		local mx, my = cam_x*Scene._zoom_amt, cam_y*Scene._zoom_amt
 
 		if not dont_snap then
@@ -642,7 +629,7 @@ Scene = Class{
 
 	    	-- placing object on click
 	    	local _placeXY = self:_getMouseXY()
-	    	BlankE._mouse_x, BlankE._mouse_y = unpack(_placeXY)
+	    	BlankE._snap_mouse_x, BlankE._snap_mouse_y = unpack(_placeXY)
 	    	if _btn_place() and _place_type then
 	    		if _placeXY[1] ~= _last_place[1] or _placeXY[2] ~= _last_place[2] then
 	    			_last_place = _placeXY
@@ -723,9 +710,18 @@ Scene = Class{
 		    	confirm_pressed = false
 		    end
 
-
-		else -- BlankE._ide_mode
-			if self._fake_view then self._fake_view.disabled = true end
+		    -- only use fake view if no other view is being used
+	    	local total = 0
+	    	_iterateGameGroup('view', function(view)
+	    		if not (view.disabled and not view._is_a_fake) then
+		    		total = total + 1
+		    	end
+	    	end)
+	    	if total > 1 then
+		    	self._fake_view.disabled = true
+		    else
+		    	self._fake_view.disabled = false
+		    end
 		end
 	end,
 
@@ -775,19 +771,10 @@ Scene = Class{
 	    	if _btn_zoom_out() then
 	    		Scene._zoom_amt = clamp(Scene._zoom_amt + 0.1, 0, 3)
 	    	end
-	    	self._fake_view:zoom(Scene._zoom_amt)
-	    	self._fake_view.port_width = game_width
-	    	self._fake_view.port_height = game_height
 	    	
 	    	-- dragging the view/grid around
 	    	BlankE.setGridSnap(self._snap[1], self._snap[2])
-	    	if not self._fake_view.disabled then
-	    		View._disable_grid = true
-				BlankE.setGridCamera(self._fake_view)
-		    else
-		    	View._disable_grid = false
-		    end
-		    
+
 	    	self._fake_view:attach()
 	    	
 	    	self:_real_draw()

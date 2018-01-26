@@ -1,9 +1,6 @@
-local _views = {}
 View = Class{
-	_disable_grid = false,
+	global_drag_enable = false,
 	init = function (self)
-		table.insert(_views, self)
-
 		self._dt = 0
 
 		self.disabled = false
@@ -14,6 +11,8 @@ View = Class{
 		self.follow_y = 0
 		self.offset_x = 0
 		self.offset_y = 0
+		self.drag_offset_x = 0
+		self.drag_offset_y = 0 
 
 		self.motion_type = 'none' -- linear, smooth
 		self.speed = 1 
@@ -33,9 +32,9 @@ View = Class{
         
         self.port_x = 0
         self.port_y = 0
-        self.port_width = love.graphics:getWidth()
-        self.port_height = love.graphics:getHeight()
-        self.noclip = false
+        self.port_width = CONF.window.width 
+        self.port_height = CONF.window.height
+        self.noclip = true
         
         self.shake_x = 0
         self.shake_y = 0
@@ -44,11 +43,16 @@ View = Class{
         self.shake_type = 'smooth'
 
         self.draggable = false
-        self.drag_input = nil
+	    self.drag_input = nil
         self._dragging = false
         self._view_initial_pos = {0,0}
 		self._initial_mouse_pos = {0,0}
+		self._enable_grid = BlankE._ide_mode
         
+        if BlankE._ide_mode then
+        	self.drag_input = Input('mouse.3','space')
+	    end
+
         _addGameObject('view',self)
 	end,
 
@@ -111,10 +115,15 @@ View = Class{
     
     mousePosition = function(self)
     	if self.camera then
-	        return self.camera:mousePosition()
-	    else
-	    	return 0, 0
+    		local mx, my = self.camera:mousePosition()
+    		if self.follow_entity then
+		        return (game_width/2)-(self.port_width/2)+mx, (game_height/2)-(self.port_height/2)+my
+		    else
+		    	return (game_width/2)-(self.port_width/2)+mx - Scene._fake_view_start[1],
+		    		   (game_height/2)-(self.port_height/2)+my - Scene._fake_view_start[2]
+		    end
 	    end
+	    return 0, 0
     end,
     
     shake = function(self, x, y)
@@ -134,25 +143,33 @@ View = Class{
 	update = function(self, dt)
 		if not self.camera then return end
 
+		if self.noclip or (mouse_x > self.port_x and mouse_y > self.port_y and
+		   mouse_x < self.port_x+self.port_width and mouse_y < self.port_y+self.port_height) then
+			BlankE._mouse_x, BlankE._mouse_y = self:mousePosition()
+			BlankE._mouse_updated = true
+		end
+
 		-- dragging
-		if self.draggable and self.drag_input ~= nil then
+		if BlankE._ide_mode and self.drag_input == nil then
+        	self.drag_input = Input('mouse.3','space')
+	    end
+
+		if (View.global_drag_enable or self.draggable) and self.drag_input ~= nil then
+			
 			if self.drag_input() then
 	    		-- on down
 		    	if not self._dragging then
 		    		self._dragging = true
-		    		self._view_initial_pos = {self:position()}
+		    		self._view_initial_pos = {self.drag_offset_x,self.drag_offset_y}
 		    		self._initial_mouse_pos = {love.mouse.getX(), love.mouse.getY()}
 		    		--
 		    	end
 		    	-- on hold
 		    	if self._dragging then
 		    		local _drag_dist = {love.mouse.getX()-self._initial_mouse_pos[1], love.mouse.getY()-self._initial_mouse_pos[2]}
-		    		self:moveToPosition(
-		    			self._view_initial_pos[1] - _drag_dist[1],
-		    			self._view_initial_pos[2] - _drag_dist[2],
-		    			true
-		    		)
-		    		Scene._fake_view_start = {self:position()}
+		    		self.drag_offset_x = self._view_initial_pos[1] - _drag_dist[1]
+		    		self.drag_offset_y = self._view_initial_pos[2] - _drag_dist[2]
+		    		--Scene._fake_view_start = {self:position()}
 		    	end
 		    end
 	    	-- on release
@@ -164,12 +181,12 @@ View = Class{
 		if self.follow_entity then
 			local follow_x = self.follow_entity.x
 			local follow_y = self.follow_entity.y
-
-			if not View._disable_grid then
-				BlankE.setGridCamera(self)
-			end	
 			self:moveToPosition(follow_x, follow_y, true)
 		end
+
+		local shake_x, shake_y = 0,0
+
+		if not BlankE.pause then
 
 		-- determine the smoother to use 
 		if self._last_speed ~= self.speed or self._last_motion_type ~= self.motion_type then
@@ -226,8 +243,8 @@ View = Class{
             modifier = (random_range(1, 20)/10)
         end
         
-        local shake_x = sinusoidal(-self.shake_x, self.shake_x, self.shake_intensity * modifier, 0)
-        local shake_y = sinusoidal(-self.shake_y, self.shake_y, self.shake_intensity * modifier, 0)
+        shake_x = sinusoidal(-self.shake_x, self.shake_x, self.shake_intensity * modifier, 0)
+        shake_y = sinusoidal(-self.shake_y, self.shake_y, self.shake_intensity * modifier, 0)
         
         if self.shake_y > 0 then
             self.shake_y = lerp(self.shake_y, 0 ,dt*self.shake_falloff)
@@ -236,32 +253,41 @@ View = Class{
         if self.shake_x > 0 then
             self.shake_x = lerp(self.shake_x, 0 ,dt*self.shake_falloff)
         end
+
+    	end
         
 		-- move the camera
 		local wx = love.graphics.getWidth()/2
 		local wy = love.graphics.getHeight()/2
-		self.camera:lockWindow(self.follow_x + self.offset_x + shake_x, self.follow_y + self.offset_y + shake_y, wx-self.max_distance, wx+self.max_distance,  wy-self.max_distance, wy+self.max_distance, self._smoother)
+		local drag_offx, drag_offy = 0, 0
+		if (View.global_drag_enable or self.draggable) then
+			drag_offx, drag_offy = self.drag_offset_x, self.drag_offset_y
+		end
+
+		self.camera:lockWindow(self.follow_x + self.offset_x + drag_offx + shake_x, self.follow_y + self.offset_y + drag_offy + shake_y, wx-self.max_distance, wx+self.max_distance,  wy-self.max_distance, wy+self.max_distance, self._smoother)
 	end,
 
 	attach = function(self)  
-		if self.camera and not (self.disabled or View._disable_grid) or (self.nickname == '_fake_view' and not self.disabled) then 
+		if self.camera and not self.disabled then 
         	self.camera:attach(self.port_x, self.port_y, self.port_width, self.port_height, self.noclip)
-			--[[local cx, cy = self.port_x+self.port_width/2, self.port_y+self.port_height/2
+		end
 
-			self._sx,self._sy,self._sw,self._sh = love.graphics.getScissor()
-			love.graphics.setScissor(x,y,w,h)
+        if (BlankE._ide_mode or self._enable_grid) and not self.disabled then
+        	local grid_width, grid_height = self.port_width, self.port_height
+        	if self.noclip then
+        		grid_width, grid_height = game_width, game_height
+        	end
 
-			love.graphics.push()
-			love.graphics.translate(cx, cy)
-			love.graphics.scale(self.scale_x, self.scale_y)
-			love.graphics.rotate(math.rad(self.angle))
-			love.graphics.translate(-self.follow_x, -self.follow_y)
-			]]
-        end
+        	if (View.global_drag_enable or self.draggable) then
+	        	BlankE._drawGrid(self.follow_x + self.offset_x + self.drag_offset_x, self.follow_y + self.offset_y + self.drag_offset_y, grid_width, grid_height)
+	        else
+	        	BlankE._drawGrid(self.follow_x + self.offset_x, self.follow_y + self.offset_y, grid_width, grid_height)
+	        end
+		end
     end,
 
 	detach = function(self)
-		if self.camera and not (self.disabled or View._disable_grid) or (self.nickname == '_fake_view' and not self.disabled) then
+		if self.camera and not self.disabled then
 			self.camera:detach()
 			--love.graphics.pop()
 			--love.graphics.setScissor(self._sx,self._sy,self._sw,self._sh)

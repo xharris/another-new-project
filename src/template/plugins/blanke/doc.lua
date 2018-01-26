@@ -351,7 +351,7 @@ getTile(x, y, layer, img_name)				-- returns list of tile_data?
 getTileImage(x, y, layer, img_name)			-- same as geTTile but returns list of Image()
 removeTile(x, y, layer, img_name)
 removeHitboxAtPoint(x, y, layer)
-getList(object_type)
+getList(object_type)						-- object_type: 'entity', 'tile', 'hitbox'
 draw()
 
 -- json format

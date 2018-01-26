@@ -160,14 +160,13 @@ local ideScene = {
 				imgui.SetNextWindowPos(game_width-scene_editor_width-window_margin, window_margin, {"Once"})
 				imgui.SetNextWindowSize(scene_editor_width,game_height-UI.getSetting("console_height").value-(titlebar_height+window_margin), {"Once"})
 				local cam_zoom = ifndef(Scene._zoom_amt,1)*100
-				local cam_mouse_x, cam_mouse_y = BlankE.main_cam:mousePosition()
-				scene_status, UI.titlebar.show_scene_editor = imgui.Begin(string.format("scene editor (%d,%d) %d,%d %d%%###scene editor", BlankE._mouse_x, BlankE._mouse_y, cam_mouse_x, cam_mouse_y, cam_zoom), true)
+				scene_status, UI.titlebar.show_scene_editor = imgui.Begin(string.format("scene editor (%d,%d) %d,%d %d%%###scene editor", BlankE._snap_mouse_x, BlankE._snap_mouse_y, BlankE._mouse_x, BlankE._mouse_y, cam_zoom), true)
 
 				-- enable/disable dragging camera
 				if _scene then
-					local cam_status, new_cam = imgui.Checkbox("disable camera dragging", _scene._fake_view.disabled)
+					local cam_status, new_cam = imgui.Checkbox("enable view dragging", View.global_drag_enable)
 					if cam_status then
-						_scene._fake_view.disabled = new_cam
+						View.global_drag_enable = new_cam
 					end 
 
 					local grid_status, new_grid = imgui.Checkbox("show grid", BlankE.show_grid)

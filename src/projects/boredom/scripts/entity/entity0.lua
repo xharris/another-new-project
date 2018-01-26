@@ -3,7 +3,7 @@ BlankE.addClassType("entity0", "Entity")
 function entity0:init()
 	self.show_debug = true
 	self.walk_speed = 180
-	self.gravity = 30
+	--self.gravity = 30
 	self.can_jump = true
     self.jump_power = 700
 

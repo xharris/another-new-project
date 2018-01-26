@@ -23,6 +23,7 @@ function assets:test()
 end
 
 
+require 'scripts.entity.DestructionWall'
 require 'scripts.entity.ground'
 require 'scripts.entity.penguin'
 

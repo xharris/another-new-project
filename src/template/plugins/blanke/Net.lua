@@ -57,9 +57,12 @@ Net = {
         Net.client.handshake = "blanke_net"
         
         Net.client:setPing()
-        Net.client:connect(Net.address, Net.port)
-        Net.is_connected = true
-        Debug.log("joining")
+        local success, err = Net.client:connect(Net.address, Net.port)
+        
+        if success then
+            Net.is_connected = true
+            Debug.log("joining "..Net.address..':'..Net.port)
+        end
 
         return Net
     end,
