@@ -20,7 +20,8 @@ Net = {
     address = "localhost",
     port = 12345,
 
-    _clients = {},    
+    _clients = {},
+    _rooms = {},   
 
     id = nil,
 
@@ -119,27 +120,7 @@ Net = {
         data = json.encode(data)
         Net.server:send(data, clientid)
         return Net
-    end,
-    
-    --[[
-    room_list = function() end,
-    room_create
-    room_join
-    room_leave
-    room_clients -- list clients in rooms
-    
-    entity_add -- add uuid to entity
-    entity_remove
-    entity_update -- manual update, usage example?
-
-    send -- data
-    
-    -- events
-    trigger
-    receive -- data
-    client_enter
-    client_leave
-    ]]
+    end
 }
 
 function love.load()

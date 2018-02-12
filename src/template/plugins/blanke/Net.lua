@@ -10,6 +10,7 @@ Net = {
     
     address = "localhost",
     port = 12345,
+    room = 1,
 
     _objects = {},          -- objects sync from other clients _objects = {'client12' = {object1, object2, ...}}
     _local_objects = {},    -- objects added by this client
@@ -86,7 +87,7 @@ Net = {
 
     _onReady = function()
         if Net.onReady then Net.onReady() end
-
+        Net.setRoom(Net.room)
         Net.send({
             type="netevent",
             event="object.sync",
@@ -103,14 +104,7 @@ Net = {
     _onDisconnect = function(clientid) 
         Debug.log('- '..clientid)
         if Net.onDisconnect then Net.onDisconnect(clientid) end
-        
-        -- remove that client's object
-        for o, object in ipairs(Net._objects[clientid]) do
-            if not object.keep_on_disconnect then
-                obj:destroy()
-            end
-        end
-        Net._objects[clientid] = nil
+        Net.removeClientObjects() 
     end,
     
     _onReceive = function(data, id)
@@ -135,7 +129,7 @@ Net = {
             return
         end
 
-        if data.type and data.type == 'netevent' then
+        if data.type and data.type == 'netevent' and data.room = Net.room then
             --Debug.log(data.event)
 
             -- get assigned client id
@@ -153,9 +147,9 @@ Net = {
             end
             
             -- new object added from diff client
-            if data.event == 'object.add' and data.info.clientid ~= Net.id then
+            if data.event == 'object.add' and data.clientid ~= Net.id then
                 local obj = data.info.object
-                local clientid = data.info.clientid
+                local clientid = data.clientid
 
                 Debug.log("added "..obj.classname)
                 Net._objects[clientid] = ifndef(Net._objects[clientid], {})
@@ -172,9 +166,9 @@ Net = {
             end
 
             -- update net entity
-            if data.event == 'object.update' and data.info.clientid ~= Net.id then
-                if Net._objects[data.info.clientid] then
-                    local obj = Net._objects[data.info.clientid][data.info.net_uuid]
+            if data.event == 'object.update' and data.clientid ~= Net.id then
+                if Net._objects[data.clientid] then
+                    local obj = Net._objects[data.clientid][data.info.net_uuid]
                     if obj then
                         for var, val in pairs(data.info.values) do
                             obj[var] = val
@@ -188,6 +182,11 @@ Net = {
                 Net.sendSyncObjects()
             end
 
+            -- another entity changed their room
+            if data.event == 'room.change' and data.clientid ~= Net.id and data.room ~= Net.room then
+                Net.removeClientObjects(data.clientid) 
+            end
+
             -- send to all clients
             if data.event == 'broadcast' then
                 print('ALL:',data.info)
@@ -198,9 +197,43 @@ Net = {
     end,
 
     send = function(in_data) 
+        if in_data.type == 'netevent' then
+            in_data.clientid = Net.id
+            in_data.room = Net.room
+        end
+
         data = json.encode(in_data)
         if Net.client then Net.client:send(data) end
         return Net
+    end,
+
+    setRoom = function(num)
+        Net.room = num
+        Net.send({
+            type='netevent',
+            event='room.change'
+        })
+        Net.removableClientObjects()
+    end,
+
+    removeClientObjects = function(clientid) 
+        local removable = {}
+        if not clientid then
+            for id, stuff in pairs(client) do
+                removable[id] = Net._objects[id]
+            end
+        else
+            removable[clientid] = Net._objects[clientid]
+        end
+
+        if Net._objects[clientid] then
+            for o, object in ipairs(Net._objects[clientid]) do
+                if not object.keep_on_disconnect then
+                    obj:destroy()
+                end
+            end
+            Net._objects[clientid] = nil
+        end
     end,
 
     addObject = function(obj)
@@ -208,12 +241,12 @@ Net = {
 
         obj.net_uuid = uuid()
         obj.net_var_old = {}
+        
         --notify the other server clients
         Net.send({
             type='netevent',
             event='object.add',
             info={
-                clientid = Net.id,
                 object = {net_uuid=obj.net_uuid, classname=obj.classname}
             }
         })
@@ -244,7 +277,6 @@ Net = {
                         end
                     end
                 end
-
                 -- update all
                 if #vars == 0 then
                     for v, var in ipairs(self.net_sync_vars) do
@@ -259,7 +291,6 @@ Net = {
                         type="netevent",
                         event="object.update",
                         info={
-                            clientid=Net.id,
                             net_uuid=self.net_uuid,
                             values=update_values
                         }
@@ -279,7 +310,6 @@ Net = {
                 type='netevent',
                 event='object.add',
                 info={
-                    clientid = Net.id,
                     object = {net_uuid=obj.net_uuid, classname=obj.classname, values=obj.net_var_old}
                 }
             })
@@ -306,27 +336,7 @@ Net = {
             end
         end
         return Net
-    end,
-    
-    --[[
-    room_list = function() end,
-    room_create
-    room_join
-    room_leave
-    room_clients -- list clients in rooms
-    
-    entity_add -- add uuid to entity
-    entity_remove
-    entity_update -- manual update, usage example?
-
-    send -- data
-    
-    -- events
-    trigger
-    receive -- data
-    client_enter
-    client_leave
-    ]]
+    end
 }
 
 return Net

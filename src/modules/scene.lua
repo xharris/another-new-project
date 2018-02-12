@@ -529,14 +529,14 @@ local ideScene = {
 													inspectObj(ent, string.format('%s (%d,%d)', ifndef(ent.nickname, ent.classname), ent.x, ent.y), flags)
 
 													if imgui.IsItemHovered() then
-														ent.show_debug = true
+														ent.scene_show_debug = true
 
 														if imgui.IsKeyReleased(10) or imgui.IsKeyReleased(11) then	
 				        									ent:destroy()
 														end
 
 													elseif selected_entity ~= ent.uuid then
-														ent.show_debug = false
+														ent.scene_show_debug = false
 													end
 
 													--[[ camera focus/highlight on entity selection (TODO: BUGGY)

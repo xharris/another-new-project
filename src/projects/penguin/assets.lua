@@ -18,8 +18,8 @@ function assets:penguin_filler()
 	local new_img = love.graphics.newImage(asset_path..'assets/image/penguin_filler.png')
 	return new_img
 end
-function assets:test()
-	 return asset_path.."assets/scene/test.json"
+function assets:level1()
+	 return asset_path.."assets/scene/level1.json"
 end
 
 

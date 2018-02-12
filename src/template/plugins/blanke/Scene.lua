@@ -183,35 +183,38 @@ Scene = Class{
 		Scene.hitbox = ifndef(scene_data.data.hitbox, {})
 
 		-- iterate LAYERS
+		local types = {'tile','hitbox','entity'} -- uses list to make load order same every time
 		for layer, data in pairs(scene_data.data) do
 			if not _place_layer then
 				self:setPlaceLayer(layer)
 			end
 			self.layer_data[layer] = table.copy(layer_template)
 
-			if data["entity"] then
-				for i_e, entity in ipairs(data["entity"]) do
-					if _G[entity.classname] then
-						Entity.x = entity.x
-						Entity.y = entity.y
-						local new_entity = _G[entity.classname](self)
-						new_entity._loadedFromFile = true
+			for t, obj_type in ipairs(types) do
+				if obj_type == 'entity' and data["entity"] then
+					for i_e, entity in ipairs(data["entity"]) do
+						if _G[entity.classname] then
+							Entity.x = entity.x
+							Entity.y = entity.y
+							local new_entity = _G[entity.classname](self)
+							new_entity._loadedFromFile = true
 
-						self:addEntity(new_entity, layer)
+							self:addEntity(new_entity, layer)
+						end
 					end
 				end
-			end
 
-			if data["tile"] then
-				for i_i, tile in ipairs(data["tile"]) do
-					self:addTile(tile.img_name, tile.x, tile.y, tile.crop, layer, true)
+				if obj_type == 'tile' and data["tile"] then
+					for i_i, tile in ipairs(data["tile"]) do
+						self:addTile(tile.img_name, tile.x, tile.y, tile.crop, layer, true)
+					end
 				end
-			end
 
-			if data["hitbox"] then
-				for i_h, hitbox in ipairs(data["hitbox"]) do
-					local new_hitbox = self:addHitbox(hitbox.name, {points=hitbox.points}, layer)
-					new_hitbox._loadedFromFile = true
+				if obj_type == 'hitbox' and data["hitbox"] then
+					for i_h, hitbox in ipairs(data["hitbox"]) do
+						local new_hitbox = self:addHitbox(hitbox.name, {points=hitbox.points}, layer)
+						new_hitbox._loadedFromFile = true
+					end
 				end
 			end
 		end   
@@ -343,13 +346,9 @@ Scene = Class{
 	end,
 
 	_addEntityStr = function(self, ent_name, x, y, layer, width, height)
-		local new_entity = _G[ent_name](x, y, width, height)
-		if new_entity.x == 0 and new_entity.y == 0 then
-			new_entity.x = x
-			new_entity.y = y
-			new_entity.xstart = x
-			new_entity.ystart = y
-		end
+		Entity.x = x
+		Entity.y = y
+		local new_entity = _G[ent_name](self)
 		self:_addEntityTable(new_entity, layer)
 
 		return new_entity
@@ -420,7 +419,8 @@ Scene = Class{
 		for t, tile in ipairs(ret_tiles) do
 			ret_tiles[t] = self:tileToImage(tile)
 		end
-		if #ret_tiles == 1 then
+		
+		if table.len(ret_tiles) == 1 then
 			return ret_tiles[1]
 		end
 		return ret_tiles
@@ -428,10 +428,6 @@ Scene = Class{
 
 	tileToImage = function(self, tile_data)
 		local img = self.images[tile_data.img_name]
-		local quad = love.graphics.newQuad(
-			tile_data.crop.x, 		tile_data.crop.y,
-			tile_data.crop.width,	tile_data.crop.height,
-			img.width,				img.height)
 		return img:crop(tile_data.crop.x, tile_data.crop.y, tile_data.crop.width, tile_data.crop.height)
 	end,
 
