@@ -81,7 +81,8 @@ class ProjectManager:
 			proj_dir = askdirectory(initialdir=getcwd(),
 				title = "Open project"
 			)
-			self.proj_path = proj_dir
+			if proj_dir and proj_dir != "":
+				self.proj_path = proj_dir
 		else:
 			self.proj_path = filepath.replace("\\","/")
 		self.game_settings.read(self.getConfigPath())
@@ -93,40 +94,52 @@ class ProjectManager:
 		self.app.setTitle(self.getProjectName())
 		for cat in self.obj_dict:
 			self.obj_dict[cat] = []
-		ignore_folder = ['dist']
+		ignore_folder = ['dist','template']
 
 		el_searchbar = self.app.element('searchbar')
 		for root, dirs, files in walk(self.proj_path):
+			root = root.replace('/','\\')
+			ignore = False
 			for f in ignore_folder:
-				if not f in root:
-					for file in files:
-						# script files
-						if file.endswith(".lua"):
-							tags = [file[:-4], "script"]
+				if "\\"+f+"\\" in root:
+					ignore = True
+
+			if not ignore:	
+				for file in files:
+					# script files
+					if file.endswith(".lua"):
+						tags = [file[:-4], "script"]
+						valid = False
+
+						if "\\scripts\\" in root:
+							valid = True
+						else:
 							with open(join(root, file),'r') as f_script:
 								# determine the category of the script
 								for line in f_script:
-									if ':enter' in line:
+									if '\"State\"' in line:
 										tags.append('state')
 										self.obj_dict['state'].append(join(root, file))
+										valid = True
 										break
-									if 'Entity.init' in line:
+									if '\"Entity\"' in line:
 										tags.append('entity')
 										self.obj_dict['entity'].append(join(root, file))
+										valid = True
 										break
-
+						if valid:
 							el_searchbar.addKey(text=file[:-4], tooltip=join(file), category="Script", tags=tags, onSelect=self.editScript, onSelectArgs={'filepath':join(root,file)})
 
-						# assets: images, sounds
-						if "assets" in root:
-							tags = [file[:-4], "asset"]
-							supported_imgs = ['.png']
-							for ext in supported_imgs:
-								if file.endswith(ext):
-									tags.append('image')
-									self.obj_dict['image'].append(join(root, file))
+					# assets: images, sounds
+					if "assets" in root:
+						tags = [file[:-4], "asset"]
+						supported_imgs = ['.png']
+						for ext in supported_imgs:
+							if file.endswith(ext):
+								tags.append('image')
+								self.obj_dict['image'].append(join(root, file))
 
-									el_searchbar.addKey(text=file[:-4], tooltip=join(file), category="Asset", tags=tags)#, onSelect=self.editScript, onSelectArgs={'filepath':join(root,file)})
+								el_searchbar.addKey(text=file[:-4], tooltip=join(file), category="Asset", tags=tags)#, onSelect=self.editScript, onSelectArgs={'filepath':join(root,file)})
 				
 	def _writeGameSettings(self, values):
 		self.game_settings.write(self.getConfigPath())
@@ -148,29 +161,34 @@ class ProjectManager:
 		template_path = join(getcwd(),'src','template').replace('\\','\\\\')
 
 		s_main = ''
-		print(join(self.proj_path,'main.lua'))
+
 		with open(join(self.proj_path,'main.lua'), 'r') as f_main:
 	   		s_main = f_main.read()
 		f_main.close()
 
-		if not 'INJECTED_CODE_START' in s_main:
-			f_main = open(join(self.proj_path,'main.lua'),'w+')
-			inject_str = ''+\
-			'--INJECTED_CODE_START'+\
-			'\npackage.path=package.path..\";'+template_path+'\\\\?.lua\"'+\
-			'\npackage.path=package.path..\";'+template_path+'\\\\?\\\\init.lua\"'+\
-			'\n--INJECTED_CODE_END\n\n'
-			f_main.write(inject_str+s_main)
-			f_main.close()
-
 		# write conf.lua
 		# TODO: finish this later lol
-		str_conf = 'function conf.lua(t)\n'
+		s_conf = 'function conf.lua(t)\n'
 		conf = {
 			'':['identity','version','console','accelerometerjoystick','externalstorage','gammacorrect'],
 			'window':['title','icon','width','height']
 		}
-		str_conf = 'end'
+		s_conf = 'end'
+
+		s_conf = ''
+		with open(join(self.proj_path,'conf.lua'), 'r') as f_conf:
+	   		s_conf = f_conf.read()
+
+		if not 'INJECTED_CODE_START' in s_conf:
+			f_conf = open(join(self.proj_path,'conf.lua'),'w+')
+			inject_str = ''+\
+			'--INJECTED_CODE_START'+\
+			'\npackage.path=package.path..\";'+template_path+'\\\\?.lua\"'+\
+			'\npackage.path=package.path..\";'+template_path+'\\\\?\\\\init.lua\"'+\
+			'\npackage.path=package.path..\";'+self.proj_path.replace('/','\\\\')+'\\\\?.lua\"'+\
+			'\n--INJECTED_CODE_END\n\n'
+			f_conf.write(inject_str+s_conf)
+			f_conf.close()
 
 		for i in range(run_count): 
 			if self.app.os == "Windows":

@@ -53,7 +53,7 @@ class App:
         self.frame('searchbar', bFrame(self, self.frame('main'), height=26, padx=4)).pack(fill=X, pady=(4,0))
         self.frame('history', bFrame(self, self.frame('main'), height=24, padx=4)).pack(fill=X, pady=(4,0))
         self.frame('workspace', bFrame(self, self.frame('main'), padx=4, pady=4)).pack(fill=BOTH, expand=True, pady=(0,28))
-        self.frame('statusbar', bFrame(self, self.frame('main'), padx=4, pady=4, height=20, highlightthickness=1)).pack(fill=X, side=BOTTOM, anchor=S)
+        #self.frame('statusbar', bFrame(self, self.frame('main'), padx=4, pady=4, height=20, highlightthickness=1)).pack(fill=X, side=BOTTOM, anchor=S)
 
         self.ide_settings = SettingManager([
             {'type':'checkbox', 'name':'use_external_editor', 'default':False},
@@ -66,8 +66,8 @@ class App:
         self.elements = {
             'searchbar': Searchbar(self),
             'history': History(self),
-            'favorites': Favorites(self),
-            'statusbar': Statusbar(self, self.frame('statusbar'))
+            'favorites': Favorites(self)
+            #'statusbar': Statusbar(self, self.frame('statusbar'))
         }
 
         self.frame('workspace').bind('<FocusIn>', self.element("searchbar").unfocus)
@@ -114,7 +114,10 @@ class App:
 
     def execute(self, stmt):   
         try:
-            retcode = subprocess.Popen(stmt, shell=True, stdin=None, stdout=None, stderr=None)
+            retcode = subprocess.Popen(stmt, shell=True, stdin=None, stdout=subprocess.PIPE, stderr=None)
+            out, err = retcode.communicate()
+            print(out)
+
             '''
             if retcode < 0:
                 print >>sys.stderr, "Child was terminated by signal", -retcode

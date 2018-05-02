@@ -56,10 +56,11 @@ class Searchbar:
 			self.result_container.destroy()
 		# create container
 		self.result_container = bFrame(self.app, self.app.frame('main'))
-		self.result_container.place(x=0, y=self.app.frame('searchbar')['height'], relwidth=1, anchor=NW)
 
 		self.result_frame = bFrame(self.app, self.result_container)
 		self.result_frame.pack(padx=4, fill=BOTH)
+
+		self.result_container.place(x=0, y=self.app.frame('searchbar')['height'], relwidth=1, anchor=NW)
 
 	def unfocus(self, ev=None):
 		self.has_focus = False
@@ -76,6 +77,7 @@ class Searchbar:
 
 	def submitSearch(self, text):
 		text = text.strip()
+		print('new')
 		if text != PLACEHOLDER and text != "":
 			for key in self.keys:
 				if text in key.text.lower():
@@ -210,11 +212,11 @@ class Result(object):
 
 	def __eq__(self, other):
 		if isinstance(other, Result):
-			return (other.key.text == self.key.text)
+			return (str(other) == str(self))
 		return False
 
 	def __repr__(self):
-		return ("Result (%s)" % (self.key.text))
+		return ("Result (%s) #[%s]" % (self.key.text, ', '.join(self.key.tags)))
 
 	def __hash__(self):
 		return hash(self.__repr__())

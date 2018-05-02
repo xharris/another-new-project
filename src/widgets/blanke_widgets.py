@@ -8,6 +8,16 @@ def stylize(d, opts):
 	for key, value in opts.iteritems():
 		ifndef(d, key, value)
 
+class bDragWindow(Frame, object):
+	def __init__(self, app, frame=None, **kwargs):
+		stylize(kwargs,{
+			'bg': app.color('frame_bg'),
+			'width': 100,
+			'height': 100
+		})
+		super(self.__class__, self).__init__(frame, **kwargs)
+
+
 class bFrame(Frame, object):
 	def __init__(self, app, frame=None, **kwargs):
 		stylize(kwargs,{
@@ -109,6 +119,8 @@ class bLabel(Label, object):
 			'bd': 0,
 			'textvariable':self.string_var
 		})
+		if 'text' in kwargs:
+			self.set(kwargs['text'])
 		super(self.__class__, self).__init__(frame, **kwargs)
 
 	def set(self, new_value):
