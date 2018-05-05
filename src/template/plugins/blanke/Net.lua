@@ -129,7 +129,7 @@ Net = {
             return
         end
 
-        if data.type and data.type == 'netevent' and data.room = Net.room then
+        if data.type and data.type == 'netevent' and data.room == Net.room then
             --Debug.log(data.event)
 
             -- get assigned client id
